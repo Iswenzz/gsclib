@@ -1,0 +1,6 @@
+*.dll
+*.so
+*.o
+*.a
+.ignore
+.vscode/
