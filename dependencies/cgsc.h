@@ -58,6 +58,38 @@ enum $0E0E04F36A22A28F2C0A7A22DC12DAE9
 	VAR_ENDON_LIST = 0x19
 };
 
+enum GSCTypeFlag
+{
+	FLAG_UNDEFINED = 1,
+	FLAG_BEGIN_REF = 2,
+	FLAG_POINTER = 4,
+	FLAG_STRING = 8,
+	FLAG_ISTRING = 16,
+	FLAG_VECTOR = 32,
+	FLAG_END_REF = 64,
+	FLAG_FLOAT = 128,
+	FLAG_INTEGER = 256,
+	FLAG_CODEPOS = 512,
+	FLAG_PRECODEPOS = 1024,
+	FLAG_FUNCTION = 2048,
+	FLAG_STACK = 4096,
+	FLAG_ANIMATION = 8192,
+	FLAG_DEVELOPER_CODEPOS = 16384,
+	FLAG_INCLUDE_CODEPOS = 32768,
+	FLAG_THREAD = 65536,
+	FLAG_NOTIFY_THREAD = 131072,
+	FLAG_TIME_THREAD = 262144,
+	FLAG_CHILD_THREAD = 524288,
+	FLAG_OBJECT = 1048576,
+	FLAG_DEAD_ENTITY = 2097152,
+	FLAG_ENTITY = 4194304,
+	FLAG_ARRAY = 8388608,
+	FLAG_DEAD_THREAD = 16777216,
+	FLAG_COUNT = 33554432,
+	FLAG_THREAD_LIST = 67108864,
+	FLAG_ENDON_LIST = 134217728
+};
+
 struct VariableStackBuffer
 {
 	const char *pos;
@@ -100,6 +132,7 @@ __attribute__((unused)) static int __callArgNumber = 0;
 
 void Plugin_Scr_FreeArray(VariableValue **array, int length);
 VariableValue **Plugin_Scr_GetArray(unsigned int paramnum);
+VariableValue *Plugin_Scr_AllocVariable(VariableValue *varRef);
 VariableValue *Plugin_Scr_SelectParamOrDefault(unsigned int paramnum);
 VariableValue *Plugin_Scr_SelectParam(unsigned int paramnum);
 qboolean Plugin_Scr_SetParamFloat(unsigned int paramnum, float value);
