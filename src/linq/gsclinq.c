@@ -1,5 +1,5 @@
-#include "dependencies/cgsc.h"
-#include "gsclinq.h"
+#include "../../dependencies/cgsc.h"
+#include <stdlib.h>
 
 void LINQ_All()
 {
@@ -110,17 +110,6 @@ void LINQ_Where()
 	}
 	Plugin_Scr_FreeArray(array, length);
 }
-
-void ComPrintf()
-{
-	if (Plugin_Scr_GetNumParam() != 1)
-    {
-        Plugin_Scr_Error("Usage: comPrintf(<string>)");
-        return;
-    }
-	Plugin_Printf(Plugin_Scr_GetString(0));
-}
-
 
 void LINQ_Min()
 {
@@ -330,11 +319,60 @@ void LINQ_Sum()
 	}
 	VariableValue **array = Plugin_Scr_GetArray(0);
 	const uint32_t length = Plugin_Scr_GetInt(1);
+	uint32_t flags = GetFlagsFromGSCArray(array, length);
 
-	for (int i = 0; i < length; i++)
+	if (HasFlag(flags, FLAG_STRING) || HasFlag(flags, FLAG_ISTRING))
 	{
-		// TODO type sort in their own function
+		uint32_t bufferSize = 1;
+		char *buffer = (char *)malloc(sizeof(char));
+		char *p = buffer;
+		for (int i = 0; i < length; i++)
+		{
+			switch (array[i]->type)
+			{
+				case VAR_INTEGER:
+					bufferSize += snprintf(NULL, 0, "%d", array[i]->u.intValue); 
+					realloc(buffer, bufferSize * sizeof(char));
+					p += snprintf(p, bufferSize, "%d", array[i]->u.intValue);
+					break;
+				case VAR_FLOAT:
+					bufferSize += snprintf(NULL, 0, "%f", array[i]->u.floatValue); 
+					realloc(buffer, bufferSize * sizeof(char));
+					p += snprintf(p, bufferSize, "%f", array[i]->u.floatValue);
+					break;
+				case VAR_STRING:
+				case VAR_ISTRING:
+				{
+					const char *gsc_str = Plugin_SL_ConvertToString(array[i]->u.stringValue);
+					bufferSize += snprintf(NULL, 0, "%s", gsc_str); 
+					realloc(buffer, bufferSize * sizeof(char));
+					p += snprintf(p, bufferSize, "%s", gsc_str);
+					break;
+				}
+			}
+		}
+		Plugin_Scr_AddString(buffer);
+		free(buffer);
 	}
+	else if (HasFlag(flags, FLAG_INTEGER) || HasFlag(flags, FLAG_FLOAT))
+	{
+		float sum = 0;
+		for (int i = 0; i < length; i++)
+		{
+			switch (array[i]->type)
+			{
+				case VAR_INTEGER: sum += array[i]->u.intValue; break;
+				case VAR_FLOAT: sum += array[i]->u.floatValue; break;
+			}
+		}
+		if (!HasFlag(flags, FLAG_FLOAT))
+			Plugin_Scr_AddInt((int)sum);
+		else
+			Plugin_Scr_AddFloat(sum);
+	}
+	else
+		Plugin_Scr_AddUndefined();
+
 	Plugin_Scr_FreeArray(array, length);
 }
 
@@ -412,44 +450,4 @@ void LINQ_Repeat()
 		}
 	}
 	Plugin_Scr_FreeArray(array, length);
-}
-
-PCL int OnInit()
-{
-	Plugin_ScrAddFunction("comPrintf", 		&ComPrintf);
-	Plugin_ScrAddFunction("all", 			&LINQ_All);
-	Plugin_ScrAddFunction("where", 			&LINQ_Where);
-	Plugin_ScrAddFunction("any", 			&LINQ_Any);
-	Plugin_ScrAddFunction("min", 			&LINQ_Min);
-	Plugin_ScrAddFunction("max", 			&LINQ_Max);
-	Plugin_ScrAddFunction("last",			&LINQ_Last);
-	Plugin_ScrAddFunction("first", 			&LINQ_First);
-	Plugin_ScrAddFunction("cast", 			&LINQ_Cast);
-	Plugin_ScrAddFunction("orderby", 		&LINQ_OrderBy);
-	Plugin_ScrAddFunction("average", 		&LINQ_Average);
-	Plugin_ScrAddFunction("count", 			&LINQ_Count);
-	Plugin_ScrAddFunction("sum", 			&LINQ_Sum);
-	Plugin_ScrAddFunction("select", 		&LINQ_Select);
-	Plugin_ScrAddFunction("range", 			&LINQ_Range);
-	Plugin_ScrAddFunction("repeat", 		&LINQ_Repeat);
-	Plugin_ScrAddFunction("reverse", 		&LINQ_Reverse);	
-
-	return 0;
-}
-
-PCL void OnInfoRequest(pluginInfo_t *info)
-{ 
-	// Function used to obtain information about the plugin
-	// Memory pointed by info is allocated by the server binary
-
-	// =====  MANDATORY FIELDS  =====
-	info->handlerVersion.major = PLUGIN_HANDLER_VERSION_MAJOR;
-	info->handlerVersion.minor = PLUGIN_HANDLER_VERSION_MINOR; // Requested handler version
-
-	// =====  OPTIONAL  FIELDS  =====
-	info->pluginVersion.major = 1;
-	info->pluginVersion.minor = 0;
-	strncpy(info->fullName, "GSC-Linq", sizeof(info->fullName));
-	strncpy(info->shortDescription, "", sizeof(info->shortDescription));
-	strncpy(info->longDescription, "", sizeof(info->longDescription));
 }
