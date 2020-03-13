@@ -1,4 +1,6 @@
 #include "utility.h"
+#include <stdio.h>
+#include <stdlib.h>
 
 void ComPrintf()
 {
@@ -95,4 +97,66 @@ qboolean HasFlag(int var, int flag)
 qboolean IsFlag(int var, int flag)
 {
 	return var == flag;
+}
+
+/** 
+ * qsort float comparison function.
+ */ 
+int float_cmp(const void *a, const void *b)
+{
+	const float *ia = (const float *)a;
+	const float *ib = (const float *)b;
+	return *ia - *ib; // integer comparison: returns negative if b > a, and positive if a > b
+}
+
+/** 
+ * qsort int comparison function.
+ */ 
+int int_cmp(const void *a, const void *b)
+{
+	const int *ia = (const int *)a;
+	const int *ib = (const int *)b;
+	return *ia - *ib; // integer comparison: returns negative if b > a, and positive if a > b
+}
+
+/** 
+ * qsort C-string comparison function.
+ */ 
+int cstring_cmp(const void *a, const void *b)
+{
+	const char **ia = (const char **)a;
+	const char **ib = (const char **)b;
+	return strcmp(*ia, *ib);
+}
+
+/** 
+ * qsort GSC variable float comparison function.
+ */ 
+int gsc_float_cmp(const void *a, const void *b)
+{
+	VariableValue *ia = *(VariableValue **)a;
+	VariableValue *ib = *(VariableValue **)b;
+	return ia->u.floatValue - ib->u.floatValue; // integer comparison: returns negative if b > a, and positive if a > b
+}
+
+/** 
+ * qsort GSC variable int comparison function.
+ */ 
+int gsc_int_cmp(const void *a, const void *b)
+{
+	VariableValue *ia = *(VariableValue **)a;
+	VariableValue *ib = *(VariableValue **)b;
+	return ia->u.intValue - ib->u.intValue; // integer comparison: returns negative if b > a, and positive if a > b
+}
+
+/** 
+ * qsort GSC variable C-string comparison function.
+ */ 
+int gsc_cstring_cmp(const void *a, const void *b)
+{
+	VariableValue *ia = *(VariableValue **)a;
+	VariableValue *ib = *(VariableValue **)b;
+	const char *sia = Plugin_SL_ConvertToString(ia->u.stringValue);
+	const char *sib = Plugin_SL_ConvertToString(ib->u.stringValue);
+	return strcmp(sia, sib);
 }
