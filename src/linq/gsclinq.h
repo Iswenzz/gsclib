@@ -9,6 +9,8 @@ void LINQ_Max();
 void LINQ_Last();
 void LINQ_First();
 void LINQ_Cast();
+void LINQ_OfType();
+void LINQ_Sort();
 void LINQ_OrderBy();
 void LINQ_Average();
 void LINQ_Count();

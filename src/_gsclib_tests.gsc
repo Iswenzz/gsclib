@@ -94,6 +94,16 @@ gsclinq_tests()
     printArrayWithType(cast(cast_arr, cast_arr.size, "int"));
     printArrayWithType(cast(cast_arr, cast_arr.size, "float"));
 
+    // OfType
+    comPrintF("\n[TEST] GSC-Linq - OfType \n");
+    printArrayWithType(ofType(cast_arr, cast_arr.size, "string"));
+    printArrayWithType(ofType(cast_arr, cast_arr.size, "int"));
+    printArrayWithType(ofType(cast_arr, cast_arr.size, "float"));
+
+    // Sort
+    comPrintF("\n[TEST] GSC-Linq - Sort \n");
+    //printArrayWithType(sort(cast_arr, cast_arr.size));
+
     // OrderBy
     comPrintF("\n[TEST] GSC-Linq - OrderBy \n");
     //printResult(orderBy(arr, arr.size, ::testPredicate));

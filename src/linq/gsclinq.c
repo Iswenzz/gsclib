@@ -451,6 +451,50 @@ void LINQ_Cast()
 	Plugin_Scr_FreeArray(array, length);
 }
 
+void LINQ_OfType()
+{
+	if (Plugin_Scr_GetNumParam() != 3)
+	{
+		Plugin_Scr_Error("Usage: ofType(<array>, <array_size>, <type>)");
+		return;
+	}
+	VariableValue **array = Plugin_Scr_GetArray(0);
+	const uint32_t length = Plugin_Scr_GetInt(1);
+	const char *typename = Plugin_Scr_GetString(2);
+
+	Plugin_Scr_MakeArray();
+
+	for (int i = 0; i < length; i++)
+	{
+		switch (array[i]->type)
+		{
+			case VAR_INTEGER:
+				if (stricmp(typename, "int") == 0)
+				{
+					Plugin_Scr_AddVariable(array[i]);
+					Plugin_Scr_AddArray();
+				}
+				break;
+			case VAR_FLOAT:
+				if (stricmp(typename, "float") == 0)
+				{
+					Plugin_Scr_AddVariable(array[i]);
+					Plugin_Scr_AddArray();
+				}
+				break;
+			case VAR_ISTRING:
+			case VAR_STRING:
+				if (stricmp(typename, "string") == 0)
+				{
+					Plugin_Scr_AddVariable(array[i]);
+					Plugin_Scr_AddArray();
+				}
+				break;
+		}
+	}
+	Plugin_Scr_FreeArray(array, length);
+}
+
 void LINQ_Sort()
 {
 	if (Plugin_Scr_GetNumParam() != 2)

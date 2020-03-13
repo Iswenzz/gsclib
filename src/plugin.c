@@ -21,6 +21,8 @@ PCL int OnInit()
 	Plugin_ScrAddFunction("last",		&LINQ_Last);
 	Plugin_ScrAddFunction("first", 		&LINQ_First);
 	Plugin_ScrAddFunction("cast", 		&LINQ_Cast);
+	Plugin_ScrAddFunction("oftype", 	&LINQ_OfType);
+	Plugin_ScrAddFunction("sort", 		&LINQ_Sort);
 	Plugin_ScrAddFunction("orderby", 	&LINQ_OrderBy);
 	Plugin_ScrAddFunction("average", 	&LINQ_Average);
 	Plugin_ScrAddFunction("count", 		&LINQ_Count);
