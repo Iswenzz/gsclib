@@ -1,13 +1,15 @@
 #include "../../dependencies/cgsc.h"
+#include "../utility/utility.h"
 #include <stdlib.h>
+#include <string.h>
 
 void LINQ_All()
 {
 	if (Plugin_Scr_GetNumParam() != 3)
-    {
+	{
 		Plugin_Scr_Error("Usage: all(<array>, <array size>, <::predicate>)");
 		return;
-    }
+	}
 	VariableValue **array = Plugin_Scr_GetArray(0);
 	const uint32_t length = Plugin_Scr_GetInt(1);
 	const uint32_t threadId = Plugin_Scr_GetFunc(2);
@@ -35,10 +37,10 @@ void LINQ_All()
 void LINQ_Reverse()
 {
 	if (Plugin_Scr_GetNumParam() != 2)
-    {
+	{
 		Plugin_Scr_Error("Usage: reverse(<array>, <array size>)");
 		return;
-    }
+	}
 	VariableValue **array = Plugin_Scr_GetArray(0);
 	const uint32_t length = Plugin_Scr_GetInt(1);
 
@@ -54,10 +56,10 @@ void LINQ_Reverse()
 void LINQ_Any()
 {
 	if (Plugin_Scr_GetNumParam() != 3)
-    {
+	{
 		Plugin_Scr_Error("Usage: any(<array>, <array size>, <::predicate>)");
 		return;
-    }
+	}
 	VariableValue **array = Plugin_Scr_GetArray(0);
 	const uint32_t length = Plugin_Scr_GetInt(1);
 	const uint32_t threadId = Plugin_Scr_GetFunc(2);
@@ -120,11 +122,76 @@ void LINQ_Min()
 	}
 	VariableValue **array = Plugin_Scr_GetArray(0);
 	const uint32_t length = Plugin_Scr_GetInt(1);
+	uint32_t flags = GetFlagsFromGSCArray(array, length);
 
-	for (int i = 0; i < length; i++)
+	if (HasFlag(flags, FLAG_STRING) || HasFlag(flags, FLAG_ISTRING))
 	{
-		// TODO type sort in their own function
+		int index = 0;
+		int strLength = 0;
+        qboolean hasValue = qfalse;
+		for (int i = 0; i < length; i++)
+		{
+			if (hasValue)
+			{
+				if (array[i]->u.intValue < strLength) 
+				{
+					strLength = strlen(Plugin_SL_ConvertToString(array[i]->u.stringValue));
+					index = i;
+				}
+			}
+			else 
+			{
+				strLength = strlen(Plugin_SL_ConvertToString(array[i]->u.stringValue));
+				hasValue = true;
+			}
+		}
+		if (hasValue)
+			Plugin_Scr_AddString(Plugin_SL_ConvertToString(array[index]->u.stringValue));
 	}
+	else if (HasFlag(flags, FLAG_INTEGER) || HasFlag(flags, FLAG_FLOAT))
+	{
+		float value = 0;
+        qboolean hasValue = qfalse;
+		for (int i = 0; i < length; i++)
+		{
+			if (array[i]->type == VAR_INTEGER)
+			{
+				if (hasValue)
+				{
+					if (array[i]->u.intValue < value) 
+						value = array[i]->u.intValue;
+				}
+				else 
+				{
+					value = array[i]->u.intValue;
+					hasValue = true;
+				}
+			}
+			else if (array[i]->type == VAR_FLOAT)
+			{
+				if (hasValue)
+				{
+					if (array[i]->u.floatValue < value) 
+						value = array[i]->u.floatValue;
+				}
+				else 
+				{
+					value = array[i]->u.floatValue;
+					hasValue = true;
+				}
+			}
+		}
+		if (hasValue) 
+		{
+			if (!HasFlag(flags, FLAG_FLOAT))
+				Plugin_Scr_AddInt((int)value);
+			else
+				Plugin_Scr_AddFloat(value);
+		}
+	}
+	else
+		Plugin_Scr_AddUndefined();
+
 	Plugin_Scr_FreeArray(array, length);
 }
 
@@ -137,21 +204,29 @@ void LINQ_Max()
 	}
 	VariableValue **array = Plugin_Scr_GetArray(0);
 	const uint32_t length = Plugin_Scr_GetInt(1);
+	uint32_t flags = GetFlagsFromGSCArray(array, length);
 
-	for (int i = 0; i < length; i++)
+	if (HasFlag(flags, FLAG_STRING) || HasFlag(flags, FLAG_ISTRING))
 	{
-		// TODO type sort in their own function
+		
 	}
+	else if (HasFlag(flags, FLAG_INTEGER) || HasFlag(flags, FLAG_FLOAT))
+	{
+		
+	}
+	else
+		Plugin_Scr_AddUndefined();
+
 	Plugin_Scr_FreeArray(array, length);
 }
 
 void LINQ_Last()
 {
 	if (Plugin_Scr_GetNumParam() != 3)
-    {
+	{
 		Plugin_Scr_Error("Usage: last(<array>, <array size>, <::predicate>)");
 		return;
-    }
+	}
 	VariableValue **array = Plugin_Scr_GetArray(0);
 	const uint32_t length = Plugin_Scr_GetInt(1);
 	const uint32_t threadId = Plugin_Scr_GetFunc(2);
@@ -175,10 +250,10 @@ void LINQ_Last()
 void LINQ_First()
 {
 	if (Plugin_Scr_GetNumParam() != 3)
-    {
+	{
 		Plugin_Scr_Error("Usage: first(<array>, <array size>, <::predicate>)");
 		return;
-    }
+	}
 	VariableValue **array = Plugin_Scr_GetArray(0);
 	const uint32_t length = Plugin_Scr_GetInt(1);
 	const uint32_t threadId = Plugin_Scr_GetFunc(2);
@@ -210,7 +285,7 @@ void LINQ_Cast()
 	}
 	VariableValue **array = Plugin_Scr_GetArray(0);
 	const uint32_t length = Plugin_Scr_GetInt(1);
-	const char *typename = Plugin_Scr_GetString(2);
+	//const char *typename = Plugin_Scr_GetString(2);
 
 	for (int i = 0; i < length; i++)
 	{
@@ -245,7 +320,7 @@ void LINQ_OrderBy()
 	}
 	VariableValue **array = Plugin_Scr_GetArray(0);
 	const uint32_t length = Plugin_Scr_GetInt(1);
-	const uint32_t threadId = Plugin_Scr_GetFunc(2);
+	//const uint32_t threadId = Plugin_Scr_GetFunc(2);
 
 	Plugin_Scr_MakeArray();
 	for (int i = 0; i < length; i++)
@@ -258,10 +333,10 @@ void LINQ_OrderBy()
 void LINQ_Average()
 {
 	if (Plugin_Scr_GetNumParam() != 2)
-    {
+	{
 		Plugin_Scr_Error("Usage: average(<array>, <array size>)");
 		return;
-    }
+	}
 	VariableValue **array = Plugin_Scr_GetArray(0);
 	const uint32_t length = Plugin_Scr_GetInt(1);
 	float sum = 0, count = 0;
@@ -285,10 +360,10 @@ void LINQ_Average()
 void LINQ_Count()
 {
 	if (Plugin_Scr_GetNumParam() != 3)
-    {
+	{
 		Plugin_Scr_Error("Usage: count(<array>, <array size>, <::predicate>)");
 		return;
-    }
+	}
 	VariableValue **array = Plugin_Scr_GetArray(0);
 	const uint32_t length = Plugin_Scr_GetInt(1);
 	const uint32_t threadId = Plugin_Scr_GetFunc(2);
@@ -393,7 +468,7 @@ void LINQ_Select()
 		// Call predicate(item)
 		Plugin_Scr_AddVariable(array[i]);
 		const short tid = Plugin_Scr_ExecThread(threadId, 1);
-		const register int *selectResult asm("edx");
+		//const register int *selectResult asm("edx");
 
 		//Plugin_Scr_AddVariable(*selectResult); // TODO get returned variableValue from execthread
 		Plugin_Scr_AddArray();
@@ -405,10 +480,10 @@ void LINQ_Select()
 void LINQ_Range()
 {
 	if (Plugin_Scr_GetNumParam() != 4)
-    {
+	{
 		Plugin_Scr_Error("Usage: range(<array>, <array size>, <min>, <max>)");
 		return;
-    }
+	}
 	VariableValue **array = Plugin_Scr_GetArray(0);
 	const uint32_t length = Plugin_Scr_GetInt(1);
 	const uint32_t min = Plugin_Scr_GetInt(2);
@@ -418,7 +493,7 @@ void LINQ_Range()
 	{
 		Plugin_Scr_Error("range() - wrong min/max value");
 		return;
-    }
+	}
 
 	Plugin_Scr_MakeArray();
 	for (int i = min; i < max; i++)
@@ -432,10 +507,10 @@ void LINQ_Range()
 void LINQ_Repeat()
 {
 	if (Plugin_Scr_GetNumParam() != 3)
-    {
+	{
 		Plugin_Scr_Error("Usage: repeat(<array>, <array size>, <count>)");
 		return;
-    }
+	}
 	VariableValue **array = Plugin_Scr_GetArray(0);
 	const uint32_t length = Plugin_Scr_GetInt(1);
 	const uint32_t count = Plugin_Scr_GetInt(2);

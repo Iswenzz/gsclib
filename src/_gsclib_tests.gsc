@@ -44,6 +44,15 @@ gsclinq_tests()
     for (i = 0; i < 10; i++)
         arr[i] = i;
 
+    // Min Test String
+    arr2 = [];
+    arr2[arr2.size] = "a";
+    arr2[arr2.size] = "ab";
+    arr2[arr2.size] = "abc";
+    arr2[arr2.size] = "b";
+    comPrintF("\n[TEST] GSC-Linq - Min \n");
+    printResultArray(min(arr2, arr2.size));
+    
     // All
     comPrintF("\n[TEST] GSC-Linq - All \n");
     printResultArray(all(arr, arr.size, ::testPredicate));
@@ -58,7 +67,7 @@ gsclinq_tests()
 
     // Min
     comPrintF("\n[TEST] GSC-Linq - Min \n");
-    //printResultArray(min(arr, arr.size));
+    printResultArray(min(arr, arr.size));
 
     // Max
     comPrintF("\n[TEST] GSC-Linq - Max \n");
