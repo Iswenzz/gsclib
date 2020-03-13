@@ -7,6 +7,7 @@ test()
     thread data_structs_tests();
 }
 
+// tests for gsclib/collections
 data_structs_tests()
 {
     arr = [];
@@ -32,54 +33,66 @@ data_structs_tests()
         //printNewArray(array);
 
         //isAll = count(arr, arr.size, ::testPredicate);
-        //printResultArray(isAll);
+        //printVariableWithType(isAll);
 
         wait 5;
     }
 }
 
+// Tests for gsclib/linq
 gsclinq_tests()
 {
     arr = [];
     for (i = 0; i < 10; i++)
         arr[i] = i;
+
+    arr2 = [];
+    arr2[arr2.size] = "a";
+    arr2[arr2.size] = "10";
+    arr2[arr2.size] = "abc 1 ac";
+    arr2[arr2.size] = "b2";
+
+    arr3 = [];
+    for (i = 0; i < 10; i++)
+        arr3[i] = i * 1.05;
     
     // All
     comPrintF("\n[TEST] GSC-Linq - All \n");
-    printResultArray(all(arr, arr.size, ::testPredicate));
+    printVariableWithType(all(arr, arr.size, ::testPredicate));
 
     // Any
     comPrintF("\n[TEST] GSC-Linq - Any \n");
-    printResultArray(any(arr, arr.size, ::testPredicate));
+    printVariableWithType(any(arr, arr.size, ::testPredicate));
 
     // Where
     comPrintF("\n[TEST] GSC-Linq - Where \n");
-    printArray(where(arr, arr.size, ::testPredicate));
+    printArrayWithType(where(arr, arr.size, ::testPredicate));
 
     // Min & Max
-    arr2 = [];
-    arr2[arr2.size] = "a";
-    arr2[arr2.size] = "ab";
-    arr2[arr2.size] = "abc";
-    arr2[arr2.size] = "b";
     comPrintF("\n[TEST] GSC-Linq - Min \n");
-    printResultArray(min(arr, arr.size));
-    printResultArray(min(arr2, arr2.size));
+    printVariableWithType(min(arr, arr.size));
+    printVariableWithType(min(arr2, arr2.size));
     comPrintF("\n[TEST] GSC-Linq - Max \n");
-    printResultArray(max(arr, arr.size));
-    printResultArray(max(arr2, arr2.size));
+    printVariableWithType(max(arr, arr.size));
+    printVariableWithType(max(arr2, arr2.size));
 
     // First
     comPrintF("\n[TEST] GSC-Linq - First \n");
-    printResultArray(first(arr, arr.size, ::testPredicate));
+    printVariableWithType(first(arr, arr.size, ::testPredicate));
 
     // Last
     comPrintF("\n[TEST] GSC-Linq - Last \n");
-    printResultArray(last(arr, arr.size, ::testPredicate));
+    printVariableWithType(last(arr, arr.size, ::testPredicate));
 
     // Cast
     comPrintF("\n[TEST] GSC-Linq - Cast \n");
-    //printResultArray(cast(arr, arr.size, "string"));
+    cast_arr = [];
+    cast_arr[cast_arr.size] = "100";
+    cast_arr[cast_arr.size] = 200;
+    cast_arr[cast_arr.size] = 300.300;
+    printArrayWithType(cast(cast_arr, cast_arr.size, "string"));
+    printArrayWithType(cast(cast_arr, cast_arr.size, "int"));
+    printArrayWithType(cast(cast_arr, cast_arr.size, "float"));
 
     // OrderBy
     comPrintF("\n[TEST] GSC-Linq - OrderBy \n");
@@ -87,31 +100,31 @@ gsclinq_tests()
 
     // Average
     comPrintF("\n[TEST] GSC-Linq - Average \n");
-    printResultArray(average(arr, arr.size));
+    printVariableWithType(average(arr, arr.size));
 
     // Count
     comPrintF("\n[TEST] GSC-Linq - Count \n");
-    printResultArray(count(arr, arr.size, ::testPredicate));
+    printVariableWithType(count(arr, arr.size, ::testPredicate));
 
     // Sum
     comPrintF("\n[TEST] GSC-Linq - Sum \n");
-    printResultArray(sum(arr, arr.size));
+    printVariableWithType(sum(arr, arr.size));
 
     // Select
     comPrintF("\n[TEST] GSC-Linq - Select \n");
-    //printResultArray(select(arr, arr.size, ::testPredicate));
+    //printVariableWithType(select(arr, arr.size, ::testPredicate));
     
     // Range
     comPrintF("\n[TEST] GSC-Linq - Range \n");
-    printArray(range(arr, arr.size, 0, 2));
+    printArrayWithType(range(arr, arr.size, 0, 2));
 
     // Repeat
     comPrintF("\n[TEST] GSC-Linq - Repeat \n");
-    printArray(repeat(arr, arr.size, 2));
+    printArrayWithType(repeat(arr, arr.size, 2));
 
     // Reverse
     comPrintF("\n[TEST] GSC-Linq - Reverse \n");
-    printArray(reverse(arr, arr.size));
+    printArrayWithType(reverse(arr, arr.size));
 }
 
 // Main tests on player ent
@@ -129,24 +142,48 @@ testPlayer()
     }
 }
 
-// Print all items in array
+// Print all items in the array with their type.
+printArrayWithType(arr)
+{
+    if (isDefined(arr) && isDefined(arr.size))
+    {
+        for (i = 0; i < arr.size; i++)
+        {
+            msg = "" + arr[i] + " " + GetType(arr[i]);
+            iprintlnbold(msg);
+            comPrintf(msg + "\n");
+        }
+    }
+}
+
+// Print all items in the array
 printArray(arr)
 {
     if (isDefined(arr) && isDefined(arr.size))
     {
         for (i = 0; i < arr.size; i++)
         {
-            iprintlnbold("" + arr[i]);
-            comPrintf("" + arr[i] + "\n");
+            msg = "" + arr[i];
+            iprintlnbold(msg);
+            comPrintf(msg + "\n");
         }
     }
 }
 
 // Print variable
-printResultArray(result)
+printVariable(var)
 {
-    iprintlnbold("" + result);
-    comPrintf("" + result + "\n");
+    msg = "" + var;
+    iprintlnbold(msg);
+    comPrintf(msg + "\n");
+}
+
+// Print variable with its type
+printVariableWithType(var)
+{
+    msg = "" + var + " " + GetType(var);
+    iprintlnbold(msg);
+    comPrintf(msg + "\n");
 }
 
 // Test predicate

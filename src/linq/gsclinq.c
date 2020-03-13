@@ -344,11 +344,109 @@ void LINQ_Cast()
 	}
 	VariableValue **array = Plugin_Scr_GetArray(0);
 	const uint32_t length = Plugin_Scr_GetInt(1);
-	//const char *typename = Plugin_Scr_GetString(2);
+	const char *typename = Plugin_Scr_GetString(2);
 
-	for (int i = 0; i < length; i++)
+	Plugin_Scr_MakeArray();
+	if (stricmp(typename, "string") == 0)
 	{
-		// TODO type sort in their own function
+		for (int i = 0; i < length; i++)
+		{
+			switch (array[i]->type)
+			{
+				case VAR_FLOAT:
+				{
+					int cpyBufferSize = snprintf(NULL, 0, "%f", array[i]->u.floatValue);
+					char buffer[cpyBufferSize];
+					snprintf(buffer, cpyBufferSize, "%f", array[i]->u.floatValue);
+					Plugin_Scr_AddString(buffer);
+					Plugin_Scr_AddArray();
+					break;
+				}
+				case VAR_INTEGER:
+				{
+					int cpyBufferSize = snprintf(NULL, 0, "%d", array[i]->u.intValue);
+					char buffer[cpyBufferSize];
+					snprintf(buffer, cpyBufferSize, "%d", array[i]->u.intValue);
+					Plugin_Scr_AddString(buffer);
+					Plugin_Scr_AddArray();
+					break;
+				}
+				case VAR_STRING:
+				{
+					Plugin_Scr_AddVariable(array[i]);
+					Plugin_Scr_AddArray();
+					break;
+				}
+			}
+		}
+	}
+	else if (stricmp(typename, "int") == 0)
+	{
+		for (int i = 0; i < length; i++)
+		{
+			switch (array[i]->type)
+			{
+				case VAR_FLOAT:
+				{
+					Plugin_Scr_AddInt((int)array[i]->u.floatValue);
+					Plugin_Scr_AddArray();
+					break;
+				}
+				case VAR_INTEGER:
+				{
+					Plugin_Scr_AddVariable(array[i]);
+					Plugin_Scr_AddArray();
+					break;
+				}
+				case VAR_STRING:
+				{
+					const char *nptr = Plugin_SL_ConvertToString(array[i]->u.stringValue);
+					char *endptr = NULL;
+					long number = strtol(nptr, &endptr, 10);
+
+					if (*endptr == '\0')
+					{
+						Plugin_Scr_AddInt((int)number);
+						Plugin_Scr_AddArray();
+					}
+					break;
+				}
+			}
+		}
+	}
+	else if (stricmp(typename, "float") == 0)
+	{
+		for (int i = 0; i < length; i++)
+		{
+			switch (array[i]->type)
+			{
+				case VAR_FLOAT:
+				{
+					Plugin_Scr_AddVariable(array[i]);
+					Plugin_Scr_AddArray();
+					break;
+				}
+				case VAR_INTEGER:
+				{
+					Plugin_Scr_AddFloat((float)array[i]->u.intValue);
+					Plugin_Scr_AddArray();
+					break;
+				}
+				case VAR_STRING:
+				{
+					const char *nptr = Plugin_SL_ConvertToString(array[i]->u.stringValue);
+					char *endptr = NULL;
+					float number = strtof(nptr, &endptr);
+
+					if (*endptr == '\0')
+					{
+						Plugin_Scr_AddFloat(number);
+						Plugin_Scr_AddArray();
+					}
+					break;
+				}
+			}
+		}
 	}
 	Plugin_Scr_FreeArray(array, length);
 }
