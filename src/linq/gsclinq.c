@@ -133,7 +133,7 @@ void LINQ_Min()
 		{
 			if (hasValue)
 			{
-				if (array[i]->u.intValue < strLength) 
+				if (strlen(Plugin_SL_ConvertToString(array[i]->u.stringValue)) < strLength) 
 				{
 					strLength = strlen(Plugin_SL_ConvertToString(array[i]->u.stringValue));
 					index = i;
@@ -143,6 +143,7 @@ void LINQ_Min()
 			{
 				strLength = strlen(Plugin_SL_ConvertToString(array[i]->u.stringValue));
 				hasValue = true;
+				index = i;
 			}
 		}
 		if (hasValue)
@@ -208,11 +209,69 @@ void LINQ_Max()
 
 	if (HasFlag(flags, FLAG_STRING) || HasFlag(flags, FLAG_ISTRING))
 	{
-		
+		int index = 0;
+		int strLength = 0;
+        qboolean hasValue = qfalse;
+		for (int i = 0; i < length; i++)
+		{
+			if (hasValue)
+			{
+				if (strlen(Plugin_SL_ConvertToString(array[i]->u.stringValue)) > strLength) 
+				{
+					strLength = strlen(Plugin_SL_ConvertToString(array[i]->u.stringValue));
+					index = i;
+				}
+			}
+			else 
+			{
+				strLength = strlen(Plugin_SL_ConvertToString(array[i]->u.stringValue));
+				hasValue = true;
+				index = i;
+			}
+		}
+		if (hasValue)
+			Plugin_Scr_AddString(Plugin_SL_ConvertToString(array[index]->u.stringValue));
 	}
 	else if (HasFlag(flags, FLAG_INTEGER) || HasFlag(flags, FLAG_FLOAT))
 	{
-		
+		float value = 0;
+        qboolean hasValue = qfalse;
+		for (int i = 0; i < length; i++)
+		{
+			if (array[i]->type == VAR_INTEGER)
+			{
+				if (hasValue)
+				{
+					if (array[i]->u.intValue > value) 
+						value = array[i]->u.intValue;
+				}
+				else 
+				{
+					value = array[i]->u.intValue;
+					hasValue = true;
+				}
+			}
+			else if (array[i]->type == VAR_FLOAT)
+			{
+				if (hasValue)
+				{
+					if (array[i]->u.floatValue > value) 
+						value = array[i]->u.floatValue;
+				}
+				else 
+				{
+					value = array[i]->u.floatValue;
+					hasValue = true;
+				}
+			}
+		}
+		if (hasValue) 
+		{
+			if (!HasFlag(flags, FLAG_FLOAT))
+				Plugin_Scr_AddInt((int)value);
+			else
+				Plugin_Scr_AddFloat(value);
+		}
 	}
 	else
 		Plugin_Scr_AddUndefined();
