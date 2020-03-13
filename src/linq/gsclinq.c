@@ -504,11 +504,28 @@ void LINQ_Sort()
 	}
 	VariableValue **array = Plugin_Scr_GetArray(0);
 	const uint32_t length = Plugin_Scr_GetInt(1);
+	uint32_t flags = GetFlagsFromGSCArray(array, length);
 
-	for (int i = 0; i < length; i++)
+	if (IsFlag(flags, FLAG_FLOAT) || IsFlag(flags, FLAG_INTEGER) || IsFlag(flags, FLAG_STRING)
+		|| IsFlag(flags, FLAG_ISTRING))
 	{
-		// TODO type sort in their own function
+		Plugin_Scr_MakeArray();
+		if (IsFlag(flags, FLAG_FLOAT))
+			qsort(array, length, sizeof(VariableValue *), gsc_float_cmp);
+		else if (IsFlag(flags, FLAG_INTEGER))
+			qsort(array, length, sizeof(VariableValue *), gsc_int_cmp);
+		else if (IsFlag(flags, FLAG_STRING) || IsFlag(flags, FLAG_ISTRING))
+			qsort(array, length, sizeof(VariableValue *), gsc_cstring_cmp);
+
+		for (int i = 0; i < length; i++)
+		{
+			Plugin_Scr_AddVariable(array[i]);
+			Plugin_Scr_AddArray();
+		}
 	}
+	else
+		Plugin_Scr_Error("Array need to be of type int, float or string.");
+
 	Plugin_Scr_FreeArray(array, length);
 }
 

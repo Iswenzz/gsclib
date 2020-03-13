@@ -102,7 +102,8 @@ gsclinq_tests()
 
     // Sort
     comPrintF("\n[TEST] GSC-Linq - Sort \n");
-    //printArrayWithType(sort(cast_arr, cast_arr.size));
+    printArrayWithType(sort(arr3, arr3.size));
+    printArrayWithType(sort(arr2, arr2.size));
 
     // OrderBy
     comPrintF("\n[TEST] GSC-Linq - OrderBy \n");
