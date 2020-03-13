@@ -10,6 +10,7 @@ PCL int OnInit()
 {
     // utility.h
     Plugin_ScrAddFunction("comPrintf", 	&ComPrintf);
+	Plugin_ScrAddFunction("getType", 	&GetType);
 
     // gsclinq.h
 	Plugin_ScrAddFunction("all", 		&LINQ_All);
