@@ -147,6 +147,8 @@ qboolean Plugin_Scr_SetParamVector(unsigned int paramnum, const float *value);
 qboolean Plugin_Scr_SetParamUndefined(unsigned int paramnum);
 int Plugin_Scr_GetFunc(unsigned int paramnum);
 void Plugin_Scr_AddFunc(const char *codePosValue);
+void Plugin_Scr_AddObjectStruct(VariableValue *var);
 void Plugin_Scr_AddVariable(VariableValue *var);
+void Plugin_Scr_DebugVariable(VariableValue *var);
 void Plugin_Scr_CallFunction(void (*function)(void), ...);
 void Plugin_Scr_CallMethod(void (*function)(Plugin_Scr_entref_t), Plugin_Scr_entref_t ent, ...);
