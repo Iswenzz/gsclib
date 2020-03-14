@@ -123,7 +123,17 @@ gsclinq_tests()
 
     // Select
     comPrintF("\n[TEST] GSC-Linq - Select \n");
-    //printVariableWithType(select(arr, arr.size, ::testPredicate));
+    weapArr = [];
+    weapArr[0] = SpawnStruct();
+    weapArr[0].name = "AK47";
+    weapArr[0].weapon = "ak47_mp";
+    weapArr[1] = SpawnStruct();
+    weapArr[1].name = "Desert Eagle";
+    weapArr[1].weapon = "deserteagle_mp";
+    weapArr[2] = SpawnStruct();
+    weapArr[2].name = "M1014";
+    weapArr[2].weapon = "m1014_mp";
+    printArrayWithType(select(weapArr, weapArr.size, ::testDelegate));
     
     // Range
     comPrintF("\n[TEST] GSC-Linq - Range \n");
@@ -201,4 +211,10 @@ printVariableWithType(var)
 testPredicate(item)
 {
     return item != 5;
+}
+
+// Test delegate
+testDelegate(item)
+{
+    return item.name;
 }

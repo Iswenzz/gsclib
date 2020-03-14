@@ -686,11 +686,18 @@ void LINQ_Select()
 		// Call predicate(item)
 		Plugin_Scr_AddVariable(array[i]);
 		const short tid = Plugin_Scr_ExecThread(threadId, 1);
-		//const register int *selectResult asm("edx");
 
-		//Plugin_Scr_AddVariable(*selectResult); // TODO get returned variableValue from execthread
+		// GSC return variable
+		const register int varType asm("esi");
+		const register int varAddr asm("ebx");
+		VariableValue *var = (VariableValue *)malloc(sizeof(VariableValue));
+		var->u = *(union VariableUnion *)varAddr;
+		var->type = varType;
+	
+		Plugin_Scr_AddVariable(var);
 		Plugin_Scr_AddArray();
 		Plugin_Scr_FreeThread(tid);
+		free(var);
 	}
 	Plugin_Scr_FreeArray(array, length);
 }
