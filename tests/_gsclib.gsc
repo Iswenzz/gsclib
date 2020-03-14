@@ -1,0 +1,72 @@
+// Main tests
+runTests()
+{
+    wait 10;
+
+    comPrintf("\n|-------------------[gsclib tests]-------------------|\n");
+    lib\_tests_linq::test();
+    lib\_tests_collections::test();
+    comPrintf("\n|----------------------------------------------------|\n");
+}
+
+// Main tests on player ent
+runPlayerTests()
+{
+    wait 5;
+}
+
+// Print all items in the array with their type.
+printArrayWithType(arr)
+{
+    if (isDefined(arr) && isDefined(arr.size))
+    {
+        for (i = 0; i < arr.size; i++)
+        {
+            msg = "" + arr[i] + " " + GetType(arr[i]);
+            iprintlnbold(msg);
+            comPrintf(msg + "\n");
+        }
+    }
+}
+
+// Print all items in the array
+printArray(arr)
+{
+    if (isDefined(arr) && isDefined(arr.size))
+    {
+        for (i = 0; i < arr.size; i++)
+        {
+            msg = "" + arr[i];
+            iprintlnbold(msg);
+            comPrintf(msg + "\n");
+        }
+    }
+}
+
+// Print variable
+printVariable(var)
+{
+    msg = "" + var;
+    iprintlnbold(msg);
+    comPrintf(msg + "\n");
+}
+
+// Print variable with its type
+printVariableWithType(var)
+{
+    msg = "" + var + " " + GetType(var);
+    iprintlnbold(msg);
+    comPrintf(msg + "\n");
+}
+
+// Test predicate
+testPredicate(item)
+{
+    return item != 5;
+}
+
+// Test delegate
+testDelegate(item)
+{
+    return item.name;
+}
