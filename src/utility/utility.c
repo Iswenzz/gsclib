@@ -4,12 +4,10 @@
 
 void ComPrintf()
 {
-	if (Plugin_Scr_GetNumParam() != 1)
-	{
-		Plugin_Scr_Error("Usage: comPrintf(<string>)");
-		return;
-	}
-	Plugin_Printf(Plugin_Scr_GetString(0));
+	if (!Plugin_Scr_GetNumParam())
+		Plugin_Printf("\n");
+	else
+		Plugin_Printf(Plugin_Scr_GetString(0)); 
 }
 
 void GetType()
