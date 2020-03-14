@@ -11,7 +11,6 @@ void LINQ_First();
 void LINQ_Cast();
 void LINQ_OfType();
 void LINQ_Sort();
-void LINQ_OrderBy();
 void LINQ_Average();
 void LINQ_Count();
 void LINQ_Sum();

@@ -529,25 +529,6 @@ void LINQ_Sort()
 	Plugin_Scr_FreeArray(array, length);
 }
 
-void LINQ_OrderBy()
-{
-	if (Plugin_Scr_GetNumParam() != 3)
-	{
-		Plugin_Scr_Error("Usage: orderby(<array>, <array_size>, <::predicate>)");
-		return;
-	}
-	VariableValue **array = Plugin_Scr_GetArray(0);
-	const uint32_t length = Plugin_Scr_GetInt(1);
-	//const uint32_t threadId = Plugin_Scr_GetFunc(2);
-
-	Plugin_Scr_MakeArray();
-	for (int i = 0; i < length; i++)
-	{
-		// TODO type sort in their own function
-	}
-	Plugin_Scr_FreeArray(array, length);
-}
-
 void LINQ_Average()
 {
 	if (Plugin_Scr_GetNumParam() != 2)
