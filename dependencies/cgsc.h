@@ -90,6 +90,7 @@ enum GSCTypeFlag
 	FLAG_ENDON_LIST = 134217728
 };
 
+
 struct VariableStackBuffer
 {
 	const char *pos;
@@ -112,11 +113,26 @@ union VariableUnion
 	unsigned int entityOffset;
 };
 
+union VariableThreadReturnUnion
+{
+	int intValue;
+	float floatValue;
+	char *stringValue;
+	float *vectorValue;
+};
+
 typedef struct
 {
 	union VariableUnion u;
 	int type;
 } VariableValue;
+
+typedef struct
+{
+	uint16_t type;
+	uint16_t padding;
+	union VariableThreadReturnUnion u;
+} VariableThreadReturn;
 
 __attribute__((unused)) static int __callArgNumber = 0;
 

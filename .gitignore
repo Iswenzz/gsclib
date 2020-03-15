@@ -6,3 +6,5 @@
 .vscode/
 
 win32_compile.bat
+
+compile.bat

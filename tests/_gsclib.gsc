@@ -65,8 +65,20 @@ testPredicate(item)
     return item != 5;
 }
 
-// Test delegate
-testDelegate(item)
+// Test predicate string
+testPredicateString(item)
+{
+    return item != "Iswenzz";
+}
+
+// Test delegate struct member "name"
+testDelegateName(item)
 {
     return item.name;
+}
+
+// Test delegate struct member "bullet"
+testDelegateBullet(item)
+{
+    return item.bullet;
 }
