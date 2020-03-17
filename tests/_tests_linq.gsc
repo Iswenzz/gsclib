@@ -13,12 +13,11 @@ test()
     for (i = 0; i < 10; i++)
         level._tests_ints[i] = i;
 
-    level._tests_strings = [];
-    level._tests_strings[level._tests_strings.size] = "Ellin";
-    level._tests_strings[level._tests_strings.size] = "Alexa";
-    level._tests_strings[level._tests_strings.size] = "Celiza";
-    level._tests_strings[level._tests_strings.size] = "Iswenzz";
-    level._tests_strings[level._tests_strings.size] = "10";
+    level._tests_strings = strTok("Ellin;Alexa;Celiza;Iswenzz;10", ";");
+
+    level._tests_vectors = [];
+    for (i = 0; i < 10; i++)
+        level._tests_vectors[i] = (level._tests_floats[i], level._tests_floats[i], level._tests_floats[i]);
 
     it_all();
     it_where();
@@ -45,6 +44,8 @@ it_all()
     printVariableWithType(all(level._tests_ints, level._tests_ints.size, ::testPredicate));
     comPrintF();
     printVariableWithType(all(level._tests_strings, level._tests_strings.size, ::testPredicateString));
+    comPrintF();
+    printVariableWithType(all(level._tests_vectors, level._tests_vectors.size, ::testPredicateVector));
 }
 
 it_where()
@@ -53,6 +54,8 @@ it_where()
     printArrayWithType(where(level._tests_ints, level._tests_ints.size, ::testPredicate));
     comPrintF();
     printArrayWithType(where(level._tests_strings, level._tests_strings.size, ::testPredicateString));
+    comPrintF();
+    printArrayWithType(where(level._tests_vectors, level._tests_vectors.size, ::testPredicateVector));
 }
 
 it_any()
@@ -61,6 +64,8 @@ it_any()
     printVariableWithType(any(level._tests_ints, level._tests_ints.size, ::testPredicate));
     comPrintF();
     printVariableWithType(any(level._tests_strings, level._tests_strings.size, ::testPredicateString));
+    comPrintF();
+    printVariableWithType(any(level._tests_vectors, level._tests_vectors.size, ::testPredicateVector));
 }
 
 it_min()
@@ -69,6 +74,8 @@ it_min()
     printVariableWithType(min(level._tests_ints, level._tests_ints.size));
     comPrintF();
     printVariableWithType(min(level._tests_strings, level._tests_strings.size));
+    comPrintF();
+    printVariableWithType(min(level._tests_vectors, level._tests_vectors.size));
 }
 
 it_max()
@@ -77,6 +84,8 @@ it_max()
     printVariableWithType(max(level._tests_ints, level._tests_ints.size));
     comPrintF();
     printVariableWithType(max(level._tests_strings, level._tests_strings.size));
+    comPrintF();
+    printVariableWithType(max(level._tests_vectors, level._tests_vectors.size));
 }
 
 it_last()
@@ -85,6 +94,8 @@ it_last()
     printVariableWithType(last(level._tests_ints, level._tests_ints.size, ::testPredicate));
     comPrintF();
     printVariableWithType(last(level._tests_strings, level._tests_strings.size, ::testPredicateString));
+    comPrintF();
+    printVariableWithType(last(level._tests_vectors, level._tests_vectors.size, ::testPredicateVector));
 }
 
 it_first()
@@ -93,6 +104,8 @@ it_first()
     printVariableWithType(first(level._tests_ints, level._tests_ints.size, ::testPredicate));
     comPrintF();
     printVariableWithType(first(level._tests_strings, level._tests_strings.size, ::testPredicateString));
+    comPrintF();
+    printVariableWithType(first(level._tests_vectors, level._tests_vectors.size, ::testPredicateVector));
 }
 
 it_cast()
@@ -103,6 +116,7 @@ it_cast()
     cast_arr[cast_arr.size] = "100";
     cast_arr[cast_arr.size] = 200;
     cast_arr[cast_arr.size] = 300.300;
+    cast_arr[cast_arr.size] = (400, 400, 400);
 
     printArrayWithType(cast(cast_arr, cast_arr.size, "string"));
     comPrintF();
@@ -119,12 +133,15 @@ it_oftype()
     cast_arr[cast_arr.size] = "100";
     cast_arr[cast_arr.size] = 200;
     cast_arr[cast_arr.size] = 300.300;
+    cast_arr[cast_arr.size] = (400, 400, 400);
 
     printArrayWithType(ofType(cast_arr, cast_arr.size, "string"));
     comPrintF();
     printArrayWithType(ofType(cast_arr, cast_arr.size, "int"));
     comPrintF();
     printArrayWithType(ofType(cast_arr, cast_arr.size, "float"));
+    comPrintF();
+    printArrayWithType(ofType(cast_arr, cast_arr.size, "vector"));
 }
 
 it_sort()
@@ -135,12 +152,16 @@ it_sort()
     printArrayWithType(sort(level._tests_floats, level._tests_floats.size));
     comPrintF();
     printArrayWithType(sort(level._tests_strings, level._tests_strings.size));
+    comPrintF();
+    printArrayWithType(sort(level._tests_vectors, level._tests_vectors.size));
 }
 
 it_average()
 {
     comPrintF("\n<-------[Average]------->\n");
     printVariableWithType(average(level._tests_ints, level._tests_ints.size));
+    comPrintF();
+    printVariableWithType(average(level._tests_vectors, level._tests_vectors.size));
 }
 
 it_count()
@@ -151,6 +172,8 @@ it_count()
     printVariableWithType(count(level._tests_floats, level._tests_floats.size, ::testPredicate));
     comPrintF();
     printVariableWithType(count(level._tests_strings, level._tests_strings.size, ::testPredicateString));
+    comPrintF();
+    printVariableWithType(count(level._tests_vectors, level._tests_vectors.size, ::testPredicateVector));
 }
 
 it_sum()
@@ -161,6 +184,8 @@ it_sum()
     printVariableWithType(sum(level._tests_floats, level._tests_floats.size));
     comPrintF();
     printVariableWithType(sum(level._tests_strings, level._tests_strings.size));
+    comPrintF();
+    printVariableWithType(sum(level._tests_vectors, level._tests_vectors.size));
 }
 
 it_select()
@@ -181,9 +206,10 @@ it_select()
     weapArr[2].weapon = "m1014_mp";
     weapArr[2].bullet = 8;
 
-    printArrayWithType(select(weapArr, weapArr.size, ::testDelegateName));
-    comPrintF();
-    printArrayWithType(select(weapArr, weapArr.size, ::testDelegateBullet));
+    comPrintF("Not implemented yet.\n");
+    // printArrayWithType(select(weapArr, weapArr.size, ::testDelegateName));
+    // comPrintF();
+    //printArrayWithType(select(weapArr, weapArr.size, ::testDelegateBullet));
 }
 
 it_range()
@@ -192,6 +218,8 @@ it_range()
     printArrayWithType(range(level._tests_ints, level._tests_ints.size, 0, 2));
     comPrintF();
     printArrayWithType(range(level._tests_strings, level._tests_strings.size, 0, 2));
+    comPrintF();
+    printArrayWithType(range(level._tests_vectors, level._tests_vectors.size, 0, 2));
 }
 
 it_repeat()
@@ -200,6 +228,8 @@ it_repeat()
     printArrayWithType(repeat(level._tests_ints, level._tests_ints.size, 2));
     comPrintF();
     printArrayWithType(repeat(level._tests_strings, level._tests_strings.size, 2));
+    comPrintF();
+    printArrayWithType(repeat(level._tests_vectors, level._tests_vectors.size, 2));
 }
 
 it_reverse()
@@ -208,4 +238,6 @@ it_reverse()
     printArrayWithType(reverse(level._tests_ints, level._tests_ints.size));
     comPrintF();
     printArrayWithType(reverse(level._tests_strings, level._tests_strings.size));
+    comPrintF();
+    printArrayWithType(reverse(level._tests_vectors, level._tests_vectors.size));
 }

@@ -22,9 +22,12 @@ printArrayWithType(arr)
     {
         for (i = 0; i < arr.size; i++)
         {
-            msg = "" + arr[i] + " " + GetType(arr[i]);
-            iprintlnbold(msg);
-            comPrintf(msg + "\n");
+            if (isDefined(arr[i]))
+            {
+                msg = "" + arr[i] + " " + GetType(arr[i]);
+                iprintlnbold(msg);
+                comPrintf(msg + "\n");
+            }
         }
     }
 }
@@ -36,9 +39,12 @@ printArray(arr)
     {
         for (i = 0; i < arr.size; i++)
         {
-            msg = "" + arr[i];
-            iprintlnbold(msg);
-            comPrintf(msg + "\n");
+            if (isDefined(arr[i]))
+            {
+                msg = "" + arr[i];
+                iprintlnbold(msg);
+                comPrintf(msg + "\n");
+            }
         }
     }
 }
@@ -46,23 +52,35 @@ printArray(arr)
 // Print variable
 printVariable(var)
 {
-    msg = "" + var;
-    iprintlnbold(msg);
-    comPrintf(msg + "\n");
+    if (isDefined(var))
+    {
+         msg = "" + var;
+        iprintlnbold(msg);
+        comPrintf(msg + "\n");
+    }
 }
 
 // Print variable with its type
 printVariableWithType(var)
 {
-    msg = "" + var + " " + GetType(var);
-    iprintlnbold(msg);
-    comPrintf(msg + "\n");
+    if (isDefined(var))
+    {
+        msg = "" + var + " " + GetType(var);
+        iprintlnbold(msg);
+        comPrintf(msg + "\n");
+    }
 }
 
 // Test predicate
 testPredicate(item)
 {
     return item != 5;
+}
+
+// Test predicate vector
+testPredicateVector(item)
+{
+    return item != (0, 0, 0);
 }
 
 // Test predicate string

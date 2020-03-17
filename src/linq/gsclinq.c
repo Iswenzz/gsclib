@@ -149,6 +149,32 @@ void LINQ_Min()
 		if (hasValue)
 			Plugin_Scr_AddString(Plugin_SL_ConvertToString(array[index]->u.stringValue));
 	}
+	else if (HasFlag(flags, FLAG_VECTOR))
+	{
+		int index = 0;
+		vec3_t zero;
+		float distance = 0;
+        qboolean hasValue = qfalse;
+		for (int i = 0; i < length; i++)
+		{
+			if (hasValue)
+			{
+				if (vec_distance((float *)array[i]->u.vectorValue, zero) < distance) 
+				{
+					distance = vec_distance((float *)array[i]->u.vectorValue, zero);
+					index = i;
+				}
+			}
+			else 
+			{
+				distance = vec_distance((float *)array[i]->u.vectorValue, zero);
+				hasValue = true;
+				index = i;
+			}
+		}
+		if (hasValue)
+			Plugin_Scr_AddVector((float *)array[index]->u.vectorValue);
+	}
 	else if (HasFlag(flags, FLAG_INTEGER) || HasFlag(flags, FLAG_FLOAT))
 	{
 		float value = 0;
@@ -231,6 +257,32 @@ void LINQ_Max()
 		}
 		if (hasValue)
 			Plugin_Scr_AddString(Plugin_SL_ConvertToString(array[index]->u.stringValue));
+	}
+	else if (HasFlag(flags, FLAG_VECTOR))
+	{
+		int index = 0;
+		vec3_t zero;
+		float distance = 0;
+        qboolean hasValue = qfalse;
+		for (int i = 0; i < length; i++)
+		{
+			if (hasValue)
+			{
+				if (vec_distance((float *)array[i]->u.vectorValue, zero) > distance) 
+				{
+					distance = vec_distance((float *)array[i]->u.vectorValue, zero);
+					index = i;
+				}
+			}
+			else 
+			{
+				distance = vec_distance((float *)array[i]->u.vectorValue, zero);
+				hasValue = true;
+				index = i;
+			}
+		}
+		if (hasValue)
+			Plugin_Scr_AddVector((float *)array[index]->u.vectorValue);
 	}
 	else if (HasFlag(flags, FLAG_INTEGER) || HasFlag(flags, FLAG_FLOAT))
 	{
@@ -377,6 +429,17 @@ void LINQ_Cast()
 					Plugin_Scr_AddArray();
 					break;
 				}
+				case VAR_VECTOR:
+				{
+					int cpyBufferSize = snprintf(NULL, 0, "(%f, %f, %f)", array[i]->u.vectorValue[0],
+						array[i]->u.vectorValue[1], array[i]->u.vectorValue[2]);
+					char buffer[cpyBufferSize];
+					snprintf(buffer, cpyBufferSize, "(%f, %f, %f)", array[i]->u.vectorValue[0],
+						array[i]->u.vectorValue[1], array[i]->u.vectorValue[2]);
+					Plugin_Scr_AddString(buffer);
+					Plugin_Scr_AddArray();
+					break;
+				}
 			}
 		}
 	}
@@ -490,6 +553,13 @@ void LINQ_OfType()
 					Plugin_Scr_AddArray();
 				}
 				break;
+			case VAR_VECTOR:
+				if (stricmp(typename, "vector") == 0)
+				{
+					Plugin_Scr_AddVariable(array[i]);
+					Plugin_Scr_AddArray();
+				}
+				break;
 		}
 	}
 	Plugin_Scr_FreeArray(array, length);
@@ -507,7 +577,7 @@ void LINQ_Sort()
 	uint32_t flags = GetFlagsFromGSCArray(array, length);
 
 	if (IsFlag(flags, FLAG_FLOAT) || IsFlag(flags, FLAG_INTEGER) || IsFlag(flags, FLAG_STRING)
-		|| IsFlag(flags, FLAG_ISTRING))
+		|| IsFlag(flags, FLAG_ISTRING) || IsFlag(flags, FLAG_VECTOR))
 	{
 		Plugin_Scr_MakeArray();
 		if (IsFlag(flags, FLAG_FLOAT))
@@ -516,6 +586,8 @@ void LINQ_Sort()
 			qsort(array, length, sizeof(VariableValue *), gsc_int_cmp);
 		else if (IsFlag(flags, FLAG_STRING) || IsFlag(flags, FLAG_ISTRING))
 			qsort(array, length, sizeof(VariableValue *), gsc_cstring_cmp);
+		else if (IsFlag(flags, FLAG_VECTOR))
+			qsort(array, length, sizeof(VariableValue *), gsc_vec3_cmp);
 
 		for (int i = 0; i < length; i++)
 		{
@@ -524,7 +596,7 @@ void LINQ_Sort()
 		}
 	}
 	else
-		Plugin_Scr_Error("Array need to be of type int, float or string.");
+		Plugin_Scr_AddUndefined();
 
 	Plugin_Scr_FreeArray(array, length);
 }
@@ -538,22 +610,42 @@ void LINQ_Average()
 	}
 	VariableValue **array = Plugin_Scr_GetArray(0);
 	const uint32_t length = Plugin_Scr_GetInt(1);
-	float sum = 0, count = 0;
+	int count = 0;
+	const uint32_t flags = GetFlagsFromGSCArray(array, length);
 
-	for (int i = 0; i < length; i++)
+	if (IsFlag(flags, FLAG_VECTOR))
 	{
-		if (array[i]->type == VAR_FLOAT)
-			sum += array[i]->u.floatValue;
-		else
-			sum += array[i]->u.intValue;
-		count++;
+		vec3_t vec;
+		for (int i = 0; i < length; i++)
+		{
+			if (array[i]->type == VAR_VECTOR)
+			{
+				vec[0] += array[i]->u.vectorValue[0];
+				vec[1] += array[i]->u.vectorValue[1];
+				vec[2] += array[i]->u.vectorValue[2];
+				count++;
+			}
+		}
+		vec[0] /= count;
+		vec[1] /= count;
+		vec[2] /= count;
+		Plugin_Scr_AddVector(vec);
+	}
+	else
+	{
+		float sum = 0;
+		for (int i = 0; i < length; i++)
+		{
+			if (array[i]->type == VAR_FLOAT)
+				sum += array[i]->u.floatValue;
+			else
+				sum += array[i]->u.intValue;
+			count++;
+		}
+		Plugin_Scr_AddFloat(sum / count);
 	}
 
 	Plugin_Scr_FreeArray(array, length);
-	if (length < 1 || !count)
-		Plugin_Scr_AddBool(qfalse);
-	else
-		Plugin_Scr_AddFloat(sum / count);
 }
 
 void LINQ_Count()
@@ -627,6 +719,20 @@ void LINQ_Sum()
 		}
 		Plugin_Scr_AddString(buffer);
 		free(buffer);
+	}
+	else if (HasFlag(flags, FLAG_VECTOR))
+	{
+		vec3_t sum;
+		for (int i = 0; i < length; i++)
+		{
+			if (array[i]->type == VAR_VECTOR)
+			{
+				sum[0] += array[i]->u.vectorValue[0];
+				sum[1] += array[i]->u.vectorValue[1];
+				sum[2] += array[i]->u.vectorValue[2];
+			}
+		}
+		Plugin_Scr_AddVector(sum);
 	}
 	else if (HasFlag(flags, FLAG_INTEGER) || HasFlag(flags, FLAG_FLOAT))
 	{
