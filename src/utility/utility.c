@@ -1,6 +1,7 @@
 #include "utility.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include <math.h>
 
 void ComPrintf()
 {
@@ -97,6 +98,33 @@ qboolean IsFlag(int var, int flag)
 	return var == flag;
 }
 
+/**
+ * Get the distance between two vec3_t.
+ */
+float vec_distance(vec3_t a, vec3_t b)
+{
+	float x = a[0] - b[0];
+	float y = a[1] - b[1];
+	float z = a[2] - b[2];
+
+	return sqrtf((x * x) + (y * y) + (z * z));
+}
+
+/** 
+ * qsort vec3_t comparison function.
+ */ 
+int vec3_cmp(const void *a, const void *b)
+{
+	vec3_t zero;
+	vec3_t *vecA = (vec3_t *)a;
+	vec3_t *vecB = (vec3_t *)b;
+
+	float distanceA = vec_distance(*vecA, zero);
+	float distanceB = vec_distance(*vecB, zero);
+	
+	return distanceA - distanceB; // float comparison: returns negative if b > a, and positive if a > b
+}
+
 /** 
  * qsort float comparison function.
  */ 
@@ -104,7 +132,7 @@ int float_cmp(const void *a, const void *b)
 {
 	const float *ia = (const float *)a;
 	const float *ib = (const float *)b;
-	return *ia - *ib; // integer comparison: returns negative if b > a, and positive if a > b
+	return *ia - *ib; // float comparison: returns negative if b > a, and positive if a > b
 }
 
 /** 
@@ -128,13 +156,38 @@ int cstring_cmp(const void *a, const void *b)
 }
 
 /** 
+ * qsort GSC variable vec3_t comparison function.
+ */ 
+int gsc_vec3_cmp(const void *a, const void *b)
+{
+	vec3_t zero;
+	VariableValue *ia = *(VariableValue **)a;
+	VariableValue *ib = *(VariableValue **)b;
+
+	vec3_t vecA;
+	vecA[0] = ia->u.vectorValue[0];
+	vecA[1] = ia->u.vectorValue[1];
+	vecA[2] = ia->u.vectorValue[2];
+
+	vec3_t vecB;
+	vecB[0] = ib->u.vectorValue[0];
+	vecB[1] = ib->u.vectorValue[1];
+	vecB[2] = ib->u.vectorValue[2];
+
+	float distanceA = vec_distance(vecA, zero);
+	float distanceB = vec_distance(vecB, zero);
+
+	return distanceA - distanceB; // float comparison: returns negative if b > a, and positive if a > b
+}
+
+/** 
  * qsort GSC variable float comparison function.
  */ 
 int gsc_float_cmp(const void *a, const void *b)
 {
 	VariableValue *ia = *(VariableValue **)a;
 	VariableValue *ib = *(VariableValue **)b;
-	return ia->u.floatValue - ib->u.floatValue; // integer comparison: returns negative if b > a, and positive if a > b
+	return ia->u.floatValue - ib->u.floatValue; // float comparison: returns negative if b > a, and positive if a > b
 }
 
 /** 
