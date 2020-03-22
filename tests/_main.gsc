@@ -4,8 +4,8 @@ runTests()
     wait 10;
 
     comPrintf("\n|-------------------[gsclib tests]-------------------|\n");
-    lib\_tests_linq::test();
-    lib\_tests_collections::test();
+    lib\gsclib\_tests_linq::test();
+    lib\gsclib\_tests_collections::test();
     comPrintf("\n|----------------------------------------------------|\n");
 }
 
