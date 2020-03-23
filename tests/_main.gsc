@@ -89,13 +89,31 @@ testPredicateString(item)
     return item != "Iswenzz";
 }
 
-// Test delegate struct member "name"
+// test predicate array
+testPredicateArray(item)
+{
+    return item.size != 10;
+}
+
+// test predicate struct.name
+testPredicateName(item)
+{
+    return item.name != "M1014";
+}
+
+// test predicate struct.bullet
+testPredicateBullet(item)
+{
+    return item.bullet != 8;
+}
+
+// Test delegate struct.name
 testDelegateName(item)
 {
     return item.name;
 }
 
-// Test delegate struct member "bullet"
+// Test delegate struct.bullet
 testDelegateBullet(item)
 {
     return item.bullet;

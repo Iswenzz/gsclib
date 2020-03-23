@@ -5,23 +5,49 @@ test()
 {
     comPrintF("\n[======{Linq}======]\n");
 
+    // float array
     level._tests_floats = [];
     for (i = 0; i < 10; i++)
         level._tests_floats[i] = i * 1.05;
 
+    // int array
     level._tests_ints = [];
     for (i = 0; i < 10; i++)
         level._tests_ints[i] = i;
 
+    // string array
     level._tests_strings = strTok("Ellin;Alexa;Celiza;Iswenzz;10", ";");
 
+    // vector array
     level._tests_vectors = [];
     for (i = 0; i < 10; i++)
         level._tests_vectors[i] = (level._tests_floats[i], level._tests_floats[i], level._tests_floats[i]);
 
+    // struct array
+    level._tests_structs = [];
+    level._tests_structs[0] = SpawnStruct();
+    level._tests_structs[0].name = "AK47";
+    level._tests_structs[0].weapon = "ak47_mp";
+    level._tests_structs[0].bullet = 30;
+    level._tests_structs[1] = SpawnStruct();
+    level._tests_structs[1].name = "Desert Eagle";
+    level._tests_structs[1].weapon = "deserteagle_mp";
+    level._tests_structs[1].bullet = 12;
+    level._tests_structs[2] = SpawnStruct();
+    level._tests_structs[2].name = "M1014";
+    level._tests_structs[2].weapon = "m1014_mp";
+    level._tests_structs[2].bullet = 8;
+
+    // 2dim array
+    level._tests_arrays = [];
+    level._tests_arrays[level._tests_arrays.size] = level._tests_floats;
+    level._tests_arrays[level._tests_arrays.size] = level._tests_ints;
+    level._tests_arrays[level._tests_arrays.size] = level._tests_vectors;
+    level._tests_arrays[level._tests_arrays.size] = level._tests_structs;
+
     it_all();
-    it_where();
     it_any();
+    it_where();
     it_min();
     it_max();
     it_last();
@@ -46,16 +72,10 @@ it_all()
     printVariableWithType(all(level._tests_strings, level._tests_strings.size, ::testPredicateString));
     comPrintF();
     printVariableWithType(all(level._tests_vectors, level._tests_vectors.size, ::testPredicateVector));
-}
-
-it_where()
-{
-    comPrintF("\n<-------[Where]------->\n");
-    printArrayWithType(where(level._tests_ints, level._tests_ints.size, ::testPredicate));
     comPrintF();
-    printArrayWithType(where(level._tests_strings, level._tests_strings.size, ::testPredicateString));
+    printVariableWithType(all(level._tests_structs, level._tests_structs.size, ::testPredicateName));
     comPrintF();
-    printArrayWithType(where(level._tests_vectors, level._tests_vectors.size, ::testPredicateVector));
+    printVariableWithType(all(level._tests_arrays, level._tests_arrays.size, ::testPredicateArray));
 }
 
 it_any()
@@ -66,6 +86,20 @@ it_any()
     printVariableWithType(any(level._tests_strings, level._tests_strings.size, ::testPredicateString));
     comPrintF();
     printVariableWithType(any(level._tests_vectors, level._tests_vectors.size, ::testPredicateVector));
+    comPrintF();
+    printVariableWithType(any(level._tests_structs, level._tests_structs.size, ::testPredicateName));
+    comPrintF();
+    printVariableWithType(any(level._tests_arrays, level._tests_arrays.size, ::testPredicateArray));
+}
+
+it_where()
+{
+    comPrintF("\n<-------[Where]------->\n");
+    printArrayWithType(where(level._tests_ints, level._tests_ints.size, ::testPredicate));
+    comPrintF();
+    printArrayWithType(where(level._tests_strings, level._tests_strings.size, ::testPredicateString));
+    comPrintF();
+    printArrayWithType(where(level._tests_vectors, level._tests_vectors.size, ::testPredicateVector));
 }
 
 it_min()
@@ -96,6 +130,10 @@ it_last()
     printVariableWithType(last(level._tests_strings, level._tests_strings.size, ::testPredicateString));
     comPrintF();
     printVariableWithType(last(level._tests_vectors, level._tests_vectors.size, ::testPredicateVector));
+    comPrintF();
+    printVariableWithType(last(level._tests_structs, level._tests_structs.size, ::testPredicateName).name);
+    comPrintF();
+    printVariableWithType(last(level._tests_arrays, level._tests_arrays.size, ::testPredicateArray)[0].name);
 }
 
 it_first()
@@ -106,6 +144,8 @@ it_first()
     printVariableWithType(first(level._tests_strings, level._tests_strings.size, ::testPredicateString));
     comPrintF();
     printVariableWithType(first(level._tests_vectors, level._tests_vectors.size, ::testPredicateVector));
+    comPrintF();
+    printVariableWithType(first(level._tests_structs, level._tests_structs.size, ::testPredicateName).name);
 }
 
 it_cast()
@@ -134,6 +174,8 @@ it_oftype()
     cast_arr[cast_arr.size] = 200;
     cast_arr[cast_arr.size] = 300.300;
     cast_arr[cast_arr.size] = (400, 400, 400);
+    cast_arr[cast_arr.size] = level._tests_structs[0];
+    cast_arr[cast_arr.size] = level._tests_ints;
 
     printArrayWithType(ofType(cast_arr, cast_arr.size, "string"));
     comPrintF();
@@ -142,6 +184,10 @@ it_oftype()
     printArrayWithType(ofType(cast_arr, cast_arr.size, "float"));
     comPrintF();
     printArrayWithType(ofType(cast_arr, cast_arr.size, "vector"));
+    comPrintF();
+    printVariableWithType(ofType(cast_arr, cast_arr.size, "struct")[0].name);
+    comPrintF();
+    printArrayWithType(ofType(cast_arr, cast_arr.size, "array")[0]);
 }
 
 it_sort()
@@ -174,6 +220,10 @@ it_count()
     printVariableWithType(count(level._tests_strings, level._tests_strings.size, ::testPredicateString));
     comPrintF();
     printVariableWithType(count(level._tests_vectors, level._tests_vectors.size, ::testPredicateVector));
+    comPrintF();
+    printVariableWithType(count(level._tests_structs, level._tests_structs.size, ::testPredicateName));
+    comPrintF();
+    printVariableWithType(count(level._tests_arrays, level._tests_arrays.size, ::testPredicateArray));
 }
 
 it_sum()
@@ -191,25 +241,10 @@ it_sum()
 it_select()
 {
     comPrintF("\n<-------[Select]------->\n");
-
-    weapArr = [];
-    weapArr[0] = SpawnStruct();
-    weapArr[0].name = "AK47";
-    weapArr[0].weapon = "ak47_mp";
-    weapArr[0].bullet = 30;
-    weapArr[1] = SpawnStruct();
-    weapArr[1].name = "Desert Eagle";
-    weapArr[1].weapon = "deserteagle_mp";
-    weapArr[1].bullet = 12;
-    weapArr[2] = SpawnStruct();
-    weapArr[2].name = "M1014";
-    weapArr[2].weapon = "m1014_mp";
-    weapArr[2].bullet = 8;
-
     comPrintF("Not implemented yet.\n");
-    // printArrayWithType(select(weapArr, weapArr.size, ::testDelegateName));
+    // printArrayWithType(select(level._tests_structs, level._tests_structs.size, ::testDelegateName));
     // comPrintF();
-    //printArrayWithType(select(weapArr, weapArr.size, ::testDelegateBullet));
+    //printArrayWithType(select(level._tests_structs, level._tests_structs.size, ::testDelegateBullet));
 }
 
 it_range()

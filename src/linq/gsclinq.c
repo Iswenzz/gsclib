@@ -526,7 +526,6 @@ void LINQ_OfType()
 	const char *typename = Plugin_Scr_GetString(2);
 
 	Plugin_Scr_MakeArray();
-
 	for (int i = 0; i < length; i++)
 	{
 		switch (array[i]->type)
@@ -560,6 +559,27 @@ void LINQ_OfType()
 					Plugin_Scr_AddArray();
 				}
 				break;
+			case VAR_POINTER:
+			{
+				switch (Plugin_Scr_GetObjectType(array[i]->u.pointerValue))
+				{
+					case VAR_ARRAY:
+						if (stricmp(typename, "array") == 0)
+						{
+							Plugin_Scr_AddVariable(array[i]);
+							Plugin_Scr_AddArray();
+						}
+						break;
+					case VAR_OBJECT:
+						if (stricmp(typename, "struct") == 0)
+						{
+							Plugin_Scr_AddVariable(array[i]);
+							Plugin_Scr_AddArray();
+						}
+						break;
+				}
+			}
+			break;
 		}
 	}
 	Plugin_Scr_FreeArray(array, length);

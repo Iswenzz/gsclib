@@ -147,6 +147,7 @@ __attribute__((unused)) static int __callArgNumber = 0;
 #define UNDEFINED() Plugin_Scr_SetParamUndefined(__callArgNumber)
 
 void Plugin_Scr_FreeArray(VariableValue **array, int length);
+unsigned int Plugin_Scr_GetObjectType(unsigned int id);
 VariableValue **Plugin_Scr_GetArray(unsigned int paramnum);
 VariableValue *Plugin_Scr_AllocVariable(VariableValue *varRef);
 VariableValue *Plugin_Scr_SelectParamOrDefault(unsigned int paramnum);
