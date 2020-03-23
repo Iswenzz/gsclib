@@ -162,6 +162,8 @@ qboolean Plugin_Scr_SetParamFunc(unsigned int paramnum, const char *codePos);
 qboolean Plugin_Scr_SetParamStack(unsigned int paramnum, struct VariableStackBuffer *stack);
 qboolean Plugin_Scr_SetParamVector(unsigned int paramnum, const float *value);
 qboolean Plugin_Scr_SetParamUndefined(unsigned int paramnum);
+VariableValue *Plugin_Scr_GetTop(unsigned int paramnum);
+short Plugin_Scr_ExecThreadResult( int callbackHook, unsigned int numArgs);
 int Plugin_Scr_GetFunc(unsigned int paramnum);
 void Plugin_Scr_AddFunc(const char *codePosValue);
 void Plugin_Scr_AddObjectStruct(VariableValue *var);

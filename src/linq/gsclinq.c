@@ -751,34 +751,23 @@ void LINQ_Select()
 	const uint32_t length = Plugin_Scr_GetInt(1);
 	const uint32_t threadId = Plugin_Scr_GetFunc(2);
 
-	//Plugin_Scr_MakeArray();
+	Plugin_Scr_MakeArray();
 	for (int i = 0; i < length; i++)
 	{
 		// Call delegate(item)
 		Plugin_Scr_AddVariable(array[i]);
-		__attribute__((unused)) const short tid = Plugin_Scr_ExecThread(threadId, 1);
-
-		// GSC return variable - try #1
-		//const register int varType asm("esi");
-		//const register int varAddr asm("ebx");
-		//VariableValue *var = (VariableValue *)malloc(sizeof(VariableValue));
-		//var->u = *(union VariableUnion *)varAddr;
-		//var->type = varType;
-
-		// GSC return variable - try #2
-		//const register int varAddr asm("ecx");
-		//const register int varUnion asm("edx");
-		//VariableValue *var = (VariableValue *)malloc(sizeof(VariableValue));
-		//var->type = ((VariableThreadReturn *)varAddr)->type;
-		//var->u = (union VariableUnion)varUnion;
+		const short tid = Plugin_Scr_ExecThreadResult(threadId, 1);
+		VariableValue *returnRef = Plugin_Scr_GetTop(-1);
+		VariableValue *var = Plugin_Scr_AllocVariable(returnRef);
+		// clean unused returnRef
+		returnRef->type = 0;
 		
-		//Plugin_Scr_AddVariable(var);
-		//Plugin_Scr_AddArray();
-		//Plugin_Scr_FreeThread(tid);
-		//free(var);
+		Plugin_Scr_AddVariable(var);
+		Plugin_Scr_AddArray();
+		Plugin_Scr_FreeThread(tid);
+		free(var);
 	}
 	Plugin_Scr_FreeArray(array, length);
-	Plugin_Printf("LINQ_Select is not implemented yet.\n");
 }
 
 void LINQ_Range()

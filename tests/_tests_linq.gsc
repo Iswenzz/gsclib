@@ -26,17 +26,23 @@ test()
     // struct array
     level._tests_structs = [];
     level._tests_structs[0] = SpawnStruct();
-    level._tests_structs[0].name = "AK47";
-    level._tests_structs[0].weapon = "ak47_mp";
-    level._tests_structs[0].bullet = 30;
+    level._tests_structs[0].string = "AK47";
+    level._tests_structs[0].int = 30;
+    level._tests_structs[0].vector = (100, 200, 300);
+    level._tests_structs[0].array = level._tests_ints;
+    level._tests_structs[0].float = 1.5;
     level._tests_structs[1] = SpawnStruct();
-    level._tests_structs[1].name = "Desert Eagle";
-    level._tests_structs[1].weapon = "deserteagle_mp";
-    level._tests_structs[1].bullet = 12;
+    level._tests_structs[1].string = "Desert Eagle";
+    level._tests_structs[1].int = 12;
+    level._tests_structs[1].vector = (400, 500, 600);
+    level._tests_structs[1].array = level._tests_floats;
+    level._tests_structs[1].float = 2.5;
     level._tests_structs[2] = SpawnStruct();
-    level._tests_structs[2].name = "M1014";
-    level._tests_structs[2].weapon = "m1014_mp";
-    level._tests_structs[2].bullet = 8;
+    level._tests_structs[2].string = "M1014";
+    level._tests_structs[2].int = 8;
+    level._tests_structs[2].vector = (700, 800, 900);
+    level._tests_structs[2].array = level._tests_strings;
+    level._tests_structs[2].float = 3.5;
 
     // 2dim array
     level._tests_arrays = [];
@@ -48,23 +54,23 @@ test()
     // ent array
     level._tests_ents = getEntArray("player", "classname");
 
-    it_all();
-    it_any();
-    it_where();
-    it_min();
-    it_max();
-    it_last();
-    it_first();
-    it_cast();
-    it_oftype();
-    it_sort();
-    it_average();
-    it_count();
-    it_sum();
+    // it_all();
+    // it_any();
+    // it_where();
+    // it_min();
+    // it_max();
+    // it_last();
+    // it_first();
+    // it_cast();
+    // it_oftype();
+    // it_sort();
+    // it_average();
+    // it_count();
+    // it_sum();
     it_select();
-    it_range();
-    it_repeat();
-    it_reverse();
+    // it_range();
+    // it_repeat();
+    // it_reverse();
 }
 
 it_all()
@@ -76,7 +82,7 @@ it_all()
     comPrintF();
     printVariableWithType(all(level._tests_vectors, level._tests_vectors.size, ::testPredicateVector));
     comPrintF();
-    printVariableWithType(all(level._tests_structs, level._tests_structs.size, ::testPredicateName));
+    printVariableWithType(all(level._tests_structs, level._tests_structs.size, ::testPredicateStructString));
     comPrintF();
     printVariableWithType(all(level._tests_arrays, level._tests_arrays.size, ::testPredicateArray));
     comPrintF();
@@ -92,7 +98,7 @@ it_any()
     comPrintF();
     printVariableWithType(any(level._tests_vectors, level._tests_vectors.size, ::testPredicateVector));
     comPrintF();
-    printVariableWithType(any(level._tests_structs, level._tests_structs.size, ::testPredicateName));
+    printVariableWithType(any(level._tests_structs, level._tests_structs.size, ::testPredicateStructString));
     comPrintF();
     printVariableWithType(any(level._tests_arrays, level._tests_arrays.size, ::testPredicateArray));
 }
@@ -136,7 +142,7 @@ it_last()
     comPrintF();
     printVariableWithType(last(level._tests_vectors, level._tests_vectors.size, ::testPredicateVector));
     comPrintF();
-    printVariableWithType(last(level._tests_structs, level._tests_structs.size, ::testPredicateName).name);
+    printVariableWithType(last(level._tests_structs, level._tests_structs.size, ::testPredicateStructString).name);
     comPrintF();
     printVariableWithType(last(level._tests_arrays, level._tests_arrays.size, ::testPredicateArray)[0].name);
     comPrintF();
@@ -152,7 +158,7 @@ it_first()
     comPrintF();
     printVariableWithType(first(level._tests_vectors, level._tests_vectors.size, ::testPredicateVector));
     comPrintF();
-    printVariableWithType(first(level._tests_structs, level._tests_structs.size, ::testPredicateName).name);
+    printVariableWithType(first(level._tests_structs, level._tests_structs.size, ::testPredicateStructString).name);
     comPrintF();
     printVariableWithType(first(level._tests_ents, level._tests_ents.size, ::testPredicateEnt).name);
 }
@@ -233,7 +239,7 @@ it_count()
     comPrintF();
     printVariableWithType(count(level._tests_vectors, level._tests_vectors.size, ::testPredicateVector));
     comPrintF();
-    printVariableWithType(count(level._tests_structs, level._tests_structs.size, ::testPredicateName));
+    printVariableWithType(count(level._tests_structs, level._tests_structs.size, ::testPredicateStructString));
     comPrintF();
     printVariableWithType(count(level._tests_arrays, level._tests_arrays.size, ::testPredicateArray));
 }
@@ -253,10 +259,10 @@ it_sum()
 it_select()
 {
     comPrintF("\n<-------[Select]------->\n");
-    comPrintF("Not implemented yet.\n");
-    // printArrayWithType(select(level._tests_structs, level._tests_structs.size, ::testDelegateName));
-    // comPrintF();
-    //printArrayWithType(select(level._tests_structs, level._tests_structs.size, ::testDelegateBullet));
+
+    printArrayWithType(select(level._tests_structs, level._tests_structs.size, ::testDelegateStructString));
+    comPrintF();
+    printArrayWithType(select(level._tests_structs, level._tests_structs.size, ::testDelegateStructInt));
 }
 
 it_range()

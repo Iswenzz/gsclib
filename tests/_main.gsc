@@ -103,25 +103,25 @@ testPredicateArray(item)
 }
 
 // test predicate struct.name
-testPredicateName(item)
+testPredicateStructString(item)
 {
-    return item.name != "M1014";
+    return item.string != "M1014";
 }
 
-// test predicate struct.bullet
-testPredicateBullet(item)
+// test predicate struct.int
+testPredicateStructInt(item)
 {
-    return item.bullet != 8;
+    return item.int != 8;
 }
 
-// Test delegate struct.name
-testDelegateName(item)
+// Test delegate struct.string
+testDelegateStructString(item)
 {
-    return item.name;
+    return item.string;
 }
 
 // Test delegate struct.bullet
-testDelegateBullet(item)
+testDelegateStructInt(item)
 {
-    return item.bullet;
+    return item.int;
 }
