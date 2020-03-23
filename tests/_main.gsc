@@ -2,17 +2,18 @@
 runTests()
 {
     wait 10;
+    // spawn bots for testing ents
+    for (i = 0; i < 5; i++)
+    {
+        bot = addTestClient();
+        wait 0.05;
+        bot notify("menuresponse", game["menu_team"], "autoassign");
+    }
 
     comPrintf("\n|-------------------[gsclib tests]-------------------|\n");
     lib\gsclib\_tests_linq::test();
     lib\gsclib\_tests_collections::test();
     comPrintf("\n|----------------------------------------------------|\n");
-}
-
-// Main tests on player ent
-runPlayerTests()
-{
-    wait 5;
 }
 
 // Print all items in the array with their type.
@@ -69,6 +70,12 @@ printVariableWithType(var)
         iprintlnbold(msg);
         comPrintf(msg + "\n");
     }
+}
+
+// Test predicate player ent
+testPredicateEnt(player)
+{
+    return player.name != "Iswenzz";
 }
 
 // Test predicate

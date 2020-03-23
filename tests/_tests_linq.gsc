@@ -45,6 +45,9 @@ test()
     level._tests_arrays[level._tests_arrays.size] = level._tests_vectors;
     level._tests_arrays[level._tests_arrays.size] = level._tests_structs;
 
+    // ent array
+    level._tests_ents = getEntArray("player", "classname");
+
     it_all();
     it_any();
     it_where();
@@ -76,6 +79,8 @@ it_all()
     printVariableWithType(all(level._tests_structs, level._tests_structs.size, ::testPredicateName));
     comPrintF();
     printVariableWithType(all(level._tests_arrays, level._tests_arrays.size, ::testPredicateArray));
+    comPrintF();
+    printVariableWithType(all(level._tests_ents, level._tests_ents.size, ::testPredicateEnt));
 }
 
 it_any()
@@ -134,6 +139,8 @@ it_last()
     printVariableWithType(last(level._tests_structs, level._tests_structs.size, ::testPredicateName).name);
     comPrintF();
     printVariableWithType(last(level._tests_arrays, level._tests_arrays.size, ::testPredicateArray)[0].name);
+    comPrintF();
+    printVariableWithType(last(level._tests_ents, level._tests_ents.size, ::testPredicateEnt).name);
 }
 
 it_first()
@@ -146,6 +153,8 @@ it_first()
     printVariableWithType(first(level._tests_vectors, level._tests_vectors.size, ::testPredicateVector));
     comPrintF();
     printVariableWithType(first(level._tests_structs, level._tests_structs.size, ::testPredicateName).name);
+    comPrintF();
+    printVariableWithType(first(level._tests_ents, level._tests_ents.size, ::testPredicateEnt).name);
 }
 
 it_cast()
@@ -176,6 +185,7 @@ it_oftype()
     cast_arr[cast_arr.size] = (400, 400, 400);
     cast_arr[cast_arr.size] = level._tests_structs[0];
     cast_arr[cast_arr.size] = level._tests_ints;
+    cast_arr[cast_arr.size] = level._tests_ents[0];
 
     printArrayWithType(ofType(cast_arr, cast_arr.size, "string"));
     comPrintF();
@@ -188,6 +198,8 @@ it_oftype()
     printVariableWithType(ofType(cast_arr, cast_arr.size, "struct")[0].name);
     comPrintF();
     printArrayWithType(ofType(cast_arr, cast_arr.size, "array")[0]);
+    comPrintF();
+    printVariableWithType(ofType(cast_arr, cast_arr.size, "ent")[0].name);
 }
 
 it_sort()

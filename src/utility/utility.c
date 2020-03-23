@@ -26,6 +26,7 @@ void GetType()
 			{
 				case VAR_ARRAY: 	Plugin_Scr_AddString("VAR_ARRAY"); 				break;
 				case VAR_OBJECT:	Plugin_Scr_AddString("VAR_OBJECT"); 			break;
+				case VAR_ENTITY:	Plugin_Scr_AddString("VAR_ENTITY"); 			break;
 			}
 			break;
 		case VAR_UNDEFINED: 		Plugin_Scr_AddString("VAR_UNDEFINED"); 			break;

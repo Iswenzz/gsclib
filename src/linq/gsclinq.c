@@ -525,61 +525,25 @@ void LINQ_OfType()
 	const uint32_t length = Plugin_Scr_GetInt(1);
 	const char *typename = Plugin_Scr_GetString(2);
 
+	int reqtype = VAR_UNDEFINED;
+	if (stricmp(typename, "int") == 0) reqtype = VAR_INTEGER;
+	else if (stricmp(typename, "float") == 0) reqtype = VAR_FLOAT;
+	else if (stricmp(typename, "vector") == 0) reqtype = VAR_VECTOR;
+	else if (stricmp(typename, "array") == 0) reqtype = VAR_ARRAY;
+	else if (stricmp(typename, "struct") == 0) reqtype = VAR_OBJECT;
+	else if (stricmp(typename, "string") == 0) reqtype = VAR_STRING;
+	else if (stricmp(typename, "istring") == 0) reqtype = VAR_ISTRING;
+	else if (stricmp(typename, "ent") == 0) reqtype = VAR_ENTITY;
+
 	Plugin_Scr_MakeArray();
 	for (int i = 0; i < length; i++)
 	{
-		switch (array[i]->type)
+		int varType = (array[i]->type == VAR_POINTER) 
+			? Plugin_Scr_GetObjectType(array[i]->u.pointerValue) : array[i]->type;
+		if (reqtype == varType)
 		{
-			case VAR_INTEGER:
-				if (stricmp(typename, "int") == 0)
-				{
-					Plugin_Scr_AddVariable(array[i]);
-					Plugin_Scr_AddArray();
-				}
-				break;
-			case VAR_FLOAT:
-				if (stricmp(typename, "float") == 0)
-				{
-					Plugin_Scr_AddVariable(array[i]);
-					Plugin_Scr_AddArray();
-				}
-				break;
-			case VAR_ISTRING:
-			case VAR_STRING:
-				if (stricmp(typename, "string") == 0)
-				{
-					Plugin_Scr_AddVariable(array[i]);
-					Plugin_Scr_AddArray();
-				}
-				break;
-			case VAR_VECTOR:
-				if (stricmp(typename, "vector") == 0)
-				{
-					Plugin_Scr_AddVariable(array[i]);
-					Plugin_Scr_AddArray();
-				}
-				break;
-			case VAR_POINTER:
-			{
-				switch (Plugin_Scr_GetObjectType(array[i]->u.pointerValue))
-				{
-					case VAR_ARRAY:
-						if (stricmp(typename, "array") == 0)
-						{
-							Plugin_Scr_AddVariable(array[i]);
-							Plugin_Scr_AddArray();
-						}
-						break;
-					case VAR_OBJECT:
-						if (stricmp(typename, "struct") == 0)
-						{
-							Plugin_Scr_AddVariable(array[i]);
-							Plugin_Scr_AddArray();
-						}
-						break;
-				}
-			}
-			break;
+			Plugin_Scr_AddVariable(array[i]);
+			Plugin_Scr_AddArray();
 		}
 	}
 	Plugin_Scr_FreeArray(array, length);
