@@ -21,8 +21,14 @@ void GetType()
 	VariableValue *var = Plugin_Scr_SelectParam(0);
 	switch (var->type)
 	{
+		case VAR_POINTER:
+			switch (Plugin_Scr_GetObjectType(var->u.pointerValue))
+			{
+				case VAR_ARRAY: 	Plugin_Scr_AddString("VAR_ARRAY"); 				break;
+				case VAR_OBJECT:	Plugin_Scr_AddString("VAR_OBJECT"); 			break;
+			}
+			break;
 		case VAR_UNDEFINED: 		Plugin_Scr_AddString("VAR_UNDEFINED"); 			break;
-		case VAR_POINTER: 			Plugin_Scr_AddString("VAR_POINTER");  			break;
 		case VAR_STRING: 			Plugin_Scr_AddString("VAR_STRING");  			break;
 		case VAR_ISTRING: 			Plugin_Scr_AddString("VAR_ISTRING");  			break;
 		case VAR_VECTOR: 			Plugin_Scr_AddString("VAR_VECTOR");  			break;
