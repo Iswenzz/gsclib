@@ -1,8 +1,8 @@
 #pragma once
 #include "../../dependencies/cgsc.h"
 
-void ComPrintf();
-void GetType();
+void GScr_ComPrintf();
+void GScr_GetType();
 
 qboolean HasFlag(int var, int flag);
 qboolean IsFlag(int var, int flag);

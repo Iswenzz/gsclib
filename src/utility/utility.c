@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <math.h>
 
-void ComPrintf()
+void GScr_ComPrintf()
 {
 	if (!Plugin_Scr_GetNumParam())
 		Plugin_Printf("\n");
@@ -11,7 +11,7 @@ void ComPrintf()
 		Plugin_Printf(Plugin_Scr_GetString(0)); 
 }
 
-void GetType()
+void GScr_GetType()
 {
 	if (Plugin_Scr_GetNumParam() != 1)
 	{

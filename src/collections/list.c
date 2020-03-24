@@ -1,13 +1,7 @@
-#include "../../dependencies/cgsc.h"
+#include "list.h"
 #include <stdlib.h>
 
-typedef struct
-{
-	uint32_t size;
-	VariableValue **array;
-} List;
-
-void LIST_new()
+void GScr_LIST_new()
 {
 	if (Plugin_Scr_GetNumParam() != 0)
     {
@@ -15,12 +9,12 @@ void LIST_new()
 		return;
     }
 	List *list = (List *)malloc(sizeof(List));
-	list->array = (VariableValue **)malloc(sizeof(VariableValue *));
-	list->size = 0;
+	list->items = (VariableValue **)malloc(sizeof(VariableValue *));
+	list->length = 0;
 	Plugin_Scr_AddInt((uint32_t)list);
 }
 
-void LIST_add()
+void GScr_LIST_add()
 {
 	if (Plugin_Scr_GetNumParam() != 2)
     {
@@ -31,12 +25,12 @@ void LIST_add()
 	VariableValue *item = Plugin_Scr_SelectParam(1);
 
 	List *list = (List *)list_addr;
-	list->size++;
-	list->array = (VariableValue **)realloc(list->array, list->size * sizeof(VariableValue *));
-	list->array[list->size - 1] = Plugin_Scr_AllocVariable(item);
+	list->length++;
+	list->items = (VariableValue **)realloc(list->items, list->length * sizeof(VariableValue *));
+	list->items[list->length - 1] = Plugin_Scr_AllocVariable(item);
 }
 
-void LIST_get()
+void GScr_LIST_get()
 {
     if (Plugin_Scr_GetNumParam() != 2)
     {
@@ -48,11 +42,11 @@ void LIST_get()
 
     List *list = (List *)list_addr;
 
-    if(list->size < index) Plugin_Scr_AddUndefined();
-    else Plugin_Scr_AddVariable(list->array[index]);
+    if(list->length < index) Plugin_Scr_AddUndefined();
+    else Plugin_Scr_AddVariable(list->items[index]);
 }
 
-void LIST_length()
+void GScr_LIST_length()
 {
     if (Plugin_Scr_GetNumParam() != 1)
     {
@@ -62,10 +56,10 @@ void LIST_length()
     const uint32_t list_addr = Plugin_Scr_GetInt(0);
 
     List *list = (List *)list_addr;
-    Plugin_Scr_AddInt(list->size);
+    Plugin_Scr_AddInt(list->length);
 }
 
-void LIST_insert()
+void GScr_LIST_insert()
 {
     if (Plugin_Scr_GetNumParam() != 3)
     {
@@ -77,19 +71,19 @@ void LIST_insert()
     const int index = Plugin_Scr_GetInt(2);
 
     List *list = (List *)list_addr;
-    List *newlist = (List *)malloc((list->size + 1) * sizeof(VariableValue *));
-    for(int i = 0; i<list->size; i++)
+    List *newlist = (List *)malloc((list->length + 1) * sizeof(VariableValue *));
+    for(int i = 0; i<list->length; i++)
     {
         if(i < index)
-            newlist->array[i] = Plugin_Scr_AllocVariable(list->array[i]);
+            newlist->items[i] = Plugin_Scr_AllocVariable(list->items[i]);
         else if (i == index)
-            newlist->array[i] = Plugin_Scr_AllocVariable(item);
+            newlist->items[i] = Plugin_Scr_AllocVariable(item);
         else if (i > index)
-            newlist->array[i+1] = Plugin_Scr_AllocVariable(list->array[i]);
+            newlist->items[i+1] = Plugin_Scr_AllocVariable(list->items[i]);
     }
 }
 
-void LIST_remove()
+void GScr_LIST_remove()
 {
     if (Plugin_Scr_GetNumParam() != 2)
     {
@@ -100,13 +94,13 @@ void LIST_remove()
     VariableValue *item = Plugin_Scr_SelectParam(1);
 
     List *list = (List *)list_addr;
-    for(int i=0; i<list->size; i++)
+    for(int i=0; i<list->length; i++)
     {
-        if(list->array[i] == item)
+        if(list->items[i] == item)
         {
-            free(list->array[i]);
-            list->array[i] = (void *)0;
-            list->size--;
+            free(list->items[i]);
+            list->items[i] = (void *)0;
+            list->length--;
         }
     }
 }

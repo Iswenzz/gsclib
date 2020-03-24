@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-void LINQ_All()
+void GScr_LINQ_All()
 {
 	if (Plugin_Scr_GetNumParam() != 2)
 	{
@@ -33,7 +33,7 @@ void LINQ_All()
 	Plugin_Scr_AddBool(result);
 }
 
-void LINQ_Reverse()
+void GScr_LINQ_Reverse()
 {
 	if (Plugin_Scr_GetNumParam() != 1)
 	{
@@ -51,7 +51,7 @@ void LINQ_Reverse()
 	Plugin_Scr_FreeArray(array);
 }
 
-void LINQ_Any()
+void GScr_LINQ_Any()
 {
 	if (Plugin_Scr_GetNumParam() != 2)
 	{
@@ -81,7 +81,7 @@ void LINQ_Any()
 	Plugin_Scr_AddBool(result);
 }
 
-void LINQ_Where()
+void GScr_LINQ_Where()
 {
 	if (Plugin_Scr_GetNumParam() != 2)
 	{
@@ -109,7 +109,7 @@ void LINQ_Where()
 	Plugin_Scr_FreeArray(array);
 }
 
-void LINQ_Min()
+void GScr_LINQ_Min()
 {
 	if (Plugin_Scr_GetNumParam() != 1)
 	{
@@ -217,7 +217,7 @@ void LINQ_Min()
 	Plugin_Scr_FreeArray(array);
 }
 
-void LINQ_Max()
+void GScr_LINQ_Max()
 {
 	if (Plugin_Scr_GetNumParam() != 1)
 	{
@@ -325,7 +325,7 @@ void LINQ_Max()
 	Plugin_Scr_FreeArray(array);
 }
 
-void LINQ_Last()
+void GScr_LINQ_Last()
 {
 	if (Plugin_Scr_GetNumParam() != 2)
 	{
@@ -351,7 +351,7 @@ void LINQ_Last()
 	Plugin_Scr_FreeArray(array);
 }
 
-void LINQ_First()
+void GScr_LINQ_First()
 {
 	if (Plugin_Scr_GetNumParam() != 2)
 	{
@@ -379,7 +379,7 @@ void LINQ_First()
 	Plugin_Scr_FreeArray(array);
 }
 
-void LINQ_Cast()
+void GScr_LINQ_Cast()
 {
 	if (Plugin_Scr_GetNumParam() != 2)
 	{
@@ -505,7 +505,7 @@ void LINQ_Cast()
 	Plugin_Scr_FreeArray(array);
 }
 
-void LINQ_OfType()
+void GScr_LINQ_OfType()
 {
 	if (Plugin_Scr_GetNumParam() != 2)
 	{
@@ -539,7 +539,7 @@ void LINQ_OfType()
 	Plugin_Scr_FreeArray(array);
 }
 
-void LINQ_Sort()
+void GScr_LINQ_Sort()
 {
 	if (Plugin_Scr_GetNumParam() != 1)
 	{
@@ -574,7 +574,7 @@ void LINQ_Sort()
 	Plugin_Scr_FreeArray(array);
 }
 
-void LINQ_Average()
+void GScr_LINQ_Average()
 {
 	if (Plugin_Scr_GetNumParam() != 1)
 	{
@@ -620,7 +620,7 @@ void LINQ_Average()
 	Plugin_Scr_FreeArray(array);
 }
 
-void LINQ_Count()
+void GScr_LINQ_Count()
 {
 	if (Plugin_Scr_GetNumParam() != 2)
 	{
@@ -647,7 +647,7 @@ void LINQ_Count()
 	Plugin_Scr_AddInt(result);
 }
 
-void LINQ_Sum()
+void GScr_LINQ_Sum()
 {
 	if (Plugin_Scr_GetNumParam() != 1)
 	{
@@ -726,7 +726,7 @@ void LINQ_Sum()
 	Plugin_Scr_FreeArray(array);
 }
 
-void LINQ_Select()
+void GScr_LINQ_Select()
 {
 	if (Plugin_Scr_GetNumParam() != 2)
 	{
@@ -752,7 +752,7 @@ void LINQ_Select()
 	Plugin_Scr_FreeArray(array);
 }
 
-void LINQ_Range()
+void GScr_LINQ_Range()
 {
 	if (Plugin_Scr_GetNumParam() != 3)
 	{
@@ -778,7 +778,7 @@ void LINQ_Range()
 	Plugin_Scr_FreeArray(array);
 }
 
-void LINQ_Repeat()
+void GScr_LINQ_Repeat()
 {
 	if (Plugin_Scr_GetNumParam() != 2)
 	{

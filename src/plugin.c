@@ -9,35 +9,35 @@
 PCL int OnInit()
 {
     // utility.h
-    Plugin_ScrAddFunction("comPrintf", 	&ComPrintf);
-	Plugin_ScrAddFunction("getType", 	&GetType);
+    Plugin_ScrAddFunction("comPrintf", 	&GScr_ComPrintf);
+	Plugin_ScrAddFunction("getType", 	&GScr_GetType);
 
     // gsclinq.h
-	Plugin_ScrAddFunction("all", 		&LINQ_All);
-	Plugin_ScrAddFunction("where", 		&LINQ_Where);
-	Plugin_ScrAddFunction("any", 		&LINQ_Any);
-	Plugin_ScrAddFunction("min", 		&LINQ_Min);
-	Plugin_ScrAddFunction("max", 		&LINQ_Max);
-	Plugin_ScrAddFunction("last",		&LINQ_Last);
-	Plugin_ScrAddFunction("first", 		&LINQ_First);
-	Plugin_ScrAddFunction("cast", 		&LINQ_Cast);
-	Plugin_ScrAddFunction("oftype", 	&LINQ_OfType);
-	Plugin_ScrAddFunction("sort", 		&LINQ_Sort);
-	Plugin_ScrAddFunction("average", 	&LINQ_Average);
-	Plugin_ScrAddFunction("count", 		&LINQ_Count);
-	Plugin_ScrAddFunction("sum", 		&LINQ_Sum);
-	Plugin_ScrAddFunction("select", 	&LINQ_Select);
-	Plugin_ScrAddFunction("range", 		&LINQ_Range);
-	Plugin_ScrAddFunction("repeat", 	&LINQ_Repeat);
-	Plugin_ScrAddFunction("reverse", 	&LINQ_Reverse);
+	Plugin_ScrAddFunction("all", 		&GScr_LINQ_All);
+	Plugin_ScrAddFunction("where", 		&GScr_LINQ_Where);
+	Plugin_ScrAddFunction("any", 		&GScr_LINQ_Any);
+	Plugin_ScrAddFunction("min", 		&GScr_LINQ_Min);
+	Plugin_ScrAddFunction("max", 		&GScr_LINQ_Max);
+	Plugin_ScrAddFunction("last",		&GScr_LINQ_Last);
+	Plugin_ScrAddFunction("first", 		&GScr_LINQ_First);
+	Plugin_ScrAddFunction("cast", 		&GScr_LINQ_Cast);
+	Plugin_ScrAddFunction("oftype", 	&GScr_LINQ_OfType);
+	Plugin_ScrAddFunction("sort", 		&GScr_LINQ_Sort);
+	Plugin_ScrAddFunction("average", 	&GScr_LINQ_Average);
+	Plugin_ScrAddFunction("count", 		&GScr_LINQ_Count);
+	Plugin_ScrAddFunction("sum", 		&GScr_LINQ_Sum);
+	Plugin_ScrAddFunction("select", 	&GScr_LINQ_Select);
+	Plugin_ScrAddFunction("range", 		&GScr_LINQ_Range);
+	Plugin_ScrAddFunction("repeat", 	&GScr_LINQ_Repeat);
+	Plugin_ScrAddFunction("reverse", 	&GScr_LINQ_Reverse);
 
     // list.h
-    Plugin_ScrAddFunction("listnew", 	&LIST_new);
-	Plugin_ScrAddFunction("listadd", 	&LIST_add);
-	Plugin_ScrAddFunction("listremove", &LIST_remove);
-	Plugin_ScrAddFunction("listinsert", &LIST_insert);
-	Plugin_ScrAddFunction("listlength", &LIST_length);
-	Plugin_ScrAddFunction("listget", 	&LIST_get);
+    Plugin_ScrAddFunction("listnew", 	&GScr_LIST_new);
+	Plugin_ScrAddFunction("listadd", 	&GScr_LIST_add);
+	Plugin_ScrAddFunction("listremove", &GScr_LIST_remove);
+	Plugin_ScrAddFunction("listinsert", &GScr_LIST_insert);
+	Plugin_ScrAddFunction("listlength", &GScr_LIST_length);
+	Plugin_ScrAddFunction("listget", 	&GScr_LIST_get);
 
 	return 0;
 }
@@ -53,7 +53,7 @@ PCL void OnInfoRequest(pluginInfo_t *info)
 	// =====  OPTIONAL  FIELDS  =====
 	info->pluginVersion.major = 1;
 	info->pluginVersion.minor = 0;
-	strncpy(info->fullName, "GSC-Linq", sizeof(info->fullName));
+	strncpy(info->fullName, "gsclib", sizeof(info->fullName));
 	strncpy(info->shortDescription, "", sizeof(info->shortDescription));
 	strncpy(info->longDescription, "", sizeof(info->longDescription));
 }
