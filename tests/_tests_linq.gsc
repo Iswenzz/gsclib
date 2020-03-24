@@ -59,108 +59,108 @@ test()
     it_where();
     it_min();
     it_max();
-    // it_last();
-    // it_first();
-    // it_cast();
-    // it_oftype();
-    // it_sort();
-    // it_average();
-    // it_count();
-    // it_sum();
+    it_last();
+    it_first();
+    it_cast();
+    it_oftype();
+    it_sort();
+    it_average();
+    it_count();
+    it_sum();
     it_select();
-    // it_range();
-    // it_repeat();
-    // it_reverse();
+    it_range();
+    it_repeat();
+    it_reverse();
 }
 
 it_all()
 {
     comPrintF("\n<-------[All]------->\n");
-    printVariableWithType(all(level._tests_ints, level._tests_ints.size, ::testPredicate));
+    printVariableWithType(all(level._tests_ints, ::testPredicate));
     comPrintF();
-    printVariableWithType(all(level._tests_strings, level._tests_strings.size, ::testPredicateString));
+    printVariableWithType(all(level._tests_strings, ::testPredicateString));
     comPrintF();
-    printVariableWithType(all(level._tests_vectors, level._tests_vectors.size, ::testPredicateVector));
+    printVariableWithType(all(level._tests_vectors, ::testPredicateVector));
     comPrintF();
-    printVariableWithType(all(level._tests_structs, level._tests_structs.size, ::testPredicateStructString));
+    printVariableWithType(all(level._tests_structs, ::testPredicateStructString));
     comPrintF();
-    printVariableWithType(all(level._tests_arrays, level._tests_arrays.size, ::testPredicateArray));
+    printVariableWithType(all(level._tests_arrays, ::testPredicateArray));
     comPrintF();
-    printVariableWithType(all(level._tests_ents, level._tests_ents.size, ::testPredicateEnt));
+    printVariableWithType(all(level._tests_ents, ::testPredicateEnt));
 }
 
 it_any()
 {
     comPrintF("\n<-------[Any]------->\n");
-    printVariableWithType(any(level._tests_ints, level._tests_ints.size, ::testPredicate));
+    printVariableWithType(any(level._tests_ints, ::testPredicate));
     comPrintF();
-    printVariableWithType(any(level._tests_strings, level._tests_strings.size, ::testPredicateString));
+    printVariableWithType(any(level._tests_strings, ::testPredicateString));
     comPrintF();
-    printVariableWithType(any(level._tests_vectors, level._tests_vectors.size, ::testPredicateVector));
+    printVariableWithType(any(level._tests_vectors, ::testPredicateVector));
     comPrintF();
-    printVariableWithType(any(level._tests_structs, level._tests_structs.size, ::testPredicateStructString));
+    printVariableWithType(any(level._tests_structs, ::testPredicateStructString));
     comPrintF();
-    printVariableWithType(any(level._tests_arrays, level._tests_arrays.size, ::testPredicateArray));
+    printVariableWithType(any(level._tests_arrays, ::testPredicateArray));
 }
 
 it_where()
 {
     comPrintF("\n<-------[Where]------->\n");
-    printArrayWithType(where(level._tests_ints, level._tests_ints.size, ::testPredicate));
+    printArrayWithType(where(level._tests_ints, ::testPredicate));
     comPrintF();
-    printArrayWithType(where(level._tests_strings, level._tests_strings.size, ::testPredicateString));
+    printArrayWithType(where(level._tests_strings, ::testPredicateString));
     comPrintF();
-    printArrayWithType(where(level._tests_vectors, level._tests_vectors.size, ::testPredicateVector));
+    printArrayWithType(where(level._tests_vectors, ::testPredicateVector));
 }
 
 it_min()
 {
     comPrintF("\n<-------[Min]------->[\n");
-    printVariableWithType(min(level._tests_ints, level._tests_ints.size));
+    printVariableWithType(min(level._tests_ints));
     comPrintF();
-    printVariableWithType(min(level._tests_strings, level._tests_strings.size));
+    printVariableWithType(min(level._tests_strings));
     comPrintF();
-    printVariableWithType(min(level._tests_vectors, level._tests_vectors.size));
+    printVariableWithType(min(level._tests_vectors));
 }
 
 it_max()
 {
     comPrintF("\n<-------[Max]------->\n");
-    printVariableWithType(max(level._tests_ints, level._tests_ints.size));
+    printVariableWithType(max(level._tests_ints));
     comPrintF();
-    printVariableWithType(max(level._tests_strings, level._tests_strings.size));
+    printVariableWithType(max(level._tests_strings));
     comPrintF();
-    printVariableWithType(max(level._tests_vectors, level._tests_vectors.size));
+    printVariableWithType(max(level._tests_vectors));
 }
 
 it_last()
 {
     comPrintF("\n<-------[Last]------->\n");
-    printVariableWithType(last(level._tests_ints, level._tests_ints.size, ::testPredicate));
+    printVariableWithType(last(level._tests_ints, ::testPredicate));
     comPrintF();
-    printVariableWithType(last(level._tests_strings, level._tests_strings.size, ::testPredicateString));
+    printVariableWithType(last(level._tests_strings, ::testPredicateString));
     comPrintF();
-    printVariableWithType(last(level._tests_vectors, level._tests_vectors.size, ::testPredicateVector));
+    printVariableWithType(last(level._tests_vectors, ::testPredicateVector));
     comPrintF();
-    printVariableWithType(last(level._tests_structs, level._tests_structs.size, ::testPredicateStructString).name);
+    printVariableWithType(last(level._tests_structs, ::testPredicateStructString).name);
     comPrintF();
-    printVariableWithType(last(level._tests_arrays, level._tests_arrays.size, ::testPredicateArray)[0].name);
+    printVariableWithType(last(level._tests_arrays, ::testPredicateArray)[0].name);
     comPrintF();
-    printVariableWithType(last(level._tests_ents, level._tests_ents.size, ::testPredicateEnt).name);
+    printVariableWithType(last(level._tests_ents, ::testPredicateEnt).name);
 }
 
 it_first()
 {
     comPrintF("\n<-------[First]------->\n");
-    printVariableWithType(first(level._tests_ints, level._tests_ints.size, ::testPredicate));
+    printVariableWithType(first(level._tests_ints, ::testPredicate));
     comPrintF();
-    printVariableWithType(first(level._tests_strings, level._tests_strings.size, ::testPredicateString));
+    printVariableWithType(first(level._tests_strings, ::testPredicateString));
     comPrintF();
-    printVariableWithType(first(level._tests_vectors, level._tests_vectors.size, ::testPredicateVector));
+    printVariableWithType(first(level._tests_vectors, ::testPredicateVector));
     comPrintF();
-    printVariableWithType(first(level._tests_structs, level._tests_structs.size, ::testPredicateStructString).name);
+    printVariableWithType(first(level._tests_structs, ::testPredicateStructString).name);
     comPrintF();
-    printVariableWithType(first(level._tests_ents, level._tests_ents.size, ::testPredicateEnt).name);
+    printVariableWithType(first(level._tests_ents, ::testPredicateEnt).name);
 }
 
 it_cast()
@@ -173,11 +173,11 @@ it_cast()
     cast_arr[cast_arr.size] = 300.300;
     cast_arr[cast_arr.size] = (400, 400, 400);
 
-    printArrayWithType(cast(cast_arr, cast_arr.size, "string"));
+    printArrayWithType(cast(cast_arr, "string"));
     comPrintF();
-    printArrayWithType(cast(cast_arr, cast_arr.size, "int"));
+    printArrayWithType(cast(cast_arr, "int"));
     comPrintF();
-    printArrayWithType(cast(cast_arr, cast_arr.size, "float"));
+    printArrayWithType(cast(cast_arr, "float"));
 }
 
 it_oftype()
@@ -193,104 +193,104 @@ it_oftype()
     cast_arr[cast_arr.size] = level._tests_ints;
     cast_arr[cast_arr.size] = level._tests_ents[0];
 
-    printArrayWithType(ofType(cast_arr, cast_arr.size, "string"));
+    printArrayWithType(ofType(cast_arr, "string"));
     comPrintF();
-    printArrayWithType(ofType(cast_arr, cast_arr.size, "int"));
+    printArrayWithType(ofType(cast_arr, "int"));
     comPrintF();
-    printArrayWithType(ofType(cast_arr, cast_arr.size, "float"));
+    printArrayWithType(ofType(cast_arr, "float"));
     comPrintF();
-    printArrayWithType(ofType(cast_arr, cast_arr.size, "vector"));
+    printArrayWithType(ofType(cast_arr, "vector"));
     comPrintF();
-    printVariableWithType(ofType(cast_arr, cast_arr.size, "struct")[0].name);
+    printVariableWithType(ofType(cast_arr, "struct")[0].name);
     comPrintF();
-    printArrayWithType(ofType(cast_arr, cast_arr.size, "array")[0]);
+    printArrayWithType(ofType(cast_arr, "array")[0]);
     comPrintF();
-    printVariableWithType(ofType(cast_arr, cast_arr.size, "ent")[0].name);
+    printVariableWithType(ofType(cast_arr, "ent")[0].name);
 }
 
 it_sort()
 {
     comPrintF("\n<-------[Sort]------->\n");
-    printArrayWithType(sort(level._tests_ints, level._tests_ints.size));
+    printArrayWithType(sort(level._tests_ints));
     comPrintF();
-    printArrayWithType(sort(level._tests_floats, level._tests_floats.size));
+    printArrayWithType(sort(level._tests_floats));
     comPrintF();
-    printArrayWithType(sort(level._tests_strings, level._tests_strings.size));
+    printArrayWithType(sort(level._tests_strings));
     comPrintF();
-    printArrayWithType(sort(level._tests_vectors, level._tests_vectors.size));
+    printArrayWithType(sort(level._tests_vectors));
 }
 
 it_average()
 {
     comPrintF("\n<-------[Average]------->\n");
-    printVariableWithType(average(level._tests_ints, level._tests_ints.size));
+    printVariableWithType(average(level._tests_ints));
     comPrintF();
-    printVariableWithType(average(level._tests_vectors, level._tests_vectors.size));
+    printVariableWithType(average(level._tests_vectors));
 }
 
 it_count()
 {
     comPrintF("\n<-------[Count]------->\n");
-    printVariableWithType(count(level._tests_ints, level._tests_ints.size, ::testPredicate));
+    printVariableWithType(count(level._tests_ints, ::testPredicate));
     comPrintF();
-    printVariableWithType(count(level._tests_floats, level._tests_floats.size, ::testPredicate));
+    printVariableWithType(count(level._tests_floats, ::testPredicate));
     comPrintF();
-    printVariableWithType(count(level._tests_strings, level._tests_strings.size, ::testPredicateString));
+    printVariableWithType(count(level._tests_strings, ::testPredicateString));
     comPrintF();
-    printVariableWithType(count(level._tests_vectors, level._tests_vectors.size, ::testPredicateVector));
+    printVariableWithType(count(level._tests_vectors, ::testPredicateVector));
     comPrintF();
-    printVariableWithType(count(level._tests_structs, level._tests_structs.size, ::testPredicateStructString));
+    printVariableWithType(count(level._tests_structs, ::testPredicateStructString));
     comPrintF();
-    printVariableWithType(count(level._tests_arrays, level._tests_arrays.size, ::testPredicateArray));
+    printVariableWithType(count(level._tests_arrays, ::testPredicateArray));
 }
 
 it_sum()
 {
     comPrintF("\n<-------[Sum]------->\n");
-    printVariableWithType(sum(level._tests_ints, level._tests_ints.size));
+    printVariableWithType(sum(level._tests_ints));
     comPrintF();
-    printVariableWithType(sum(level._tests_floats, level._tests_floats.size));
+    printVariableWithType(sum(level._tests_floats));
     comPrintF();
-    printVariableWithType(sum(level._tests_strings, level._tests_strings.size));
+    printVariableWithType(sum(level._tests_strings));
     comPrintF();
-    printVariableWithType(sum(level._tests_vectors, level._tests_vectors.size));
+    printVariableWithType(sum(level._tests_vectors));
 }
 
 it_select()
 {
     comPrintF("\n<-------[Select]------->\n");
 
-    printArrayWithType(select(level._tests_structs, level._tests_structs.size, ::testDelegateStructString));
+    printArrayWithType(select(level._tests_structs, ::testDelegateStructString));
     comPrintF();
-    printArrayWithType(select(level._tests_structs, level._tests_structs.size, ::testDelegateStructInt));
+    printArrayWithType(select(level._tests_structs, ::testDelegateStructInt));
 }
 
 it_range()
 {
     comPrintF("\n<-------[Range]------->\n");
-    printArrayWithType(range(level._tests_ints, level._tests_ints.size, 0, 2));
+    printArrayWithType(range(level._tests_ints, 0, 2));
     comPrintF();
-    printArrayWithType(range(level._tests_strings, level._tests_strings.size, 0, 2));
+    printArrayWithType(range(level._tests_strings, 0, 2));
     comPrintF();
-    printArrayWithType(range(level._tests_vectors, level._tests_vectors.size, 0, 2));
+    printArrayWithType(range(level._tests_vectors, 0, 2));
 }
 
 it_repeat()
 {
     comPrintF("\n<-------[Repeat]------->\n");
-    printArrayWithType(repeat(level._tests_ints, level._tests_ints.size, 2));
+    printArrayWithType(repeat(level._tests_ints, 2));
     comPrintF();
-    printArrayWithType(repeat(level._tests_strings, level._tests_strings.size, 2));
+    printArrayWithType(repeat(level._tests_strings, 2));
     comPrintF();
-    printArrayWithType(repeat(level._tests_vectors, level._tests_vectors.size, 2));
+    printArrayWithType(repeat(level._tests_vectors, 2));
 }
 
 it_reverse()
 {
     comPrintF("\n<-------[Reverse]------->\n");
-    printArrayWithType(reverse(level._tests_ints, level._tests_ints.size));
+    printArrayWithType(reverse(level._tests_ints));
     comPrintF();
-    printArrayWithType(reverse(level._tests_strings, level._tests_strings.size));
+    printArrayWithType(reverse(level._tests_strings));
     comPrintF();
-    printArrayWithType(reverse(level._tests_vectors, level._tests_vectors.size));
+    printArrayWithType(reverse(level._tests_vectors));
 }

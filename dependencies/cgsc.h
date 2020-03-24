@@ -112,14 +112,6 @@ union VariableUnion
 	unsigned int entityOffset;
 };
 
-union VariableThreadReturnUnion
-{
-	int intValue;
-	float floatValue;
-	char *stringValue;
-	float *vectorValue;
-};
-
 typedef struct
 {
 	union VariableUnion u;
@@ -128,10 +120,9 @@ typedef struct
 
 typedef struct
 {
-	uint16_t type;
-	uint16_t padding;
-	union VariableThreadReturnUnion u;
-} VariableThreadReturn;
+    uint32_t length;
+    VariableValue **items;
+} VariableValueArray;
 
 __attribute__((unused)) static int __callArgNumber = 0;
 
@@ -145,9 +136,10 @@ __attribute__((unused)) static int __callArgNumber = 0;
 #define FUNC(val) Plugin_Scr_SetParamFunc(__callArgNumber, val)
 #define UNDEFINED() Plugin_Scr_SetParamUndefined(__callArgNumber)
 
-void Plugin_Scr_FreeArray(VariableValue **array, int length);
+uint32_t Plugin_GetFlagsFromGSCArray(VariableValueArray *array);
+void Plugin_Scr_FreeArray(VariableValueArray *array);
+VariableValueArray *Plugin_Scr_GetArray(unsigned int paramnum);
 unsigned int Plugin_Scr_GetObjectType(unsigned int id);
-VariableValue **Plugin_Scr_GetArray(unsigned int paramnum);
 VariableValue *Plugin_Scr_AllocVariable(VariableValue *varRef);
 VariableValue *Plugin_Scr_SelectParamOrDefault(unsigned int paramnum);
 VariableValue *Plugin_Scr_SelectParam(unsigned int paramnum);
@@ -171,4 +163,3 @@ void Plugin_Scr_AddVariable(VariableValue *var);
 void Plugin_Scr_DebugVariable(VariableValue *var);
 void Plugin_Scr_CallFunction(void (*function)(void), ...);
 void Plugin_Scr_CallMethod(void (*function)(Plugin_Scr_entref_t), Plugin_Scr_entref_t ent, ...);
-uint32_t Plugin_GetFlagsFromGSCArray(VariableValue **array, int array_size);
