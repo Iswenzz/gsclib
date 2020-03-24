@@ -122,7 +122,7 @@ void LINQ_Min()
 	}
 	VariableValue **array = Plugin_Scr_GetArray(0);
 	const uint32_t length = Plugin_Scr_GetInt(1);
-	uint32_t flags = GetFlagsFromGSCArray(array, length);
+	uint32_t flags = Plugin_GetFlagsFromGSCArray(array, length);
 
 	if (HasFlag(flags, FLAG_STRING) || HasFlag(flags, FLAG_ISTRING))
 	{
@@ -231,7 +231,7 @@ void LINQ_Max()
 	}
 	VariableValue **array = Plugin_Scr_GetArray(0);
 	const uint32_t length = Plugin_Scr_GetInt(1);
-	uint32_t flags = GetFlagsFromGSCArray(array, length);
+	uint32_t flags = Plugin_GetFlagsFromGSCArray(array, length);
 
 	if (HasFlag(flags, FLAG_STRING) || HasFlag(flags, FLAG_ISTRING))
 	{
@@ -558,7 +558,7 @@ void LINQ_Sort()
 	}
 	VariableValue **array = Plugin_Scr_GetArray(0);
 	const uint32_t length = Plugin_Scr_GetInt(1);
-	uint32_t flags = GetFlagsFromGSCArray(array, length);
+	uint32_t flags = Plugin_GetFlagsFromGSCArray(array, length);
 
 	if (IsFlag(flags, FLAG_FLOAT) || IsFlag(flags, FLAG_INTEGER) || IsFlag(flags, FLAG_STRING)
 		|| IsFlag(flags, FLAG_ISTRING) || IsFlag(flags, FLAG_VECTOR))
@@ -595,7 +595,7 @@ void LINQ_Average()
 	VariableValue **array = Plugin_Scr_GetArray(0);
 	const uint32_t length = Plugin_Scr_GetInt(1);
 	int count = 0;
-	const uint32_t flags = GetFlagsFromGSCArray(array, length);
+	const uint32_t flags = Plugin_GetFlagsFromGSCArray(array, length);
 
 	if (IsFlag(flags, FLAG_VECTOR))
 	{
@@ -669,7 +669,7 @@ void LINQ_Sum()
 	}
 	VariableValue **array = Plugin_Scr_GetArray(0);
 	const uint32_t length = Plugin_Scr_GetInt(1);
-	uint32_t flags = GetFlagsFromGSCArray(array, length);
+	uint32_t flags = Plugin_GetFlagsFromGSCArray(array, length);
 
 	if (HasFlag(flags, FLAG_STRING) || HasFlag(flags, FLAG_ISTRING))
 	{
@@ -757,10 +757,7 @@ void LINQ_Select()
 		// Call delegate(item)
 		Plugin_Scr_AddVariable(array[i]);
 		const short tid = Plugin_Scr_ExecThreadResult(threadId, 1);
-		VariableValue *returnRef = Plugin_Scr_GetTop(-1);
-		VariableValue *var = Plugin_Scr_AllocVariable(returnRef);
-		// clean unused returnRef
-		returnRef->type = 0;
+		VariableValue *var = Plugin_Scr_AllocReturnResult();
 		
 		Plugin_Scr_AddVariable(var);
 		Plugin_Scr_AddArray();

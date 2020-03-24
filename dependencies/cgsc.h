@@ -90,7 +90,6 @@ enum GSCTypeFlag
 	FLAG_ENDON_LIST = 134217728
 };
 
-
 struct VariableStackBuffer
 {
 	const char *pos;
@@ -164,6 +163,7 @@ qboolean Plugin_Scr_SetParamVector(unsigned int paramnum, const float *value);
 qboolean Plugin_Scr_SetParamUndefined(unsigned int paramnum);
 VariableValue *Plugin_Scr_GetTop(unsigned int paramnum);
 short Plugin_Scr_ExecThreadResult( int callbackHook, unsigned int numArgs);
+VariableValue *Plugin_Scr_AllocReturnResult();
 int Plugin_Scr_GetFunc(unsigned int paramnum);
 void Plugin_Scr_AddFunc(const char *codePosValue);
 void Plugin_Scr_AddObjectStruct(VariableValue *var);
@@ -171,3 +171,4 @@ void Plugin_Scr_AddVariable(VariableValue *var);
 void Plugin_Scr_DebugVariable(VariableValue *var);
 void Plugin_Scr_CallFunction(void (*function)(void), ...);
 void Plugin_Scr_CallMethod(void (*function)(Plugin_Scr_entref_t), Plugin_Scr_entref_t ent, ...);
+uint32_t Plugin_GetFlagsFromGSCArray(VariableValue **array, int array_size);

@@ -54,11 +54,11 @@ test()
     // ent array
     level._tests_ents = getEntArray("player", "classname");
 
-    // it_all();
-    // it_any();
-    // it_where();
-    // it_min();
-    // it_max();
+    it_all();
+    it_any();
+    it_where();
+    it_min();
+    it_max();
     // it_last();
     // it_first();
     // it_cast();
