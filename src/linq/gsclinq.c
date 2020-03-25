@@ -659,34 +659,53 @@ void GScr_LINQ_Sum()
 
 	if (HasFlag(flags, FLAG_STRING) || HasFlag(flags, FLAG_ISTRING))
 	{
-		uint32_t bufferSize = 1;
-		char *buffer = (char *)malloc(sizeof(char));
-		char *p = buffer;
+		unsigned int bufferSize = 1;
+		char* buffer = (char*)malloc(sizeof(char));
 		for (int i = 0; i < array->length; i++)
 		{
 			switch (array->items[i]->type)
 			{
-				case VAR_INTEGER:
-					bufferSize += snprintf(NULL, 0, "%d", array->items[i]->u.intValue); 
-					realloc(buffer, bufferSize * sizeof(char));
-					p += snprintf(p, bufferSize, "%d", array->items[i]->u.intValue);
-					break;
-				case VAR_FLOAT:
-					bufferSize += snprintf(NULL, 0, "%f", array->items[i]->u.floatValue); 
-					realloc(buffer, bufferSize * sizeof(char));
-					p += snprintf(p, bufferSize, "%f", array->items[i]->u.floatValue);
-					break;
-				case VAR_STRING:
-				case VAR_ISTRING:
+				case 6:
 				{
-					const char *gsc_str = Plugin_SL_ConvertToString(array->items[i]->u.stringValue);
-					bufferSize += snprintf(NULL, 0, "%s", gsc_str); 
-					realloc(buffer, bufferSize * sizeof(char));
-					p += snprintf(p, bufferSize, "%s", gsc_str);
-					break;
+					int strSize = snprintf(NULL, 0, "%d", array->items[i]->u.intValue);
+					bufferSize += strSize;
+					char* temp = (char*)realloc(buffer, bufferSize * sizeof(char));
+					if (temp != NULL)
+					{
+						buffer = temp;
+						snprintf(buffer + bufferSize - strSize - 1, bufferSize, "%d", array->items[i]->u.intValue);
+					}
 				}
+				break;
+				case 5:
+				{
+					int strSize = snprintf(NULL, 0, "%f", array->items[i]->u.floatValue);
+					bufferSize += strSize;
+					char* temp = (char*)realloc(buffer, bufferSize * sizeof(char));
+					if (temp != NULL)
+					{
+						buffer = temp;
+						snprintf(buffer + bufferSize - strSize - 1, bufferSize, "%f", array->items[i]->u.floatValue);
+					}
+				}
+				break;
+				case 2:
+				case 3:
+				{
+					const char* gsc_str = Plugin_SL_ConvertToString(array->items[i]->u.stringValue);
+					int strSize = snprintf(NULL, 0, "%s", gsc_str);
+					bufferSize += strSize;
+					char* temp = (char*)realloc(buffer, bufferSize * sizeof(char));
+					if (temp != NULL)
+					{
+						buffer = temp;
+						snprintf(buffer + bufferSize - strSize - 1, bufferSize, "%s", gsc_str);
+					}
+				}
+				break;
 			}
 		}
+		buffer[bufferSize - 1] = '\0';
 		Plugin_Scr_AddString(buffer);
 		free(buffer);
 	}
