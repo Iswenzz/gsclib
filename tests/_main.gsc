@@ -12,7 +12,7 @@ runTests()
 
     comPrintf("\n|-------------------[gsclib tests]-------------------|\n");
     lib\gsclib\_tests_linq::test();
-    lib\gsclib\_tests_collections::test();
+    lib\gsclib\_tests_utility::test();
     comPrintf("\n|----------------------------------------------------|\n");
 }
 

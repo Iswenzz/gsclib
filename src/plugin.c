@@ -1,5 +1,4 @@
 #include "linq/gsclinq.h"
-#include "collections/list.h"
 #include "utility/utility.h"
 
 #ifndef PLUGIN_INCLUDES
@@ -30,14 +29,6 @@ PCL int OnInit()
 	Plugin_ScrAddFunction("range", 		&GScr_LINQ_Range);
 	Plugin_ScrAddFunction("repeat", 	&GScr_LINQ_Repeat);
 	Plugin_ScrAddFunction("reverse", 	&GScr_LINQ_Reverse);
-
-    // list.h
-    Plugin_ScrAddFunction("listnew", 	&GScr_LIST_new);
-	Plugin_ScrAddFunction("listadd", 	&GScr_LIST_add);
-	Plugin_ScrAddFunction("listremove", &GScr_LIST_remove);
-	Plugin_ScrAddFunction("listinsert", &GScr_LIST_insert);
-	Plugin_ScrAddFunction("listlength", &GScr_LIST_length);
-	Plugin_ScrAddFunction("listget", 	&GScr_LIST_get);
 
 	return 0;
 }

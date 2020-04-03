@@ -705,7 +705,6 @@ void GScr_LINQ_Sum()
 				break;
 			}
 		}
-		buffer[bufferSize - 1] = '\0';
 		Plugin_Scr_AddString(buffer);
 		free(buffer);
 	}
