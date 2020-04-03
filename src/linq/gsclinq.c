@@ -399,8 +399,8 @@ void GScr_LINQ_Cast()
 				case VAR_FLOAT:
 				{
 					int cpyBufferSize = snprintf(NULL, 0, "%f", array->items[i]->u.floatValue);
-					char buffer[cpyBufferSize];
-					snprintf(buffer, cpyBufferSize, "%f", array->items[i]->u.floatValue);
+					char buffer[cpyBufferSize + 1];
+					snprintf(buffer, cpyBufferSize + 1, "%f", array->items[i]->u.floatValue);
 					Plugin_Scr_AddString(buffer);
 					Plugin_Scr_AddArray();
 					break;
@@ -408,8 +408,8 @@ void GScr_LINQ_Cast()
 				case VAR_INTEGER:
 				{
 					int cpyBufferSize = snprintf(NULL, 0, "%d", array->items[i]->u.intValue);
-					char buffer[cpyBufferSize];
-					snprintf(buffer, cpyBufferSize, "%d", array->items[i]->u.intValue);
+					char buffer[cpyBufferSize + 1];
+					snprintf(buffer, cpyBufferSize + 1, "%d", array->items[i]->u.intValue);
 					Plugin_Scr_AddString(buffer);
 					Plugin_Scr_AddArray();
 					break;
@@ -424,8 +424,8 @@ void GScr_LINQ_Cast()
 				{
 					int cpyBufferSize = snprintf(NULL, 0, "(%f, %f, %f)", array->items[i]->u.vectorValue[0],
 						array->items[i]->u.vectorValue[1], array->items[i]->u.vectorValue[2]);
-					char buffer[cpyBufferSize];
-					snprintf(buffer, cpyBufferSize, "(%f, %f, %f)", array->items[i]->u.vectorValue[0],
+					char buffer[cpyBufferSize + 1];
+					snprintf(buffer, cpyBufferSize + 1, "(%f, %f, %f)", array->items[i]->u.vectorValue[0],
 						array->items[i]->u.vectorValue[1], array->items[i]->u.vectorValue[2]);
 					Plugin_Scr_AddString(buffer);
 					Plugin_Scr_AddArray();
