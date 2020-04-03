@@ -3,19 +3,164 @@
 #include <stdlib.h>
 #include <math.h>
 
+void GScr_ToInt()
+{
+	if (Plugin_Scr_GetNumParam() != 1)
+	{
+		Plugin_Scr_Error("Usage: ToInt(<type>)");
+		return;
+	}
+	VariableValue *var = Plugin_Scr_SelectParam(0);
+	switch (var->type)
+	{
+		case VAR_ISTRING:
+		case VAR_STRING:
+		{
+			const char *nptr = Plugin_SL_ConvertToString(var->u.stringValue);
+			char *endptr = NULL;
+			long number = strtol(nptr, &endptr, 10);
+
+			if (*endptr == '\0')
+				Plugin_Scr_AddInt((int)number);
+			break;
+		}
+		
+		case VAR_VECTOR:
+			Plugin_Scr_AddInt((int)(var->u.vectorValue[0] + var->u.vectorValue[1] + var->u.vectorValue[2]));
+			break;
+		case VAR_INTEGER:
+			Plugin_Scr_AddInt(var->u.intValue);
+			break;
+		case VAR_FLOAT:
+			Plugin_Scr_AddInt((int)var->u.floatValue);
+			break;
+		default:
+			Plugin_Scr_AddUndefined();
+	}
+}
+
+void GScr_ToFloat()
+{
+	if (Plugin_Scr_GetNumParam() != 1)
+	{
+		Plugin_Scr_Error("Usage: ToFloat(<type>)");
+		return;
+	}
+	VariableValue *var = Plugin_Scr_SelectParam(0);
+	switch (var->type)
+	{
+		case VAR_ISTRING:
+		case VAR_STRING:
+		{
+			const char *nptr = Plugin_SL_ConvertToString(var->u.stringValue);
+			char *endptr = NULL;
+			float number = strtof(nptr, &endptr);
+
+			if (*endptr == '\0')
+				Plugin_Scr_AddFloat(number);
+			break;
+		}
+		
+		case VAR_VECTOR:
+			Plugin_Scr_AddFloat(var->u.vectorValue[0] + var->u.vectorValue[1] + var->u.vectorValue[2]);
+			break;
+		case VAR_INTEGER:
+			Plugin_Scr_AddFloat((float)var->u.intValue);
+			break;
+		case VAR_FLOAT:
+			Plugin_Scr_AddFloat(var->u.floatValue);
+			break;
+		default:
+			Plugin_Scr_AddUndefined();
+	}
+}
+
+void GScr_ToString()
+{
+	if (Plugin_Scr_GetNumParam() != 1)
+	{
+		Plugin_Scr_Error("Usage: ToString(<type>)");
+		return;
+	}
+	VariableValue *var = Plugin_Scr_SelectParam(0);
+	switch (var->type)
+	{
+		case VAR_ISTRING:
+		case VAR_STRING:
+			Plugin_Scr_AddString(Plugin_SL_ConvertToString(var->u.stringValue));
+			break;
+		
+		case VAR_VECTOR:
+		{
+			int cpyBufferSize = snprintf(NULL, 0, "(%f, %f, %f)", var->u.vectorValue[0],
+				var->u.vectorValue[1], var->u.vectorValue[2]);
+			char buffer[cpyBufferSize + 1];
+			snprintf(buffer, cpyBufferSize + 1, "(%f, %f, %f)", var->u.vectorValue[0],
+				var->u.vectorValue[1], var->u.vectorValue[2]);
+			Plugin_Scr_AddString(buffer);
+			break;
+		}
+		case VAR_INTEGER:
+		{
+			int cpyBufferSize = snprintf(NULL, 0, "%d", var->u.intValue);
+			char buffer[cpyBufferSize + 1];
+			snprintf(buffer, cpyBufferSize + 1, "%d", var->u.intValue);
+			Plugin_Scr_AddString(buffer);
+			break;
+		}
+		case VAR_FLOAT:
+		{
+			int cpyBufferSize = snprintf(NULL, 0, "%f", var->u.floatValue);
+			char buffer[cpyBufferSize + 1];
+			snprintf(buffer, cpyBufferSize + 1, "%f", var->u.floatValue);
+			Plugin_Scr_AddString(buffer);
+			break;
+		}
+		default:
+			Plugin_Scr_AddUndefined();
+	}
+}
+
+void GScr_Ternary()
+{
+	if (Plugin_Scr_GetNumParam() != 3)
+	{
+		Plugin_Scr_Error("Usage: Ternary(<condition>, <var if true>, <var if false>)");
+		return;
+	}
+	qboolean condition = Plugin_Scr_GetInt(0);
+	VariableValue *a = Plugin_Scr_SelectParam(1);
+	VariableValue *b = Plugin_Scr_SelectParam(2);
+	Plugin_Scr_AddVariable(condition ? a : b);
+}
+
+void GScr_IfUndef()
+{
+	if (Plugin_Scr_GetNumParam() != 2)
+	{
+		Plugin_Scr_Error("Usage: IfUndef(<var>, <default if undef>)");
+		return;
+	}
+	VariableValue *a = Plugin_Scr_SelectParam(0);
+	VariableValue *b = Plugin_Scr_SelectParam(1);
+	Plugin_Scr_AddVariable(a->type == VAR_UNDEFINED ? b : a);
+}
+
 void GScr_ComPrintf()
 {
 	if (!Plugin_Scr_GetNumParam())
 		Plugin_Printf("\n");
+	else if (Plugin_Scr_GetNumParam() == 1)
+		Plugin_Printf(Plugin_Scr_GetString(0));
 	else
-		Plugin_Printf(Plugin_Scr_GetString(0)); 
+		Plugin_Scr_Error("Usage: ComPrintf(<message>)");
 }
 
 void GScr_GetType()
 {
 	if (Plugin_Scr_GetNumParam() != 1)
 	{
-		Plugin_Scr_Error("Usage: getType(<var>)");
+		Plugin_Scr_Error("Usage: GetType(<var>)");
 		return;
 	}
 	VariableValue *var = Plugin_Scr_SelectParam(0);

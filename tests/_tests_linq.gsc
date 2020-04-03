@@ -115,7 +115,7 @@ it_where()
 
 it_min()
 {
-    comPrintF("\n<-------[Min]------->[\n");
+    comPrintF("\n<-------[Min]------->\n");
     printVariableWithType(min(level._tests_ints));
     comPrintF();
     printVariableWithType(min(level._tests_strings));

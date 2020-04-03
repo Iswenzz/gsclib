@@ -8,8 +8,13 @@
 PCL int OnInit()
 {
     // utility.h
-    Plugin_ScrAddFunction("comPrintf", 	&GScr_ComPrintf);
-	Plugin_ScrAddFunction("getType", 	&GScr_GetType);
+    Plugin_ScrAddFunction("comprintf", 	&GScr_ComPrintf);
+	Plugin_ScrAddFunction("gettype", 	&GScr_GetType);
+	Plugin_ScrAddFunction("ternary", 	&GScr_Ternary);
+	Plugin_ScrAddFunction("ifundef", 	&GScr_IfUndef);
+	Plugin_ScrAddFunction("tostring", 	&GScr_ToString);
+	Plugin_ScrAddFunction("toint", 		&GScr_ToInt);
+	Plugin_ScrAddFunction("tofloat", 	&GScr_ToFloat);
 
     // gsclinq.h
 	Plugin_ScrAddFunction("all", 		&GScr_LINQ_All);

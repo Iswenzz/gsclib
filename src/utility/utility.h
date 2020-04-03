@@ -2,7 +2,14 @@
 #include "../../dependencies/cgsc.h"
 
 void GScr_ComPrintf();
+
 void GScr_GetType();
+void GScr_Ternary();
+void GScr_IfUndef();
+
+void GScr_ToString();
+void GScr_ToFloat();
+void GScr_ToInt();
 
 qboolean HasFlag(int var, int flag);
 qboolean IsFlag(int var, int flag);
