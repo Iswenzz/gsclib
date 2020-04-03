@@ -7,7 +7,7 @@ void GScr_LINQ_All()
 {
 	if (Plugin_Scr_GetNumParam() != 2)
 	{
-		Plugin_Scr_Error("Usage: all(<array>, <::predicate>)");
+		Plugin_Scr_Error("Usage: All(<array>, <::predicate>)");
 		return;
 	}
 	VariableValueArray *array = Plugin_Scr_GetArray(0);
@@ -37,7 +37,7 @@ void GScr_LINQ_Reverse()
 {
 	if (Plugin_Scr_GetNumParam() != 1)
 	{
-		Plugin_Scr_Error("Usage: reverse(<array>)");
+		Plugin_Scr_Error("Usage: Reverse(<array>)");
 		return;
 	}
 	VariableValueArray *array = Plugin_Scr_GetArray(0);
@@ -55,7 +55,7 @@ void GScr_LINQ_Any()
 {
 	if (Plugin_Scr_GetNumParam() != 2)
 	{
-		Plugin_Scr_Error("Usage: any(<array>, <::predicate>)");
+		Plugin_Scr_Error("Usage: Any(<array>, <::predicate>)");
 		return;
 	}
 	VariableValueArray *array = Plugin_Scr_GetArray(0);
@@ -85,7 +85,7 @@ void GScr_LINQ_Where()
 {
 	if (Plugin_Scr_GetNumParam() != 2)
 	{
-		Plugin_Scr_Error("Usage: where(<array>, <::predicate>)");
+		Plugin_Scr_Error("Usage: Where(<array>, <::predicate>)");
 		return;
 	}
 	VariableValueArray *array = Plugin_Scr_GetArray(0);
@@ -113,7 +113,7 @@ void GScr_LINQ_Min()
 {
 	if (Plugin_Scr_GetNumParam() != 1)
 	{
-		Plugin_Scr_Error("Usage: min(<array>)");
+		Plugin_Scr_Error("Usage: Min(<array>)");
 		return;
 	}
 	VariableValueArray *array = Plugin_Scr_GetArray(0);
@@ -137,12 +137,14 @@ void GScr_LINQ_Min()
 			else 
 			{
 				strLength = strlen(Plugin_SL_ConvertToString(array->items[i]->u.stringValue));
-				hasValue = true;
+				hasValue = qtrue;
 				index = i;
 			}
 		}
 		if (hasValue)
 			Plugin_Scr_AddString(Plugin_SL_ConvertToString(array->items[index]->u.stringValue));
+		else
+			Plugin_Scr_AddUndefined();
 	}
 	else if (HasFlag(flags, FLAG_VECTOR))
 	{
@@ -163,12 +165,14 @@ void GScr_LINQ_Min()
 			else 
 			{
 				distance = vec_distance((float *)array->items[i]->u.vectorValue, zero);
-				hasValue = true;
+				hasValue = qtrue;
 				index = i;
 			}
 		}
 		if (hasValue)
 			Plugin_Scr_AddVector((float *)array->items[index]->u.vectorValue);
+		else
+			Plugin_Scr_AddUndefined();
 	}
 	else if (HasFlag(flags, FLAG_INTEGER) || HasFlag(flags, FLAG_FLOAT))
 	{
@@ -186,7 +190,7 @@ void GScr_LINQ_Min()
 				else 
 				{
 					value = array->items[i]->u.intValue;
-					hasValue = true;
+					hasValue = qtrue;
 				}
 			}
 			else if (array->items[i]->type == VAR_FLOAT)
@@ -199,7 +203,7 @@ void GScr_LINQ_Min()
 				else 
 				{
 					value = array->items[i]->u.floatValue;
-					hasValue = true;
+					hasValue = qtrue;
 				}
 			}
 		}
@@ -210,6 +214,8 @@ void GScr_LINQ_Min()
 			else
 				Plugin_Scr_AddFloat(value);
 		}
+		else
+			Plugin_Scr_AddUndefined();
 	}
 	else
 		Plugin_Scr_AddUndefined();
@@ -221,7 +227,7 @@ void GScr_LINQ_Max()
 {
 	if (Plugin_Scr_GetNumParam() != 1)
 	{
-		Plugin_Scr_Error("Usage: max(<array>)");
+		Plugin_Scr_Error("Usage: Max(<array>)");
 		return;
 	}
 	VariableValueArray *array = Plugin_Scr_GetArray(0);
@@ -245,7 +251,7 @@ void GScr_LINQ_Max()
 			else 
 			{
 				strLength = strlen(Plugin_SL_ConvertToString(array->items[i]->u.stringValue));
-				hasValue = true;
+				hasValue = qtrue;
 				index = i;
 			}
 		}
@@ -271,7 +277,7 @@ void GScr_LINQ_Max()
 			else 
 			{
 				distance = vec_distance((float *)array->items[i]->u.vectorValue, zero);
-				hasValue = true;
+				hasValue = qtrue;
 				index = i;
 			}
 		}
@@ -294,7 +300,7 @@ void GScr_LINQ_Max()
 				else 
 				{
 					value = array->items[i]->u.intValue;
-					hasValue = true;
+					hasValue = qtrue;
 				}
 			}
 			else if (array->items[i]->type == VAR_FLOAT)
@@ -307,7 +313,7 @@ void GScr_LINQ_Max()
 				else 
 				{
 					value = array->items[i]->u.floatValue;
-					hasValue = true;
+					hasValue = qtrue;
 				}
 			}
 		}
@@ -329,7 +335,7 @@ void GScr_LINQ_Last()
 {
 	if (Plugin_Scr_GetNumParam() != 2)
 	{
-		Plugin_Scr_Error("Usage: last(<array>, <::predicate>)");
+		Plugin_Scr_Error("Usage: Last(<array>, <::predicate>)");
 		return;
 	}
 	VariableValueArray *array = Plugin_Scr_GetArray(0);
@@ -355,7 +361,7 @@ void GScr_LINQ_First()
 {
 	if (Plugin_Scr_GetNumParam() != 2)
 	{
-		Plugin_Scr_Error("Usage: first(<array>, <::predicate>)");
+		Plugin_Scr_Error("Usage: First(<array>, <::predicate>)");
 		return;
 	}
 	VariableValueArray *array = Plugin_Scr_GetArray(0);
@@ -383,7 +389,7 @@ void GScr_LINQ_Cast()
 {
 	if (Plugin_Scr_GetNumParam() != 2)
 	{
-		Plugin_Scr_Error("Usage: cast(<array>, <type>)");
+		Plugin_Scr_Error("Usage: Cast(<array>, <type>)");
 		return;
 	}
 	VariableValueArray *array = Plugin_Scr_GetArray(0);
@@ -509,7 +515,7 @@ void GScr_LINQ_OfType()
 {
 	if (Plugin_Scr_GetNumParam() != 2)
 	{
-		Plugin_Scr_Error("Usage: ofType(<array>, <type>)");
+		Plugin_Scr_Error("Usage: OfType(<array>, <type>)");
 		return;
 	}
 	VariableValueArray *array = Plugin_Scr_GetArray(0);
@@ -543,7 +549,7 @@ void GScr_LINQ_Sort()
 {
 	if (Plugin_Scr_GetNumParam() != 1)
 	{
-		Plugin_Scr_Error("Usage: sort(<array>)");
+		Plugin_Scr_Error("Usage: Sort(<array>)");
 		return;
 	}
 	VariableValueArray *array = Plugin_Scr_GetArray(0);
@@ -578,7 +584,7 @@ void GScr_LINQ_Average()
 {
 	if (Plugin_Scr_GetNumParam() != 1)
 	{
-		Plugin_Scr_Error("Usage: average(<array>)");
+		Plugin_Scr_Error("Usage: Average(<array>)");
 		return;
 	}
 	VariableValueArray *array = Plugin_Scr_GetArray(0);
@@ -624,7 +630,7 @@ void GScr_LINQ_Count()
 {
 	if (Plugin_Scr_GetNumParam() != 2)
 	{
-		Plugin_Scr_Error("Usage: count(<array>, <::predicate>)");
+		Plugin_Scr_Error("Usage: Count(<array>, <::predicate>)");
 		return;
 	}
 	VariableValueArray *array = Plugin_Scr_GetArray(0);
@@ -651,7 +657,7 @@ void GScr_LINQ_Sum()
 {
 	if (Plugin_Scr_GetNumParam() != 1)
 	{
-		Plugin_Scr_Error("Usage: sum(<array>)");
+		Plugin_Scr_Error("Usage: Sum(<array>)");
 		return;
 	}
 	VariableValueArray *array = Plugin_Scr_GetArray(0);
@@ -748,7 +754,7 @@ void GScr_LINQ_Select()
 {
 	if (Plugin_Scr_GetNumParam() != 2)
 	{
-		Plugin_Scr_Error("Usage: select(<array>, <::delegate>)");
+		Plugin_Scr_Error("Usage: Select(<array>, <::delegate>)");
 		return;
 	}
 	VariableValueArray *array = Plugin_Scr_GetArray(0);
@@ -774,7 +780,7 @@ void GScr_LINQ_Range()
 {
 	if (Plugin_Scr_GetNumParam() != 3)
 	{
-		Plugin_Scr_Error("Usage: range(<array>, <min>, <max>)");
+		Plugin_Scr_Error("Usage: Range(<array>, <min>, <max>)");
 		return;
 	}
 	VariableValueArray *array = Plugin_Scr_GetArray(0);
@@ -783,7 +789,7 @@ void GScr_LINQ_Range()
 
 	if (min >= max || max < min)
 	{
-		Plugin_Scr_Error("range() - wrong min/max value");
+		Plugin_Scr_Error("Range() - wrong min/max value");
 		return;
 	}
 
@@ -800,7 +806,7 @@ void GScr_LINQ_Repeat()
 {
 	if (Plugin_Scr_GetNumParam() != 2)
 	{
-		Plugin_Scr_Error("Usage: repeat(<array>, <count>)");
+		Plugin_Scr_Error("Usage: Repeat(<array>, <count>)");
 		return;
 	}
 	VariableValueArray *array = Plugin_Scr_GetArray(0);
