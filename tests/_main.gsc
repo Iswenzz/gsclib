@@ -11,8 +11,8 @@ runTests()
     }
 
     comPrintf("\n|-------------------[gsclib tests]-------------------|\n");
-    lib\gsclib\_tests_linq::test();
-    lib\gsclib\_tests_utility::test();
+    // lib\gsclib\_tests_linq::test(false);
+    lib\gsclib\_tests_utility::test(false);
     comPrintf("\n|----------------------------------------------------|\n");
 }
 

@@ -1,7 +1,7 @@
 #include lib\gsclib\_main;
 
 // Tests for gsclib/linq
-test()
+test(loop)
 {
     comPrintF("\n[======{Linq}======]\n");
 
@@ -54,23 +54,30 @@ test()
     // ent array
     level._tests_ents = getEntArray("player", "classname");
 
-    it_all();
-    it_any();
-    it_where();
-    it_min();
-    it_max();
-    it_last();
-    it_first();
-    it_cast();
-    it_oftype();
-    it_sort();
-    it_average();
-    it_count();
-    it_sum();
-    it_select();
-    it_range();
-    it_repeat();
-    it_reverse();
+    while (true)
+    {
+        it_all();
+        it_any();
+        it_where();
+        it_min();
+        it_max();
+        it_last();
+        it_first();
+        it_cast();
+        it_oftype();
+        it_sort();
+        it_average();
+        it_count();
+        it_sum();
+        it_select();
+        it_range();
+        it_repeat();
+        it_reverse();
+
+        if (!loop)
+            break;
+        wait 0.05;
+    }
 }
 
 it_all()

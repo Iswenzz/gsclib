@@ -1,25 +1,30 @@
 #include lib\gsclib\_main;
 
 // Tests for gsclib/utility
-test()
+test(loop)
 {
     comPrintF("\n[======{Utility}======]\n");
 
-    it_GetType();
-    it_Ternary();
-    it_IfUndef();
-    it_IsNullOrEmpty();
-    it_ToUpper();
-    it_ToLower();
-    it_ToInt();
-    it_ToFloat();
-    it_ToString();
-    it_IsStrNumber();
-    it_IsStrVector();
-    it_IsStrAlpha();
-    it_IsStrFloat();
-    it_RegexMatch();
-    it_RegexSub();
+    while (true)
+    {
+        it_GetType();
+        it_Ternary();
+        it_IfUndef();
+        it_IsNullOrEmpty();
+        it_ToUpper();
+        it_ToInt();
+        it_ToFloat();
+        it_ToString();
+        it_IsStringInt();
+        it_IsStringAlpha();
+        it_IsStringFloat();
+        it_RegexMatch();
+        it_RegexSub();
+
+        if (!loop)
+            break;
+        wait 0.05;
+    }
 }
 
 it_GetType()
@@ -54,21 +59,20 @@ it_IfUndef()
 it_IsNullOrEmpty()
 {
     comPrintF("\n<-------[IsNullOrEmpty]------->\n");
+    a = undefined;
+    b = "";
+    c = "test";
+    printVariable(IsNullOrEmpty(a));
+    printVariable(IsNullOrEmpty(b));
+    printVariable(IsNullOrEmpty(c));
 }
 
 it_ToUpper()
 {
     comPrintF("\n<-------[ToUpper]------->\n");
-}
-
-it_ToLower()
-{
-    comPrintF("\n<-------[ToLower]------->\n");
-}
-
-it_ToTitle()
-{
-    comPrintF("\n<-------[ToTitle]------->\n");
+    printVariable(ToUpper("test"));
+    printVariable(ToUpper("test2"));
+    printVariable(ToUpper("test__test"));
 }
 
 it_ToInt()
@@ -95,24 +99,34 @@ it_ToString()
     printVariable(ToString((3.3, 3.3, 3.3)));
 }
 
-it_IsStrNumber()
+it_IsStringInt()
 {
-    comPrintF("\n<-------[IsStrNumber]------->\n");
+    comPrintF("\n<-------[IsStringInt]------->\n");
+    printVariable(IsStringInt("123"));
+    printVariable(IsStringInt("123__"));
+    printVariable(IsStringInt("123.123"));
+    printVariable(IsStringInt("ab123__"));
+    printVariable(IsStringInt("test"));
 }
 
-it_IsStrVector()
+it_IsStringAlpha()
 {
-    comPrintF("\n<-------[IsStrVector]------->\n");
+    comPrintF("\n<-------[IsStringAlpha]------->\n");
+    printVariable(IsStringAlpha("123"));
+    printVariable(IsStringAlpha("123__"));
+    printVariable(IsStringAlpha("123.123"));
+    printVariable(IsStringAlpha("ab123__"));
+    printVariable(IsStringAlpha("test"));
 }
 
-it_IsStrAlpha()
+it_IsStringFloat()
 {
-    comPrintF("\n<-------[IsStrAlpha]------->\n");
-}
-
-it_IsStrFloat()
-{
-    comPrintF("\n<-------[IsStrFloat]------->\n");
+    comPrintF("\n<-------[IsStringFloat]------->\n");
+    printVariable(IsStringFloat("123.123"));
+    printVariable(IsStringFloat("123.123__"));
+    printVariable(IsStringFloat("123"));
+    printVariable(IsStringFloat("ab123.123__"));
+    printVariable(IsStringFloat("test"));
 }
 
 it_RegexMatch()
