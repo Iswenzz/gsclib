@@ -1,5 +1,6 @@
 #include "linq/gsclinq.h"
 #include "utility/utility.h"
+#include "utility/regex.h"
 
 #ifndef PLUGIN_INCLUDES
 #include "../../pinc.h"
@@ -7,8 +8,13 @@
 
 PCL int OnInit()
 {
-    // utility.h
-    Plugin_ScrAddFunction("comprintf", 		&GScr_ComPrintf);
+	// regex.h
+	Plugin_ScrAddFunction("regexmatch", 	&GScr_RegexMatch);
+	Plugin_ScrAddFunction("regexsplit", 	&GScr_RegexSplit);
+	Plugin_ScrAddFunction("regexreplace", 	&GScr_RegexReplace);
+
+	// utility.h
+	Plugin_ScrAddFunction("comprintf", 		&GScr_ComPrintf);
 	Plugin_ScrAddFunction("gettype", 		&GScr_GetType);
 	Plugin_ScrAddFunction("ternary", 		&GScr_Ternary);
 	Plugin_ScrAddFunction("ifundef", 		&GScr_IfUndef);
@@ -21,7 +27,7 @@ PCL int OnInit()
 	Plugin_ScrAddFunction("isstringfloat", 	&GScr_IsStringFloat);
 	Plugin_ScrAddFunction("isstringint", 	&GScr_IsStringInt);
 
-    // gsclinq.h
+	// gsclinq.h
 	Plugin_ScrAddFunction("all", 			&GScr_LINQ_All);
 	Plugin_ScrAddFunction("where", 			&GScr_LINQ_Where);
 	Plugin_ScrAddFunction("any", 			&GScr_LINQ_Any);

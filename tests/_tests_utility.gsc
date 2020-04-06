@@ -19,7 +19,8 @@ test(loop)
         it_IsStringAlpha();
         it_IsStringFloat();
         it_RegexMatch();
-        it_RegexSub();
+        it_RegexReplace();
+        it_RegexSplit();
 
         if (!loop)
             break;
@@ -132,9 +133,17 @@ it_IsStringFloat()
 it_RegexMatch()
 {
     comPrintF("\n<-------[RegexMatch]------->\n");
+    printArray(RegexMatch("zzzz123affff12345ffffb", "\\d+"));
 }
 
-it_RegexSub()
+it_RegexSplit()
 {
-    comPrintF("\n<-------[RegexSub]------->\n");
+    comPrintF("\n<-------[RegexSplit]------->\n");
+    printArray(RegexSplit("zzzz123affff12345ffffb", "\\d+"));
+}
+
+it_RegexReplace()
+{
+    comPrintF("\n<-------[RegexReplace]------->\n");
+    printVariable(RegexReplace("zzzz123affff12345ffffb", "", "\\d+"));
 }

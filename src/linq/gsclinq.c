@@ -123,7 +123,7 @@ void GScr_LINQ_Min()
 	{
 		int index = 0;
 		int strLength = 0;
-        qboolean hasValue = qfalse;
+		qboolean hasValue = qfalse;
 		for (int i = 0; i < array->length; i++)
 		{
 			if (hasValue)
@@ -151,7 +151,7 @@ void GScr_LINQ_Min()
 		int index = 0;
 		vec3_t zero;
 		float distance = 0;
-        qboolean hasValue = qfalse;
+		qboolean hasValue = qfalse;
 		for (int i = 0; i < array->length; i++)
 		{
 			if (hasValue)
@@ -177,7 +177,7 @@ void GScr_LINQ_Min()
 	else if (HasFlag(flags, FLAG_INTEGER) || HasFlag(flags, FLAG_FLOAT))
 	{
 		float value = 0;
-        qboolean hasValue = qfalse;
+		qboolean hasValue = qfalse;
 		for (int i = 0; i < array->length; i++)
 		{
 			if (array->items[i]->type == VAR_INTEGER)
@@ -237,7 +237,7 @@ void GScr_LINQ_Max()
 	{
 		int index = 0;
 		int strLength = 0;
-        qboolean hasValue = qfalse;
+		qboolean hasValue = qfalse;
 		for (int i = 0; i < array->length; i++)
 		{
 			if (hasValue)
@@ -263,7 +263,7 @@ void GScr_LINQ_Max()
 		int index = 0;
 		vec3_t zero;
 		float distance = 0;
-        qboolean hasValue = qfalse;
+		qboolean hasValue = qfalse;
 		for (int i = 0; i < array->length; i++)
 		{
 			if (hasValue)
@@ -287,7 +287,7 @@ void GScr_LINQ_Max()
 	else if (HasFlag(flags, FLAG_INTEGER) || HasFlag(flags, FLAG_FLOAT))
 	{
 		float value = 0;
-        qboolean hasValue = qfalse;
+		qboolean hasValue = qfalse;
 		for (int i = 0; i < array->length; i++)
 		{
 			if (array->items[i]->type == VAR_INTEGER)
@@ -671,7 +671,7 @@ void GScr_LINQ_Sum()
 		{
 			switch (array->items[i]->type)
 			{
-				case 6:
+				case VAR_INTEGER:
 				{
 					int strSize = snprintf(NULL, 0, "%d", array->items[i]->u.intValue);
 					bufferSize += strSize;
@@ -683,7 +683,7 @@ void GScr_LINQ_Sum()
 					}
 				}
 				break;
-				case 5:
+				case VAR_FLOAT:
 				{
 					int strSize = snprintf(NULL, 0, "%f", array->items[i]->u.floatValue);
 					bufferSize += strSize;
@@ -695,8 +695,8 @@ void GScr_LINQ_Sum()
 					}
 				}
 				break;
-				case 2:
-				case 3:
+				case VAR_ISTRING:
+				case VAR_STRING:
 				{
 					const char* gsc_str = Plugin_SL_ConvertToString(array->items[i]->u.stringValue);
 					int strSize = snprintf(NULL, 0, "%s", gsc_str);
