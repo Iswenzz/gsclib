@@ -11,9 +11,10 @@ test(loop)
         it_RegexReplace();
         it_RegexSplit();
         
-        it_SQLVersion();
-        it_SQLConnect();
-        it_SQLClose();
+        it_SQL_Version();
+        it_SQL_Connect();
+        it_SQL_ListDB();
+        it_SQL_Close();
 
         if (!loop)
             break;
@@ -21,22 +22,28 @@ test(loop)
     }
 }
 
-it_SQLVersion()
+it_SQL_ListDB()
 {
-    comPrintF("\n<-------[SQLVersion]------->\n");
-    printVariable(SQLVersion());
+    comPrintF("\n<-------[SQL_ListDB]------->\n");
+    printArray(SQL_ListDB());
 }
 
-it_SQLConnect()
+it_SQL_Version()
 {
-    comPrintF("\n<-------[SQLConnect]------->\n");
-    printVariable(SQLConnect("127.0.0.1", 3306, "root", "rootpassword"));
+    comPrintF("\n<-------[SQL_Version]------->\n");
+    printVariable(SQL_Version());
 }
 
-it_SQLClose()
+it_SQL_Connect()
 {
-    comPrintF("\n<-------[SQLClose]------->\n");
-    printVariable(SQLClose());
+    comPrintF("\n<-------[SQL_Connect]------->\n");
+    printVariable(SQL_Connect("127.0.0.1", 3306, "root", "rootpassword"));
+}
+
+it_SQL_Close()
+{
+    comPrintF("\n<-------[SQL_Close]------->\n");
+    printVariable(SQL_Close());
 }
 
 it_RegexMatch()

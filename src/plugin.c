@@ -14,9 +14,10 @@
 PCL int OnInit()
 {
 	// mysql.h
-	Plugin_ScrAddFunction("sqlversion", 	&GScr_MySQL_Version);
-	Plugin_ScrAddFunction("sqlconnect", 	&GScr_MySQL_Connect);
-	Plugin_ScrAddFunction("sqlclose", 		&GScr_MySQL_Close);
+	Plugin_ScrAddFunction("sql_listdb", 		&GScr_MySQL_ListDB);
+	Plugin_ScrAddFunction("sql_version", 	&GScr_MySQL_Version);
+	Plugin_ScrAddFunction("sql_connect", 	&GScr_MySQL_Connect);
+	Plugin_ScrAddFunction("sql_close", 		&GScr_MySQL_Close);
 
 	// regex.h
 	Plugin_ScrAddFunction("regexmatch", 	&GScr_RegexMatch);
