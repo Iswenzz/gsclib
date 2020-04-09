@@ -3,7 +3,6 @@
 *.o
 *.a
 .ignore
-.vscode/
 
 win32_compile.bat
 

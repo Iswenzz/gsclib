@@ -1,0 +1,17 @@
+{
+    "configurations": [
+        {
+            "name": "gsclib",
+            "intelliSenseMode": "gcc-x86",
+            "includePath": [
+                "deps/cgsc",
+                "deps/dre2",
+                "deps/mysql/windows/include",
+                "deps/mysql/linux/include"
+            ],
+            "cStandard": "c11",
+            "cppStandard": "c++17" 
+        }
+    ],
+    "version": 4
+}

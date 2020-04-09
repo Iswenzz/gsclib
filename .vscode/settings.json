@@ -1,0 +1,8 @@
+{
+    "files.associations": {
+        "my_global.h": "c",
+        "cgsc.h": "c",
+        "cstdlib": "c",
+        "cctype": "c"
+    }
+}
