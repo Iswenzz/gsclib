@@ -10,17 +10,16 @@ test(loop)
         it_GetType();
         it_Ternary();
         it_IfUndef();
-        it_IsNullOrEmpty();
-        it_ToUpper();
+
         it_ToInt();
         it_ToFloat();
         it_ToString();
+
+        it_ToUpper();
+        it_IsNullOrEmpty();
         it_IsStringInt();
         it_IsStringAlpha();
         it_IsStringFloat();
-        it_RegexMatch();
-        it_RegexReplace();
-        it_RegexSplit();
 
         if (!loop)
             break;
@@ -128,22 +127,4 @@ it_IsStringFloat()
     printVariable(IsStringFloat("123"));
     printVariable(IsStringFloat("ab123.123__"));
     printVariable(IsStringFloat("test"));
-}
-
-it_RegexMatch()
-{
-    comPrintF("\n<-------[RegexMatch]------->\n");
-    printArray(RegexMatch("zzzz123affff12345ffffb", "\\d+"));
-}
-
-it_RegexSplit()
-{
-    comPrintF("\n<-------[RegexSplit]------->\n");
-    printArray(RegexSplit("zzzz123affff12345ffffb", "\\d+"));
-}
-
-it_RegexReplace()
-{
-    comPrintF("\n<-------[RegexReplace]------->\n");
-    printVariable(RegexReplace("zzzz123affff12345ffffb", "", "\\d+"));
 }

@@ -1,5 +1,5 @@
 #include "regex.h"
-#include <stdio.h>
+#include <cgsc.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -30,7 +30,7 @@ regex_items *dre2_get_matches(struct dre2 *re, unsigned char *input)
 		// Get match string
 		dre2_matched_substring(p, &result, &it_match);
 		matches->items[matches->count - 1] = (unsigned char *)calloc(strlen((const char *)it_match), sizeof(unsigned char));
-		strncpy(matches->items[matches->count - 1], it_match, strlen((const char *)it_match));
+		strncpy((char *)matches->items[matches->count - 1], (char *)it_match, strlen((const char *)it_match));
 
 		// Sub matched string from input string
 		p += result.end_pos;
@@ -180,7 +180,7 @@ void GScr_RegexReplace()
 			if (temp != NULL)
 			{
 				buffer = temp;
-				snprintf(buffer + buffer_size - strSize - 1, buffer_size, "%s%s", splits->items[i], replace_str);
+				snprintf((char *)(buffer + buffer_size - strSize - 1), buffer_size, "%s%s", splits->items[i], replace_str);
 			}
 		}
 		Plugin_Scr_AddString((const char *)buffer);

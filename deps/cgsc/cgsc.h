@@ -1,7 +1,7 @@
 #pragma once
 
 #ifndef PLUGIN_INCLUDES
-#include "../../pinc.h"
+#include "../../../pinc.h"
 #endif
 
 #ifdef _MSC_VER

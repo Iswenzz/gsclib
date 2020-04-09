@@ -1,6 +1,5 @@
 #pragma once
-#include "../../dependencies/cgsc.h"
-#include "../../dependencies/dre2.h"
+#include <dre2.h>
 
 typedef struct
 {

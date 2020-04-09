@@ -10,9 +10,10 @@ runTests()
         bot notify("menuresponse", game["menu_team"], "autoassign");
     }
 
-    comPrintf("\n|-------------------[gsclib tests]-------------------|\n");
+    comPrintf("\n|-------------------[GSCLIB Tests]-------------------|\n");
     // lib\gsclib\_tests_linq::test(false);
-    lib\gsclib\_tests_utility::test(false);
+    // lib\gsclib\_tests_utility::test(false);
+    lib\gsclib\_tests_data::test(false);
     comPrintf("\n|----------------------------------------------------|\n");
 }
 

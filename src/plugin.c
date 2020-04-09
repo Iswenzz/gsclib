@@ -1,6 +1,11 @@
 #include "linq/gsclinq.h"
+
+#include "data/mysql.h"
+#include "data/regex.h"
+
 #include "utility/utility.h"
-#include "utility/regex.h"
+#include "utility/stringutil.h"
+#include "utility/convert.h"
 
 #ifndef PLUGIN_INCLUDES
 #include "../../pinc.h"
@@ -8,6 +13,9 @@
 
 PCL int OnInit()
 {
+	// mysql.h
+	Plugin_ScrAddFunction("sqlversion", 	&GScr_MySQL_Version);
+
 	// regex.h
 	Plugin_ScrAddFunction("regexmatch", 	&GScr_RegexMatch);
 	Plugin_ScrAddFunction("regexsplit", 	&GScr_RegexSplit);
@@ -18,14 +26,18 @@ PCL int OnInit()
 	Plugin_ScrAddFunction("gettype", 		&GScr_GetType);
 	Plugin_ScrAddFunction("ternary", 		&GScr_Ternary);
 	Plugin_ScrAddFunction("ifundef", 		&GScr_IfUndef);
-	Plugin_ScrAddFunction("isnullorempty",	&GScr_IsNullOrEmpty);
+
+	// convert.h
 	Plugin_ScrAddFunction("tostring", 		&GScr_ToString);
 	Plugin_ScrAddFunction("toint", 			&GScr_ToInt);
 	Plugin_ScrAddFunction("tofloat", 		&GScr_ToFloat);
-	Plugin_ScrAddFunction("toupper", 		&GScr_ToUpper);
+
+	// stringutil.h
+	Plugin_ScrAddFunction("isnullorempty",	&GScr_IsNullOrEmpty);
 	Plugin_ScrAddFunction("isstringalpha", 	&GScr_IsStringAlpha);
 	Plugin_ScrAddFunction("isstringfloat", 	&GScr_IsStringFloat);
 	Plugin_ScrAddFunction("isstringint", 	&GScr_IsStringInt);
+	Plugin_ScrAddFunction("toupper", 		&GScr_ToUpper);
 
 	// gsclinq.h
 	Plugin_ScrAddFunction("all", 			&GScr_LINQ_All);

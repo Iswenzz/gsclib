@@ -1,5 +1,7 @@
-#include "../../dependencies/cgsc.h"
+#include "gsclinq.h"
+#include "../utility/polycmp.h"
 #include "../utility/utility.h"
+#include <cgsc.h>
 #include <stdlib.h>
 #include <string.h>
 
