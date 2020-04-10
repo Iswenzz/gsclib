@@ -15,11 +15,16 @@ test(loop)
 		it_SQL_Connect();
 		it_SQL_SelectDB();
 		it_SQL_ListDB();
+		it_SQL_ListTables();
 		it_SQL_Query();
+		it_SQL_AffectedRows();
 		it_SQL_NumRows();
 		it_SQL_NumFields();
+		it_SQL_FetchFields();
 		it_SQL_FetchRow();
 		it_SQL_FetchRows();
+		it_SQL_HexString();
+		it_SQL_EscapeString();
 		it_SQL_Close();
 
 		if (!loop)
@@ -28,22 +33,48 @@ test(loop)
 	}
 }
 
+it_SQL_HexString()
+{
+	comPrintF("\n<-------[SQL_HexString]------->\n");
+	printVariable(SQL_HexString("Iswenzz"));
+}
+
+it_SQL_EscapeString()
+{
+	comPrintF("\n<-------[SQL_EscapeString]------->\n");
+	printVariable(SQL_EscapeString("\\"));
+}
+
+it_SQL_AffectedRows()
+{
+	comPrintF("\n<-------[SQL_AffectedRows]------->\n");
+	SQL_Query("SELECT * FROM players");
+	printVariable(SQL_AffectedRows());
+}
+
 it_SQL_Query()
 {
 	comPrintF("\n<-------[SQL_Query]------->\n");
+	printVariable(SQL_Query("SELECT * FROM players"));
+}
+
+it_SQL_FetchFields()
+{
+	comPrintF("\n<-------[SQL_FetchFields]------->\n");
 	SQL_Query("SELECT * FROM players");
+	printArray(SQL_FetchFields());
 }
 
 it_SQL_FetchRow()
 {
-	comPrintF("\n<-------[FetchRow]------->\n");
+	comPrintF("\n<-------[SQL_FetchRow]------->\n");
 	SQL_Query("SELECT * FROM players");
 	printArray(SQL_FetchRow());
 }
 
 it_SQL_FetchRows()
 {
-	comPrintF("\n<-------[FetchRows]------->\n");
+	comPrintF("\n<-------[SQL_FetchRows]------->\n");
 	SQL_Query("SELECT * FROM players");
 
 	rows = SQL_FetchRows();
@@ -56,20 +87,20 @@ it_SQL_FetchRows()
 
 it_SQL_NumFields()
 {
-	comPrintF("\n<-------[NumFields]------->\n");
+	comPrintF("\n<-------[SQL_NumFields]------->\n");
 	printVariable(SQL_NumFields());
 }
 
 it_SQL_NumRows()
 {
-	comPrintF("\n<-------[NumRows]------->\n");
+	comPrintF("\n<-------[SQL_NumRows]------->\n");
 	printVariable(SQL_NumRows());
 }
 
 it_SQL_SelectDB()
 {
 	comPrintF("\n<-------[SQL_SelectDB]------->\n");
-	SQL_SelectDB("testdb");
+	printVariable(SQL_SelectDB("testdb"));
 }
 
 it_SQL_ListDB()
@@ -78,22 +109,28 @@ it_SQL_ListDB()
 	printArray(SQL_ListDB());
 }
 
+it_SQL_ListTables()
+{
+	comPrintF("\n<-------[SQL_ListTables]------->\n");
+	printArray(SQL_ListTables());
+}
+
 it_SQL_Version()
 {
 	comPrintF("\n<-------[SQL_Version]------->\n");
-	SQL_Version();
+	printVariable(SQL_Version());
 }
 
 it_SQL_Connect()
 {
 	comPrintF("\n<-------[SQL_Connect]------->\n");
-	SQL_Connect("127.0.0.1", 3306, "root", "rootpassword");
+	printVariable(SQL_Connect("127.0.0.1", 3306, "root", "rootpassword"));
 }
 
 it_SQL_Close()
 {
 	comPrintF("\n<-------[SQL_Close]------->\n");
-	SQL_Close();
+	printVariable(SQL_Close());
 }
 
 it_RegexMatch()

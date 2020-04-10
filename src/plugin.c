@@ -14,58 +14,63 @@
 PCL int OnInit()
 {
 	// mysql.h
-	Plugin_ScrAddFunction("sql_selectdb", 	&GScr_MySQL_SelectDB);
-	Plugin_ScrAddFunction("sql_query", 		&GScr_MySQL_Query);
-	Plugin_ScrAddFunction("sql_numrows", 	&GScr_MySQL_NumRows);
-	Plugin_ScrAddFunction("sql_numfields", 	&GScr_MySQL_NumFields);
-	Plugin_ScrAddFunction("sql_fetchrows", 	&GScr_MySQL_FetchRows);
-	Plugin_ScrAddFunction("sql_fetchrow", 	&GScr_MySQL_FetchRow);
-	Plugin_ScrAddFunction("sql_listdb", 	&GScr_MySQL_ListDB);
-	Plugin_ScrAddFunction("sql_version", 	&GScr_MySQL_Version);
-	Plugin_ScrAddFunction("sql_connect", 	&GScr_MySQL_Connect);
-	Plugin_ScrAddFunction("sql_close", 		&GScr_MySQL_Close);
+	Plugin_ScrAddFunction("sql_escapestring", 	&GScr_MySQL_EscapeString);
+	Plugin_ScrAddFunction("sql_hexstring", 		&GScr_MySQL_HexString);
+	Plugin_ScrAddFunction("sql_selectdb", 		&GScr_MySQL_SelectDB);
+	Plugin_ScrAddFunction("sql_query", 			&GScr_MySQL_Query);
+	Plugin_ScrAddFunction("sql_numrows", 		&GScr_MySQL_NumRows);
+	Plugin_ScrAddFunction("sql_numfields", 		&GScr_MySQL_NumFields);
+	Plugin_ScrAddFunction("sql_affectedrows",	&GScr_MySQL_AffectedRows);
+	Plugin_ScrAddFunction("sql_fetchrows", 		&GScr_MySQL_FetchRows);
+	Plugin_ScrAddFunction("sql_fetchrow", 		&GScr_MySQL_FetchRow);
+	Plugin_ScrAddFunction("sql_fetchfields", 	&GScr_MySQL_FetchFields);
+	Plugin_ScrAddFunction("sql_listdb", 		&GScr_MySQL_ListDB);
+	Plugin_ScrAddFunction("sql_listtables", 	&GScr_MySQL_ListTables);
+	Plugin_ScrAddFunction("sql_version", 		&GScr_MySQL_Version);
+	Plugin_ScrAddFunction("sql_connect", 		&GScr_MySQL_Connect);
+	Plugin_ScrAddFunction("sql_close", 			&GScr_MySQL_Close);
 
 	// regex.h
-	Plugin_ScrAddFunction("regexmatch", 	&GScr_RegexMatch);
-	Plugin_ScrAddFunction("regexsplit", 	&GScr_RegexSplit);
-	Plugin_ScrAddFunction("regexreplace", 	&GScr_RegexReplace);
+	Plugin_ScrAddFunction("regexmatch", 		&GScr_RegexMatch);
+	Plugin_ScrAddFunction("regexsplit", 		&GScr_RegexSplit);
+	Plugin_ScrAddFunction("regexreplace", 		&GScr_RegexReplace);
 
 	// utility.h
-	Plugin_ScrAddFunction("comprintf", 		&GScr_ComPrintf);
-	Plugin_ScrAddFunction("gettype", 		&GScr_GetType);
-	Plugin_ScrAddFunction("ternary", 		&GScr_Ternary);
-	Plugin_ScrAddFunction("ifundef", 		&GScr_IfUndef);
+	Plugin_ScrAddFunction("comprintf", 			&GScr_ComPrintf);
+	Plugin_ScrAddFunction("gettype", 			&GScr_GetType);
+	Plugin_ScrAddFunction("ternary", 			&GScr_Ternary);
+	Plugin_ScrAddFunction("ifundef", 			&GScr_IfUndef);
 
 	// convert.h
-	Plugin_ScrAddFunction("tostring", 		&GScr_ToString);
-	Plugin_ScrAddFunction("toint", 			&GScr_ToInt);
-	Plugin_ScrAddFunction("tofloat", 		&GScr_ToFloat);
+	Plugin_ScrAddFunction("tostring", 			&GScr_ToString);
+	Plugin_ScrAddFunction("toint", 				&GScr_ToInt);
+	Plugin_ScrAddFunction("tofloat", 			&GScr_ToFloat);
 
 	// stringutil.h
-	Plugin_ScrAddFunction("isnullorempty",	&GScr_IsNullOrEmpty);
-	Plugin_ScrAddFunction("isstringalpha", 	&GScr_IsStringAlpha);
-	Plugin_ScrAddFunction("isstringfloat", 	&GScr_IsStringFloat);
-	Plugin_ScrAddFunction("isstringint", 	&GScr_IsStringInt);
-	Plugin_ScrAddFunction("toupper", 		&GScr_ToUpper);
+	Plugin_ScrAddFunction("isnullorempty",		&GScr_IsNullOrEmpty);
+	Plugin_ScrAddFunction("isstringalpha", 		&GScr_IsStringAlpha);
+	Plugin_ScrAddFunction("isstringfloat", 		&GScr_IsStringFloat);
+	Plugin_ScrAddFunction("isstringint", 		&GScr_IsStringInt);
+	Plugin_ScrAddFunction("toupper", 			&GScr_ToUpper);
 
 	// gsclinq.h
-	Plugin_ScrAddFunction("all", 			&GScr_LINQ_All);
-	Plugin_ScrAddFunction("where", 			&GScr_LINQ_Where);
-	Plugin_ScrAddFunction("any", 			&GScr_LINQ_Any);
-	Plugin_ScrAddFunction("min", 			&GScr_LINQ_Min);
-	Plugin_ScrAddFunction("max", 			&GScr_LINQ_Max);
-	Plugin_ScrAddFunction("last",			&GScr_LINQ_Last);
-	Plugin_ScrAddFunction("first", 			&GScr_LINQ_First);
-	Plugin_ScrAddFunction("cast", 			&GScr_LINQ_Cast);
-	Plugin_ScrAddFunction("oftype", 		&GScr_LINQ_OfType);
-	Plugin_ScrAddFunction("sort", 			&GScr_LINQ_Sort);
-	Plugin_ScrAddFunction("average",		&GScr_LINQ_Average);
-	Plugin_ScrAddFunction("count", 			&GScr_LINQ_Count);
-	Plugin_ScrAddFunction("sum", 			&GScr_LINQ_Sum);
-	Plugin_ScrAddFunction("select", 		&GScr_LINQ_Select);
-	Plugin_ScrAddFunction("range",			&GScr_LINQ_Range);
-	Plugin_ScrAddFunction("repeat",			&GScr_LINQ_Repeat);
-	Plugin_ScrAddFunction("reverse", 		&GScr_LINQ_Reverse);
+	Plugin_ScrAddFunction("all", 				&GScr_LINQ_All);
+	Plugin_ScrAddFunction("where", 				&GScr_LINQ_Where);
+	Plugin_ScrAddFunction("any", 				&GScr_LINQ_Any);
+	Plugin_ScrAddFunction("min", 				&GScr_LINQ_Min);
+	Plugin_ScrAddFunction("max", 				&GScr_LINQ_Max);
+	Plugin_ScrAddFunction("last",				&GScr_LINQ_Last);
+	Plugin_ScrAddFunction("first", 				&GScr_LINQ_First);
+	Plugin_ScrAddFunction("cast", 				&GScr_LINQ_Cast);
+	Plugin_ScrAddFunction("oftype", 			&GScr_LINQ_OfType);
+	Plugin_ScrAddFunction("sort", 				&GScr_LINQ_Sort);
+	Plugin_ScrAddFunction("average",			&GScr_LINQ_Average);
+	Plugin_ScrAddFunction("count", 				&GScr_LINQ_Count);
+	Plugin_ScrAddFunction("sum", 				&GScr_LINQ_Sum);
+	Plugin_ScrAddFunction("select", 			&GScr_LINQ_Select);
+	Plugin_ScrAddFunction("range",				&GScr_LINQ_Range);
+	Plugin_ScrAddFunction("repeat",				&GScr_LINQ_Repeat);
+	Plugin_ScrAddFunction("reverse", 			&GScr_LINQ_Reverse);
 
 	return 0;
 }

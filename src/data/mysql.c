@@ -59,6 +59,65 @@ void GScr_MySQL_ListDB()
 	}
 }
 
+void GScr_MySQL_ListTables()
+{
+	if (Plugin_Scr_GetNumParam() != 0)
+	{
+		Plugin_Scr_Error("Usage: SQL_ListTables()");
+		return;
+	}
+	MYSQL_CHECK_INSTANCE(instance.mysql);
+
+	MYSQL_RES *result = mysql_list_tables(instance.mysql, "%");
+	if (!result)
+	{
+		char buffer[1024];
+		snprintf(buffer, sizeof(buffer), "SQL_ListTables(): Couldn't get table list: %s", mysql_error(instance.mysql));
+		Plugin_Scr_Error(buffer);
+	}
+	else 
+	{
+		MYSQL_ROW row;
+		Plugin_Scr_MakeArray();
+		while ((row = mysql_fetch_row(result)))
+		{
+			Plugin_Scr_AddString(row[0]);
+			Plugin_Scr_AddArray();
+		}
+		mysql_free_result(result);
+	}
+}
+
+void GScr_MySQL_EscapeString()
+{
+	if (Plugin_Scr_GetNumParam() != 1)
+	{
+		Plugin_Scr_Error("Usage: SQL_EscapeString(<string>)");
+		return;
+	}
+	MYSQL_CHECK_INSTANCE(instance.mysql);
+
+	const char *from = Plugin_Scr_GetString(0);
+    char to[strlen(from) + 1];
+    unsigned long len = mysql_real_escape_string(instance.mysql, to, from, strlen(from));
+    to[len] = '\0';
+	Plugin_Scr_AddString(to);
+}
+
+void GScr_MySQL_HexString()
+{
+	if (Plugin_Scr_GetNumParam() != 1)
+	{
+		Plugin_Scr_Error("Usage: SQL_HexString(<string>)");
+		return;
+	}
+	const char *from = Plugin_Scr_GetString(0);
+    char to[strlen(from) + 1];
+    unsigned long len = mysql_hex_string(to, from, strlen(from));
+    to[len] = '\0';
+    Plugin_Scr_AddString(to);
+}
+
 void GScr_MySQL_SelectDB()
 {
 	if (Plugin_Scr_GetNumParam() != 1)
@@ -73,7 +132,40 @@ void GScr_MySQL_SelectDB()
 		char buffer[1024];
 		snprintf(buffer, sizeof(buffer), "SQL_SelectDB(): Changing DBs failed: '%s'", mysql_error(instance.mysql));
 		Plugin_Scr_Error(buffer);
-    } 
+		Plugin_Scr_AddBool(qfalse);
+    }
+	else
+		Plugin_Scr_AddBool(qtrue);
+}
+
+void GScr_MySQL_FetchFields()
+{
+	if (Plugin_Scr_GetNumParam() != 0)
+	{
+		Plugin_Scr_Error("Usage: SQL_FetchFields()");
+		return;
+	}
+	MYSQL_CHECK_INSTANCE(instance.mysql);
+	MYSQL_CHECK_RESULT(instance.result);
+
+	unsigned int num_fields = mysql_num_fields(instance.result);
+	Plugin_Scr_MakeArray();
+	mysql_field_seek(instance.result, 0);
+	for (int i = 0; i < num_fields; i++) 
+	{
+		MYSQL_FIELD *field = mysql_fetch_field(instance.result);
+		if (field == NULL)
+		{
+			Plugin_Scr_AddUndefined();
+			Plugin_Scr_AddArray();
+			Plugin_Scr_Error("SQL_FetchFields(): Error while fetching fields.");
+			return;
+		}
+		else
+			Plugin_Scr_AddString(field->name);
+
+		Plugin_Scr_AddArray();
+	}
 }
 
 void GScr_MySQL_FetchRow()
@@ -111,7 +203,6 @@ void GScr_MySQL_FetchRow()
 			Plugin_Scr_AddArray();
 			// Plugin_Scr_AddArrayKeys(Plugin_Scr_AllocString(field->name)); // Plugin_Scr_AddArrayKeys is broken in the latest cod4x version.
 		}
-		mysql_free_result(instance.result);
 	}
 }
 
@@ -182,6 +273,20 @@ void GScr_MySQL_NumFields()
 	Plugin_Scr_AddInt(mysql_num_fields(instance.result));
 }
 
+
+void GScr_MySQL_AffectedRows()
+{
+	if (Plugin_Scr_GetNumParam() != 0)
+	{
+		Plugin_Scr_Error("Usage: SQL_AffectedRows()");
+		return;
+	}
+	MYSQL_CHECK_INSTANCE(instance.mysql);
+	MYSQL_CHECK_RESULT(instance.result);
+
+	Plugin_Scr_AddInt(mysql_affected_rows(instance.mysql));
+}
+
 void GScr_MySQL_Query()
 {
 	if (Plugin_Scr_GetNumParam() != 1)
@@ -202,6 +307,7 @@ void GScr_MySQL_Query()
 		char buffer[1024];
 		snprintf(buffer, sizeof(buffer), "SQL_Query(): Query failed: %s\n", mysql_error(instance.mysql));
 		Plugin_PrintError(buffer);
+		Plugin_Scr_AddBool(qfalse);
 	} 
 	else 
 	{
@@ -211,7 +317,10 @@ void GScr_MySQL_Query()
 			char buffer[1024];
 			snprintf(buffer, sizeof(buffer), "SQL_Query(): Couldn't get results set: %s\n", mysql_error(instance.mysql));
 			Plugin_PrintError(buffer);
+			Plugin_Scr_AddBool(qfalse);
 		}
+		else
+			Plugin_Scr_AddBool(qtrue);
 	}
 }
 
@@ -240,6 +349,7 @@ void GScr_MySQL_Connect()
 	if (mysql_library_init(0, NULL, NULL)) 
 	{
 		Plugin_Scr_Error("SQL_Connect(): Could not initialize MySQL client library");
+		Plugin_Scr_AddBool(qfalse);
 		return;
 	}
 
@@ -248,6 +358,7 @@ void GScr_MySQL_Connect()
 	{
 		Plugin_Scr_Error("SQL_Connect(): MySQL failed to initialize");
 		mysql_library_end();
+		Plugin_Scr_AddBool(qfalse);
 		return;
 	}
 
@@ -268,9 +379,13 @@ void GScr_MySQL_Connect()
 			mysql_library_end();
 			instance.mysql = NULL;
 		}
+		Plugin_Scr_AddBool(qfalse);
 	}
 	else
+	{
 		Plugin_Printf("SQL_Connect(): Connected MySQL Server: %s\n", mysql_get_server_info(instance.mysql));
+		Plugin_Scr_AddBool(qtrue);
+	}
 }
 
 void GScr_MySQL_Close()
@@ -291,4 +406,5 @@ void GScr_MySQL_Close()
 		instance.mysql = NULL;
 	}
 	Plugin_Printf("SQL_Close(): Successfully closed MySQL connection.\n");
+	Plugin_Scr_AddBool(qtrue);
 }
