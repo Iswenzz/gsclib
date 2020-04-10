@@ -11,14 +11,15 @@ test(loop)
 		it_RegexReplace();
 		it_RegexSplit();
 		
-		// it_SQL_Version();
+		it_SQL_Version();
 		it_SQL_Connect();
 		it_SQL_SelectDB();
-		// it_SQL_ListDB();
+		it_SQL_ListDB();
 		it_SQL_Query();
 		it_SQL_NumRows();
 		it_SQL_NumFields();
 		it_SQL_FetchRow();
+		it_SQL_FetchRows();
 		it_SQL_Close();
 
 		if (!loop)
@@ -36,7 +37,21 @@ it_SQL_Query()
 it_SQL_FetchRow()
 {
 	comPrintF("\n<-------[FetchRow]------->\n");
+	SQL_Query("SELECT * FROM players");
 	printArray(SQL_FetchRow());
+}
+
+it_SQL_FetchRows()
+{
+	comPrintF("\n<-------[FetchRows]------->\n");
+	SQL_Query("SELECT * FROM players");
+
+	rows = SQL_FetchRows();
+	if (isDefined(rows) && isDefined(rows.size))
+	{
+		for (i = 0; i < rows.size; i++)
+			printArray(rows[i]);
+	}
 }
 
 it_SQL_NumFields()

@@ -18,6 +18,7 @@ PCL int OnInit()
 	Plugin_ScrAddFunction("sql_query", 		&GScr_MySQL_Query);
 	Plugin_ScrAddFunction("sql_numrows", 	&GScr_MySQL_NumRows);
 	Plugin_ScrAddFunction("sql_numfields", 	&GScr_MySQL_NumFields);
+	Plugin_ScrAddFunction("sql_fetchrows", 	&GScr_MySQL_FetchRows);
 	Plugin_ScrAddFunction("sql_fetchrow", 	&GScr_MySQL_FetchRow);
 	Plugin_ScrAddFunction("sql_listdb", 	&GScr_MySQL_ListDB);
 	Plugin_ScrAddFunction("sql_version", 	&GScr_MySQL_Version);

@@ -16,3 +16,4 @@ void GScr_MySQL_Query();
 void GScr_MySQL_NumRows();
 void GScr_MySQL_NumFields();
 void GScr_MySQL_FetchRow();
+void GScr_MySQL_FetchRows();
