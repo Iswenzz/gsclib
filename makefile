@@ -7,7 +7,7 @@ TARGETNAME=gsclib.dll
 else
 INCLUDES=-Ideps/mysql/unix/include -Ideps/dre2 -Ideps/cgsc
 LIBDIRS=-Ldeps/dre2 -Ldeps/mysql/unix/lib
-LIBS=../libcom_plugin.a -ldre2 -lmysqlclient
+LIBS=-ldre2 -lmysqlclient
 TARGETNAME=gsclib.so
 endif
 

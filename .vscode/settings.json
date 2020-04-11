@@ -6,6 +6,7 @@
         "cctype": "c",
         "stringutil.h": "c",
         "util.h": "c",
-        "enumerable.h": "c"
+        "enumerable.h": "c",
+        "https.h": "c"
     }
 }

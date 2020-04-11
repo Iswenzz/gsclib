@@ -1,7 +1,7 @@
-*.dll
-*.so
 *.o
 *.a
+gsclib.so
+gsclib.dll
 .ignore
 
 win32_compile.bat
