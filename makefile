@@ -23,12 +23,15 @@ LDFLAGS=-m32 -s -shared -static-libgcc -static-libstdc++ -Wl,-enable-stdcall-fix
 .PHONY: all clean
 
 all: $(OBJS)
-	$(CC) -o $(TARGETDIR)/$(TARGETNAME) $(OBJS) $(LDFLAGS)
+	@echo -e \nLinking DLL\n
+	@echo $(TARGETNAME)
+	@$(CC) -o $(TARGETDIR)/$(TARGETNAME) $(OBJS) $(LDFLAGS)
 
 .SECONDEXPANSION:
 $(OBJDIR)/%.o: $(SRCDIR)/%.c
-	mkdir -p $(@D)
-	$(CC) $(CFLAGS) -o $@ -c $<
+	@mkdir -p $(@D)
+	@echo $@
+	@$(CC) $(CFLAGS) -o $@ -c $<
 
 clean:
-	$(RM) -r $(OBJDIR)
+	@$(RM) -r $(OBJDIR)
