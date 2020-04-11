@@ -256,7 +256,7 @@ void GScr_LINQ_Cast()
 	const char *typename = Plugin_Scr_GetString(1);
 
 	Plugin_Scr_MakeArray();
-	if (stricmp(typename, "string") == 0)
+	if (strcasecmp(typename, "string") == 0)
 	{
 		for (int i = 0; i < array->length; i++)
 		{
@@ -300,7 +300,7 @@ void GScr_LINQ_Cast()
 			}
 		}
 	}
-	else if (stricmp(typename, "int") == 0)
+	else if (strcasecmp(typename, "int") == 0)
 	{
 		for (int i = 0; i < array->length; i++)
 		{
@@ -334,7 +334,7 @@ void GScr_LINQ_Cast()
 			}
 		}
 	}
-	else if (stricmp(typename, "float") == 0)
+	else if (strcasecmp(typename, "float") == 0)
 	{
 		for (int i = 0; i < array->length; i++)
 		{
@@ -382,14 +382,14 @@ void GScr_LINQ_OfType()
 	const char *typename = Plugin_Scr_GetString(1);
 
 	int reqtype = VAR_UNDEFINED;
-	if (stricmp(typename, "int") == 0) reqtype = VAR_INTEGER;
-	else if (stricmp(typename, "float") == 0) reqtype = VAR_FLOAT;
-	else if (stricmp(typename, "vector") == 0) reqtype = VAR_VECTOR;
-	else if (stricmp(typename, "array") == 0) reqtype = VAR_ARRAY;
-	else if (stricmp(typename, "struct") == 0) reqtype = VAR_OBJECT;
-	else if (stricmp(typename, "string") == 0) reqtype = VAR_STRING;
-	else if (stricmp(typename, "istring") == 0) reqtype = VAR_ISTRING;
-	else if (stricmp(typename, "ent") == 0) reqtype = VAR_ENTITY;
+	if (strcasecmp(typename, "int") == 0) reqtype = VAR_INTEGER;
+	else if (strcasecmp(typename, "float") == 0) reqtype = VAR_FLOAT;
+	else if (strcasecmp(typename, "vector") == 0) reqtype = VAR_VECTOR;
+	else if (strcasecmp(typename, "array") == 0) reqtype = VAR_ARRAY;
+	else if (strcasecmp(typename, "struct") == 0) reqtype = VAR_OBJECT;
+	else if (strcasecmp(typename, "string") == 0) reqtype = VAR_STRING;
+	else if (strcasecmp(typename, "istring") == 0) reqtype = VAR_ISTRING;
+	else if (strcasecmp(typename, "ent") == 0) reqtype = VAR_ENTITY;
 
 	Plugin_Scr_MakeArray();
 	for (int i = 0; i < array->length; i++)
