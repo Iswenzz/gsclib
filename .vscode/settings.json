@@ -3,6 +3,9 @@
         "my_global.h": "c",
         "cgsc.h": "c",
         "cstdlib": "c",
-        "cctype": "c"
+        "cctype": "c",
+        "stringutil.h": "c",
+        "util.h": "c",
+        "enumerable.h": "c"
     }
 }

@@ -1,19 +1,12 @@
 #pragma once
 
-void GScr_LINQ_All();
-void GScr_LINQ_Where();
-void GScr_LINQ_Any();
 void GScr_LINQ_Min();
 void GScr_LINQ_Max();
-void GScr_LINQ_Last();
-void GScr_LINQ_First();
 void GScr_LINQ_Cast();
 void GScr_LINQ_OfType();
 void GScr_LINQ_Sort();
 void GScr_LINQ_Average();
-void GScr_LINQ_Count();
 void GScr_LINQ_Sum();
-void GScr_LINQ_Select();
 void GScr_LINQ_Range();
 void GScr_LINQ_Repeat();
 void GScr_LINQ_Reverse();
