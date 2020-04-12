@@ -243,7 +243,6 @@ void GScr_MySQL_FetchRows()
 			// Plugin_Scr_AddArrayKeys(Plugin_Scr_AllocString(field->name)); // Plugin_Scr_AddArrayKeys is broken in the latest cod4x version.
 		}
 		Plugin_Scr_AddArray();
-		mysql_free_result(instance.result);
 	}
 }
 
