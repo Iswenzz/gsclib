@@ -7,7 +7,9 @@
                 "deps/cgsc",
                 "deps/dre2",
                 "deps/mysql/windows/include",
-                "deps/mysql/linux/include"
+                "deps/mysql/linux/include",
+                "deps/curl/windows/include",
+                "deps/curl/linux/include"
             ],
             "cStandard": "c11",
             "cppStandard": "c++17" 
