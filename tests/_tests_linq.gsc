@@ -149,9 +149,9 @@ it_last()
     comPrintF();
     printVariableWithType(last(level._tests_vectors, ::testPredicateVector));
     comPrintF();
-    printVariableWithType(last(level._tests_structs, ::testPredicateStructString).name);
+    printVariableWithType(last(level._tests_structs, ::testPredicateStructString).string);
     comPrintF();
-    printVariableWithType(last(level._tests_arrays, ::testPredicateArray)[0].name);
+    printVariableWithType(last(level._tests_arrays, ::testPredicateArray)[0].string);
     comPrintF();
     printVariableWithType(last(level._tests_ents, ::testPredicateEnt).name);
 }
@@ -165,7 +165,9 @@ it_first()
     comPrintF();
     printVariableWithType(first(level._tests_vectors, ::testPredicateVector));
     comPrintF();
-    printVariableWithType(first(level._tests_structs, ::testPredicateStructString).name);
+    printVariableWithType(first(level._tests_structs, ::testPredicateStructString).string);
+    comPrintF();
+    printVariableWithType(first(level._tests_arrays, ::testPredicateArray)[0].string);
     comPrintF();
     printVariableWithType(first(level._tests_ents, ::testPredicateEnt).name);
 }
@@ -208,11 +210,11 @@ it_oftype()
     comPrintF();
     printArrayWithType(ofType(cast_arr, "vector"));
     comPrintF();
-    printVariableWithType(ofType(cast_arr, "struct")[0].name);
+    printVariableWithType(ofType(cast_arr, "struct")[0].string);
     comPrintF();
     printArrayWithType(ofType(cast_arr, "array")[0]);
     comPrintF();
-    printVariableWithType(ofType(cast_arr, "ent")[0].name);
+    printVariableWithType(ofType(cast_arr, "ent")[0].string);
 }
 
 it_sort()
