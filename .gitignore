@@ -1,5 +1,4 @@
 *.o
-*.a
 gsclib.so
 gsclib.dll
 .ignore
