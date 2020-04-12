@@ -63,7 +63,7 @@ void GScr_LINQ_Min()
 	else if (HasFlag(flags, FLAG_VECTOR))
 	{
 		int index = 0;
-		vec3_t zero;
+		vec3_t zero = { 0, 0, 0 };
 		float distance = 0;
 		qboolean hasValue = qfalse;
 		for (int i = 0; i < array->length; i++)
@@ -175,7 +175,7 @@ void GScr_LINQ_Max()
 	else if (HasFlag(flags, FLAG_VECTOR))
 	{
 		int index = 0;
-		vec3_t zero;
+		vec3_t zero = { 0, 0, 0 };
 		float distance = 0;
 		qboolean hasValue = qfalse;
 		for (int i = 0; i < array->length; i++)
@@ -453,7 +453,7 @@ void GScr_LINQ_Average()
 
 	if (IsFlag(flags, FLAG_VECTOR))
 	{
-		vec3_t vec;
+		vec3_t vec = { 0, 0, 0 };
 		for (int i = 0; i < array->length; i++)
 		{
 			if (array->items[i]->type == VAR_VECTOR)
@@ -549,7 +549,7 @@ void GScr_LINQ_Sum()
 	}
 	else if (HasFlag(flags, FLAG_VECTOR))
 	{
-		vec3_t sum;
+		vec3_t sum = { 0, 0, 0 };
 		for (int i = 0; i < array->length; i++)
 		{
 			if (array->items[i]->type == VAR_VECTOR)
