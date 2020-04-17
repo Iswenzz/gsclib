@@ -1,4 +1,5 @@
 #include "curl.h"
+#include <stdlib.h>
 
 CURL_INSTANCE curl_instance = { NULL, 0, 0 };
 FTP_INSTANCE ftp_instance = { NULL, 0, 0, 0 };

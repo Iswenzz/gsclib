@@ -1,6 +1,7 @@
 #include "ftp.h"
 #include <string.h>
 #include <sys/stat.h>
+#include <errno.h>
 
 size_t ftp_fwrite(void *buffer, size_t size, size_t nmemb, void *stream)
 {
