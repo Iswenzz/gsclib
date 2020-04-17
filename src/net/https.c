@@ -180,7 +180,7 @@ void GScr_HTTPS_PostFile()
 		buffer = malloc(length * sizeof(char));
 
 		if (buffer)
-			fread(buffer, 1, length, fd);
+			(void)!fread(buffer, 1, length, fd);
 		fclose(fd);
 	}
 	else

@@ -13,7 +13,7 @@ test(loop)
 		
 		it_HTTPS_GetFile();
 		it_HTTPS_GetString();
-		// it_HTTPS_PostFile();
+		it_HTTPS_PostFile();
 		it_HTTPS_PostString();
 		
 		it_SFTP_Connect();
@@ -56,20 +56,20 @@ it_HTTPS_GetFile()
 it_HTTPS_GetString()
 {
 	comPrintF("\n<-------[HTTPS_GetString]------->\n");
-	printVariable(HTTPS_GetString("https://iswenzz.com/contact"));
+	printVariable(HTTPS_GetString("http://httpbin.org/get"));
 }
 
 it_HTTPS_PostFile()
 {
 	comPrintF("\n<-------[HTTPS_PostFile]------->\n");
-	printVariable(HTTPS_PostFile("test/version.txt", "http://www.tipjar.com/cgi-bin/test"));
+	printVariable(HTTPS_PostFile("test/version.txt", "http://httpbin.org/post"));
 }
 
 it_HTTPS_PostString()
 {
 	comPrintF("\n<-------[HTTPS_PostString]------->\n");
 	CURL_SetHeader("Accept: application/json,Content-Type: application/json");
-	printVariable(HTTPS_PostString("{\"login\":\"login\",\"password\":\"password\"}", "https://reqbin.com/echo/post/json"));
+	printVariable(HTTPS_PostString("{\"login\":\"login\",\"password\":\"password\"}", "http://httpbin.org/post"));
 }
 
 it_SFTP_Connect()
