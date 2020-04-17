@@ -1,3 +1,5 @@
+#include <curl/curl.h>
+
 #include "linq/enumerable.h"
 #include "linq/predicate.h"
 #include "linq/delegate.h"
@@ -9,12 +11,37 @@
 #include "utility/stringutil.h"
 #include "utility/convert.h"
 
+#include "net/curl.h"
+#include "net/https.h"
+#include "net/ftp.h"
+
 #ifndef PLUGIN_INCLUDES
 #include "../../pinc.h"
 #endif
 
 PCL int OnInit()
 {
+	curl_global_init(CURL_GLOBAL_ALL); // initialize curl library
+	// ------------------------------------------------------------------ //
+	// net/curl.h
+	Plugin_ScrAddFunction("curl_version", 		&GScr_CURL_Version);
+	Plugin_ScrAddFunction("curl_setheader", 	&GScr_CURL_SetHeader);
+	Plugin_ScrAddFunction("curl_headercleanup", &GScr_CURL_HeaderCleanup);
+	Plugin_ScrAddFunction("curl_optcleanup", 	&GScr_CURL_OptCleanup);
+	Plugin_ScrAddFunction("curl_addopt", 		&GScr_CURL_AddOpt);
+	// net/https.h
+	Plugin_ScrAddFunction("https_postfile", 	&GScr_HTTPS_PostFile);
+	Plugin_ScrAddFunction("https_poststring", 	&GScr_HTTPS_PostString);
+	Plugin_ScrAddFunction("https_getfile", 		&GScr_HTTPS_GetFile);
+	Plugin_ScrAddFunction("https_getstring", 	&GScr_HTTPS_GetString);
+	// net/ftp.h
+	Plugin_ScrAddFunction("sftp_connect", 		&GScr_SFTP_Connect);
+	Plugin_ScrAddFunction("ftp_connect", 		&GScr_FTP_Connect);
+	Plugin_ScrAddFunction("ftp_close", 			&GScr_FTP_Close);
+	Plugin_ScrAddFunction("ftp_shell", 			&GScr_FTP_Shell);
+	Plugin_ScrAddFunction("ftp_postfile", 		&GScr_FTP_PostFile);
+	Plugin_ScrAddFunction("ftp_getfile", 		&GScr_FTP_GetFile);
+	// ------------------------------------------------------------------ //
 	// data/mysql.h
 	Plugin_ScrAddFunction("sql_escapestring", 	&GScr_MySQL_EscapeString);
 	Plugin_ScrAddFunction("sql_hexstring", 		&GScr_MySQL_HexString);
@@ -31,33 +58,29 @@ PCL int OnInit()
 	Plugin_ScrAddFunction("sql_version", 		&GScr_MySQL_Version);
 	Plugin_ScrAddFunction("sql_connect", 		&GScr_MySQL_Connect);
 	Plugin_ScrAddFunction("sql_close", 			&GScr_MySQL_Close);
-
 	// data/regex.h
 	Plugin_ScrAddFunction("regexmatch", 		&GScr_RegexMatch);
 	Plugin_ScrAddFunction("regexsplit", 		&GScr_RegexSplit);
 	Plugin_ScrAddFunction("regexreplace", 		&GScr_RegexReplace);
-
+	// ------------------------------------------------------------------ //
 	// utility/util.h
 	Plugin_ScrAddFunction("comprintf", 			&GScr_ComPrintf);
 	Plugin_ScrAddFunction("gettype", 			&GScr_GetType);
 	Plugin_ScrAddFunction("ternary", 			&GScr_Ternary);
 	Plugin_ScrAddFunction("ifundef", 			&GScr_IfUndef);
-
 	// utitlity/convert.h
 	Plugin_ScrAddFunction("tostring", 			&GScr_ToString);
 	Plugin_ScrAddFunction("toint", 				&GScr_ToInt);
 	Plugin_ScrAddFunction("tofloat", 			&GScr_ToFloat);
-
 	// utitlity/stringutil.h
 	Plugin_ScrAddFunction("isnullorempty",		&GScr_IsNullOrEmpty);
 	Plugin_ScrAddFunction("isstringalpha", 		&GScr_IsStringAlpha);
 	Plugin_ScrAddFunction("isstringfloat", 		&GScr_IsStringFloat);
 	Plugin_ScrAddFunction("isstringint", 		&GScr_IsStringInt);
 	Plugin_ScrAddFunction("toupper", 			&GScr_ToUpper);
-
+	// ------------------------------------------------------------------ //
 	// linq/delegate
 	Plugin_ScrAddFunction("select", 			&GScr_LINQ_Select);
-
 	// linq/predicate
 	Plugin_ScrAddFunction("all", 				&GScr_LINQ_All);
 	Plugin_ScrAddFunction("where", 				&GScr_LINQ_Where);
@@ -65,7 +88,6 @@ PCL int OnInit()
 	Plugin_ScrAddFunction("last",				&GScr_LINQ_Last);
 	Plugin_ScrAddFunction("first", 				&GScr_LINQ_First);
 	Plugin_ScrAddFunction("count", 				&GScr_LINQ_Count);
-
 	// linq/enumerable
 	Plugin_ScrAddFunction("min", 				&GScr_LINQ_Min);
 	Plugin_ScrAddFunction("max", 				&GScr_LINQ_Max);
@@ -77,12 +99,19 @@ PCL int OnInit()
 	Plugin_ScrAddFunction("range",				&GScr_LINQ_Range);
 	Plugin_ScrAddFunction("repeat",				&GScr_LINQ_Repeat);
 	Plugin_ScrAddFunction("reverse", 			&GScr_LINQ_Reverse);
-
+	// ------------------------------------------------------------------ //
 	return 0;
 }
 
-// Function used to obtain information about the plugin
-// Memory pointed by info is allocated by the server binary
+PCL void OnTerminate()
+{
+	curl_global_cleanup(); // free curl library
+}
+
+/**
+ * @brief Callback used to obtain information about the plugin
+ * Memory pointed by info is allocated by the server binary.
+ */
 PCL void OnInfoRequest(pluginInfo_t *info)
 { 
 	// =====  MANDATORY FIELDS  =====

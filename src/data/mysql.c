@@ -1,6 +1,6 @@
 #include "mysql.h"
-#include <cgsc.h>
 #include <my_global.h>
+#include <cgsc.h>
 
 #define MYSQL_CHECK_INSTANCE(x) 					\
 if (x == NULL) 										\
