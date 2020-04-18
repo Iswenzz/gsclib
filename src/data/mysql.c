@@ -305,7 +305,7 @@ void GScr_MySQL_Query()
 	{
 		char buffer[1024];
 		snprintf(buffer, sizeof(buffer), "SQL_Query(): Query failed: %s\n", mysql_error(instance.mysql));
-		Plugin_PrintError(buffer);
+		Plugin_Scr_Error(buffer);
 		Plugin_Scr_AddBool(qfalse);
 	} 
 	else 
@@ -315,7 +315,7 @@ void GScr_MySQL_Query()
 		{
 			char buffer[1024];
 			snprintf(buffer, sizeof(buffer), "SQL_Query(): Couldn't get results set: %s\n", mysql_error(instance.mysql));
-			Plugin_PrintError(buffer);
+			Plugin_Scr_Error(buffer);
 			Plugin_Scr_AddBool(qfalse);
 		}
 		else
