@@ -20,6 +20,8 @@ test(loop)
         it_IsStringInt();
         it_IsStringAlpha();
         it_IsStringFloat();
+        it_ToRGB();
+        it_HexToRGB();
 
         if (!loop)
             break;
@@ -127,4 +129,18 @@ it_IsStringFloat()
     printVariable(IsStringFloat("123"));
     printVariable(IsStringFloat("ab123.123__"));
     printVariable(IsStringFloat("test"));
+}
+
+it_ToRGB()
+{
+    comPrintF("\n<-------[ToRGB]------->\n");
+    printVariable(ToRGB(125, 125, 255));
+}
+
+it_HexToRGB()
+{
+    comPrintF("\n<-------[HexToRGB]------->\n");
+    printVariable(HexToRGB("AABBCC"));
+    printVariable(HexToRGB("#AABBCC"));
+    printVariable(HexToRGB("#FFFFFF"));
 }

@@ -78,6 +78,8 @@ PCL int OnInit()
 	Plugin_ScrAddFunction("isstringfloat", 		&GScr_IsStringFloat);
 	Plugin_ScrAddFunction("isstringint", 		&GScr_IsStringInt);
 	Plugin_ScrAddFunction("toupper", 			&GScr_ToUpper);
+	Plugin_ScrAddFunction("torgb", 				&GScr_ToRGB);
+	Plugin_ScrAddFunction("hextorgb", 			&GScr_HexToRGB);
 	// ------------------------------------------------------------------ //
 	// linq/delegate
 	Plugin_ScrAddFunction("select", 			&GScr_LINQ_Select);

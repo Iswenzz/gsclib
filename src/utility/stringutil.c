@@ -75,3 +75,46 @@ void GScr_IsNullOrEmpty()
 	Plugin_Scr_AddBool(!((var->type == VAR_STRING || var->type  == VAR_ISTRING)
 		&& Plugin_SL_ConvertToString(var->u.stringValue)[0] != '\0'));
 }
+
+void GScr_ToRGB()
+{
+	if (Plugin_Scr_GetNumParam() != 3)
+	{
+		Plugin_Scr_Error("Usage: ToRGB(<r>, <g>, <b>)");
+		return;
+	}
+	vec3_t vec = { 0, 0, 0 };
+	// normalize vector for cod4 rgb
+	vec[0] = ((float)Plugin_Scr_GetInt(0)) / 255;
+	vec[1] = ((float)Plugin_Scr_GetInt(1)) / 255;
+	vec[2] = ((float)Plugin_Scr_GetInt(2)) / 255;
+	Plugin_Scr_AddVector(vec);
+}
+
+void GScr_HexToRGB()
+{
+	if (Plugin_Scr_GetNumParam() != 1)
+	{
+		Plugin_Scr_Error("Usage: HexToRGB(<hex string>)");
+		return;
+	}
+	const char *string = Plugin_Scr_GetString(0);
+    char *p = (char *)string;
+    int rgb = 0;
+    vec3_t vec = { 0, 0, 0 };
+
+    if (string[0] == '#') 
+        p++;
+    if (strlen(p) != 6)
+    {
+        Plugin_Scr_ParamError(1, "Wrong HEX color input");
+        return;
+    }
+    rgb = (int)strtol(p, NULL, 16);
+
+    // normalize vector for cod4 rgb
+    vec[0] = ((float)((rgb >> 16) & 0xFF)) / 255;
+    vec[1] = ((float)((rgb >> 8) & 0xFF)) / 255;
+    vec[2] = ((float)(rgb & 0xFF)) / 255;
+	Plugin_Scr_AddVector(vec);
+}

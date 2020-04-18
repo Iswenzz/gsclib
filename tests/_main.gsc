@@ -12,9 +12,9 @@ runTests()
 
     comPrintf("\n|-------------------[GSCLIB Tests]-------------------|\n");
     // lib\gsclib\_tests_linq::test(false);
-    // lib\gsclib\_tests_utility::test(false);
+    lib\gsclib\_tests_utility::test(false);
     // lib\gsclib\_tests_data::test(false);
-    lib\gsclib\_tests_net::test(false);
+    // lib\gsclib\_tests_net::test(false);
     comPrintf("\n|----------------------------------------------------|\n");
 }
 
