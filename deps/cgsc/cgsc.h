@@ -7,8 +7,8 @@
 #ifdef PLUGIN_HANDLER_VERSION_MAJOR
     #if PLUGIN_HANDLER_VERSION_MAJOR >= 4
 		#define _CGSC_4
-    #elif PLUGIN_HANDLER_VERSION_MAJOR >= 2
-		#define _CGSC_2
+    #elif PLUGIN_HANDLER_VERSION_MAJOR >= 3
+		#define _CGSC_3
     #endif
 #endif
 

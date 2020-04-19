@@ -8,7 +8,7 @@
 	#define GetIntReturn() \
 	*ret_int
 #endif
-#ifdef _CGSC_2
+#ifdef _CGSC_3
 	#define DeclareIntReturn() \
 	const register int ret_int asm("edx"); 
 

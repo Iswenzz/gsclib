@@ -30,7 +30,7 @@ void GScr_LINQ_Select()
 	Plugin_Scr_FreeArray(array);
 	#endif
 
-	#ifdef _CGSC_2
+	#ifdef _CGSC_3
 	Plugin_PrintError("LINQ_Select is unsupported for this version.");
 	Plugin_Scr_AddUndefined();
 	#endif
