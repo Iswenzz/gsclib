@@ -1,6 +1,7 @@
 #include "convert.h"
 #include <cgsc.h>
 #include <stdlib.h>
+#include <stdio.h>
 
 void GScr_ToInt()
 {
