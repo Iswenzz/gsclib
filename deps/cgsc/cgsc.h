@@ -6,10 +6,8 @@
 
 #ifdef PLUGIN_HANDLER_VERSION_MAJOR
     #if PLUGIN_HANDLER_VERSION_MAJOR >= 4
-		// Tested with 17.7.1
 		#define _CGSC_4
     #elif PLUGIN_HANDLER_VERSION_MAJOR >= 2
-		// Tested with 17.6.0
 		#define _CGSC_2
     #endif
 #endif
