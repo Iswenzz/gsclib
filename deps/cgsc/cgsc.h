@@ -4,6 +4,16 @@
 #include "../../../pinc.h"
 #endif
 
+#ifdef PLUGIN_HANDLER_VERSION_MAJOR
+    #if PLUGIN_HANDLER_VERSION_MAJOR >= 4
+		// Tested with 17.7.1
+		#define _CGSC_4
+    #elif PLUGIN_HANDLER_VERSION_MAJOR >= 2
+		// Tested with 17.6.0
+		#define _CGSC_2
+    #endif
+#endif
+
 #ifdef _MSC_VER
 typedef __int64 int64_t;
 typedef __int32 int32_t;
@@ -124,8 +134,15 @@ typedef struct
     VariableValue **items;
 } VariableValueArray;
 
-__attribute__((unused)) static int __callArgNumber = 0;
+// ------------------------------ cgsc_utils ------------------------------ //
+#define CGSC_va(fmt,...) 							    \
+char cgsc_va[1024];									    \
+snprintf(cgsc_va, sizeof(cgsc_va), fmt, __VA_ARGS__);   \
 
+uint32_t Plugin_GetFlagsFromGSCArray(VariableValueArray *array);
+
+// ------------------------------ cgsc_param ------------------------------ //
+__attribute__((unused)) static int __callArgNumber = 0;
 #define FLOAT(val) Plugin_Scr_SetParamFloat(__callArgNumber, val)
 #define INT(val) Plugin_Scr_SetParamInt(__callArgNumber, val)
 #define VECTOR(val) Plugin_Scr_SetParamVector(__callArgNumber, val)
@@ -136,13 +153,6 @@ __attribute__((unused)) static int __callArgNumber = 0;
 #define FUNC(val) Plugin_Scr_SetParamFunc(__callArgNumber, val)
 #define UNDEFINED() Plugin_Scr_SetParamUndefined(__callArgNumber)
 
-uint32_t Plugin_GetFlagsFromGSCArray(VariableValueArray *array);
-void Plugin_Scr_FreeArray(VariableValueArray *array);
-VariableValueArray *Plugin_Scr_GetArray(unsigned int paramnum);
-unsigned int Plugin_Scr_GetObjectType(unsigned int id);
-VariableValue *Plugin_Scr_AllocVariable(VariableValue *varRef);
-VariableValue *Plugin_Scr_SelectParamOrDefault(unsigned int paramnum);
-VariableValue *Plugin_Scr_SelectParam(unsigned int paramnum);
 qboolean Plugin_Scr_SetParamFloat(unsigned int paramnum, float value);
 qboolean Plugin_Scr_SetParamInt(unsigned int paramnum, int value);
 qboolean Plugin_Scr_SetParamObject(unsigned int paramnum, int structPointer);
@@ -153,13 +163,23 @@ qboolean Plugin_Scr_SetParamFunc(unsigned int paramnum, const char *codePos);
 qboolean Plugin_Scr_SetParamStack(unsigned int paramnum, struct VariableStackBuffer *stack);
 qboolean Plugin_Scr_SetParamVector(unsigned int paramnum, const float *value);
 qboolean Plugin_Scr_SetParamUndefined(unsigned int paramnum);
+
+void Plugin_Scr_CallFunction(void (*function)(void), ...);
+void Plugin_Scr_CallMethod(void (*function)(scr_entref_t), scr_entref_t ent, ...);
+
+// ----------------------------- cgsc_variable ---------------------------- //
+void Plugin_Scr_FreeArray(VariableValueArray *array);
+VariableValueArray *Plugin_Scr_GetArray(unsigned int paramnum);
+VariableValue *Plugin_Scr_AllocVariable(VariableValue *varRef);
+VariableValue *Plugin_Scr_SelectParamOrDefault(unsigned int paramnum);
+VariableValue *Plugin_Scr_SelectParam(unsigned int paramnum);
 VariableValue *Plugin_Scr_GetTop(unsigned int paramnum);
-short Plugin_Scr_ExecThreadResult( int callbackHook, unsigned int numArgs);
 VariableValue *Plugin_Scr_AllocReturnResult();
-int Plugin_Scr_GetFunc(unsigned int paramnum);
+short Plugin_Scr_ExecThreadResult(int callbackHook, unsigned int numArgs);
 void Plugin_Scr_AddFunc(const char *codePosValue);
-void Plugin_Scr_AddObjectStruct(VariableValue *var);
 void Plugin_Scr_AddVariable(VariableValue *var);
 void Plugin_Scr_DebugVariable(VariableValue *var);
-void Plugin_Scr_CallFunction(void (*function)(void), ...);
-void Plugin_Scr_CallMethod(void (*function)(Plugin_Scr_entref_t), Plugin_Scr_entref_t ent, ...);
+
+// ------------------------------ cgsc_export ----------------------------- //
+unsigned int Plugin_Scr_GetObjectType(unsigned int id);
+int Plugin_Scr_GetFunc(unsigned int paramnum);

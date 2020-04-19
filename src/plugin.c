@@ -124,6 +124,6 @@ PCL void OnInfoRequest(pluginInfo_t *info)
 	info->pluginVersion.major = 1;
 	info->pluginVersion.minor = 0;
 	strncpy(info->fullName, "gsclib", sizeof(info->fullName));
-	strncpy(info->shortDescription, "", sizeof(info->shortDescription));
-	strncpy(info->longDescription, "", sizeof(info->longDescription));
+	strncpy(info->shortDescription, "gsclib acts as a standard library extension for the Call of Duty 4 scripting language.", sizeof(info->shortDescription));
+	strncpy(info->longDescription, "gsclib acts as a standard library extension for the Call of Duty 4 scripting language. The features this library provides consists of an FTP/FTPS/SFTP client, an HTTP/HTTPS client, Regular Expresison (RegEx) support, Language Integrated Query (Linq) support, a MySQL connector for databases, casting/type conversion and other type utilities, and much more. More detailed information on each feature can be found in the documentation section.", sizeof(info->longDescription));
 }
