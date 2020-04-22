@@ -3,12 +3,12 @@
 
 ## Features & Documentation
 
-* [HTTP/HTTPS client]()
-* [FTP/FTPS/SFTP client]()
-* [Regular expression]()
-* [Language Integrated Query (Linq)]()
-* [MySQL]()
-* [Type utilities]()
+* [HTTP/HTTPS client](https://github.com/Iswenzz/gsclib/blob/master/docs/https.md)
+* [FTP/FTPS/SFTP client](https://github.com/Iswenzz/gsclib/blob/master/docs/ftp.md)
+* [Regular expression](https://github.com/Iswenzz/gsclib/blob/master/docs/regex.md)
+* [Language Integrated Query (Linq)](https://github.com/Iswenzz/gsclib/blob/master/docs/linq.md)
+* [MySQL](https://github.com/Iswenzz/gsclib/blob/master/docs/mysql.md)
+* [Type utilities](https://github.com/Iswenzz/gsclib/blob/master/docs/utility.md)
 
 ## Instructions
 In order to use this library, just download the archived file down below, and extract it to the Call of Duty 4X ``/plugins`` directory.
