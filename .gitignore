@@ -2,8 +2,4 @@
 gsclib.so
 gsclib.dll
 .ignore
-unix_compile.sh
-
-win32_compile.bat
-
 compile.bat

@@ -1,14 +1,14 @@
 # gsclib
 ``gsclib`` acts as a standard library extension for the Call of Duty 4 scripting language. The features this library provides consists of an FTP/FTPS/SFTP client, an HTTP/HTTPS client, Regular Expresison (RegEx) support, Language Integrated Query (Linq) support, a MySQL connector for databases, casting/type conversion and other type utilities, and much more. More detailed information on each feature can be found in the documentation section.
 
-## Features
+## Features & Documentation
 
-* HTTP/HTTPS client
-* FTP/FTPS/SFTP client 
-* Regular expression
-* Language Integrated Query (Linq)
-* MySQL
-* Type utilities
+* [HTTP/HTTPS client]()
+* [FTP/FTPS/SFTP client]()
+* [Regular expression]()
+* [Language Integrated Query (Linq)]()
+* [MySQL]()
+* [Type utilities]()
 
 ## Instructions
 In order to use this library, just download the archived file down below, and extract it to the Call of Duty 4X ``/plugins`` directory.
