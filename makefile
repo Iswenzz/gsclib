@@ -16,13 +16,20 @@ endif
 SRCDIR=.
 OBJDIR=obj
 TARGETDIR=bin
+INSTALL_DIR=XD
 
 SRCS=$(shell find $(SRCDIR) -name "*.c")
 OBJS=$(SRCS:$(SRCDIR)/%.c=$(OBJDIR)/%.o)
 CFLAGS=-m32 -Wall -Wno-missing-braces -O1 -s -mtune=core2 $(INCLUDES)
 LDFLAGS=-m32 -s -shared -static-libgcc -static-libstdc++ $(OSFLAG) $(LIBDIRS) $(LIBS)
 
-.PHONY: all clean
+# C build rule
+$(OBJDIR)/%.o: $(SRCDIR)/%.c
+	@mkdir -p $(@D)
+	@echo $@
+	@$(CC) $(CFLAGS) -o $@ -c $<
+
+.PHONY: all install uninstall clean
 
 all: $(OBJS)
 	@echo -e \\nLinking DLL\\n
@@ -30,11 +37,23 @@ all: $(OBJS)
 	@mkdir -p $(TARGETDIR)
 	@$(CC) -o $(TARGETDIR)/$(TARGETNAME) $(OBJS) $(LDFLAGS)
 
-.SECONDEXPANSION:
-$(OBJDIR)/%.o: $(SRCDIR)/%.c
-	@mkdir -p $(@D)
-	@echo $@
-	@$(CC) $(CFLAGS) -o $@ -c $<
+install:
+	@echo "installing gsclib [admin required]"
+ifeq ($(OS),Windows_NT)
+	@powershell Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope LocalMachine -Force;
+	@powershell ./scripts/windows_setup.ps1 install;
+else
+	@./scripts/linux_setup.sh install
+endif
+
+uninstall:
+	@echo "uninstalling gsclib [admin required]"
+ifeq ($(OS),Windows_NT)
+	@powershell Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope LocalMachine -Force;
+	@powershell ./scripts/windows_setup.ps1 uninstall;
+else
+	@./scripts/linux_setup.sh uninstall
+endif
 
 clean:
-	@$(RM) -r $(OBJDIR)
+	@rm -r $(OBJDIR)
