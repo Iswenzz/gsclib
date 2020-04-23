@@ -2,9 +2,6 @@
 #include <string.h>
 #include <math.h>
 
-/**
- * Get the distance between two vec3_t.
- */
 float vec_distance(vec3_t a, vec3_t b)
 {
 	float x = a[0] - b[0];
@@ -14,9 +11,6 @@ float vec_distance(vec3_t a, vec3_t b)
 	return sqrtf((x * x) + (y * y) + (z * z));
 }
 
-/** 
- * qsort vec3_t comparison function.
- */ 
 int vec3_cmp(const void *a, const void *b)
 {
 	vec3_t zero;
@@ -26,32 +20,23 @@ int vec3_cmp(const void *a, const void *b)
 	float distanceA = vec_distance(*vecA, zero);
 	float distanceB = vec_distance(*vecB, zero);
 	
-	return distanceA - distanceB; // float comparison: returns negative if b > a, and positive if a > b
+	return distanceA - distanceB;
 }
 
-/** 
- * qsort float comparison function.
- */ 
 int float_cmp(const void *a, const void *b)
 {
 	const float *ia = (const float *)a;
 	const float *ib = (const float *)b;
-	return *ia - *ib; // float comparison: returns negative if b > a, and positive if a > b
+	return *ia - *ib;
 }
 
-/** 
- * qsort int comparison function.
- */ 
 int int_cmp(const void *a, const void *b)
 {
 	const int *ia = (const int *)a;
 	const int *ib = (const int *)b;
-	return *ia - *ib; // integer comparison: returns negative if b > a, and positive if a > b
+	return *ia - *ib;
 }
 
-/** 
- * qsort C-string comparison function.
- */ 
 int cstring_cmp(const void *a, const void *b)
 {
 	const char **ia = (const char **)a;
@@ -59,9 +44,6 @@ int cstring_cmp(const void *a, const void *b)
 	return strcmp(*ia, *ib);
 }
 
-/** 
- * qsort GSC variable vec3_t comparison function.
- */ 
 int gsc_vec3_cmp(const void *a, const void *b)
 {
 	vec3_t zero;
@@ -81,32 +63,23 @@ int gsc_vec3_cmp(const void *a, const void *b)
 	float distanceA = vec_distance(vecA, zero);
 	float distanceB = vec_distance(vecB, zero);
 
-	return distanceA - distanceB; // float comparison: returns negative if b > a, and positive if a > b
+	return distanceA - distanceB;
 }
 
-/** 
- * qsort GSC variable float comparison function.
- */ 
 int gsc_float_cmp(const void *a, const void *b)
 {
 	VariableValue *ia = *(VariableValue **)a;
 	VariableValue *ib = *(VariableValue **)b;
-	return ia->u.floatValue - ib->u.floatValue; // float comparison: returns negative if b > a, and positive if a > b
+	return ia->u.floatValue - ib->u.floatValue;
 }
 
-/** 
- * qsort GSC variable int comparison function.
- */ 
 int gsc_int_cmp(const void *a, const void *b)
 {
 	VariableValue *ia = *(VariableValue **)a;
 	VariableValue *ib = *(VariableValue **)b;
-	return ia->u.intValue - ib->u.intValue; // integer comparison: returns negative if b > a, and positive if a > b
+	return ia->u.intValue - ib->u.intValue;
 }
 
-/** 
- * qsort GSC variable C-string comparison function.
- */ 
 int gsc_cstring_cmp(const void *a, const void *b)
 {
 	VariableValue *ia = *(VariableValue **)a;
