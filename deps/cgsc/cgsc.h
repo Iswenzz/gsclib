@@ -133,51 +133,194 @@ typedef struct
 } VariableValueArray;
 
 // ------------------------------ cgsc_utils ------------------------------ //
+/**
+ * @brief Create a formated string,
+ * The buffer variable is named "cgsc_va".
+ */
 #define CGSC_va(fmt,...) 							    \
 char cgsc_va[1024];									    \
 snprintf(cgsc_va, sizeof(cgsc_va), fmt, __VA_ARGS__);   \
 
+/**
+ * @brief Get the flags from GSC array object.
+ * 
+ * @param array - The GSC array.
+ * @return uint32_t - Flags value.
+ */
 uint32_t Plugin_GetFlagsFromGSCArray(VariableValueArray *array);
 
 // ------------------------------ cgsc_param ------------------------------ //
-__attribute__((unused)) static int __callArgNumber = 0;
-#define FLOAT(val) Plugin_Scr_SetParamFloat(__callArgNumber, val)
-#define INT(val) Plugin_Scr_SetParamInt(__callArgNumber, val)
-#define VECTOR(val) Plugin_Scr_SetParamVector(__callArgNumber, val)
-#define OBJECT(val) Plugin_Scr_SetParamObject(__callArgNumber, val)
-#define ENTITY(val) Plugin_Scr_SetParamEntity(__callArgNumber, val)
-#define STRING(val) Plugin_Scr_SetParamString(__callArgNumber, val)
-#define ISTRING(val) Plugin_Scr_SetParamIString(__callArgNumber, val)
-#define FUNC(val) Plugin_Scr_SetParamFunc(__callArgNumber, val)
-#define UNDEFINED() Plugin_Scr_SetParamUndefined(__callArgNumber)
 
-qboolean Plugin_Scr_SetParamFloat(unsigned int paramnum, float value);
-qboolean Plugin_Scr_SetParamInt(unsigned int paramnum, int value);
-qboolean Plugin_Scr_SetParamObject(unsigned int paramnum, int structPointer);
-qboolean Plugin_Scr_SetParamEntity(unsigned int paramnum, int entID);
-qboolean Plugin_Scr_SetParamIString(unsigned int paramnum, const char *string);
-qboolean Plugin_Scr_SetParamString(unsigned int paramnum, const char *string);
-qboolean Plugin_Scr_SetParamFunc(unsigned int paramnum, const char *codePos);
-qboolean Plugin_Scr_SetParamStack(unsigned int paramnum, struct VariableStackBuffer *stack);
-qboolean Plugin_Scr_SetParamVector(unsigned int paramnum, const float *value);
-qboolean Plugin_Scr_SetParamUndefined(unsigned int paramnum);
+/**
+ * @brief 
+ * This variable is used to keep track of param count for a single call, 
+ * and can only be used in non-thread safe environment.
+ * @todo 
+ */
+__attribute__((used)) static int __callArgNumber = 0;
 
+/**
+ * @brief Alloc a new GSC float param before calling the function with Scr_CallFunction/Scr_CallMethod.
+ */
+#define FLOAT(val) Plugin_Scr_SetParamGeneric(__callArgNumber, val, VAR_FLOAT)
+/**
+ * @brief Alloc a new GSC int param before calling the function with Scr_CallFunction/Scr_CallMethod.
+ */
+#define INT(val) Plugin_Scr_SetParamGeneric(__callArgNumber, val, VAR_INTEGER)
+/**
+ * @brief Alloc a new GSC vector param before calling the function with Scr_CallFunction/Scr_CallMethod.
+ */
+#define VECTOR(val) Plugin_Scr_SetParamGeneric(__callArgNumber, val, VAR_VECTOR)
+/**
+ * @brief Alloc a new GSC pointer param before calling the function with Scr_CallFunction/Scr_CallMethod.
+ */
+#define POINTER(val) Plugin_Scr_SetParamGeneric(__callArgNumber, val, VAR_POINTER)
+/**
+ * @brief Alloc a new GSC string param before calling the function with Scr_CallFunction/Scr_CallMethod.
+ */
+#define STRING(val) Plugin_Scr_SetParamGeneric(__callArgNumber, val, VAR_STRING)
+/**
+ * @brief Alloc a new GSC localized string param before calling the function with Scr_CallFunction/Scr_CallMethod.
+ */
+#define ISTRING(val) Plugin_Scr_SetParamGeneric(__callArgNumber, val, VAR_ISTRING)
+/**
+ * @brief Alloc a new GSC function param before calling the function with Scr_CallFunction/Scr_CallMethod.
+ */
+#define FUNC(val) Plugin_Scr_SetParamGeneric(__callArgNumber, val, VAR_FUNCTION)
+/**
+ * @brief Alloc a new GSC undefined param before calling the function with Scr_CallFunction/Scr_CallMethod.
+ */
+#define UNDEFINED() Plugin_Scr_SetParamGeneric(__callArgNumber, NULL, VAR_UNDEFINED)
+
+/**
+ * @brief Alloc a new GSC generic param before calling the function with Scr_CallFunction/Scr_CallMethod.
+ * 
+ * @param paramnum - The param index to alloc.
+ * @param var - The value of the generic variable.
+ * @param type - The type of the generic variable.
+ * @return qboolean - Boolean result.
+ */
+qboolean Plugin_Scr_SetParamGeneric(unsigned int paramnum, void *var, int type);
+
+/**
+ * @brief Call the specified GSC function pointer
+ * This function is experimental. @todo
+ * @param function - The GSC function pointer.
+ * @param ... - GSC alloc macros can be written here only for convenience.
+ */
 void Plugin_Scr_CallFunction(void (*function)(void), ...);
+
+/**
+ * @brief Call the specified GSC method pointer
+ * This function is experimental. @todo
+ * @param function - The GSC function pointer.
+ * @param ent - The GSC entref.
+ * @param ... - GSC alloc macros can be written here only for convenience.
+ */
 void Plugin_Scr_CallMethod(void (*function)(scr_entref_t), scr_entref_t ent, ...);
 
 // ----------------------------- cgsc_variable ---------------------------- //
+/**
+ * @brief Free a VariableValueArray and its values.
+ * 
+ * @param array - The VariableValueArray to free.
+ */
 void Plugin_Scr_FreeArray(VariableValueArray *array);
+
+/**
+ * @brief Get a GSC array from specified param number.
+ * 
+ * @param paramnum - GSC param number.
+ * @return VariableValueArray* - The GSC array.
+ */
 VariableValueArray *Plugin_Scr_GetArray(unsigned int paramnum);
+
+/**
+ * @brief Alloc a VariableValue* and copy the variable info from specified parameter.
+ * Call free() when the value is not used anymore.
+ * 
+ * @param varRef - The variable to copy.
+ * @return VariableValue* - A copy of the variable.
+ */
 VariableValue *Plugin_Scr_AllocVariable(VariableValue *varRef);
+
+/**
+ * @brief Get a GSC variable reference from the specified param number.
+ * If the param number is not found it will allocate a default one.
+ * 
+ * @param paramnum - GSC param number.
+ * @return VariableValue* - GSC variable reference.
+ */
 VariableValue *Plugin_Scr_SelectParamOrDefault(unsigned int paramnum);
+
+/**
+ * @brief Get a GSC variable reference from the specified param number.
+ * 
+ * @param paramnum - GSC param number.
+ * @return VariableValue* - GSC variable reference.
+ */
 VariableValue *Plugin_Scr_SelectParam(unsigned int paramnum);
+
+/**
+ * @brief Get a GSC variable reference from the GSC stack with the specified index.
+ * 
+ * @param paramnum - Index to get from the GSC stack.
+ * @return VariableValue* - GSC variable reference.
+ */
 VariableValue *Plugin_Scr_GetTop(unsigned int paramnum);
+
+/**
+ * @brief Alloc a copy of the last GSC return variable.
+ * Call free() when the value is not used anymore.
+ * 
+ * @return VariableValue* - The allocated variable.
+ */
 VariableValue *Plugin_Scr_AllocReturnResult();
+
+/**
+ * @brief Call a GSC function and keep the GSC return value uncleared.
+ * 
+ * @param callbackHook - GSC function ID.
+ * @param numArgs - GSC function args count.
+ * @return short - The GSC thread id to be freed with Scr_FreeThread(<short>).
+ */
 short Plugin_Scr_ExecThreadResult(int callbackHook, unsigned int numArgs);
+
+/**
+ * @brief Return a GSC Function from specified codeposvalue.
+ * This function is untested.
+ * 
+ * @param codePosValue 
+ */
 void Plugin_Scr_AddFunc(const char *codePosValue);
+
+/**
+ * @brief Return a GSC variable.
+ * 
+ * @param var - The GSC variable to return.
+ */
 void Plugin_Scr_AddVariable(VariableValue *var);
+
+/**
+ * @brief Print GSC variable informations.
+ * 
+ * @param var - The GSC variable to debug.
+ */
 void Plugin_Scr_DebugVariable(VariableValue *var);
 
 // ------------------------------ cgsc_export ----------------------------- //
+/**
+ * @brief Get the type of a GSC object.
+ * 
+ * @param id - The GSC object.
+ * @return unsigned int - The type enum.
+ */
 unsigned int Plugin_Scr_GetObjectType(unsigned int id);
+
+/**
+ * @brief Get GSC func id from specified param num.
+ * 
+ * @param paramnum - GSC param index.
+ * @return int - The GSC func id.
+ */
 int Plugin_Scr_GetFunc(unsigned int paramnum);
