@@ -16,8 +16,9 @@ In order to use this library, just download the archived file down below, and ex
 ## Building (Any Platform)
 _Pre-Requisites:_
 1. [CGSC](https://github.com/Iswenzz/CGSC)
-1. Windows [MinGW-W64 GCC-7.3.0](https://sourceforge.net/projects/mingw-w64/files/Toolchains%20targetting%20Win32/Personal%20Builds/mingw-builds/7.3.0/threads-win32/dwarf/i686-7.3.0-release-win32-dwarf-rt_v5-rev0.7z)
+2. Windows [MinGW-W64 GCC-7.3.0](https://sourceforge.net/projects/mingw-w64/files/Toolchains%20targetting%20Win32/Personal%20Builds/mingw-builds/7.3.0/threads-win32/dwarf/i686-7.3.0-release-win32-dwarf-rt_v5-rev0.7z)
 Linux [MinGW-W64 GCC-7.3.0](https://sourceforge.net/projects/mingw-w64/files/Toolchains%20targetting%20Win32/Personal%20Builds/mingw-builds/7.3.0/threads-posix/dwarf/i686-7.3.0-release-posix-dwarf-rt_v5-rev0.7z)
+3. Windows [Cygwin](https://www.cygwin.com/) or [Git for Windows](https://gitforwindows.org/)
 
 _Build Command (Windows):_
 
