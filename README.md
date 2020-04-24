@@ -11,7 +11,7 @@
 * [Type utilities](https://github.com/Iswenzz/gsclib/blob/master/docs/utility.md)
 
 ## Instructions
-In order to use this library, just download the archived file down below, and extract it to the Call of Duty 4X ``/plugins`` directory.
+In order to use this library, just download the archived file down below, and extract it to the Call of Duty 4X ``/plugins/gsclib`` directory.
 
 ## Building (Any Platform)
 _Pre-Requisites:_
