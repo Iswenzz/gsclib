@@ -1,4 +1,5 @@
-#/bin/sh
+#!/bin/sh
+
 case $1 in
 	"install")
 	echo "Installed gsclib shared libraries to: /usr/lib/."
