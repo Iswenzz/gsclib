@@ -16,7 +16,6 @@ endif
 SRCDIR=.
 OBJDIR=obj
 TARGETDIR=bin
-INSTALL_DIR=XD
 
 SRCS=$(shell find $(SRCDIR) -name "*.c")
 OBJS=$(SRCS:$(SRCDIR)/%.c=$(OBJDIR)/%.o)
