@@ -33,6 +33,9 @@ _Build Command (Linux):_
 
     make
     make install
+    
+***Note:***
+``gsclib`` can be compiled without CGSC features with ``make nocgsc``target.
 
 ### [Download](https://github.com/Iswenzz/gsclib/releases)
 
