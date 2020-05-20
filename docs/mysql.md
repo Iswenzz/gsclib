@@ -14,7 +14,7 @@ Connect to a MySQL server.
 
 Usage Example:
 ```c
-SQL_Connect("127.0.0.1", 3306, "root", "rootpassword"));
+SQL_Connect("127.0.0.1", 3306, "root", "rootpassword");
 ```
 <hr>
 
@@ -115,7 +115,7 @@ Retrieve a single row data in a GSC array after a query.
 
 Usage Example:
 ```c
-row = SQL_FetchRows();
+row = SQL_FetchRow();
 for (i = 0; i < row.size; i++)
     comPrintF(row[i]);
 ```
