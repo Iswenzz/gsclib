@@ -272,7 +272,6 @@ void GScr_MySQL_NumFields()
 	Plugin_Scr_AddInt(mysql_num_fields(instance.result));
 }
 
-
 void GScr_MySQL_AffectedRows()
 {
 	if (Plugin_Scr_GetNumParam() != 0)
@@ -281,7 +280,6 @@ void GScr_MySQL_AffectedRows()
 		return;
 	}
 	MYSQL_CHECK_INSTANCE(instance.mysql);
-	MYSQL_CHECK_RESULT(instance.result);
 
 	Plugin_Scr_AddInt(mysql_affected_rows(instance.mysql));
 }
@@ -311,15 +309,7 @@ void GScr_MySQL_Query()
 	else 
 	{
 		instance.result = mysql_store_result(instance.mysql);
-		if (!instance.result) 
-		{
-			char buffer[1024];
-			snprintf(buffer, sizeof(buffer), "SQL_Query(): Couldn't get results set: %s\n", mysql_error(instance.mysql));
-			Plugin_Scr_Error(buffer);
-			Plugin_Scr_AddBool(qfalse);
-		}
-		else
-			Plugin_Scr_AddBool(qtrue);
+		Plugin_Scr_AddBool(qtrue);
 	}
 }
 
