@@ -59,8 +59,8 @@ test(loop)
 		it_all();
 		it_any();
 		it_where();
-		it_min();
-		it_max();
+		it_getmin();
+		it_getmax();
 		it_last();
 		it_first();
 		it_cast();
@@ -120,24 +120,24 @@ it_where()
 	printArrayWithType(where(level._tests_vectors, ::testPredicateVector));
 }
 
-it_min()
+it_getmin()
 {
 	comPrintF("\n<-------[Min]------->\n");
-	printVariableWithType(min(level._tests_ints));
+	printVariableWithType(getMin(level._tests_ints));
 	comPrintF();
-	printVariableWithType(min(level._tests_strings));
+	printVariableWithType(getMin(level._tests_strings));
 	comPrintF();
-	printVariableWithType(min(level._tests_vectors));
+	printVariableWithType(getMin(level._tests_vectors));
 }
 
-it_max()
+it_getmax()
 {
 	comPrintF("\n<-------[Max]------->\n");
-	printVariableWithType(max(level._tests_ints));
+	printVariableWithType(getMax(level._tests_ints));
 	comPrintF();
-	printVariableWithType(max(level._tests_strings));
+	printVariableWithType(getMax(level._tests_strings));
 	comPrintF();
-	printVariableWithType(max(level._tests_vectors));
+	printVariableWithType(getMax(level._tests_vectors));
 }
 
 it_last()

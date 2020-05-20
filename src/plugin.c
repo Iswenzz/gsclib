@@ -91,8 +91,8 @@ PCL int OnInit()
 	Plugin_ScrAddFunction("first", 				&GScr_LINQ_First);
 	Plugin_ScrAddFunction("count", 				&GScr_LINQ_Count);
 	// linq/enumerable
-	Plugin_ScrAddFunction("min", 				&GScr_LINQ_Min);
-	Plugin_ScrAddFunction("max", 				&GScr_LINQ_Max);
+	Plugin_ScrAddFunction("getmin", 			&GScr_LINQ_Min);
+	Plugin_ScrAddFunction("getmax", 			&GScr_LINQ_Max);
 	Plugin_ScrAddFunction("cast", 				&GScr_LINQ_Cast);
 	Plugin_ScrAddFunction("oftype", 			&GScr_LINQ_OfType);
 	Plugin_ScrAddFunction("sort", 				&GScr_LINQ_Sort);
