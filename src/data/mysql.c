@@ -16,6 +16,7 @@ if (x == NULL)										\
 	return;											\
 }
 
+int mysql_library_init_code;
 static MYSQL_INSTANCE instance;
 
 void GScr_MySQL_Version()

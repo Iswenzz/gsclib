@@ -21,7 +21,9 @@
 
 PCL int OnInit()
 {
-	curl_global_init(CURL_GLOBAL_ALL); // initialize curl library
+	curl_library_init_code = curl_global_init(CURL_GLOBAL_ALL); 	// initialize curl library
+	mysql_library_init_code = mysql_library_init(0, NULL, NULL); 	// initialize mysql library
+
 	// ------------------------------------------------------------------ //
 	// net/curl.h
 	Plugin_ScrAddFunction("curl_version", 		&GScr_CURL_Version);

@@ -1,6 +1,7 @@
 #include "curl.h"
 #include <stdlib.h>
 
+CURLcode curl_library_init_code;
 CURL_INSTANCE curl_instance = { NULL, 0, 0 };
 FTP_INSTANCE ftp_instance = { NULL, 0, 0, 0 };
 

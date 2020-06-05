@@ -1,6 +1,8 @@
 #pragma once
 #include <mysql.h>
 
+extern int mysql_library_init_code;
+
 typedef struct 
 {
 	MYSQL *mysql;

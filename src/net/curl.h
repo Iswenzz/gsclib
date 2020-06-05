@@ -2,6 +2,8 @@
 #include <cgsc.h>
 #include <curl/curl.h>
 
+extern CURLcode curl_library_init_code;
+
 /**
  * @brief 
  * Check if an FTP connection exists and return if not.
