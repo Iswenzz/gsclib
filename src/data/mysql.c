@@ -321,33 +321,18 @@ void GScr_MySQL_Connect()
 		Plugin_Scr_Error("Usage: SQL_Connect(<host>, <port>, <user>, <password>)");
 		return;
 	}
-
-	// Close previous connection
-	if (instance.result != NULL)
-	{
-		mysql_free_result(instance.result);
-		instance.result = NULL;
-	}
 	if (instance.mysql != NULL)
 	{
+		Plugin_Printf("b\n");
 		mysql_close(instance.mysql);
-		mysql_library_end();
 		instance.mysql = NULL;
-	}
-
-	// Initialize mysql lib
-	if (mysql_library_init(0, NULL, NULL)) 
-	{
-		Plugin_Scr_Error("SQL_Connect(): Could not initialize MySQL client library");
-		Plugin_Scr_AddBool(qfalse);
-		return;
 	}
 
 	instance.mysql = mysql_init(instance.mysql);
 	if (!instance.mysql)
 	{
+		Plugin_Printf("c\n");
 		Plugin_Scr_Error("SQL_Connect(): MySQL failed to initialize");
-		mysql_library_end();
 		Plugin_Scr_AddBool(qfalse);
 		return;
 	}
@@ -365,14 +350,16 @@ void GScr_MySQL_Connect()
 		Plugin_Scr_Error("SQL_Connect(): Connection failed");
 		if (instance.mysql != NULL)
 		{
+			Plugin_Printf("d\n");
 			mysql_close(instance.mysql);
-			mysql_library_end();
 			instance.mysql = NULL;
 		}
+		Plugin_Printf("e\n");
 		Plugin_Scr_AddBool(qfalse);
 	}
 	else
 	{
+		Plugin_Printf("5");
 		Plugin_Printf("SQL_Connect(): Connected MySQL Server: %s\n", mysql_get_server_info(instance.mysql));
 		Plugin_Scr_AddBool(qtrue);
 	}
@@ -387,12 +374,9 @@ void GScr_MySQL_Close()
 	}
 
 	// Close previous connection
-	if (instance.result != NULL)
-		mysql_free_result(instance.result);
 	if (instance.mysql != NULL)
 	{
 		mysql_close(instance.mysql);
-		mysql_library_end();
 		instance.mysql = NULL;
 	}
 	Plugin_Printf("SQL_Close(): Successfully closed MySQL connection.\n");
