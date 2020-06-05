@@ -109,7 +109,8 @@ PCL int OnInit()
 
 PCL void OnTerminate()
 {
-	curl_global_cleanup(); // free curl library
+	curl_global_cleanup(); 	// free curl library
+	mysql_library_end(); 	// free mysql library
 }
 
 /**
