@@ -19,6 +19,7 @@ In order to use this library, just download the archived file down below, and ex
 
 ## Building (Linux)
 _Pre-Requisites:_
+
 Debian/Ubuntu 32-bit:
 
     sudo apt install nasm paxctl build-essential
@@ -41,6 +42,9 @@ _Build Command (Linux):_
 
     make
     make install
+    
+***Note:***
+``gsclib`` can be compiled without CGSC features with ``make nocgsc``target.
 
 ## Building (Windows)
 _Pre-Requisites:_
