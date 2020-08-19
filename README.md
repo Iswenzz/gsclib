@@ -17,22 +17,41 @@
 ## Instructions
 In order to use this library, just download the archived file down below, and extract it to the Call of Duty 4X ``/plugins/gsclib`` directory.
 
-## Building (Any Platform)
+## Building (Linux)
+_Pre-Requisites:_
+Debian/Ubuntu 32-bit:
+
+    sudo apt install nasm paxctl build-essential
+
+Debian/Ubuntu 64-bit:
+
+    sudo dpkg --add-architecture i386
+    sudo apt-get update
+    sudo apt-get install nasm:i386 build-essential gcc-multilib g++-multilib
+
+openSUSE 32-bit:
+
+    sudo zypper install nasm gcc-32bit gcc-c++-32bit
+
+Arch Linux 32-bit:
+
+    yaourt -S nasm paxctl gcc-multilib make
+    
+_Build Command (Linux):_
+
+    make
+    make install
+
+## Building (Windows)
 _Pre-Requisites:_
 1. [CGSC](https://github.com/Iswenzz/CGSC)
 2. Windows [MinGW-W64 GCC-7.3.0](https://sourceforge.net/projects/mingw-w64/files/Toolchains%20targetting%20Win32/Personal%20Builds/mingw-builds/7.3.0/threads-win32/dwarf/i686-7.3.0-release-win32-dwarf-rt_v5-rev0.7z)
-Linux [MinGW-W64 GCC-7.3.0](https://sourceforge.net/projects/mingw-w64/files/Toolchains%20targetting%20Win32/Personal%20Builds/mingw-builds/7.3.0/threads-posix/dwarf/i686-7.3.0-release-posix-dwarf-rt_v5-rev0.7z)
 3. Windows [Cygwin](https://www.cygwin.com/) or [Git for Windows](https://gitforwindows.org/)
 
 _Build Command (Windows):_
 
     mingw32-make
     mingw32-make install
-
-_Build Command (Linux):_
-
-    make
-    make install
     
 ***Note:***
 ``gsclib`` can be compiled without CGSC features with ``make nocgsc``target.
