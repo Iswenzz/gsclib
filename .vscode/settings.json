@@ -7,6 +7,14 @@
         "stringutil.h": "c",
         "util.h": "c",
         "enumerable.h": "c",
-        "https.h": "c"
+        "https.h": "c",
+        "pthread.h": "c",
+        "mysql.h": "c",
+        "fstream": "c",
+        "sstream": "c",
+        "stdexcept": "c",
+        "tuple": "c",
+        "typeinfo": "c",
+        "my_config.h": "c"
     }
 }

@@ -43,10 +43,11 @@ typedef char my_bool;
 
 #ifndef my_socket_defined
 #ifdef _WIN32
-#include <windows.h>
-#ifdef WIN32_LEAN_AND_MEAN
 #include <winsock2.h>
-#endif
+#include <windows.h>
+// #ifdef WIN32_LEAN_AND_MEAN
+// #include <winsock2.h>
+// #endif
 #define my_socket SOCKET
 #else
 typedef int my_socket;
