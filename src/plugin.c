@@ -46,6 +46,11 @@ PCL int OnInit()
 	Plugin_ScrAddFunction("ftp_getfile", 		&GScr_FTP_GetFile);
 
 	// data/mysql.h
+	Plugin_ScrAddFunction("sql_prepare", 		&GScr_MySQL_Prepare);
+	Plugin_ScrAddFunction("sql_bindparam", 		&GScr_MySQL_BindParam);
+	Plugin_ScrAddFunction("sql_bindresult", 	&GScr_MySQL_BindResult);
+	Plugin_ScrAddFunction("sql_execute", 		&GScr_MySQL_Execute);
+
 	Plugin_ScrAddFunction("sql_escapestring", 	&GScr_MySQL_EscapeString);
 	Plugin_ScrAddFunction("sql_hexstring", 		&GScr_MySQL_HexString);
 	Plugin_ScrAddFunction("sql_selectdb", 		&GScr_MySQL_SelectDB);
@@ -53,7 +58,9 @@ PCL int OnInit()
 	Plugin_ScrAddFunction("sql_numrows", 		&GScr_MySQL_NumRows);
 	Plugin_ScrAddFunction("sql_numfields", 		&GScr_MySQL_NumFields);
 	Plugin_ScrAddFunction("sql_affectedrows",	&GScr_MySQL_AffectedRows);
+	Plugin_ScrAddFunction("sql_fetchrowsdict", 	&GScr_MySQL_FetchRowsDict);
 	Plugin_ScrAddFunction("sql_fetchrows", 		&GScr_MySQL_FetchRows);
+	Plugin_ScrAddFunction("sql_fetchrowdict", 	&GScr_MySQL_FetchRowDict);
 	Plugin_ScrAddFunction("sql_fetchrow", 		&GScr_MySQL_FetchRow);
 	Plugin_ScrAddFunction("sql_fetchfields", 	&GScr_MySQL_FetchFields);
 	Plugin_ScrAddFunction("sql_listdb", 		&GScr_MySQL_ListDB);

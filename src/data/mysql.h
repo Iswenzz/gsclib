@@ -1,13 +1,45 @@
 #pragma once
 #include <mysql.h>
+#include <cgsc.h>
 
 extern int mysql_library_init_code;
+
+typedef struct
+{
+	MYSQL_BIND bind;
+	void *buffer;
+} MYSQL_BIND_BUFFER;
 
 typedef struct 
 {
 	MYSQL *mysql;
 	MYSQL_RES *result;
+	MYSQL_STMT *stmt;
+	MYSQL_BIND_BUFFER *binds;
+	MYSQL_BIND_BUFFER *bindsResult;
+	int bindsLength;
+	int bindsResultLength;
 } MYSQL_INSTANCE;
+
+void MySQL_Free();
+
+void MySQL_Free_Result();
+
+void MySQL_Free_Statement();
+
+int MySQL_TypeToGSC(enum_field_types type);
+
+void MySQL_PrepareBindBuffer(MYSQL_BIND_BUFFER *b, const char *value, int valueLength, enum_field_types type);
+
+void MySQL_FetchRowsInternal(qboolean all, qboolean stringIndexed);
+
+void GScr_MySQL_Prepare();
+
+void GScr_MySQL_BindParam();
+
+void GScr_MySQL_BindResult();
+
+void GScr_MySQL_Execute();
 
 /**
  * @brief 
@@ -80,6 +112,18 @@ void GScr_MySQL_FetchRow();
  * Retrieve rows data in a two dimensional GSC array after a query.
  */
 void GScr_MySQL_FetchRows();
+
+/**
+ * @brief 
+ * Retrieve a single row data in a GSC string indexed array after a query.
+ */
+void GScr_MySQL_FetchRowDict();
+
+/**
+ * @brief 
+ * Retrieve rows data in a two dimensional GSC string indexed array after a query.
+ */
+void GScr_MySQL_FetchRowsDict();
 
 /**
  * @brief 
