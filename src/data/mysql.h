@@ -14,6 +14,7 @@ typedef struct
 {
 	MYSQL *mysql;
 	MYSQL_RES *result;
+	MYSQL_RES *resultStmt;
 	MYSQL_STMT *stmt;
 	MYSQL_BIND_BUFFER *binds;
 	MYSQL_BIND_BUFFER *bindsResult;

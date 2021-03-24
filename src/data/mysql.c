@@ -1,26 +1,17 @@
 #include "mysql.h"
 #include <my_global.h>
 
-#define MYSQL_CHECK_INSTANCE(x) 					\
+#define MYSQL_ERROR(x, msg) 						\
 if (x == NULL) 										\
 {													\
-	Plugin_Scr_Error("No MySQL connection found");	\
+	Plugin_Scr_Error(msg);							\
 	return;											\
 }
 
-#define MYSQL_CHECK_RESULT(x) 						\
-if (x == NULL)										\
-{													\
-	Plugin_Scr_Error("MySQL Query is empty");		\
-	return;											\
-}
-
-#define MYSQL_CHECK_STMT(x)							\
-if (x == NULL)										\
-{													\
-	Plugin_Scr_Error("MySQL Statement is empty");	\
-	return;											\
-}
+#define MYSQL_CHECK_INSTANCE(x) \
+	MYSQL_ERROR(x, "MySQL connection not found.")
+#define MYSQL_CHECK_STMT(x) \
+	MYSQL_ERROR(x, "MySQL statement not found.")
 
 int mysql_library_init_code;
 static MYSQL_INSTANCE instance;
@@ -252,7 +243,7 @@ void GScr_MySQL_Execute()
 	else
 	{
 		mysql_stmt_store_result(instance.stmt);
-		instance.result = mysql_stmt_result_metadata(instance.stmt);
+		instance.resultStmt = mysql_stmt_result_metadata(instance.stmt);
 		Plugin_Scr_AddBool(qtrue);
 	}
 
@@ -384,25 +375,27 @@ void GScr_MySQL_FetchFields()
 		return;
 	}
 	MYSQL_CHECK_INSTANCE(instance.mysql);
-	MYSQL_CHECK_RESULT(instance.result);
 
-	unsigned int num_fields = mysql_num_fields(instance.result);
-	Plugin_Scr_MakeArray();
-	mysql_field_seek(instance.result, 0);
-	for (int i = 0; i < num_fields; i++) 
+	if (instance.result)
 	{
-		MYSQL_FIELD *field = mysql_fetch_field(instance.result);
-		if (field == NULL)
+		unsigned int num_fields = mysql_num_fields(instance.result);
+		Plugin_Scr_MakeArray();
+		mysql_field_seek(instance.result, 0);
+		for (int i = 0; i < num_fields; i++) 
 		{
-			Plugin_Scr_AddUndefined();
-			Plugin_Scr_AddArray();
-			Plugin_Scr_Error("SQL_FetchFields(): Error while fetching fields.");
-			return;
-		}
-		else
-			Plugin_Scr_AddString(field->name);
+			MYSQL_FIELD *field = mysql_fetch_field(instance.result);
+			if (field == NULL)
+			{
+				Plugin_Scr_AddUndefined();
+				Plugin_Scr_AddArray();
+				Plugin_Scr_Error("SQL_FetchFields(): Error while fetching fields.");
+				return;
+			}
+			else
+				Plugin_Scr_AddString(field->name);
 
-		Plugin_Scr_AddArray();
+			Plugin_Scr_AddArray();
+		}
 	}
 }
 
@@ -449,22 +442,21 @@ void GScr_MySQL_FetchRowsDict()
 void MySQL_FetchRowsInternal(qboolean all, qboolean stringIndexed)
 {
 	MYSQL_CHECK_INSTANCE(instance.mysql);
-	MYSQL_CHECK_RESULT(instance.result);
 
 	// Statement results
-	if (instance.stmt != NULL)
+	if (instance.resultStmt)
 	{
 		if (all) 
 			Plugin_Scr_MakeArray();
 		while (!mysql_stmt_fetch(instance.stmt))
 		{
-			mysql_field_seek(instance.result, 0);
+			mysql_field_seek(instance.resultStmt, 0);
 
 			Plugin_Scr_MakeArray();
 			for (int i = 0; i < instance.bindsResultLength; i++) 
 			{
 				// Get the field name
-				MYSQL_FIELD *field = mysql_fetch_field(instance.result);
+				MYSQL_FIELD *field = mysql_fetch_field(instance.resultStmt);
 				if (field == NULL)
 				{
 					Plugin_Scr_AddUndefined();
@@ -504,7 +496,7 @@ void MySQL_FetchRowsInternal(qboolean all, qboolean stringIndexed)
 				Plugin_Scr_AddArray();
 		}
 	}
-	else
+	else if (instance.result)
 	{
 		MYSQL_ROW row;
 		unsigned int num_fields = mysql_num_fields(instance.result);
@@ -556,9 +548,9 @@ void GScr_MySQL_NumRows()
 		return;
 	}
 	MYSQL_CHECK_INSTANCE(instance.mysql);
-	MYSQL_CHECK_RESULT(instance.result);
 
-	Plugin_Scr_AddInt(mysql_num_rows(instance.result));
+	if (instance.result)
+		Plugin_Scr_AddInt(mysql_num_rows(instance.result));
 }
 
 void GScr_MySQL_NumFields()
@@ -569,9 +561,9 @@ void GScr_MySQL_NumFields()
 		return;
 	}
 	MYSQL_CHECK_INSTANCE(instance.mysql);
-	MYSQL_CHECK_RESULT(instance.result);
 
-	Plugin_Scr_AddInt(mysql_num_fields(instance.result));
+	if (instance.result)
+		Plugin_Scr_AddInt(mysql_num_fields(instance.result));
 }
 
 void GScr_MySQL_AffectedRows()
@@ -671,7 +663,7 @@ void GScr_MySQL_Close()
 
 void MySQL_Free_Statement()
 {
-	if (instance.stmt != NULL)
+	if (instance.stmt)
 	{
 		mysql_stmt_free_result(instance.stmt);
 		mysql_stmt_close(instance.stmt);
@@ -681,13 +673,13 @@ void MySQL_Free_Statement()
 
 void MySQL_Free_Result()
 {
-	if (instance.result != NULL)
+	if (instance.resultStmt)
 	{
-		mysql_free_result(instance.result);
-		instance.result = NULL;
+		mysql_free_result(instance.resultStmt);
+		instance.resultStmt = NULL;
 
 		// Free results binds
-		if (instance.bindsResult != NULL)
+		if (instance.bindsResult)
 		{
 			for (int i = 0; i < instance.bindsResultLength; i++)
 				free(instance.bindsResult[i].buffer);
@@ -697,22 +689,19 @@ void MySQL_Free_Result()
 			instance.bindsResultLength = 0;
 		}
 	}
-}
-
-void MySQL_Free()
-{
-	if (instance.stmt != NULL)
-	{
-		mysql_stmt_free_result(instance.stmt);
-		mysql_stmt_close(instance.stmt);
-		instance.stmt = NULL;
-	}
-	if (instance.result != NULL)
+	if (instance.result)
 	{
 		mysql_free_result(instance.result);
 		instance.result = NULL;
 	}
-	if (instance.mysql != NULL)
+}
+
+void MySQL_Free()
+{
+	MySQL_Free_Statement();
+	MySQL_Free_Result();
+
+	if (instance.mysql)
 	{
 		mysql_close(instance.mysql);
 		instance.mysql = NULL;
