@@ -66,7 +66,7 @@ void GScr_MySQL_BindParam()
 	const char *value = Plugin_Scr_GetString(0);
 	enum_field_types type = (enum_field_types)Plugin_Scr_GetInt(1);
 
-	if (instance.binds == NULL)
+	if (!instance.binds)
 		instance.binds = (MYSQL_BIND_BUFFER *)malloc(sizeof(MYSQL_BIND_BUFFER));
 	else
 		instance.binds = (MYSQL_BIND_BUFFER *)realloc(instance.binds, 
@@ -88,7 +88,7 @@ void GScr_MySQL_BindResult()
 
 	enum_field_types type = (enum_field_types)Plugin_Scr_GetInt(0);
 
-	if (instance.bindsResult == NULL)
+	if (!instance.bindsResult)
 		instance.bindsResult = (MYSQL_BIND_BUFFER *)malloc(sizeof(MYSQL_BIND_BUFFER));
 	else
 		instance.bindsResult = (MYSQL_BIND_BUFFER *)realloc(instance.bindsResult, 
@@ -113,7 +113,7 @@ void MySQL_PrepareBindBuffer(MYSQL_BIND_BUFFER *b, const char *value, int valueL
 			char *str = (char *)malloc(sizeof(char) * valueLength + 1);
 			*str = '\0';
 
-			if (value != NULL)
+			if (value)
 				strcpy_s(str, valueLength + 1, value);
 
 			b->buffer = str;
@@ -125,7 +125,7 @@ void MySQL_PrepareBindBuffer(MYSQL_BIND_BUFFER *b, const char *value, int valueL
 			long long *number = (long long *)malloc(sizeof(long long));
 			*number = 0;
 
-			if (value != NULL)
+			if (value)
 				*number = strtoll(value, NULL, 10);
 			
 			b->buffer = number;
@@ -136,7 +136,7 @@ void MySQL_PrepareBindBuffer(MYSQL_BIND_BUFFER *b, const char *value, int valueL
 			float *number = (float *)malloc(sizeof(float));
 			*number = 0;
 
-			if (value != NULL)
+			if (value)
 				*number = strtof(value, NULL);
 
 			b->buffer = number;
@@ -248,7 +248,7 @@ void GScr_MySQL_Execute()
 	}
 
 	// Free binds
-	if (instance.binds != NULL)
+	if (instance.binds)
 	{
 		for (int i = 0; i < instance.bindsLength; i++)
 			free(instance.binds[i].buffer);
@@ -376,26 +376,31 @@ void GScr_MySQL_FetchFields()
 	}
 	MYSQL_CHECK_INSTANCE(instance.mysql);
 
-	if (instance.result)
+	MYSQL_RES *res = instance.result ? instance.result : instance.resultStmt;
+	if (!res)
 	{
-		unsigned int num_fields = mysql_num_fields(instance.result);
-		Plugin_Scr_MakeArray();
-		mysql_field_seek(instance.result, 0);
-		for (int i = 0; i < num_fields; i++) 
-		{
-			MYSQL_FIELD *field = mysql_fetch_field(instance.result);
-			if (field == NULL)
-			{
-				Plugin_Scr_AddUndefined();
-				Plugin_Scr_AddArray();
-				Plugin_Scr_Error("SQL_FetchFields(): Error while fetching fields.");
-				return;
-			}
-			else
-				Plugin_Scr_AddString(field->name);
+		Plugin_Scr_AddUndefined();
+		Plugin_Scr_Error("SQL_FetchFields(): MySQL result not found.");
+		return;
+	}
 
+	unsigned int num_fields = mysql_num_fields(res);
+	Plugin_Scr_MakeArray();
+	mysql_field_seek(res, 0);
+	for (int i = 0; i < num_fields; i++) 
+	{
+		MYSQL_FIELD *field = mysql_fetch_field(res);
+		if (!field)
+		{
+			Plugin_Scr_AddUndefined();
 			Plugin_Scr_AddArray();
+			Plugin_Scr_Error("SQL_FetchFields(): Error while fetching fields.");
+			return;
 		}
+		else
+			Plugin_Scr_AddString(field->name);
+
+		Plugin_Scr_AddArray();
 	}
 }
 
@@ -457,7 +462,7 @@ void MySQL_FetchRowsInternal(qboolean all, qboolean stringIndexed)
 			{
 				// Get the field name
 				MYSQL_FIELD *field = mysql_fetch_field(instance.resultStmt);
-				if (field == NULL)
+				if (!field)
 				{
 					Plugin_Scr_AddUndefined();
 					Plugin_Scr_AddArray();
@@ -512,7 +517,7 @@ void MySQL_FetchRowsInternal(qboolean all, qboolean stringIndexed)
 			{
 				// Get the field name
 				MYSQL_FIELD *field = mysql_fetch_field(instance.result);
-				if (field == NULL)
+				if (!field)
 				{
 					Plugin_Scr_AddUndefined();
 					Plugin_Scr_AddArray();
@@ -521,7 +526,7 @@ void MySQL_FetchRowsInternal(qboolean all, qboolean stringIndexed)
 				}
 
 				// Add the row value
-				if (row[i] == NULL)
+				if (!row[i])
 					Plugin_Scr_AddUndefined();
 				else
 					Plugin_Scr_AddString(row[i]);
@@ -551,6 +556,8 @@ void GScr_MySQL_NumRows()
 
 	if (instance.result)
 		Plugin_Scr_AddInt(mysql_num_rows(instance.result));
+	else if (instance.resultStmt)
+		Plugin_Scr_AddInt(mysql_stmt_num_rows(instance.stmt));
 }
 
 void GScr_MySQL_NumFields()
@@ -564,6 +571,8 @@ void GScr_MySQL_NumFields()
 
 	if (instance.result)
 		Plugin_Scr_AddInt(mysql_num_fields(instance.result));
+	else if (instance.resultStmt)
+		Plugin_Scr_AddInt(mysql_stmt_field_count(instance.stmt));
 }
 
 void GScr_MySQL_AffectedRows()
@@ -575,7 +584,10 @@ void GScr_MySQL_AffectedRows()
 	}
 	MYSQL_CHECK_INSTANCE(instance.mysql);
 
-	Plugin_Scr_AddInt(mysql_affected_rows(instance.mysql));
+	if (instance.result)
+		Plugin_Scr_AddInt(mysql_affected_rows(instance.mysql));
+	else if (instance.resultStmt)
+		Plugin_Scr_AddInt(mysql_stmt_affected_rows(instance.stmt));
 }
 
 void GScr_MySQL_Query()
@@ -609,7 +621,7 @@ void GScr_MySQL_Connect()
 		Plugin_Scr_Error("Usage: SQL_Connect(<host>, <port>, <user>, <password>)");
 		return;
 	}
-	if (instance.mysql != NULL)
+	if (instance.mysql)
 	{
 		mysql_close(instance.mysql);
 		instance.mysql = NULL;
@@ -627,14 +639,15 @@ void GScr_MySQL_Connect()
 	qboolean reconnect = qtrue;
 	mysql_options(instance.mysql, MYSQL_OPT_RECONNECT, &reconnect);
 
-	if (!mysql_real_connect(instance.mysql, 	/* MYSQL structure to use */
-		Plugin_Scr_GetString(0),  	/* server hostname or IP address */ 
-		Plugin_Scr_GetString(2),  	/* mysql user */
-		Plugin_Scr_GetString(3),  	/* password */
-		NULL,  						/* default database to use, NULL for none */
-		Plugin_Scr_GetInt(1),     	/* port number, 0 for default */
-		NULL,  						/* socket file or named pipe name */
-		0 							/* connection flags */ ))
+	if (!mysql_real_connect(instance.mysql, /* MYSQL structure to use */
+		Plugin_Scr_GetString(0),  			/* server hostname or IP address */ 
+		Plugin_Scr_GetString(2),  			/* mysql user */
+		Plugin_Scr_GetString(3),  			/* password */
+		NULL,  								/* default database to use, NULL for none */
+		Plugin_Scr_GetInt(1),     			/* port number, 0 for default */
+		NULL,  								/* socket file or named pipe name */
+		0 									/* connection flags */ 
+	))
 	{
 		// Close previous connection
 		Plugin_Scr_Error("SQL_Connect(): Connection failed");
