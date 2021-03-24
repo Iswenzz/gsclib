@@ -50,7 +50,6 @@ PCL int OnInit()
 	Plugin_ScrAddFunction("sql_bindparam", 		&GScr_MySQL_BindParam);
 	Plugin_ScrAddFunction("sql_bindresult", 	&GScr_MySQL_BindResult);
 	Plugin_ScrAddFunction("sql_execute", 		&GScr_MySQL_Execute);
-
 	Plugin_ScrAddFunction("sql_escapestring", 	&GScr_MySQL_EscapeString);
 	Plugin_ScrAddFunction("sql_hexstring", 		&GScr_MySQL_HexString);
 	Plugin_ScrAddFunction("sql_selectdb", 		&GScr_MySQL_SelectDB);
