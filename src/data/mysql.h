@@ -22,24 +22,72 @@ typedef struct
 	int bindsResultLength;
 } MYSQL_INSTANCE;
 
+/**
+ * @brief 
+ * Free all MySQL resources.
+ */
 void MySQL_Free();
 
+/**
+ * @brief 
+ * Free the MySQL query & statement result.
+ */
 void MySQL_Free_Result();
 
+/**
+ * @brief 
+ * Free the MySQL statement.
+ */
 void MySQL_Free_Statement();
 
+/**
+ * @brief 
+ * Converts a MySQL type to a GSC variable type.
+ * @param type - The MySQL type.
+ * @return int - The GSC variable type.
+ */
 int MySQL_TypeToGSC(enum_field_types type);
 
+/**
+ * @brief 
+ * Generic bind for a prepare statement.
+ * @param b - The MySQL bind pointer.
+ * @param value - The param bind value or NULL for a result bind.
+ * @param valueLength - The length of the string to allocate (0 for other types).
+ * @param type - The MySQL type to bind.
+ */
 void MySQL_PrepareBindBuffer(MYSQL_BIND_BUFFER *b, const char *value, int valueLength, enum_field_types type);
 
+/**
+ * @brief 
+ * Generic fetch row function for both queries and statements.
+ * @param all - Retrieve all rows or only one.
+ * @param stringIndexed - Return as a string indexed array or a regular array.
+ */
 void MySQL_FetchRowsInternal(qboolean all, qboolean stringIndexed);
 
+/**
+ * @brief 
+ * Prepare a MySQL statement.
+ */
 void GScr_MySQL_Prepare();
 
+/**
+ * @brief 
+ * Bind a value param for the MySQL statement.
+ */
 void GScr_MySQL_BindParam();
 
+/**
+ * @brief 
+ * Bind a result param for the MySQL statement.
+ */
 void GScr_MySQL_BindResult();
 
+/**
+ * @brief 
+ * Execute the MySQL statement.
+ */
 void GScr_MySQL_Execute();
 
 /**
