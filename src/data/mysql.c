@@ -556,7 +556,7 @@ void GScr_MySQL_NumRows()
 
 	if (instance.result)
 		Plugin_Scr_AddInt(mysql_num_rows(instance.result));
-	else if (instance.resultStmt)
+	else if (instance.stmt)
 		Plugin_Scr_AddInt(mysql_stmt_num_rows(instance.stmt));
 }
 
@@ -571,7 +571,7 @@ void GScr_MySQL_NumFields()
 
 	if (instance.result)
 		Plugin_Scr_AddInt(mysql_num_fields(instance.result));
-	else if (instance.resultStmt)
+	else if (instance.stmt)
 		Plugin_Scr_AddInt(mysql_stmt_field_count(instance.stmt));
 }
 
@@ -586,7 +586,7 @@ void GScr_MySQL_AffectedRows()
 
 	if (instance.result)
 		Plugin_Scr_AddInt(mysql_affected_rows(instance.mysql));
-	else if (instance.resultStmt)
+	else if (instance.stmt)
 		Plugin_Scr_AddInt(mysql_stmt_affected_rows(instance.stmt));
 }
 
