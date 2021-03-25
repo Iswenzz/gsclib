@@ -452,7 +452,10 @@ void MySQL_FetchRowsInternal(qboolean all, qboolean stringIndexed)
 	if (instance.resultStmt)
 	{
 		if (all) 
+		{
 			Plugin_Scr_MakeArray();
+			mysql_stmt_data_seek(instance.stmt, 0);
+		}
 		while (!mysql_stmt_fetch(instance.stmt))
 		{
 			mysql_field_seek(instance.resultStmt, 0);
@@ -507,7 +510,10 @@ void MySQL_FetchRowsInternal(qboolean all, qboolean stringIndexed)
 		unsigned int num_fields = mysql_num_fields(instance.result);
 
 		if (all) 
+		{
 			Plugin_Scr_MakeArray();
+			mysql_data_seek(instance.result, 0);
+		}
 		while ((row = mysql_fetch_row(instance.result)) != NULL)
 		{
 			Plugin_Scr_MakeArray();
