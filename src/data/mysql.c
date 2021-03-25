@@ -95,7 +95,7 @@ void GScr_MySQL_BindResult()
 			sizeof(MYSQL_BIND_BUFFER) * (instance.bindsResultLength + 1));
 
 	if (Plugin_Scr_GetNumParam() == 2) // Alloc a string buffer
-		MySQL_PrepareBindBuffer(&instance.bindsResult[instance.bindsResultLength], NULL, Plugin_Scr_GetInt(1), type);
+		MySQL_PrepareBindBuffer(&instance.bindsResult[instance.bindsResultLength], NULL, Plugin_Scr_GetInt(1) + 1, type);
 	else
 		MySQL_PrepareBindBuffer(&instance.bindsResult[instance.bindsResultLength], NULL, 0, type);
 	instance.bindsResultLength++;
