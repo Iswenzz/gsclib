@@ -1,41 +1,34 @@
-#include sr\tests\gsclib\_main;
+#include sr\tests\_main;
 
 // Tests for gsclib/utility
-test(loop)
+test()
 {
-	comPrintF("\n[======{Utility}======]\n");
+	suit("GSCLIB - Utility");
 
-	while (true)
-	{
-		it_GetType();
-		it_Ternary();
-		it_IfUndef();
+	run(::it_GetType, "GetType");
+	run(::it_Ternary, "Ternary");
+	run(::it_IfUndef, "IfUndef");
 
-		it_ToInt();
-		it_ToFloat();
-		it_ToString();
+	run(::it_ToInt, "ToInt");
+	run(::it_ToFloat, "ToFloat");
+	run(::it_ToString, "ToString");
 
-		it_ToUpper();
-		it_IsNullOrEmpty();
-		it_IsStringInt();
-		it_IsStringAlpha();
-		it_IsStringFloat();
-		it_ToRGB();
-		it_HexToRGB();
-
-		if (!loop)
-			break;
-		wait 0.05;
-	}
+	run(::it_ToUpper, "ToUpper");
+	run(::it_IsNullOrEmpty, "IsNullOrEmpty");
+	run(::it_IsStringInt, "IsStringInt");
+	run(::it_IsStringAlpha, "IsStringAlpha");
+	run(::it_IsStringFloat, "IsStringFloat");
+	run(::it_ToRGB, "ToRGB");
+	run(::it_HexToRGB, "HexToRGB");
 }
 
 it_GetType()
 {
-	comPrintF("\n<-------[GetType]------->\n");
 	f = 1.125;
 	i = 10;
 	s = "test";
 	v = (0, 1, 2);
+
 	printVariable(GetType(f));
 	printVariable(GetType(i));
 	printVariable(GetType(s));
@@ -44,26 +37,25 @@ it_GetType()
 
 it_Ternary()
 {
-	comPrintF("\n<-------[Ternary]------->\n");
 	printVariable(Ternary(true, 3, 4));
 	printVariable(Ternary(false, 3, 4));
 }
 
 it_IfUndef()
 {
-	comPrintF("\n<-------[IfUndef]------->\n");
 	a = "test";
 	b = undefined;
+
 	printVariable(IfUndef(b, a));
 	printVariable(IfUndef(a, a));
 }
 
 it_IsNullOrEmpty()
 {
-	comPrintF("\n<-------[IsNullOrEmpty]------->\n");
 	a = undefined;
 	b = "";
 	c = "test";
+
 	printVariable(IsNullOrEmpty(a));
 	printVariable(IsNullOrEmpty(b));
 	printVariable(IsNullOrEmpty(c));
@@ -71,7 +63,6 @@ it_IsNullOrEmpty()
 
 it_ToUpper()
 {
-	comPrintF("\n<-------[ToUpper]------->\n");
 	printVariable(ToUpper("test"));
 	printVariable(ToUpper("test2"));
 	printVariable(ToUpper("test__test"));
@@ -79,7 +70,6 @@ it_ToUpper()
 
 it_ToInt()
 {
-	comPrintF("\n<-------[ToInt]------->\n");
 	printVariable(ToInt("1"));
 	printVariable(ToInt(2.2));
 	printVariable(ToInt((3, 3, 3)));
@@ -87,7 +77,6 @@ it_ToInt()
 
 it_ToFloat()
 {
-	comPrintF("\n<-------[ToFloat]------->\n");
 	printVariable(ToFloat("1.1"));
 	printVariable(ToFloat(2.2));
 	printVariable(ToFloat((3.3, 3.3, 3.3)));
@@ -95,7 +84,6 @@ it_ToFloat()
 
 it_ToString()
 {
-	comPrintF("\n<-------[ToString]------->\n");
 	printVariable(ToString("1"));
 	printVariable(ToString(2.2));
 	printVariable(ToString((3.3, 3.3, 3.3)));
@@ -103,7 +91,6 @@ it_ToString()
 
 it_IsStringInt()
 {
-	comPrintF("\n<-------[IsStringInt]------->\n");
 	printVariable(IsStringInt("123"));
 	printVariable(IsStringInt("123__"));
 	printVariable(IsStringInt("123.123"));
@@ -113,7 +100,6 @@ it_IsStringInt()
 
 it_IsStringAlpha()
 {
-	comPrintF("\n<-------[IsStringAlpha]------->\n");
 	printVariable(IsStringAlpha("123"));
 	printVariable(IsStringAlpha("123__"));
 	printVariable(IsStringAlpha("123.123"));
@@ -123,7 +109,6 @@ it_IsStringAlpha()
 
 it_IsStringFloat()
 {
-	comPrintF("\n<-------[IsStringFloat]------->\n");
 	printVariable(IsStringFloat("123.123"));
 	printVariable(IsStringFloat("123.123__"));
 	printVariable(IsStringFloat("123"));
@@ -133,13 +118,11 @@ it_IsStringFloat()
 
 it_ToRGB()
 {
-	comPrintF("\n<-------[ToRGB]------->\n");
 	printVariable(ToRGB(125, 125, 255));
 }
 
 it_HexToRGB()
 {
-	comPrintF("\n<-------[HexToRGB]------->\n");
 	printVariable(HexToRGB("AABBCC"));
 	printVariable(HexToRGB("#AABBCC"));
 	printVariable(HexToRGB("#FFFFFF"));

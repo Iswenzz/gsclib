@@ -3,3 +3,4 @@ gsclib.so
 gsclib.dll
 .ignore
 compile.bat
+build/
