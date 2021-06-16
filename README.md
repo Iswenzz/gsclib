@@ -23,6 +23,9 @@ _Pre-Requisites:_
 #define MAX_SCRIPTFUNCTIONS 256
 ```
 2. [CGSC](https://github.com/Iswenzz/CGSC) and it's pre-requisites.
+```
+sudo apt install libcurl3:i386
+```
     
 _Build Command (Linux):_
 
