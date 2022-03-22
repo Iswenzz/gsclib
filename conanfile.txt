@@ -1,0 +1,9 @@
+[requires]
+CGSC/1.0.0
+libmysqlclient/8.0.25
+libcurl/7.80.0
+pcre2/10.39
+gtest/cci.20210126
+
+[generators]
+cmake

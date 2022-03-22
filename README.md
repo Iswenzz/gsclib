@@ -23,17 +23,19 @@ _Pre-Requisites:_
 #define MAX_SCRIPTFUNCTIONS 256
 ```
 2. [CGSC](https://github.com/Iswenzz/CGSC) and it's pre-requisites.
-```
-sudo apt install libcurl3:i386
-```
-    
+3. [CMake](https://cmake.org/) and [Conan](https://conan.io/).
+
 _Build Command (Linux):_
 
-    make
-    make install
-    
+	conan remote add iswenzz-conan https://iswenzz.jfrog.io/artifactory/api/conan/iswenzz-conan
+	mkdir build && cd build
+	conan install .. --build --profile ../.conan/linux.conf
+	cmake ..
+	cmake --build .
+
+
 ***Note:***
-``gsclib`` can be compiled without CGSC features with ``make nocgsc`` target.
+``gsclib`` can be compiled without CGSC features with ``cmake .. -G "Visual Studio 16 2019" -A Win32 -DNOCGSC`` target.
 
 ## Building (Windows)
 _Pre-Requisites:_
@@ -42,15 +44,19 @@ _Pre-Requisites:_
 #define MAX_SCRIPTFUNCTIONS 256
 ```
 2. [CGSC](https://github.com/Iswenzz/CGSC) and it's pre-requisites.
-3. Windows [Cygwin](https://www.cygwin.com/) or [Git for Windows](https://gitforwindows.org/)
+3. [CMake](https://cmake.org/) and [Conan](https://conan.io/).
 
 _Build Command (Windows):_
 
-    mingw32-make
-    mingw32-make install
-    
+	conan remote add iswenzz-conan https://iswenzz.jfrog.io/artifactory/api/conan/iswenzz-conan
+	mkdir build && cd build
+	conan install .. --build --profile ../.conan/windows.conf
+	cmake .. -G "Visual Studio 16 2019" -T ClangCL -A Win32
+	cmake --build .
+
+
 ***Note:***
-``gsclib`` can be compiled without CGSC features with ``mingw32-make nocgsc`` target.
+``gsclib`` can be compiled without CGSC features with ``cmake .. -G "Visual Studio 16 2019" -A Win32 -DNOCGSC`` target.
 
 ## [Download](https://github.com/Iswenzz/gsclib/releases)
 
