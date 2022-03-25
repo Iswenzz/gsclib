@@ -24,6 +24,9 @@ conan_basic_setup()
 
 # Build
 add_subdirectory(src)
+target_include_directories(gsclib PUBLIC ..)
+target_link_directories(gsclib PUBLIC ..)
+target_link_libraries(gsclib PUBLIC ${CONAN_LIBS} libcom_plugin)
 
 # Pack
 install(TARGETS gsclib LIBRARY DESTINATION lib)

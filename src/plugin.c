@@ -1,43 +1,67 @@
-#include <curl/curl.h>
+// #include "data/regex.h"
 
-#include "linq/enumerable.h"
-#include "linq/predicate.h"
-#include "linq/delegate.h"
-
-#include "data/mysql.h"
-#include "data/regex.h"
-
-#include "utility/util.h"
-#include "utility/stringutil.h"
-#include "utility/convert.h"
+#include "linq/enumerables.h"
+#include "linq/predicates.h"
+#include "linq/delegates.h"
 
 #include "net/curl.h"
 #include "net/https.h"
 #include "net/ftp.h"
+#include "net/mysql.h"
 
-#ifndef PLUGIN_INCLUDES
-#include "../../pinc.h"
-#endif
+#include "utils/utils.h"
+#include "utils/stringutils.h"
+#include "utils/convert.h"
+
+#include <curl/curl.h>
 
 PCL int OnInit()
 {
 	curl_library_init_code = curl_global_init(CURL_GLOBAL_ALL); 	// initialize curl library
 	mysql_library_init_code = mysql_library_init(0, NULL, NULL); 	// initialize mysql library
 
-	// net/curl.h
+	//// data/regex
+	// Plugin_ScrAddFunction("regexmatch", 		&GScr_RegexMatch);
+	// Plugin_ScrAddFunction("regexsplit", 		&GScr_RegexSplit);
+	// Plugin_ScrAddFunction("regexreplace", 	&GScr_RegexReplace);
+
+	// linq/delegates
+	Plugin_ScrAddFunction("select", 			&GScr_LINQ_Select);
+
+	// linq/predicates
+	Plugin_ScrAddFunction("all", 				&GScr_LINQ_All);
+	Plugin_ScrAddFunction("where", 				&GScr_LINQ_Where);
+	Plugin_ScrAddFunction("any", 				&GScr_LINQ_Any);
+	Plugin_ScrAddFunction("last",				&GScr_LINQ_Last);
+	Plugin_ScrAddFunction("first", 				&GScr_LINQ_First);
+	Plugin_ScrAddFunction("count", 				&GScr_LINQ_Count);
+
+	// linq/enumerables
+	Plugin_ScrAddFunction("getmin", 			&GScr_LINQ_Min);
+	Plugin_ScrAddFunction("getmax", 			&GScr_LINQ_Max);
+	Plugin_ScrAddFunction("cast", 				&GScr_LINQ_Cast);
+	Plugin_ScrAddFunction("oftype", 			&GScr_LINQ_OfType);
+	Plugin_ScrAddFunction("sort", 				&GScr_LINQ_Sort);
+	Plugin_ScrAddFunction("average",			&GScr_LINQ_Average);
+	Plugin_ScrAddFunction("sum", 				&GScr_LINQ_Sum);
+	Plugin_ScrAddFunction("range",				&GScr_LINQ_Range);
+	Plugin_ScrAddFunction("repeat",				&GScr_LINQ_Repeat);
+	Plugin_ScrAddFunction("reverse", 			&GScr_LINQ_Reverse);
+
+	// net/curl
 	Plugin_ScrAddFunction("curl_version", 		&GScr_CURL_Version);
 	Plugin_ScrAddFunction("curl_setheader", 	&GScr_CURL_SetHeader);
 	Plugin_ScrAddFunction("curl_headercleanup", &GScr_CURL_HeaderCleanup);
 	Plugin_ScrAddFunction("curl_optcleanup", 	&GScr_CURL_OptCleanup);
 	Plugin_ScrAddFunction("curl_addopt", 		&GScr_CURL_AddOpt);
 
-	// net/https.h
+	// net/https
 	Plugin_ScrAddFunction("https_postfile", 	&GScr_HTTPS_PostFile);
 	Plugin_ScrAddFunction("https_poststring", 	&GScr_HTTPS_PostString);
 	Plugin_ScrAddFunction("https_getfile", 		&GScr_HTTPS_GetFile);
 	Plugin_ScrAddFunction("https_getstring", 	&GScr_HTTPS_GetString);
 
-	// net/ftp.h
+	// net/ftp
 	Plugin_ScrAddFunction("sftp_connect", 		&GScr_SFTP_Connect);
 	Plugin_ScrAddFunction("ftp_connect", 		&GScr_FTP_Connect);
 	Plugin_ScrAddFunction("ftp_close", 			&GScr_FTP_Close);
@@ -45,7 +69,7 @@ PCL int OnInit()
 	Plugin_ScrAddFunction("ftp_postfile", 		&GScr_FTP_PostFile);
 	Plugin_ScrAddFunction("ftp_getfile", 		&GScr_FTP_GetFile);
 
-	// data/mysql.h
+	// net/mysql
 	Plugin_ScrAddFunction("sql_prepare", 		&GScr_MySQL_Prepare);
 	Plugin_ScrAddFunction("sql_bindparam", 		&GScr_MySQL_BindParam);
 	Plugin_ScrAddFunction("sql_bindresult", 	&GScr_MySQL_BindResult);
@@ -68,23 +92,18 @@ PCL int OnInit()
 	Plugin_ScrAddFunction("sql_connect", 		&GScr_MySQL_Connect);
 	Plugin_ScrAddFunction("sql_close", 			&GScr_MySQL_Close);
 
-	// data/regex.h
-	Plugin_ScrAddFunction("regexmatch", 		&GScr_RegexMatch);
-	Plugin_ScrAddFunction("regexsplit", 		&GScr_RegexSplit);
-	Plugin_ScrAddFunction("regexreplace", 		&GScr_RegexReplace);
-
-	// utility/util.h
+	// utils/utils
 	Plugin_ScrAddFunction("comprintf", 			&GScr_ComPrintf);
 	Plugin_ScrAddFunction("gettype", 			&GScr_GetType);
 	Plugin_ScrAddFunction("ternary", 			&GScr_Ternary);
 	Plugin_ScrAddFunction("ifundef", 			&GScr_IfUndef);
 
-	// utitlity/convert.h
+	// utils/convert
 	Plugin_ScrAddFunction("tostring", 			&GScr_ToString);
 	Plugin_ScrAddFunction("toint", 				&GScr_ToInt);
 	Plugin_ScrAddFunction("tofloat", 			&GScr_ToFloat);
 
-	// utitlity/stringutil.h
+	// utils/stringutils
 	Plugin_ScrAddFunction("isnullorempty",		&GScr_IsNullOrEmpty);
 	Plugin_ScrAddFunction("isstringalpha", 		&GScr_IsStringAlpha);
 	Plugin_ScrAddFunction("isstringfloat", 		&GScr_IsStringFloat);
@@ -92,29 +111,6 @@ PCL int OnInit()
 	Plugin_ScrAddFunction("toupper", 			&GScr_ToUpper);
 	Plugin_ScrAddFunction("torgb", 				&GScr_ToRGB);
 	Plugin_ScrAddFunction("hextorgb", 			&GScr_HexToRGB);
-
-	// linq/delegate
-	Plugin_ScrAddFunction("select", 			&GScr_LINQ_Select);
-
-	// linq/predicate
-	Plugin_ScrAddFunction("all", 				&GScr_LINQ_All);
-	Plugin_ScrAddFunction("where", 				&GScr_LINQ_Where);
-	Plugin_ScrAddFunction("any", 				&GScr_LINQ_Any);
-	Plugin_ScrAddFunction("last",				&GScr_LINQ_Last);
-	Plugin_ScrAddFunction("first", 				&GScr_LINQ_First);
-	Plugin_ScrAddFunction("count", 				&GScr_LINQ_Count);
-
-	// linq/enumerable
-	Plugin_ScrAddFunction("getmin", 			&GScr_LINQ_Min);
-	Plugin_ScrAddFunction("getmax", 			&GScr_LINQ_Max);
-	Plugin_ScrAddFunction("cast", 				&GScr_LINQ_Cast);
-	Plugin_ScrAddFunction("oftype", 			&GScr_LINQ_OfType);
-	Plugin_ScrAddFunction("sort", 				&GScr_LINQ_Sort);
-	Plugin_ScrAddFunction("average",			&GScr_LINQ_Average);
-	Plugin_ScrAddFunction("sum", 				&GScr_LINQ_Sum);
-	Plugin_ScrAddFunction("range",				&GScr_LINQ_Range);
-	Plugin_ScrAddFunction("repeat",				&GScr_LINQ_Repeat);
-	Plugin_ScrAddFunction("reverse", 			&GScr_LINQ_Reverse);
 
 	return 0;
 }
@@ -130,7 +126,7 @@ PCL void OnTerminate()
  * Memory pointed by info is allocated by the server binary.
  */
 PCL void OnInfoRequest(pluginInfo_t *info)
-{ 
+{
 	// =====  MANDATORY FIELDS  =====
 	info->handlerVersion.major = PLUGIN_HANDLER_VERSION_MAJOR;
 	info->handlerVersion.minor = PLUGIN_HANDLER_VERSION_MINOR; // Requested handler version

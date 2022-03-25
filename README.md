@@ -25,15 +25,6 @@ _Pre-Requisites:_
 2. [CGSC](https://github.com/Iswenzz/CGSC) and it's pre-requisites.
 3. [CMake](https://cmake.org/) and [Conan](https://conan.io/).
 
-_Build Command (Linux):_
-
-	conan remote add iswenzz-conan https://iswenzz.jfrog.io/artifactory/api/conan/iswenzz-conan
-	mkdir build && cd build
-	conan install .. --build --profile ../.conan/linux.conf
-	cmake ..
-	cmake --build .
-
-
 ***Note:***
 ``gsclib`` can be compiled without CGSC features with ``cmake .. -G "Visual Studio 16 2019" -A Win32 -DNOCGSC`` target.
 
@@ -46,16 +37,8 @@ _Pre-Requisites:_
 2. [CGSC](https://github.com/Iswenzz/CGSC) and it's pre-requisites.
 3. [CMake](https://cmake.org/) and [Conan](https://conan.io/).
 
-_Build Command (Windows):_
-
-	conan remote add iswenzz-conan https://iswenzz.jfrog.io/artifactory/api/conan/iswenzz-conan
-	mkdir build && cd build
-	conan install .. --build --profile ../.conan/windows.conf
-	cmake .. -G "Visual Studio 16 2019" -T ClangCL -A Win32
-	cmake --build .
-
-
 ***Note:***
+VCPKG integration need to be disabled ``vcpkg integration remove``.
 ``gsclib`` can be compiled without CGSC features with ``cmake .. -G "Visual Studio 16 2019" -A Win32 -DNOCGSC`` target.
 
 ## [Download](https://github.com/Iswenzz/gsclib/releases)

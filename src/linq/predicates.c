@@ -1,14 +1,14 @@
-#include "predicate.h"
+#include "predicates.h"
 #include <cgsc.h>
 
-#ifdef _CGSC_4
+#ifdef CGSC_4
 	#define DeclareIntReturn() \
 	const register int *ret_int asm("edx");
 
 	#define GetIntReturn() \
 	*ret_int
 #endif
-#ifdef _CGSC_3
+#ifdef CGSC_3
 	#define DeclareIntReturn() \
 	const register int ret_int asm("edx"); 
 

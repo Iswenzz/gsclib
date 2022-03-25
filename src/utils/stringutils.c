@@ -1,4 +1,5 @@
-#include "stringutil.h"
+#include "stringutils.h"
+
 #include <cgsc.h>
 #include <stdlib.h>
 #include <ctype.h>

@@ -1,4 +1,4 @@
-#include "util.h"
+#include "utils.h"
 
 void GScr_Ternary()
 {

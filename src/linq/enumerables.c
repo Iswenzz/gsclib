@@ -1,6 +1,7 @@
-#include "enumerable.h"
-#include "../utility/polycmp.h"
-#include "../utility/util.h"
+#include "enumerables.h"
+#include "utils/polycmp.h"
+#include "utils/utils.h"
+
 #include <cgsc.h>
 #include <stdlib.h>
 #include <string.h>
@@ -43,13 +44,13 @@ void GScr_LINQ_Min()
 		{
 			if (hasValue)
 			{
-				if (strlen(Plugin_SL_ConvertToString(array->items[i]->u.stringValue)) < strLength) 
+				if (strlen(Plugin_SL_ConvertToString(array->items[i]->u.stringValue)) < strLength)
 				{
 					strLength = strlen(Plugin_SL_ConvertToString(array->items[i]->u.stringValue));
 					index = i;
 				}
 			}
-			else 
+			else
 			{
 				strLength = strlen(Plugin_SL_ConvertToString(array->items[i]->u.stringValue));
 				hasValue = qtrue;
@@ -71,13 +72,13 @@ void GScr_LINQ_Min()
 		{
 			if (hasValue)
 			{
-				if (vec_distance((float *)array->items[i]->u.vectorValue, zero) < distance) 
+				if (vec_distance((float *)array->items[i]->u.vectorValue, zero) < distance)
 				{
 					distance = vec_distance((float *)array->items[i]->u.vectorValue, zero);
 					index = i;
 				}
 			}
-			else 
+			else
 			{
 				distance = vec_distance((float *)array->items[i]->u.vectorValue, zero);
 				hasValue = qtrue;
@@ -99,10 +100,10 @@ void GScr_LINQ_Min()
 			{
 				if (hasValue)
 				{
-					if (array->items[i]->u.intValue < value) 
+					if (array->items[i]->u.intValue < value)
 						value = array->items[i]->u.intValue;
 				}
-				else 
+				else
 				{
 					value = array->items[i]->u.intValue;
 					hasValue = qtrue;
@@ -112,17 +113,17 @@ void GScr_LINQ_Min()
 			{
 				if (hasValue)
 				{
-					if (array->items[i]->u.floatValue < value) 
+					if (array->items[i]->u.floatValue < value)
 						value = array->items[i]->u.floatValue;
 				}
-				else 
+				else
 				{
 					value = array->items[i]->u.floatValue;
 					hasValue = qtrue;
 				}
 			}
 		}
-		if (hasValue) 
+		if (hasValue)
 		{
 			if (!HasFlag(flags, FLAG_FLOAT))
 				Plugin_Scr_AddInt((int)value);
@@ -157,13 +158,13 @@ void GScr_LINQ_Max()
 		{
 			if (hasValue)
 			{
-				if (strlen(Plugin_SL_ConvertToString(array->items[i]->u.stringValue)) > strLength) 
+				if (strlen(Plugin_SL_ConvertToString(array->items[i]->u.stringValue)) > strLength)
 				{
 					strLength = strlen(Plugin_SL_ConvertToString(array->items[i]->u.stringValue));
 					index = i;
 				}
 			}
-			else 
+			else
 			{
 				strLength = strlen(Plugin_SL_ConvertToString(array->items[i]->u.stringValue));
 				hasValue = qtrue;
@@ -183,13 +184,13 @@ void GScr_LINQ_Max()
 		{
 			if (hasValue)
 			{
-				if (vec_distance((float *)array->items[i]->u.vectorValue, zero) > distance) 
+				if (vec_distance((float *)array->items[i]->u.vectorValue, zero) > distance)
 				{
 					distance = vec_distance((float *)array->items[i]->u.vectorValue, zero);
 					index = i;
 				}
 			}
-			else 
+			else
 			{
 				distance = vec_distance((float *)array->items[i]->u.vectorValue, zero);
 				hasValue = qtrue;
@@ -209,10 +210,10 @@ void GScr_LINQ_Max()
 			{
 				if (hasValue)
 				{
-					if (array->items[i]->u.intValue > value) 
+					if (array->items[i]->u.intValue > value)
 						value = array->items[i]->u.intValue;
 				}
-				else 
+				else
 				{
 					value = array->items[i]->u.intValue;
 					hasValue = qtrue;
@@ -222,17 +223,17 @@ void GScr_LINQ_Max()
 			{
 				if (hasValue)
 				{
-					if (array->items[i]->u.floatValue > value) 
+					if (array->items[i]->u.floatValue > value)
 						value = array->items[i]->u.floatValue;
 				}
-				else 
+				else
 				{
 					value = array->items[i]->u.floatValue;
 					hasValue = qtrue;
 				}
 			}
 		}
-		if (hasValue) 
+		if (hasValue)
 		{
 			if (!HasFlag(flags, FLAG_FLOAT))
 				Plugin_Scr_AddInt((int)value);
@@ -257,7 +258,7 @@ void GScr_LINQ_Cast()
 	const char *typename = Plugin_Scr_GetString(1);
 
 	Plugin_Scr_MakeArray();
-	if (strcasecmp(typename, "string") == 0)
+	if (stricmp(typename, "string") == 0)
 	{
 		for (int i = 0; i < array->length; i++)
 		{
@@ -301,7 +302,7 @@ void GScr_LINQ_Cast()
 			}
 		}
 	}
-	else if (strcasecmp(typename, "int") == 0)
+	else if (stricmp(typename, "int") == 0)
 	{
 		for (int i = 0; i < array->length; i++)
 		{
@@ -335,7 +336,7 @@ void GScr_LINQ_Cast()
 			}
 		}
 	}
-	else if (strcasecmp(typename, "float") == 0)
+	else if (stricmp(typename, "float") == 0)
 	{
 		for (int i = 0; i < array->length; i++)
 		{
@@ -383,19 +384,19 @@ void GScr_LINQ_OfType()
 	const char *typename = Plugin_Scr_GetString(1);
 
 	int reqtype = VAR_UNDEFINED;
-	if (strcasecmp(typename, "int") == 0) reqtype = VAR_INTEGER;
-	else if (strcasecmp(typename, "float") == 0) reqtype = VAR_FLOAT;
-	else if (strcasecmp(typename, "vector") == 0) reqtype = VAR_VECTOR;
-	else if (strcasecmp(typename, "array") == 0) reqtype = VAR_ARRAY;
-	else if (strcasecmp(typename, "struct") == 0) reqtype = VAR_OBJECT;
-	else if (strcasecmp(typename, "string") == 0) reqtype = VAR_STRING;
-	else if (strcasecmp(typename, "istring") == 0) reqtype = VAR_ISTRING;
-	else if (strcasecmp(typename, "ent") == 0) reqtype = VAR_ENTITY;
+	if (stricmp(typename, "int") == 0) reqtype = VAR_INTEGER;
+	else if (stricmp(typename, "float") == 0) reqtype = VAR_FLOAT;
+	else if (stricmp(typename, "vector") == 0) reqtype = VAR_VECTOR;
+	else if (stricmp(typename, "array") == 0) reqtype = VAR_ARRAY;
+	else if (stricmp(typename, "struct") == 0) reqtype = VAR_OBJECT;
+	else if (stricmp(typename, "string") == 0) reqtype = VAR_STRING;
+	else if (stricmp(typename, "istring") == 0) reqtype = VAR_ISTRING;
+	else if (stricmp(typename, "ent") == 0) reqtype = VAR_ENTITY;
 
 	Plugin_Scr_MakeArray();
 	for (int i = 0; i < array->length; i++)
 	{
-		int varType = (array->items[i]->type == VAR_POINTER) 
+		int varType = (array->items[i]->type == VAR_POINTER)
 			? Plugin_Scr_GetObjectType(array->items[i]->u.pointerValue) : array->items[i]->type;
 		if (reqtype == varType)
 		{

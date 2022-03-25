@@ -1,5 +1,5 @@
 #include "mysql.h"
-#include <my_global.h>
+#include <mysql.h>
 
 #define MYSQL_ERROR(x, msg) 						\
 if (x == NULL) 										\

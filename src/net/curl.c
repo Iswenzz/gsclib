@@ -13,7 +13,7 @@ i_curl_string i_string_init()
 	return str;
 }
 
-inline void i_curl_setopts(CURL* curl)
+void i_curl_setopts(CURL* curl)
 {
 	if (curl_instance.opt_count > 0)
 	{
@@ -40,13 +40,13 @@ inline void i_curl_setopts(CURL* curl)
 	}
 }
 
-inline void i_curl_setheader(CURL* curl, CURLoption header_type)
+void i_curl_setheader(CURL* curl, CURLoption header_type)
 {
 	if (curl_instance.header != NULL)
 		curl_easy_setopt(curl, header_type, curl_instance.header);
 }
 
-inline void i_curl_opt_cleanup()
+void i_curl_opt_cleanup()
 {
 	for (int i = 0; i < curl_instance.opt_count; i++)
 	{
@@ -57,7 +57,7 @@ inline void i_curl_opt_cleanup()
 	memset(&curl_instance.opts, 0, sizeof(curl_instance.opts));
 }
 
-inline void i_curl_header_cleanup()
+void i_curl_header_cleanup()
 {
 	if (curl_instance.header != NULL)
 	{
@@ -66,20 +66,20 @@ inline void i_curl_header_cleanup()
 	}
 }
 
-inline qboolean i_curl_close()
+qboolean i_curl_close()
 {
 	if (ftp_instance.curl != NULL)
 	{
 		curl_easy_cleanup(ftp_instance.curl);
-		memset(&ftp_instance, 0, sizeof(ftp_instance));
-		ftp_instance.curl = NULL;
-		return qtrue;
+memset(&ftp_instance, 0, sizeof(ftp_instance));
+ftp_instance.curl = NULL;
+return qtrue;
 	}
 	return qfalse;
 }
 
-inline qboolean i_curl_connect(const char *protocol, const char *hostname, const char *username, 
-	const char *password, unsigned short port)
+qboolean i_curl_connect(const char* protocol, const char* hostname, const char* username,
+	const char* password, unsigned short port)
 {
 	i_curl_close();
 
@@ -97,11 +97,11 @@ void GScr_CURL_Version()
 		Plugin_Scr_Error("Usage: CURL_Version()");
 		return;
 	}
-	curl_version_info_data *info = curl_version_info(CURLVERSION_NOW);
+	curl_version_info_data* info = curl_version_info(CURLVERSION_NOW);
 	if (info != NULL)
 	{
 		Plugin_Printf("----------[CURL INFO]----------\n");
-		Plugin_Printf("Age: %d\nHost: %s\nSSH: %s\nSSL: %s\nVersion: %s\n", 
+		Plugin_Printf("Age: %d\nHost: %s\nSSH: %s\nSSL: %s\nVersion: %s\n",
 			info->age, info->host, info->libssh_version, info->ssl_version, info->version);
 
 		Plugin_Printf("Features: ");
@@ -129,7 +129,6 @@ void GScr_CURL_Version()
 		Plugin_Printf("%s", info->features & CURL_VERSION_BROTLI ? "BROTLI " : "");
 		Plugin_Printf("%s", info->features & CURL_VERSION_ALTSVC ? "ALTSVC " : "");
 		Plugin_Printf("%s", info->features & CURL_VERSION_HTTP3 ? "HTTP3 " : "");
-		Plugin_Printf("%s", info->features & CURL_VERSION_ESNI ? "ESNI " : "");
 		Plugin_Printf("\n");
 
 		Plugin_Printf("Protocols: ");
@@ -166,14 +165,16 @@ void GScr_CURL_SetHeader()
 		Plugin_Scr_Error("Usage: CURL_SetHeader(<header parse>)");
 		return;
 	}
-	char *header_parse_dup = strdup(Plugin_Scr_GetString(0));
-	char *token;
-	char *rest = header_parse_dup;
+	char* header_parse_dup = strdup(Plugin_Scr_GetString(0));
+	char* token = strtok(header_parse_dup, ",");
 
 	i_curl_header_cleanup();
 
-	while ((token = strtok_r(rest, ",", &rest))) 
+	while (token != NULL)
+	{
 		curl_instance.header = curl_slist_append(curl_instance.header, token);
+		token = strtok(NULL, ",");
+	}
 	free(header_parse_dup);
 }
 

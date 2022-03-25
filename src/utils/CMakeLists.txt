@@ -1,0 +1,9 @@
+target_sources(gsclib PRIVATE
+   convert.c
+   convert.h
+   polycmp.c
+   polycmp.h
+   stringutils.c
+   stringutils.h
+   utils.c
+   utils.h)
