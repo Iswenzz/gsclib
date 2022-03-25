@@ -5,7 +5,34 @@
 test()
 {
 	suit("GSCLIB - Linq");
+	setup();
 
+	// linq/delegates
+	run(::it_select, "Select");
+
+	// linq/enumerables
+	run(::it_getmin, "GetMin");
+	run(::it_getmax, "GetMax");
+	run(::it_cast, "Cast");
+	run(::it_oftype, "OfType");
+	run(::it_sort, "Sort");
+	run(::it_average, "Average");
+	run(::it_sum, "Sum");
+	run(::it_range, "Range");
+	run(::it_repeat, "Repeat");
+	run(::it_reverse, "Reverse");
+
+	// linq/predicates
+	run(::it_all, "All");
+	run(::it_any, "Any");
+	run(::it_where, "Where");
+	run(::it_last, "Last");
+	run(::it_first, "First");
+	run(::it_count, "Count");
+}
+
+setup()
+{
 	// Float array
 	level._tests_floats = [];
 	for (i = 0; i < 10; i++)
@@ -54,24 +81,6 @@ test()
 
 	// Ent array
 	level._tests_ents = getEntArray("player", "classname");
-
-	run(::it_all, "All");
-	run(::it_any, "Any");
-	run(::it_where, "Where");
-	run(::it_getmin, "GetMin");
-	run(::it_getmax, "GetMax");
-	run(::it_last, "Last");
-	run(::it_first, "First");
-	run(::it_cast, "Cast");
-	run(::it_oftype, "OfType");
-	run(::it_sort, "Sort");
-	run(::it_average, "Average");
-	run(::it_count, "Count");
-	run(::it_sum, "Sum");
-	run(::it_select, "Select");
-	run(::it_range, "Range");
-	run(::it_repeat, "Repeat");
-	run(::it_reverse, "Reverse");
 }
 
 it_all()

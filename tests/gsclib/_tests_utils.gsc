@@ -1,18 +1,11 @@
 #include sr\tests\_main;
 
-// Tests for gsclib/utility
+// Tests for gsclib/utils
 test()
 {
-	suit("GSCLIB - Utility");
+	suit("GSCLIB - Utils");
 
-	run(::it_GetType, "GetType");
-	run(::it_Ternary, "Ternary");
-	run(::it_IfUndef, "IfUndef");
-
-	run(::it_ToInt, "ToInt");
-	run(::it_ToFloat, "ToFloat");
-	run(::it_ToString, "ToString");
-
+	// utils/stringutils
 	run(::it_ToUpper, "ToUpper");
 	run(::it_IsNullOrEmpty, "IsNullOrEmpty");
 	run(::it_IsStringInt, "IsStringInt");
@@ -20,6 +13,14 @@ test()
 	run(::it_IsStringFloat, "IsStringFloat");
 	run(::it_ToRGB, "ToRGB");
 	run(::it_HexToRGB, "HexToRGB");
+
+	// utils/utils
+	run(::it_GetType, "GetType");
+	run(::it_Ternary, "Ternary");
+	run(::it_IfUndef, "IfUndef");
+	run(::it_ToInt, "ToInt");
+	run(::it_ToFloat, "ToFloat");
+	run(::it_ToString, "ToString");
 }
 
 it_GetType()

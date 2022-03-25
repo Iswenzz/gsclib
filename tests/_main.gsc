@@ -1,13 +1,12 @@
 // Run all tests suits.
-runTests()
+run()
 {
     wait 5;
     spawnBots();
 
-    sr\tests\gsclib\_main::testLib();
+    sr\tests\gsclib\_main::test();
 }
 
-// Spawn bots for testing entities.
 spawnBots()
 {
 	for (i = 0; i < 5; i++)
@@ -31,7 +30,6 @@ suit(name)
     comPrintf("\n|-------------------[" + name + "]-------------------|\n");
 }
 
-// Print all items in the array with their type.
 printArrayWithType(arr)
 {
 	if (isDefined(arr) && isDefined(arr.size))
@@ -48,7 +46,6 @@ printArrayWithType(arr)
 	}
 }
 
-// Print all items in a dict
 printArrayKeys(arr)
 {
 	if (isDefined(arr))
@@ -69,7 +66,6 @@ printArrayKeys(arr)
 	}
 }
 
-// Print all items in the array
 printArray(arr)
 {
 	if (isDefined(arr) && isDefined(arr.size))
@@ -86,7 +82,6 @@ printArray(arr)
 	}
 }
 
-// Print variable
 printVariable(var)
 {
 	if (isDefined(var))
@@ -97,7 +92,6 @@ printVariable(var)
 	}
 }
 
-// Print variable with its type
 printVariableWithType(var)
 {
 	if (isDefined(var))
