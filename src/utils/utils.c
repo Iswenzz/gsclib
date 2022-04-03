@@ -80,13 +80,3 @@ void GScr_GetType()
 		case VAR_ENDON_LIST: 		Plugin_Scr_AddString("VAR_ENDON_LIST");  		break;
 	}
 }
-
-qboolean HasFlag(int var, int flag)
-{
-	return (var & flag) == flag;
-}
-
-qboolean IsFlag(int var, int flag)
-{
-	return var == flag;
-}

@@ -8,9 +8,7 @@ add_subdirectory(utils)
 
 target_include_directories(gsclib PUBLIC .)
 
-target_sources(gsclib PRIVATE
-	plugin.c
-  	nocgsc.c)
+target_sources(gsclib PRIVATE plugin.c)
 
 get_target_property(SOURCES gsclib SOURCES)
 source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR} FILES ${SOURCES})

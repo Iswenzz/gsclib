@@ -127,11 +127,11 @@ PCL void OnTerminate()
  */
 PCL void OnInfoRequest(pluginInfo_t *info)
 {
-	// =====  MANDATORY FIELDS  =====
+	// ===== MANDATORY FIELDS =====
 	info->handlerVersion.major = PLUGIN_HANDLER_VERSION_MAJOR;
 	info->handlerVersion.minor = PLUGIN_HANDLER_VERSION_MINOR; // Requested handler version
 
-	// =====  OPTIONAL  FIELDS  =====
+	// ===== OPTIONAL FIELDS =====
 	info->pluginVersion.major = 1;
 	info->pluginVersion.minor = 2;
 	strncpy(info->fullName, "gsclib", sizeof(info->fullName));

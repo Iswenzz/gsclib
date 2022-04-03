@@ -1,21 +1,6 @@
 #include "predicates.h"
 #include <cgsc.h>
 
-#ifdef CGSC_4
-	#define DeclareIntReturn() \
-	const register int *ret_int asm("edx");
-
-	#define GetIntReturn() \
-	*ret_int
-#endif
-#ifdef CGSC_3
-	#define DeclareIntReturn() \
-	const register int ret_int asm("edx"); 
-
-	#define GetIntReturn() \
-	ret_int
-#endif
-
 void GScr_LINQ_All()
 {
 	if (Plugin_Scr_GetNumParam() != 2)
@@ -32,9 +17,8 @@ void GScr_LINQ_All()
 		// Call predicate(item)
 		Plugin_Scr_AddVariable(array->items[i]);
 		const short tid = Plugin_Scr_ExecThread(threadId, 1);
-		DeclareIntReturn();
 
-		if (!GetIntReturn())
+		if (!Plugin_Scr_GetThreadReturn())
 		{
 			result = qfalse;
 			Plugin_Scr_FreeThread(tid);
@@ -62,9 +46,8 @@ void GScr_LINQ_Any()
 		// Call predicate(item)
 		Plugin_Scr_AddVariable(array->items[i]);
 		const short tid = Plugin_Scr_ExecThread(threadId, 1);
-		DeclareIntReturn();
 
-		if (GetIntReturn())
+		if (Plugin_Scr_GetThreadReturn())
 		{
 			result = qtrue;
 			Plugin_Scr_FreeThread(tid);
@@ -92,9 +75,8 @@ void GScr_LINQ_Where()
 		// Call predicate(item)
 		Plugin_Scr_AddVariable(array->items[i]);
 		const short tid = Plugin_Scr_ExecThread(threadId, 1);
-		DeclareIntReturn();
 
-		if (GetIntReturn())
+		if (Plugin_Scr_GetThreadReturn())
 		{
 			Plugin_Scr_AddVariable(array->items[i]);
 			Plugin_Scr_AddArray();
@@ -120,9 +102,8 @@ void GScr_LINQ_Last()
 		// Call predicate(item)
 		Plugin_Scr_AddVariable(array->items[i]);
 		const short tid = Plugin_Scr_ExecThread(threadId, 1);
-		DeclareIntReturn();
 
-		if (GetIntReturn())
+		if (Plugin_Scr_GetThreadReturn())
 			last = array->items[i];
 		Plugin_Scr_FreeThread(tid);
 	}
@@ -148,9 +129,8 @@ void GScr_LINQ_First()
 		// Call predicate(item)
 		Plugin_Scr_AddVariable(array->items[i]);
 		const short tid = Plugin_Scr_ExecThread(threadId, 1);
-		DeclareIntReturn();
 
-		if (GetIntReturn())
+		if (Plugin_Scr_GetThreadReturn())
 		{
 			Plugin_Scr_AddVariable(array->items[i]);
 			Plugin_Scr_FreeThread(tid);
@@ -177,9 +157,8 @@ void GScr_LINQ_Count()
 		// Call predicate(item)
 		Plugin_Scr_AddVariable(array->items[i]);
 		const short tid = Plugin_Scr_ExecThread(threadId, 1);
-		DeclareIntReturn();
 
-		if (GetIntReturn())
+		if (Plugin_Scr_GetThreadReturn())
 			result++;
 
 		Plugin_Scr_FreeThread(tid);

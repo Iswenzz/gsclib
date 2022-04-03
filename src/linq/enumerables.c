@@ -33,7 +33,7 @@ void GScr_LINQ_Min()
 		return;
 	}
 	VariableValueArray *array = Plugin_Scr_GetArray(0);
-	uint32_t flags = Plugin_GetFlagsFromGSCArray(array);
+	uint32_t flags = Plugin_Scr_GetFlagsFromGSCArray(array);
 
 	if (HasFlag(flags, FLAG_STRING) || HasFlag(flags, FLAG_ISTRING))
 	{
@@ -147,7 +147,7 @@ void GScr_LINQ_Max()
 		return;
 	}
 	VariableValueArray *array = Plugin_Scr_GetArray(0);
-	uint32_t flags = Plugin_GetFlagsFromGSCArray(array);
+	uint32_t flags = Plugin_Scr_GetFlagsFromGSCArray(array);
 
 	if (HasFlag(flags, FLAG_STRING) || HasFlag(flags, FLAG_ISTRING))
 	{
@@ -415,7 +415,7 @@ void GScr_LINQ_Sort()
 		return;
 	}
 	VariableValueArray *array = Plugin_Scr_GetArray(0);
-	uint32_t flags = Plugin_GetFlagsFromGSCArray(array);
+	uint32_t flags = Plugin_Scr_GetFlagsFromGSCArray(array);
 
 	if (IsFlag(flags, FLAG_FLOAT) || IsFlag(flags, FLAG_INTEGER) || IsFlag(flags, FLAG_STRING)
 		|| IsFlag(flags, FLAG_ISTRING) || IsFlag(flags, FLAG_VECTOR))
@@ -451,7 +451,7 @@ void GScr_LINQ_Average()
 	}
 	VariableValueArray *array = Plugin_Scr_GetArray(0);
 	int count = 0;
-	const uint32_t flags = Plugin_GetFlagsFromGSCArray(array);
+	const uint32_t flags = Plugin_Scr_GetFlagsFromGSCArray(array);
 
 	if (IsFlag(flags, FLAG_VECTOR))
 	{
@@ -496,7 +496,7 @@ void GScr_LINQ_Sum()
 		return;
 	}
 	VariableValueArray *array = Plugin_Scr_GetArray(0);
-	uint32_t flags = Plugin_GetFlagsFromGSCArray(array);
+	uint32_t flags = Plugin_Scr_GetFlagsFromGSCArray(array);
 
 	if (HasFlag(flags, FLAG_STRING) || HasFlag(flags, FLAG_ISTRING))
 	{

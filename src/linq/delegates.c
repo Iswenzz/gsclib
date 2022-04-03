@@ -11,7 +11,7 @@ void GScr_LINQ_Select()
 		return;
 	}
 
-	#ifdef CGSC_4
+	#if CGSC(4)
 	VariableValueArray *array = Plugin_Scr_GetArray(0);
 	const uint32_t threadId = Plugin_Scr_GetFunc(1);
 
@@ -31,7 +31,7 @@ void GScr_LINQ_Select()
 	Plugin_Scr_FreeArray(array);
 	#endif
 
-	#ifdef CGSC_3
+	#if CGSC_EQ(3)
 	Plugin_PrintError("LINQ_Select is unsupported for this version.");
 	Plugin_Scr_AddUndefined();
 	#endif
