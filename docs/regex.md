@@ -3,7 +3,6 @@
 #### ``RegexMatch(<input>, <regex>)``
 Get all matches in an array from the specified input string and regex.
 
-Usage Example:
 ```c
 RegexMatch("zzzz123affff12345ffffb", "\\d+");
 /* output:
@@ -16,7 +15,6 @@ RegexMatch("zzzz123affff12345ffffb", "\\d+");
 #### ``RegexSplit(<input>, <regex>)``
 Get all splited string in an array from the specified input string and regex.
 
-Usage Example:
 ```c
 RegexSplit("zzzz123affff12345ffffb", "\\d+");
 /* output:
@@ -30,7 +28,6 @@ ffffb
 #### ``RegexReplace(<input>, <replace>, <regex>)``
 Replace all matches with a specific string.
 
-Usage Example:
 ```c
 RegexReplace("zzzz123affff12345ffffb", "", "\\d+");
 /* output:

@@ -5,7 +5,6 @@
 #### ``SFTP_Connect(<host>, <user>, <password>, <port>)``
 Connect to an SFTP server, the connection can be closed with FTP_Close.
 
-Usage Example:
 ```c
 SFTP_Connect("localhost", "root", "rootpassword", 22);
 ```
@@ -14,7 +13,6 @@ SFTP_Connect("localhost", "root", "rootpassword", 22);
 #### ``FTP_Connect(<host>, <user>, <password>, <port>)``
 Connect to an FTP/FTPS server, the connection can be closed with FTP_Close.
 
-Usage Example:
 ```c
 FTP_Connect("localhost", "root", "rootpassword", 21);
 ```
@@ -23,7 +21,6 @@ FTP_Connect("localhost", "root", "rootpassword", 21);
 #### ``FTP_Close()``
 Close the FTP/FTPS/SFTP connection.
 
-Usage Example:
 ```c
 FTP_Close();
 ```
@@ -33,7 +30,6 @@ FTP_Close();
 Execute a command to the FTP/FTPS/SFTP server.
 The commands should be set with CURL_SetHeader.
 
-Usage Example:
 ```c
 CURL_SetHeader("rename libcurl.dll test.dll");
 FTP_Shell();
@@ -43,7 +39,6 @@ FTP_Shell();
 #### ``FTP_PostFile(<filepath>, <uploadfilepath>)``
 Upload a file to the FTP/FTPS/SFTP server.
 
-Usage Example:
 ```c
 FTP_PostFile("libcurl.dll", "/user/libcurl.dll");
 ```
@@ -52,7 +47,6 @@ FTP_PostFile("libcurl.dll", "/user/libcurl.dll");
 #### ``FTP_GetFile(<filepath>, <downloadfilepath>)``
 Download a file from the FTP/FTPS/SFTP server.
 
-Usage Example:
 ```c
 FTP_GetFile("test.dll", "/user/test.dll");
 ```

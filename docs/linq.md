@@ -3,7 +3,6 @@
 #### ``Select(<array>, <delegate>)``
 Project data in a collection using delegates, the same way select clause in a SQL database to fetch specific columns of a table.
 
-Usage Example:
 ```c
 new_array = Select(array, ::delegate);
 ```
@@ -12,7 +11,6 @@ new_array = Select(array, ::delegate);
 #### ``All(<array>, <predicate>)``
 Check if all items match the predicate.
 
-Usage Example:
 ```c
 isAll = All(array, ::predicate);
 ```
@@ -21,7 +19,6 @@ isAll = All(array, ::predicate);
 #### ``Where(<array>, <predicate>)``
 Reconstruct the array with only matches values from the predicate.
 
-Usage Example:
 ```c
 new_array = Where(array, ::predicate);
 ```
@@ -30,7 +27,6 @@ new_array = Where(array, ::predicate);
 #### ``Any(<array>, <predicate>)``
 Check if atleast one item match the predicate.
 
-Usage Example:
 ```c
 isAny = Any(array, ::predicate);
 ```
@@ -39,7 +35,6 @@ isAny = Any(array, ::predicate);
 #### ``Last(<array>, <predicate>)``
 Get the last item that match the predicate.
 
-Usage Example:
 ```c
 last = Last(array, ::predicate);
 ```
@@ -48,7 +43,6 @@ last = Last(array, ::predicate);
 #### ``First(<array>, <predicate>)``
 Get the first item that match the predicate.
 
-Usage Example:
 ```c
 first = First(array, ::predicate);
 ```
@@ -57,7 +51,6 @@ first = First(array, ::predicate);
 #### ``Count(<array>, <predicate>)``
 Count all items that match the predicate.
 
-Usage Example:
 ```c
 count = Count(array, ::predicate);
 ```
@@ -66,7 +59,6 @@ count = Count(array, ::predicate);
 #### ``Min(<array>)``
 Get the smallest value from an array of int/float/string/vector.
 
-Usage Example:
 ```c
 min = Min(array);
 ```
@@ -75,7 +67,6 @@ min = Min(array);
 #### ``Max(<array>)``
 Get the biggest value from an array of int/float/string/vector.
 
-Usage Example:
 ```c
 max = Max(array);
 ```
@@ -85,7 +76,6 @@ max = Max(array);
 Reconstruct an array with all items casted to a specific type.
 Available types are: int, float, string.
 
-Usage Example:
 ```c
 strings = Cast(array, "string");
 ints = Cast(array, "int");
@@ -96,7 +86,6 @@ ints = Cast(array, "int");
 Reconstruct the array with only the specified type.
 Available types are: int, float, string.
 
-Usage Example:
 ```c
 strings = OfType(array, "string");
 ints = OfType(array, "int");
@@ -106,7 +95,6 @@ ints = OfType(array, "int");
 #### ``Sort(<array>)``
 Sort all items from an array of int/float/string/vector.
 
-Usage Example:
 ```c
 new_array = Sort(array);
 ```
@@ -115,7 +103,6 @@ new_array = Sort(array);
 #### ``Average(<array>)``
 Get the average value from an array of int/float/vector.
 
-Usage Example:
 ```c
 average = Average(array);
 ```
@@ -124,7 +111,6 @@ average = Average(array);
 #### ``Sum(<array>)``
 Adds all values from an array of int/float/vector/string.
 
-Usage Example:
 ```c
 sum = Sum(array);
 ```
@@ -133,7 +119,6 @@ sum = Sum(array);
 #### ``Range(<array>, <min>, <max>)``
 Reconstruct the array with a specified range.
 
-Usage Example:
 ```c
 new_array = Range(array, 3, 6);
 ```
@@ -142,7 +127,6 @@ new_array = Range(array, 3, 6);
 #### ``Repeat(<array>, <repeat>)``
 Repeat all values in an array.
 
-Usage Example:
 ```c
 new_array = Repeat(array, 3);
 ```
@@ -151,7 +135,6 @@ new_array = Repeat(array, 3);
 #### ``Reverse(<array>)``
 Reverse the array.
 
-Usage Example:
 ```c
 new_array = Reverse(array);
 ```

@@ -3,7 +3,6 @@
 #### ``ComPrintf(<string>)``
 Print a message to the console output.
 
-Usage Example:
 ```c
 ComPrintf("Hello World!");
 ```
@@ -12,7 +11,6 @@ ComPrintf("Hello World!");
 #### ``Ternary(<condition>, <true>, <false>)``
 Check the condition and return the 1st value if true or the second value if false.
 
-Usage Example:
 ```c
 a = Ternary(player.name == "Iswenzz", 1000, 0);
 ```
@@ -21,7 +19,6 @@ a = Ternary(player.name == "Iswenzz", 1000, 0);
 #### ``IfUndef(<var>, <default>)``
 Give a default value if the variable is undefined.
 
-Usage Example:
 ```c
 name = IfUndef(player.name, "Unknown player");
 ```
@@ -30,7 +27,6 @@ name = IfUndef(player.name, "Unknown player");
 #### ``GetType(<var>)``
 Get the type name of a GSC variable.
 
-Usage Example:
 ```c
 type = GetType(player.name);
 ```
@@ -39,7 +35,6 @@ type = GetType(player.name);
 #### ``ToString(<var>)``
 Convert int, float, vector to string.
 
-Usage Example:
 ```c
 str = ToString(player.velocity);
 ```
@@ -48,7 +43,6 @@ str = ToString(player.velocity);
 #### ``ToInt(<var>)``
 Convert string, float, vector to integer.
 
-Usage Example:
 ```c
 i = ToInt("123");
 ```
@@ -57,7 +51,6 @@ i = ToInt("123");
 #### ``ToFloat(<var>)``
 Convert string, int, vector to float.
 
-Usage Example:
 ```c
 f = ToFloat("1.23");
 ```
@@ -66,7 +59,6 @@ f = ToFloat("1.23");
 #### ``IsNullOrEmpty(<str>)``
 Check if a string is undefined or empty.
 
-Usage Example:
 ```c
 IsNullOrEmpty(player.name);
 ```
@@ -75,7 +67,6 @@ IsNullOrEmpty(player.name);
 #### ``IsStringAlpha(<str>)``
 Check if a string is alphanumeric.
 
-Usage Example:
 ```c
 IsStringAlpha("abc123_&");
 ```
@@ -84,7 +75,6 @@ IsStringAlpha("abc123_&");
 #### ``IsStringFloat(<str>)``
 Check if a string contains a float.
 
-Usage Example:
 ```c
 IsStringFloat("123.123");
 ```
@@ -93,7 +83,6 @@ IsStringFloat("123.123");
 #### ``IsStringInt(<str>)``
 Check if a string contains an integer.
 
-Usage Example:
 ```c
 IsStringInt("123");
 ```
@@ -102,7 +91,6 @@ IsStringInt("123");
 #### ``ToUpper(<str>)``
 Convert a string to upper case.
 
-Usage Example:
 ```c
 up = ToUpper("abc");
 ```
@@ -111,7 +99,6 @@ up = ToUpper("abc");
 #### ``ToRGB(<r>, <g>, <b>)``
 Normalize RGB vector.
 
-Usage Example:
 ```c
 rgb = ToRGB(125, 255, 255);
 ```
@@ -120,7 +107,6 @@ rgb = ToRGB(125, 255, 255);
 #### ``HexToRGB(<hex>)``
 Convert a HEX color string to a normalized RGB vector.
 
-Usage Example:
 ```c
 rgb = HexToRGB("#AABBCC");
 rgb = HexToRGB("AABBCC");
