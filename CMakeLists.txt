@@ -31,4 +31,4 @@ target_link_libraries(gsclib PUBLIC ${CONAN_LIBS} libcom_plugin)
 # Pack
 install(TARGETS gsclib LIBRARY DESTINATION lib)
 install(DIRECTORY src/ DESTINATION lib/include/gsclib
-    FILES_MATCHING PATTERN "*.hpp" PATTERN "__test__" EXCLUDE)
+    FILES_MATCHING PATTERN "*.h" PATTERN "__test__" EXCLUDE)

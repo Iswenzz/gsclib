@@ -25,8 +25,10 @@ _Pre-Requisites:_
 2. [CGSC](https://github.com/Iswenzz/CGSC) and it's pre-requisites.
 3. [CMake](https://cmake.org/) and [Conan](https://conan.io/).
 
-***Note:***
-``gsclib`` can be compiled without CGSC features with ``cmake .. -G "Visual Studio 16 2019" -A Win32 -DNOCGSC`` target.
+_Build Command:_
+
+   	cd scripts
+	./build_linux.sh
 
 ## Building (Windows)
 _Pre-Requisites:_
@@ -36,10 +38,16 @@ _Pre-Requisites:_
 ```
 2. [CGSC](https://github.com/Iswenzz/CGSC) and it's pre-requisites.
 3. [CMake](https://cmake.org/) and [Conan](https://conan.io/).
+4. [Visual Studio](https://visualstudio.microsoft.com/) with [Clang](https://docs.microsoft.com/en-us/cpp/build/clang-support-msbuild?view=msvc-170) toolset.
+
+**Using the Developer Command Prompt for Visual Studio**
+_Build Command:_
+
+    cd scripts
+	build_windows.bat
 
 ***Note:***
 VCPKG integration need to be disabled ``vcpkg integration remove``.
-``gsclib`` can be compiled without CGSC features with ``cmake .. -G "Visual Studio 16 2019" -A Win32 -DNOCGSC`` target.
 
 ## [Download](https://github.com/Iswenzz/gsclib/releases)
 

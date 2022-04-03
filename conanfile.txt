@@ -1,5 +1,5 @@
 [requires]
-CGSC/1.1.0
+CGSC/4.0.0
 libmysqlclient/8.0.25
 libcurl/7.80.0
 pcre2/10.39
