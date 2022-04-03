@@ -2,8 +2,8 @@
 #include <stdlib.h>
 
 CURLcode curl_library_init_code;
-CURL_INSTANCE curl_instance = { NULL, 0, 0 };
-FTP_INSTANCE ftp_instance = { NULL, 0, 0, 0 };
+CURL_INSTANCE curl_instance = { NULL, 0, { 0 } };
+FTP_INSTANCE ftp_instance = { NULL, { 0 }, { 0 }, 0};
 
 i_curl_string i_string_init() 
 {
@@ -48,11 +48,6 @@ void i_curl_setheader(CURL* curl, CURLoption header_type)
 
 void i_curl_opt_cleanup()
 {
-	for (int i = 0; i < curl_instance.opt_count; i++)
-	{
-		if (curl_instance.opts[i].param != NULL)
-			free(curl_instance.opts[i].param);
-	}
 	curl_instance.opt_count = 0;
 	memset(&curl_instance.opts, 0, sizeof(curl_instance.opts));
 }
@@ -71,9 +66,9 @@ qboolean i_curl_close()
 	if (ftp_instance.curl != NULL)
 	{
 		curl_easy_cleanup(ftp_instance.curl);
-memset(&ftp_instance, 0, sizeof(ftp_instance));
-ftp_instance.curl = NULL;
-return qtrue;
+		memset(&ftp_instance, 0, sizeof(ftp_instance));
+		ftp_instance.curl = NULL;
+		return qtrue;
 	}
 	return qfalse;
 }

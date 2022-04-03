@@ -143,12 +143,12 @@ void GScr_HTTPS_PostString()
 		if(res != CURLE_OK)
 		{
 			Plugin_Printf("curl_easy_perform() failed: %s\n", curl_easy_strerror(res));
-			Plugin_Scr_AddBool(qfalse);
+			Plugin_Scr_AddUndefined();
 		}
 		else if (str.buffer != NULL)
 			Plugin_Scr_AddString(str.buffer);
 		else
-			Plugin_Scr_AddBool(qtrue);
+			Plugin_Scr_AddUndefined();
 
 		curl_easy_cleanup(curl);
 	}
@@ -214,7 +214,7 @@ void GScr_HTTPS_PostFile()
 		else if (str.buffer != NULL)
 			Plugin_Scr_AddString(str.buffer);
 		else
-			Plugin_Scr_AddBool(qtrue);
+			Plugin_Scr_AddBool(qfalse);
 
 		curl_easy_cleanup(curl);
 	}
