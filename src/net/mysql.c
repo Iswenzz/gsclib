@@ -1,17 +1,15 @@
 #include "mysql.h"
 #include <mysql.h>
 
-#define MYSQL_ERROR(x, msg) 						\
-if (x == NULL) 										\
-{													\
-	Plugin_Scr_Error(msg);							\
-	return;											\
+#define MYSQL_ERROR(x, msg) \
+if (x == NULL) 				\
+{							\
+	Plugin_Scr_Error(msg);	\
+	return;					\
 }
 
-#define MYSQL_CHECK_INSTANCE(x) \
-	MYSQL_ERROR(x, "MySQL connection not found.")
-#define MYSQL_CHECK_STMT(x) \
-	MYSQL_ERROR(x, "MySQL statement not found.")
+#define MYSQL_CHECK_INSTANCE(x) MYSQL_ERROR(x, "MySQL connection not found.")
+#define MYSQL_CHECK_STMT(x) MYSQL_ERROR(x, "MySQL statement not found.")
 
 int mysql_library_init_code;
 static MYSQL_INSTANCE instance;
@@ -493,7 +491,7 @@ void MySQL_FetchRowsInternal(qboolean all, qboolean stringIndexed)
 				}
 
 				// Add the value to an array
-				if (stringIndexed)
+				if (stringIndexed && Plugin_Sys_GetCommonVersion() >= 20.0f)
 					Plugin_Scr_AddArrayStringIndexed(Plugin_Scr_AllocString(field->name));
 				else
 					Plugin_Scr_AddArray();
@@ -538,7 +536,7 @@ void MySQL_FetchRowsInternal(qboolean all, qboolean stringIndexed)
 					Plugin_Scr_AddString(row[i]);
 
 				// Add the value to an array
-				if (stringIndexed)
+				if (stringIndexed && Plugin_Sys_GetCommonVersion() >= 20.0f)
 					Plugin_Scr_AddArrayStringIndexed(Plugin_Scr_AllocString(field->name));
 				else
 					Plugin_Scr_AddArray();

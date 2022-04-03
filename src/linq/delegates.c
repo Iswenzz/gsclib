@@ -5,13 +5,17 @@
 
 void GScr_LINQ_Select()
 {
+	if (CGSC_Unsupported(CGSC_EQ(3)))
+	{
+		Plugin_Scr_AddUndefined();
+		return;
+	}
 	if (Plugin_Scr_GetNumParam() != 2)
 	{
 		Plugin_Scr_Error("Usage: Select(<array>, <::delegate>)");
 		return;
 	}
 
-	#if CGSC(4)
 	VariableValueArray *array = Plugin_Scr_GetArray(0);
 	const uint32_t threadId = Plugin_Scr_GetFunc(1);
 
@@ -29,10 +33,4 @@ void GScr_LINQ_Select()
 		free(var);
 	}
 	Plugin_Scr_FreeArray(array);
-	#endif
-
-	#if CGSC_EQ(3)
-	Plugin_PrintError("LINQ_Select is unsupported for this version.");
-	Plugin_Scr_AddUndefined();
-	#endif
 }
