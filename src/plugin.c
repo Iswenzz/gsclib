@@ -50,7 +50,7 @@ PCL int OnInit()
 
 	// net/curl
 	Plugin_ScrAddFunction("curl_version", 		&GScr_CURL_Version);
-	Plugin_ScrAddFunction("curl_setheader", 	&GScr_CURL_SetHeader);
+	Plugin_ScrAddFunction("curl_addheader", 	&GScr_CURL_AddHeader);
 	Plugin_ScrAddFunction("curl_headercleanup", &GScr_CURL_HeaderCleanup);
 	Plugin_ScrAddFunction("curl_optcleanup", 	&GScr_CURL_OptCleanup);
 	Plugin_ScrAddFunction("curl_addopt", 		&GScr_CURL_AddOpt);

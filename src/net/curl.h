@@ -5,7 +5,7 @@
 extern CURLcode curl_library_init_code;
 
 /**
- * @brief 
+ * @brief
  * Check if an FTP connection exists and return if not.
  */
 #define CHECK_FTP_CONNECTION(x) 			        \
@@ -15,13 +15,13 @@ if (x.curl == NULL)							        \
 	return;									        \
 }
 
-typedef struct 
+typedef struct
 {
     char *buffer;
     size_t len;
 } i_curl_string;
 
-struct FtpFile 
+struct FtpFile
 {
 	const char *filename;
 	FILE *stream;
@@ -34,7 +34,7 @@ typedef struct
 } CURL_OPT;
 
 /**
- * @brief 
+ * @brief
  * Structure that contains a CURL header struct and an array of CURL options.
  */
 typedef struct
@@ -45,7 +45,7 @@ typedef struct
 } CURL_INSTANCE;
 
 /**
- * @brief 
+ * @brief
  * Structure that contains a CURL handle and information about the FTP connection
  * such as ftp url, password, port.
  */
@@ -61,28 +61,28 @@ extern CURL_INSTANCE curl_instance;
 extern FTP_INSTANCE ftp_instance;
 
 /**
- * @brief 
+ * @brief
  * Alloc a string buffer for curl manipulation. the buffer can be free with free().
- * @return i_curl_string 
+ * @return i_curl_string
  */
 i_curl_string i_string_init();
 
 /**
- * @brief 
+ * @brief
  * Close all connections.
- * @return qboolean 
+ * @return qboolean
  */
 qboolean i_curl_close();
 
 /**
- * @brief 
+ * @brief
  * Set the options that has been set in the CURL_INSTANCE struct.
  * @param curl - The CURL handle.
  */
 void i_curl_setopts(CURL* curl);
 
 /**
- * @brief 
+ * @brief
  * Set the header that has been set in the CURL_INSTANCE struct.
  * @param curl - The CURL handle.
  * @param header_type - The header option type.
@@ -90,19 +90,19 @@ void i_curl_setopts(CURL* curl);
 void i_curl_setheader(CURL* curl, CURLoption header_type);
 
 /**
- * @brief 
+ * @brief
  * Cleanup all CURL options from the CURL_INSTANCE struct.
  */
 void i_curl_opt_cleanup();
 
 /**
- * @brief 
+ * @brief
  * Cleanup the CURL header from the CURL_INSTANCE struct.
  */
 void i_curl_header_cleanup();
 
 /**
- * @brief 
+ * @brief
  * Connect to a FTP/FTPS/SFTP server.
  * @param protocol - File protocol to use i.e: ftp/sftp
  * @param hostname - Host ip/name address.
@@ -111,35 +111,35 @@ void i_curl_header_cleanup();
  * @param port - The server port.
  * @return qboolean - If the connection succeded.
  */
-qboolean i_curl_connect(const char *protocol, const char *hostname, const char *username, 
+qboolean i_curl_connect(const char *protocol, const char *hostname, const char *username,
 	const char *password, unsigned short port);
 
 /**
- * @brief 
- * Print info about curl library. 
+ * @brief
+ * Print info about curl library.
  */
 void GScr_CURL_Version();
 
 /**
- * @brief 
- * Set CURL Header for the next requests, commands should be separated with a ",".
+ * @brief
+ * Add a CURL Header for the next requests.
  */
-void GScr_CURL_SetHeader();
+void GScr_CURL_AddHeader();
 
 /**
- * @brief 
- * Clean header set by CURL_SetHeader.
+ * @brief
+ * Clean header set by CURL_AddHeader.
  */
 void GScr_CURL_HeaderCleanup();
 
 /**
- * @brief 
+ * @brief
  * Clean all CURL Option added by CURL_AddOpt.
  */
 void GScr_CURL_OptCleanup();
 
 /**
- * @brief 
+ * @brief
  * Add a CURL Option for the next request.
  */
 void GScr_CURL_AddOpt();

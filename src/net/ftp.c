@@ -7,7 +7,7 @@
 size_t ftp_fwrite(void *buffer, size_t size, size_t nmemb, void *stream)
 {
 	struct FtpFile *out = (struct FtpFile *)stream;
-	if(!out->stream) 
+	if(!out->stream)
 	{
 		out->stream = fopen(out->filename, "wb");
 		if(!out->stream)
@@ -28,7 +28,7 @@ void GScr_SFTP_Connect()
 		Plugin_Scr_Error("Usage: SFTP_Connect(<hostname>, <username>, <password>, <port>)");
 		return;
 	}
-	Plugin_Scr_AddBool(i_curl_connect("sftp", Plugin_Scr_GetString(0), Plugin_Scr_GetString(1), 
+	Plugin_Scr_AddBool(i_curl_connect("sftp", Plugin_Scr_GetString(0), Plugin_Scr_GetString(1),
 		Plugin_Scr_GetString(2), Plugin_Scr_GetInt(3)));
 }
 
@@ -39,7 +39,7 @@ void GScr_FTP_Connect()
 		Plugin_Scr_Error("Usage: FTP_Connect(<hostname>, <username>, <password>, <port>)");
 		return;
 	}
-	Plugin_Scr_AddBool(i_curl_connect("ftp", Plugin_Scr_GetString(0), Plugin_Scr_GetString(1), 
+	Plugin_Scr_AddBool(i_curl_connect("ftp", Plugin_Scr_GetString(0), Plugin_Scr_GetString(1),
 		Plugin_Scr_GetString(2), Plugin_Scr_GetInt(3)));
 }
 
@@ -57,7 +57,7 @@ void GScr_FTP_Shell()
 {
 	if (Plugin_Scr_GetNumParam() != 0)
 	{
-		Plugin_Scr_Error("Usage: FTP_Shell() - Execute header from CURL_SetHeader()");
+		Plugin_Scr_Error("Usage: FTP_Shell() - Execute header from CURL_AddHeader()");
 		return;
 	}
 	CHECK_FTP_CONNECTION(ftp_instance);
@@ -77,7 +77,7 @@ void GScr_FTP_Shell()
 		res = curl_easy_perform(ftp_instance.curl);
 		if(CURLE_OK != res)
 		{
-			Plugin_Printf("curl_easy_perform() failed: %d\n", res);
+			Plugin_Printf("Error: curl_easy_perform: %s\n", curl_easy_strerror(res));
 			Plugin_Scr_AddBool(qfalse);
 		}
 		else
@@ -102,7 +102,7 @@ void GScr_FTP_PostFile()
 	struct stat file_info;
 	curl_off_t fsize;
 
-	if(stat(filepath, &file_info)) 
+	if(stat(filepath, &file_info))
 	{
 		Plugin_Printf("Couldn't open '%s': %s\n", filepath, strerror(errno));
 		Plugin_Scr_AddBool(qfalse);
@@ -140,7 +140,7 @@ void GScr_FTP_PostFile()
 		res = curl_easy_perform(ftp_instance.curl);
 		if(res != CURLE_OK)
 		{
-			Plugin_Printf("curl_easy_perform() failed: %s\n", curl_easy_strerror(res));
+			Plugin_Printf("Error: curl_easy_perform: %s\n", curl_easy_strerror(res));
 			Plugin_Scr_AddBool(qfalse);
 		}
 		else
@@ -165,7 +165,7 @@ void GScr_FTP_GetFile()
 	CURLcode res;
 	struct FtpFile ftpfile = { filepath, NULL};
 
-	if(ftp_instance.curl) 
+	if(ftp_instance.curl)
 	{
 		curl_easy_reset(ftp_instance.curl);
 
@@ -180,12 +180,12 @@ void GScr_FTP_GetFile()
 		curl_easy_setopt(ftp_instance.curl, CURLOPT_WRITEFUNCTION, ftp_fwrite);
 		curl_easy_setopt(ftp_instance.curl, CURLOPT_WRITEDATA, &ftpfile);
 		curl_easy_setopt(ftp_instance.curl, CURLOPT_SSH_AUTH_TYPES, CURLSSH_AUTH_PASSWORD);
-		i_curl_setopts(ftp_instance.curl); 
+		i_curl_setopts(ftp_instance.curl);
 
 		res = curl_easy_perform(ftp_instance.curl);
-		if(CURLE_OK != res) 
+		if(CURLE_OK != res)
 		{
-			Plugin_Printf("curl_easy_perform() failed: %d\n", res);
+			Plugin_Printf("Error: curl_easy_perform: %s\n", curl_easy_strerror(res));
 			Plugin_Scr_AddBool(qfalse);
 		}
 		else

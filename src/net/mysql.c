@@ -21,9 +21,7 @@ void GScr_MySQL_Version()
 		Plugin_Scr_Error("Usage: SQL_Version()");
 		return;
 	}
-	char buffer[1024];
-	snprintf(buffer, sizeof(buffer), "SQL_Version(): MySQL Client: %s", mysql_get_client_info());
-    Plugin_Scr_AddString(buffer);
+    Plugin_Scr_AddString(mysql_get_client_info());
 }
 
 void GScr_MySQL_Prepare()
@@ -78,13 +76,13 @@ void GScr_MySQL_BindResult()
 {
 	if (Plugin_Scr_GetNumParam() < 1)
 	{
-		Plugin_Scr_Error("Usage: SQL_BindResult(<type>, <?stringLength>)");
+		Plugin_Scr_Error("Usage: SQL_BindResult(<type>, <?valueLength>)");
 		return;
 	}
 	MYSQL_CHECK_INSTANCE(instance.mysql);
 	MYSQL_CHECK_STMT(instance.stmt);
 
-	enum_field_types type = (enum_field_types)Plugin_Scr_GetInt(0);
+	enum_field_types type = Plugin_Scr_GetInt(0);
 
 	if (!instance.bindsResult)
 		instance.bindsResult = (MYSQL_BIND_BUFFER *)malloc(sizeof(MYSQL_BIND_BUFFER));
@@ -339,9 +337,10 @@ void GScr_MySQL_HexString()
 		return;
 	}
 	const char *from = Plugin_Scr_GetString(0);
-    char to[strlen(from) + 1];
+    char to[(strlen(from) * 2) + 1];
     unsigned long len = mysql_hex_string(to, from, strlen(from));
     to[len] = '\0';
+
     Plugin_Scr_AddString(to);
 }
 

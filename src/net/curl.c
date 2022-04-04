@@ -130,7 +130,11 @@ void GScr_CURL_Version()
 		for (int i = 0; info->protocols[i] != NULL; i++)
 			Plugin_Printf("%s ", info->protocols[i]);
 		Plugin_Printf("\n-------------------------------\n");
+
+		Plugin_Scr_AddString(info->version);
 	}
+	else
+		Plugin_Scr_AddUndefined();
 }
 
 void GScr_CURL_OptCleanup()
@@ -153,24 +157,14 @@ void GScr_CURL_HeaderCleanup()
 	i_curl_header_cleanup();
 }
 
-void GScr_CURL_SetHeader()
+void GScr_CURL_AddHeader()
 {
 	if (Plugin_Scr_GetNumParam() != 1)
 	{
-		Plugin_Scr_Error("Usage: CURL_SetHeader(<header parse>)");
+		Plugin_Scr_Error("Usage: CURL_AddHeader(<header parse>)");
 		return;
 	}
-	char* header_parse_dup = strdup(Plugin_Scr_GetString(0));
-	char* token = strtok(header_parse_dup, ",");
-
-	i_curl_header_cleanup();
-
-	while (token != NULL)
-	{
-		curl_instance.header = curl_slist_append(curl_instance.header, token);
-		token = strtok(NULL, ",");
-	}
-	free(header_parse_dup);
+	curl_instance.header = curl_slist_append(curl_instance.header, Plugin_Scr_GetString(0));
 }
 
 void GScr_CURL_AddOpt()

@@ -97,7 +97,7 @@ SQL_Query("SELECT * FROM players");
 Command for performing a statement on the database server, binds must be set in order.
 
 ```c
-printVariable(SQL_Prepare("SELECT name, guid, rank FROM speedrun_ranks WHERE name = ?"));
+SQL_Prepare("SELECT name, guid, rank FROM speedrun_ranks WHERE name = ?");
 SQL_BindParam("Iswenzz", level.MYSQL_TYPE_VAR_STRING);
 SQL_BindResult(level.MYSQL_TYPE_VAR_STRING, 60);
 SQL_BindResult(level.MYSQL_TYPE_VAR_STRING, 60);
@@ -106,7 +106,7 @@ SQL_BindResult(level.MYSQL_TYPE_LONG);
 SQL_BindResult(level.MYSQL_TYPE_LONG);
 ```
 ```c
-printVariable(SQL_Prepare("INSERT INTO speedrun_ranks (name, guid, rank) VALUES (?, ?, ?)"));
+SQL_Prepare("INSERT INTO speedrun_ranks (name, guid, rank) VALUES (?, ?, ?)");
 SQL_BindParam("Iswenzz", level.MYSQL_TYPE_VAR_STRING);
 SQL_BindParam("313354b4", level.MYSQL_TYPE_VAR_STRING);
 SQL_BindParam("80", level.MYSQL_TYPE_LONG);

@@ -2,50 +2,50 @@
 #include "curl.h"
 
 /**
- * @brief 
+ * @brief
  * File write function to use with ftp CURL write callback.
  */
 size_t ftp_fwrite(void *buffer, size_t size, size_t nmemb, void *stream);
 
 /**
- * @brief 
+ * @brief
  * File read function to use with ftp CURL read callback.
  */
 size_t ftp_fread(void *ptr, size_t size, size_t nmemb, void *stream);
 
 /**
- * @brief 
+ * @brief
  * Connect to an SFTP server, the connection can be closed with FTP_Close.
  */
 void GScr_SFTP_Connect();
 
 /**
- * @brief 
+ * @brief
  * Connect to an FTP/FTPS server, the connection can be closed with FTP_Close.
  */
 void GScr_FTP_Connect();
 
 /**
- * @brief 
+ * @brief
  * Close the FTP/FTPS/SFTP connection.
  */
 void GScr_FTP_Close();
 
 /**
- * @brief 
+ * @brief
  * Execute a command to the FTP/FTPS/SFTP server.
- * The commands should be set with CURL_SetHeader.
+ * The commands should be set with CURL_AddHeader.
  */
 void GScr_FTP_Shell();
 
 /**
- * @brief 
+ * @brief
  * Upload a file to the FTP/FTPS/SFTP server.
  */
 void GScr_FTP_PostFile();
 
 /**
- * @brief 
+ * @brief
  * Download a file from the FTP/FTPS/SFTP server.
  */
 void GScr_FTP_GetFile();

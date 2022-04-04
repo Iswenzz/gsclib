@@ -28,10 +28,10 @@ FTP_Close();
 
 #### ``FTP_Shell()``
 Execute a command to the FTP/FTPS/SFTP server.
-The commands should be set with CURL_SetHeader.
+The commands should be set with CURL_AddHeader.
 
 ```c
-CURL_SetHeader("rename libcurl.dll test.dll");
+CURL_AddHeader("rename libcurl.dll test.dll");
 FTP_Shell();
 ```
 <hr>
