@@ -93,7 +93,7 @@ PCL int OnInit()
 	Plugin_ScrAddFunction("sql_close", 			&GScr_MySQL_Close);
 
 	// utils/utils
-	Plugin_ScrAddFunction("comprintf", 			&GScr_ComPrintf);
+	Plugin_ScrAddFunction("comprintf", 			&GScr_ComPrintF);
 	Plugin_ScrAddFunction("gettype", 			&GScr_GetType);
 	Plugin_ScrAddFunction("ternary", 			&GScr_Ternary);
 	Plugin_ScrAddFunction("ifundef", 			&GScr_IfUndef);

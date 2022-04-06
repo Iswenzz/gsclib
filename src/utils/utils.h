@@ -1,26 +1,22 @@
 #pragma once
 #include <cgsc.h>
 
-/**
- * @brief 
- * Print a message to the console output.
- */
-void GScr_ComPrintf();
+/// <summary>
+/// Print a message to the console output.
+/// </summary>
+void GScr_ComPrintF();
 
-/**
- * @brief 
- * Get the type name of a GSC variable.
- */
+/// <summary>
+/// Get the type name of a GSC variable.
+/// </summary>
 void GScr_GetType();
 
-/**
- * @brief 
- * Check the condition and return the 1st value if true or the second value if false.
- */
+/// <summary>
+/// Check the condition and return the 1st value if true or the second value if false.
+/// </summary>
 void GScr_Ternary();
 
-/**
- * @brief 
- * Give a default value if the variable is undefined.
- */
+/// <summary>
+/// Give a default value if the variable is undefined.
+/// </summary>
 void GScr_IfUndef();

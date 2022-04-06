@@ -1,19 +1,16 @@
 #pragma once
 
-/**
- * @brief 
- * Convert int, float, vector to string.
- */
+/// <summary>
+/// Convert int, float, vector to string.
+/// </summary>
 void GScr_ToString();
 
-/**
- * @brief 
- * Convert string, int, vector to float.
- */
+/// <summary>
+/// Convert string, int, vector to float.
+/// </summary>
 void GScr_ToFloat();
 
-/**
- * @brief 
- * Convert string, float, vector to integer.
- */
+/// <summary>
+/// Convert string, float, vector to integer.
+/// </summary>
 void GScr_ToInt();

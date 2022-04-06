@@ -84,6 +84,7 @@ void GScr_ToString()
 		return;
 	}
 	VariableValue *var = Plugin_Scr_SelectParam(0);
+
 	switch (var->type)
 	{
 		case VAR_ISTRING:
@@ -92,31 +93,17 @@ void GScr_ToString()
 			break;
 		
 		case VAR_VECTOR:
-		{
-			int cpyBufferSize = snprintf(NULL, 0, "(%f, %f, %f)", var->u.vectorValue[0],
-				var->u.vectorValue[1], var->u.vectorValue[2]);
-			char buffer[cpyBufferSize + 1];
-			snprintf(buffer, cpyBufferSize + 1, "(%f, %f, %f)", var->u.vectorValue[0],
-				var->u.vectorValue[1], var->u.vectorValue[2]);
-			Plugin_Scr_AddString(buffer);
+			Plugin_Scr_AddString(fmt("(%f, %f, %f)", 
+				var->u.vectorValue[0],
+				var->u.vectorValue[1], 
+				var->u.vectorValue[2]));
 			break;
-		}
 		case VAR_INTEGER:
-		{
-			int cpyBufferSize = snprintf(NULL, 0, "%d", var->u.intValue);
-			char buffer[cpyBufferSize + 1];
-			snprintf(buffer, cpyBufferSize + 1, "%d", var->u.intValue);
-			Plugin_Scr_AddString(buffer);
+			Plugin_Scr_AddString(fmt("%d", var->u.intValue));
 			break;
-		}
 		case VAR_FLOAT:
-		{
-			int cpyBufferSize = snprintf(NULL, 0, "%f", var->u.floatValue);
-			char buffer[cpyBufferSize + 1];
-			snprintf(buffer, cpyBufferSize + 1, "%f", var->u.floatValue);
-			Plugin_Scr_AddString(buffer);
+			Plugin_Scr_AddString(fmt("%f", var->u.floatValue));
 			break;
-		}
 		default:
 			Plugin_Scr_AddUndefined();
 	}

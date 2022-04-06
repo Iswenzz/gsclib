@@ -1,43 +1,36 @@
 #pragma once
 
-/**
- * @brief 
- * Check if a string is undefined or empty.
- */
+/// <summary>
+/// Check if a string is undefined or empty.
+/// </summary>
 void GScr_IsNullOrEmpty();
 
-/**
- * @brief 
- * Check if a string is alphanumeric.
- */
+/// <summary>
+/// Check if a string is alphanumeric.
+/// </summary>
 void GScr_IsStringAlpha();
 
-/**
- * @brief 
- * Check if a string contains an integer.
- */
+/// <summary>
+/// Check if a string contains an integer.
+/// </summary>
 void GScr_IsStringInt();
 
-/**
- * @brief 
- * Check if a string contains a float.
- */
+/// <summary>
+/// Check if a string contains a float.
+/// </summary>
 void GScr_IsStringFloat();
 
-/**
- * @brief 
- * Convert a string to upper case.
- */
+/// <summary>
+/// Convert a string to upper case.
+/// </summary>
 void GScr_ToUpper();
 
-/**
- * @brief 
- * Convert a HEX color string to a normalized RGB vector.
- */
+/// <summary>
+/// Convert a HEX color string to a normalized RGB vector.
+/// </summary>
 void GScr_HexToRGB();
 
-/**
- * @brief 
- * Normalize RGB vector.
- */
+/// <summary>
+/// Normalize RGB vector.
+/// </summary>
 void GScr_ToRGB();

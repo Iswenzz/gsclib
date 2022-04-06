@@ -72,9 +72,10 @@ void GScr_IsNullOrEmpty()
 		Plugin_Scr_Error("Usage: IsNullOrEmpty(<string>)");
 		return;
 	}
-	VariableValue *var = Plugin_Scr_SelectParam(0);
-	Plugin_Scr_AddBool(!((var->type == VAR_STRING || var->type  == VAR_ISTRING)
-		&& Plugin_SL_ConvertToString(var->u.stringValue)[0] != '\0'));
+	VariableValue* var = Plugin_Scr_SelectParam(0);
+	qboolean isString = var->type == VAR_STRING || var->type == VAR_ISTRING;
+
+	Plugin_Scr_AddBool(!(isString && Plugin_SL_ConvertToString(var->u.stringValue)[0] != '\0'));
 }
 
 void GScr_ToRGB()
@@ -85,7 +86,8 @@ void GScr_ToRGB()
 		return;
 	}
 	vec3_t vec = { 0, 0, 0 };
-	// normalize vector for cod4 rgb
+
+	// Normalize vector for cod4 rgb
 	vec[0] = ((float)Plugin_Scr_GetInt(0)) / 255;
 	vec[1] = ((float)Plugin_Scr_GetInt(1)) / 255;
 	vec[2] = ((float)Plugin_Scr_GetInt(2)) / 255;
@@ -99,21 +101,20 @@ void GScr_HexToRGB()
 		Plugin_Scr_Error("Usage: HexToRGB(<hex string>)");
 		return;
 	}
-	const char *string = Plugin_Scr_GetString(0);
-    char *p = (char *)string;
+	char *string = Plugin_Scr_GetString(0);
     int rgb = 0;
     vec3_t vec = { 0, 0, 0 };
 
     if (string[0] == '#') 
-        p++;
-    if (strlen(p) != 6)
+		string++;
+    if (strlen(string) != 6)
     {
         Plugin_Scr_ParamError(1, "Wrong HEX color input");
         return;
     }
-    rgb = (int)strtol(p, NULL, 16);
+    rgb = (int)strtol(string, NULL, 16);
 
-    // normalize vector for cod4 rgb
+    // Normalize vector for cod4 rgb
     vec[0] = ((float)((rgb >> 16) & 0xFF)) / 255;
     vec[1] = ((float)((rgb >> 8) & 0xFF)) / 255;
     vec[2] = ((float)(rgb & 0xFF)) / 255;

@@ -1,80 +1,74 @@
 #pragma once
 #include <cgsc.h>
 
-/**
- * @brief 
- * Get the distance between 2 3D vectors.
- */
+/// <summary>
+/// Get the distance between 2 3D vectors.
+/// </summary>
+/// <param name="a"></param>
+/// <param name="b"></param>
+/// <returns></returns>
 float VectorDistance(vec3_t a, vec3_t b);
 
-/**
- * @brief 
- * qsort vec3_t comparison function.
- * @param a - Pointer to an vec3_t.
- * @param b - Pointer to an vec3_t.
- * @return int - returns negative if b > a, and positive if a > b.
- */
+/// <summary>
+/// Sort vec3_t comparison function.
+/// </summary>
+/// <param name="a">Pointer to an vec3_t.</param>
+/// <param name="b">Pointer to an vec3_t.</param>
+/// <returns>Negative if b > a, and positive if a > b.</returns>
 int VectorCmp(const void *a, const void *b);
 
-/**
- * @brief 
- * qsort int comparison function.
- * @param a - Pointer to an int.
- * @param b - Pointer to an int.
- * @return int - returns negative if b > a, and positive if a > b.
- */
+/// <summary>
+/// Sort int comparison function.
+/// </summary>
+/// <param name="a">Pointer to an int.</param>
+/// <param name="b">Pointer to an int.</param>
+/// <returns>Negative if b > a, and positive if a > b.</returns>
 int IntCmp(const void *a, const void *b);
 
-/**
- * @brief 
- * qsort float comparison function.
- * @param a - Pointer to an float.
- * @param b - Pointer to an float.
- * @return int - returns negative if b > a, and positive if a > b.
- */
+/// <summary>
+/// Sort float comparison function.
+/// </summary>
+/// <param name="a">Pointer to an float.</param>
+/// <param name="b">Pointer to an float.</param>
+/// <returns>Negative if b > a, and positive if a > b.</returns>
 int FloatCmp(const void *a, const void *b);
 
-/**
- * @brief 
- * qsort C-string comparison function.
- * @param a - Pointer to a char pointer.
- * @param b - Pointer to a char pointer.
- * @return int - strcmp result.
- */
+/// <summary>
+/// Sort string comparison function.
+/// </summary>
+/// <param name="a">Pointer to a string.</param>
+/// <param name="b">Pointer to a string.</param>
+/// <returns>strcmp result.</returns>
 int StringCmp(const void *a, const void *b);
 
-/**
- * @brief 
- * qsort GSC variable vec3_t comparison function.
- * @param a - Pointer to a VariableValue.
- * @param b - Pointer to a VariableValue.
- * @return int - returns negative if b > a, and positive if a > b.
- */
+/// <summary>
+/// Sort vec3_t comparison function.
+/// </summary>
+/// <param name="a">Pointer to a VariableValue.</param>
+/// <param name="b">Pointer to a VariableValue.</param>
+/// <returns>Negative if b > a, and positive if a > b.</returns>
 int Scr_VectorCmp(const void *a, const void *b);
 
-/**
- * @brief 
- * qsort GSC variable int comparison function.
- * @param a - Pointer to a VariableValue.
- * @param b - Pointer to a VariableValue.
- * @return int - returns negative if b > a, and positive if a > b.
- */
+/// <summary>
+/// Sort int comparison function.
+/// </summary>
+/// <param name="a">Pointer to a VariableValue.</param>
+/// <param name="b">Pointer to a VariableValue.</param>
+/// <returns>Negative if b > a, and positive if a > b.</returns>
 int Scr_IntCmp(const void *a, const void *b);
 
-/**
- * @brief 
- * qsort GSC variable float comparison function.
- * @param a - Pointer to a VariableValue.
- * @param b - Pointer to a VariableValue.
- * @return int - returns negative if b > a, and positive if a > b.
- */
+/// <summary>
+/// Sort float comparison function.
+/// </summary>
+/// <param name="a">Pointer to a VariableValue.</param>
+/// <param name="b">Pointer to a VariableValue.</param>
+/// <returns>Negative if b > a, and positive if a > b.</returns>
 int Scr_FloatCmp(const void *a, const void *b);
 
-/**
- * @brief 
- * qsort GSC variable string comparison function.
- * @param a - Pointer to a VariableValue.
- * @param b - Pointer to a VariableValue.
- * @return int - strcmp result.
- */
+/// <summary>
+/// Sort string comparison function.
+/// </summary>
+/// <param name="a">Pointer to a VariableValue.</param>
+/// <param name="b">Pointer to a VariableValue.</param>
+/// <returns>strcmp result.</returns>
 int Scr_StringCmp(const void *a, const void *b);

@@ -25,7 +25,7 @@ void GScr_IfUndef()
 	Plugin_Scr_AddVariable(a->type == VAR_UNDEFINED ? b : a);
 }
 
-void GScr_ComPrintf()
+void GScr_ComPrintF()
 {
 	if (!Plugin_Scr_GetNumParam())
 		Plugin_Printf("\n");
