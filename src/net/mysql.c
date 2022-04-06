@@ -1,18 +1,8 @@
 #include "mysql.h"
 #include <mysql.h>
 
-#define MYSQL_ERROR(x, msg) \
-if (x == NULL) 				\
-{							\
-	Plugin_Scr_Error(msg);	\
-	return;					\
-}
-
-#define MYSQL_CHECK_INSTANCE(x) MYSQL_ERROR(x, "MySQL connection not found.")
-#define MYSQL_CHECK_STMT(x) MYSQL_ERROR(x, "MySQL statement not found.")
-
-int mysql_library_init_code;
-static MYSQL_INSTANCE instance;
+int MySQLcode;
+static MYSQL_INSTANCE mysql;
 
 void GScr_MySQL_Version()
 {
@@ -31,18 +21,16 @@ void GScr_MySQL_Prepare()
 		Plugin_Scr_Error("Usage: SQL_Prepare(<query>)");
 		return;
 	}
-	MYSQL_CHECK_INSTANCE(instance.mysql);
+	CHECK_MYSQL_INSTANCE();
 	MySQL_Free_Statement();
 	MySQL_Free_Result();
 	
 	const char *query = Plugin_Scr_GetString(0);
 
-	instance.stmt = mysql_stmt_init(instance.mysql);
-	if (mysql_stmt_prepare(instance.stmt, query, strlen(query)))
+	mysql.stmt = mysql_stmt_init(mysql.handle);
+	if (mysql_stmt_prepare(mysql.stmt, query, strlen(query)))
 	{
-		char buffer[1024];
-		snprintf(buffer, sizeof(buffer), "SQL_Prepare(): Prepare statement failed: %s", mysql_stmt_error(instance.stmt));
-		Plugin_Scr_Error(buffer);
+		Plugin_Scr_Error(fmt("SQL_Prepare(): Prepare statement failed: %s", mysql_stmt_error(mysql.stmt)));
 		Plugin_Scr_AddBool(qfalse);
 	}
 	else
@@ -56,20 +44,20 @@ void GScr_MySQL_BindParam()
 		Plugin_Scr_Error("Usage: SQL_BindParam(<value>, <type>)");
 		return;
 	}
-	MYSQL_CHECK_INSTANCE(instance.mysql);
-	MYSQL_CHECK_STMT(instance.stmt);
+	CHECK_MYSQL_INSTANCE();
+	CHECK_MYSQL_STMT();
 
 	const char *value = Plugin_Scr_GetString(0);
 	enum_field_types type = (enum_field_types)Plugin_Scr_GetInt(1);
 
-	if (!instance.binds)
-		instance.binds = (MYSQL_BIND_BUFFER *)malloc(sizeof(MYSQL_BIND_BUFFER));
+	if (!mysql.binds)
+		mysql.binds = (MYSQL_BIND_BUFFER *)malloc(sizeof(MYSQL_BIND_BUFFER));
 	else
-		instance.binds = (MYSQL_BIND_BUFFER *)realloc(instance.binds, 
-			sizeof(MYSQL_BIND_BUFFER) * (instance.bindsLength + 1));
+		mysql.binds = (MYSQL_BIND_BUFFER *)realloc(mysql.binds, 
+			sizeof(MYSQL_BIND_BUFFER) * (mysql.bindsLength + 1));
 
-	MySQL_PrepareBindBuffer(&instance.binds[instance.bindsLength], value, strlen(value), type);
-	instance.bindsLength++;
+	MySQL_PrepareBindBuffer(&mysql.binds[mysql.bindsLength], value, strlen(value), type);
+	mysql.bindsLength++;
 }
 
 void GScr_MySQL_BindResult()
@@ -79,22 +67,22 @@ void GScr_MySQL_BindResult()
 		Plugin_Scr_Error("Usage: SQL_BindResult(<type>, <?valueLength>)");
 		return;
 	}
-	MYSQL_CHECK_INSTANCE(instance.mysql);
-	MYSQL_CHECK_STMT(instance.stmt);
+	CHECK_MYSQL_INSTANCE();
+	CHECK_MYSQL_STMT();
 
 	enum_field_types type = Plugin_Scr_GetInt(0);
 
-	if (!instance.bindsResult)
-		instance.bindsResult = (MYSQL_BIND_BUFFER *)malloc(sizeof(MYSQL_BIND_BUFFER));
+	if (!mysql.bindsResult)
+		mysql.bindsResult = (MYSQL_BIND_BUFFER *)malloc(sizeof(MYSQL_BIND_BUFFER));
 	else
-		instance.bindsResult = (MYSQL_BIND_BUFFER *)realloc(instance.bindsResult, 
-			sizeof(MYSQL_BIND_BUFFER) * (instance.bindsResultLength + 1));
+		mysql.bindsResult = (MYSQL_BIND_BUFFER *)realloc(mysql.bindsResult, 
+			sizeof(MYSQL_BIND_BUFFER) * (mysql.bindsResultLength + 1));
 
 	if (Plugin_Scr_GetNumParam() == 2) // Alloc a string buffer
-		MySQL_PrepareBindBuffer(&instance.bindsResult[instance.bindsResultLength], NULL, Plugin_Scr_GetInt(1) + 1, type);
+		MySQL_PrepareBindBuffer(&mysql.bindsResult[mysql.bindsResultLength], NULL, Plugin_Scr_GetInt(1) + 1, type);
 	else
-		MySQL_PrepareBindBuffer(&instance.bindsResult[instance.bindsResultLength], NULL, 0, type);
-	instance.bindsResultLength++;
+		MySQL_PrepareBindBuffer(&mysql.bindsResult[mysql.bindsResultLength], NULL, 0, type);
+	mysql.bindsResultLength++;
 }
 
 void MySQL_PrepareBindBuffer(MYSQL_BIND_BUFFER *b, const char *value, int valueLength, enum_field_types type)
@@ -110,8 +98,7 @@ void MySQL_PrepareBindBuffer(MYSQL_BIND_BUFFER *b, const char *value, int valueL
 			*str = '\0';
 
 			if (value)
-				strcpy_s(str, valueLength + 1, value);
-
+				strcpy(str, value);
 			b->buffer = str;
 			b->bind.buffer_length = valueLength;
 		}
@@ -123,7 +110,6 @@ void MySQL_PrepareBindBuffer(MYSQL_BIND_BUFFER *b, const char *value, int valueL
 
 			if (value)
 				*number = strtoll(value, NULL, 10);
-			
 			b->buffer = number;
 		}
 		break;
@@ -134,7 +120,6 @@ void MySQL_PrepareBindBuffer(MYSQL_BIND_BUFFER *b, const char *value, int valueL
 
 			if (value)
 				*number = strtof(value, NULL);
-
 			b->buffer = number;
 		}
 		break;
@@ -195,63 +180,57 @@ void GScr_MySQL_Execute()
 		Plugin_Scr_Error("Usage: SQL_Execute()");
 		return;
 	}
-	MYSQL_CHECK_INSTANCE(instance.mysql);
-	MYSQL_CHECK_STMT(instance.stmt);
+	CHECK_MYSQL_INSTANCE();
+	CHECK_MYSQL_STMT();
 
 	// Remap the binds
-	MYSQL_BIND binds[instance.bindsLength];
-	MYSQL_BIND bindsResult[instance.bindsResultLength];
+	MYSQL_BIND binds[mysql.bindsLength];
+	MYSQL_BIND bindsResult[mysql.bindsResultLength];
 
-	for (int i = 0; i < instance.bindsLength; i++)
-		binds[i] = instance.binds[i].bind;
-	for (int i = 0; i < instance.bindsResultLength; i++)
-		bindsResult[i] = instance.bindsResult[i].bind;
+	for (int i = 0; i < mysql.bindsLength; i++)
+		binds[i] = mysql.binds[i].bind;
+	for (int i = 0; i < mysql.bindsResultLength; i++)
+		bindsResult[i] = mysql.bindsResult[i].bind;
 	
 	// Bind params
-	if (instance.bindsLength && mysql_stmt_bind_param(instance.stmt, binds))
+	if (mysql.bindsLength && mysql_stmt_bind_param(mysql.stmt, binds))
 	{
-		char buffer[1024];
-		snprintf(buffer, sizeof(buffer), "SQL_Execute(): Bind statement failed: %s", mysql_stmt_error(instance.stmt));
-		Plugin_Scr_Error(buffer);
+		Plugin_Scr_Error(fmt("SQL_Execute(): Bind statement failed: %s", mysql_stmt_error(mysql.stmt)));
 		Plugin_Scr_AddBool(qfalse);
 		return;
 	}
 
 	// Bind results
-	if (instance.bindsResultLength && mysql_stmt_bind_result(instance.stmt, bindsResult))
+	if (mysql.bindsResultLength && mysql_stmt_bind_result(mysql.stmt, bindsResult))
 	{
-		char buffer[1024];
-		snprintf(buffer, sizeof(buffer), "SQL_Execute(): Bind statement failed: %s", mysql_stmt_error(instance.stmt));
-		Plugin_Scr_Error(buffer);
+		Plugin_Scr_Error(fmt("SQL_Execute(): Bind statement failed: %s", mysql_stmt_error(mysql.stmt)));
 		Plugin_Scr_AddBool(qfalse);
 		return;
 	}
 
 	// Execute statement
-	if (mysql_stmt_execute(instance.stmt))
+	if (mysql_stmt_execute(mysql.stmt))
 	{
-		char buffer[1024];
-		snprintf(buffer, sizeof(buffer), "SQL_Execute(): Execute statement failed: %s", mysql_stmt_error(instance.stmt));
-		Plugin_Scr_Error(buffer);
+		Plugin_Scr_Error(fmt("SQL_Execute(): Execute statement failed: %s", mysql_stmt_error(mysql.stmt)));
 		Plugin_Scr_AddBool(qfalse);
 		MySQL_Free_Statement();
 	}
 	else
 	{
-		mysql_stmt_store_result(instance.stmt);
-		instance.resultStmt = mysql_stmt_result_metadata(instance.stmt);
+		mysql_stmt_store_result(mysql.stmt);
+		mysql.resultStmt = mysql_stmt_result_metadata(mysql.stmt);
 		Plugin_Scr_AddBool(qtrue);
 	}
 
 	// Free binds
-	if (instance.binds)
+	if (mysql.binds)
 	{
-		for (int i = 0; i < instance.bindsLength; i++)
-			free(instance.binds[i].buffer);
+		for (int i = 0; i < mysql.bindsLength; i++)
+			free(mysql.binds[i].buffer);
 
-		free(instance.binds);
-		instance.binds = NULL;
-		instance.bindsLength = 0;
+		free(mysql.binds);
+		mysql.binds = NULL;
+		mysql.bindsLength = 0;
 	}
 }
 
@@ -262,26 +241,24 @@ void GScr_MySQL_ListDB()
 		Plugin_Scr_Error("Usage: SQL_ListDB()");
 		return;
 	}
-	MYSQL_CHECK_INSTANCE(instance.mysql);
+	CHECK_MYSQL_INSTANCE();
 
-	MYSQL_RES *result = mysql_list_dbs(instance.mysql, "%");
+	MYSQL_RES *result = mysql_list_dbs(mysql.handle, "%");
+	MYSQL_ROW row;
+
 	if (!result)
 	{
-		char buffer[1024];
-		snprintf(buffer, sizeof(buffer), "SQL_ListDB(): Couldn't get db list: %s", mysql_error(instance.mysql));
-		Plugin_Scr_Error(buffer);
+		Plugin_Scr_Error(fmt("SQL_ListDB(): Couldn't get db list: %s", mysql_error(mysql.handle)));
+		return;
 	}
-	else 
+	
+	Plugin_Scr_MakeArray();
+	while ((row = mysql_fetch_row(result)))
 	{
-		MYSQL_ROW row;
-		Plugin_Scr_MakeArray();
-		while ((row = mysql_fetch_row(result)))
-		{
-			Plugin_Scr_AddString(row[0]);
-			Plugin_Scr_AddArray();
-		}
-		mysql_free_result(result);
+		Plugin_Scr_AddString(row[0]);
+		Plugin_Scr_AddArray();
 	}
+	mysql_free_result(result);
 }
 
 void GScr_MySQL_ListTables()
@@ -291,26 +268,24 @@ void GScr_MySQL_ListTables()
 		Plugin_Scr_Error("Usage: SQL_ListTables()");
 		return;
 	}
-	MYSQL_CHECK_INSTANCE(instance.mysql);
+	CHECK_MYSQL_INSTANCE();
 
-	MYSQL_RES *result = mysql_list_tables(instance.mysql, "%");
+	MYSQL_RES *result = mysql_list_tables(mysql.handle, "%");
+	MYSQL_ROW row;
+
 	if (!result)
 	{
-		char buffer[1024];
-		snprintf(buffer, sizeof(buffer), "SQL_ListTables(): Couldn't get table list: %s", mysql_error(instance.mysql));
-		Plugin_Scr_Error(buffer);
+		Plugin_Scr_Error(fmt("SQL_ListTables(): Couldn't get table list: %s", mysql_error(mysql.handle)));
+		return;
 	}
-	else 
+
+	Plugin_Scr_MakeArray();
+	while ((row = mysql_fetch_row(result)))
 	{
-		MYSQL_ROW row;
-		Plugin_Scr_MakeArray();
-		while ((row = mysql_fetch_row(result)))
-		{
-			Plugin_Scr_AddString(row[0]);
-			Plugin_Scr_AddArray();
-		}
-		mysql_free_result(result);
+		Plugin_Scr_AddString(row[0]);
+		Plugin_Scr_AddArray();
 	}
+	mysql_free_result(result);
 }
 
 void GScr_MySQL_EscapeString()
@@ -320,12 +295,13 @@ void GScr_MySQL_EscapeString()
 		Plugin_Scr_Error("Usage: SQL_EscapeString(<string>)");
 		return;
 	}
-	MYSQL_CHECK_INSTANCE(instance.mysql);
+	CHECK_MYSQL_INSTANCE();
 
 	const char *from = Plugin_Scr_GetString(0);
     char to[strlen(from) + 1];
-    unsigned long len = mysql_real_escape_string(instance.mysql, to, from, strlen(from));
+    unsigned long len = mysql_real_escape_string(mysql.handle, to, from, strlen(from));
     to[len] = '\0';
+
 	Plugin_Scr_AddString(to);
 }
 
@@ -351,17 +327,15 @@ void GScr_MySQL_SelectDB()
 		Plugin_Scr_Error("Usage: SQL_SelectDB(<name>)");
 		return;
 	}
-	MYSQL_CHECK_INSTANCE(instance.mysql);
+	CHECK_MYSQL_INSTANCE();
 
-	if (mysql_select_db(instance.mysql, Plugin_Scr_GetString(0))) 
-	{
-		char buffer[1024];
-		snprintf(buffer, sizeof(buffer), "SQL_SelectDB(): Changing DBs failed: '%s'", mysql_error(instance.mysql));
-		Plugin_Scr_Error(buffer);
-		Plugin_Scr_AddBool(qfalse);
-    }
-	else
+	if (mysql_select_db(mysql.handle, Plugin_Scr_GetString(0)) == 0) 
 		Plugin_Scr_AddBool(qtrue);
+	else
+	{
+		Plugin_Scr_Error(fmt("SQL_SelectDB(): Changing DBs failed: '%s'", mysql_error(mysql.handle)));
+		Plugin_Scr_AddBool(qfalse);
+	}
 }
 
 void GScr_MySQL_FetchFields()
@@ -371,9 +345,9 @@ void GScr_MySQL_FetchFields()
 		Plugin_Scr_Error("Usage: SQL_FetchFields()");
 		return;
 	}
-	MYSQL_CHECK_INSTANCE(instance.mysql);
+	CHECK_MYSQL_INSTANCE();
 
-	MYSQL_RES *res = instance.result ? instance.result : instance.resultStmt;
+	MYSQL_RES *res = mysql.result ? mysql.result : mysql.resultStmt;
 	if (!res)
 	{
 		Plugin_Scr_AddUndefined();
@@ -408,7 +382,12 @@ void GScr_MySQL_FetchRow()
 		Plugin_Scr_Error("Usage: SQL_FetchRow()");
 		return;
 	}
-	MySQL_FetchRowsInternal(qfalse, qfalse);
+	CHECK_MYSQL_INSTANCE();
+
+	if (mysql.result)
+		Scr_MySQL_FetchQueryRow(qfalse);
+	else if (mysql.stmt)
+		Scr_MySQL_FetchStatementRow(qfalse);
 }
 
 void GScr_MySQL_FetchRows()
@@ -418,7 +397,12 @@ void GScr_MySQL_FetchRows()
 		Plugin_Scr_Error("Usage: SQL_FetchRows()");
 		return;
 	}
-	MySQL_FetchRowsInternal(qtrue, qfalse);
+	CHECK_MYSQL_INSTANCE();
+
+	if (mysql.result)
+		Scr_MySQL_FetchQueryRows(qfalse);
+	else if (mysql.stmt)
+		Scr_MySQL_FetchStatementRows(qfalse);
 }
 
 void GScr_MySQL_FetchRowDict()
@@ -428,7 +412,12 @@ void GScr_MySQL_FetchRowDict()
 		Plugin_Scr_Error("Usage: SQL_FetchRowDict()");
 		return;
 	}
-	MySQL_FetchRowsInternal(qfalse, qtrue);
+	CHECK_MYSQL_INSTANCE();
+
+	if (mysql.result)
+		Scr_MySQL_FetchQueryRow(qtrue);
+	else if (mysql.stmt)
+		Scr_MySQL_FetchStatementRow(qtrue);
 }
 
 void GScr_MySQL_FetchRowsDict()
@@ -438,114 +427,122 @@ void GScr_MySQL_FetchRowsDict()
 		Plugin_Scr_Error("Usage: SQL_FetchRowsDict()");
 		return;
 	}
-	MySQL_FetchRowsInternal(qtrue, qtrue);
+	CHECK_MYSQL_INSTANCE();
+
+	if (mysql.result)
+		Scr_MySQL_FetchQueryRows(qtrue);
+	else if (mysql.stmt)
+		Scr_MySQL_FetchStatementRows(qtrue);
 }
 
-void MySQL_FetchRowsInternal(qboolean all, qboolean stringIndexed)
+void Scr_MySQL_FetchStatementRows(qboolean stringIndexed)
 {
-	MYSQL_CHECK_INSTANCE(instance.mysql);
+	CHECK_MYSQL_INSTANCE();
+	CHECK_MYSQL_STMT();
 
-	// Statement results
-	if (instance.resultStmt)
+	Plugin_Scr_MakeArray();
+	mysql_stmt_data_seek(mysql.stmt, 0);
+
+	while (!mysql_stmt_fetch(mysql.stmt))
 	{
-		if (all) 
-		{
-			Plugin_Scr_MakeArray();
-			mysql_stmt_data_seek(instance.stmt, 0);
-		}
-		while (!mysql_stmt_fetch(instance.stmt))
-		{
-			mysql_field_seek(instance.resultStmt, 0);
-
-			Plugin_Scr_MakeArray();
-			for (int i = 0; i < instance.bindsResultLength; i++) 
-			{
-				// Get the field name
-				MYSQL_FIELD *field = mysql_fetch_field(instance.resultStmt);
-				if (!field)
-				{
-					Plugin_Scr_AddUndefined();
-					Plugin_Scr_AddArray();
-					Plugin_Scr_Error("SQL_FetchRowsDict(): Error while fetching fields.");
-					return;
-				}
-
-				// Add the row value
-				if (instance.bindsResult[i].bind.is_null_value)
-					Plugin_Scr_AddUndefined();
-				else
-				{
-					switch (MySQL_TypeToGSC(instance.bindsResult[i].bind.buffer_type))
-					{
-						case VAR_STRING:
-							Plugin_Scr_AddString((const char *)instance.bindsResult[i].bind.buffer);
-							break;
-						case VAR_INTEGER:
-							Plugin_Scr_AddInt(*(int *)instance.bindsResult[i].bind.buffer);
-							break;
-						case VAR_FLOAT:
-							Plugin_Scr_AddFloat(*(float *)instance.bindsResult[i].bind.buffer);
-							break;
-					}
-				}
-
-				// Add the value to an array
-				if (stringIndexed && Plugin_Sys_GetCommonVersion() >= 20.0f)
-					Plugin_Scr_AddArrayStringIndexed(Plugin_Scr_AllocString(field->name));
-				else
-					Plugin_Scr_AddArray();
-			}
-			if (!all)
-				break;
-			else
-				Plugin_Scr_AddArray();
-		}
+		Scr_MySQL_FetchStatementRow(stringIndexed);
+		Plugin_Scr_AddArray();
 	}
-	else if (instance.result)
+}
+
+void Scr_MySQL_FetchStatementRow(qboolean stringIndexed)
+{
+	CHECK_MYSQL_INSTANCE();
+	CHECK_MYSQL_STMT();
+
+	mysql_field_seek(mysql.resultStmt, 0);
+	Plugin_Scr_MakeArray();
+
+	for (int i = 0; i < mysql.bindsResultLength; i++)
 	{
-		MYSQL_ROW row;
-		unsigned int num_fields = mysql_num_fields(instance.result);
-
-		if (all) 
+		// Get the field name
+		MYSQL_FIELD* field = mysql_fetch_field(mysql.resultStmt);
+		if (!field)
 		{
-			Plugin_Scr_MakeArray();
-			mysql_data_seek(instance.result, 0);
+			Plugin_Scr_AddUndefined();
+			Plugin_Scr_AddArray();
+			Plugin_Scr_Error("SQL_FetchRowsDict(): Error while fetching fields.");
+			return;
 		}
-		while ((row = mysql_fetch_row(instance.result)) != NULL)
+
+		// Add the row value
+		if (mysql.bindsResult[i].bind.is_null_value)
+			Plugin_Scr_AddUndefined();
+		else
 		{
-			Plugin_Scr_MakeArray();
-			mysql_field_seek(instance.result, 0);
-
-			for (int i = 0; i < num_fields; i++) 
+			switch (MySQL_TypeToGSC(mysql.bindsResult[i].bind.buffer_type))
 			{
-				// Get the field name
-				MYSQL_FIELD *field = mysql_fetch_field(instance.result);
-				if (!field)
-				{
-					Plugin_Scr_AddUndefined();
-					Plugin_Scr_AddArray();
-					Plugin_Scr_Error("SQL_FetchRowsDict(): Error while fetching fields.");
-					return;
-				}
-
-				// Add the row value
-				if (!row[i])
-					Plugin_Scr_AddUndefined();
-				else
-					Plugin_Scr_AddString(row[i]);
-
-				// Add the value to an array
-				if (stringIndexed && Plugin_Sys_GetCommonVersion() >= 20.0f)
-					Plugin_Scr_AddArrayStringIndexed(Plugin_Scr_AllocString(field->name));
-				else
-					Plugin_Scr_AddArray();
-			}
-			if (!all)
+			case VAR_STRING:
+				Plugin_Scr_AddString((const char*)mysql.bindsResult[i].bind.buffer);
 				break;
-			else
-				Plugin_Scr_AddArray();
-		}		
+			case VAR_INTEGER:
+				Plugin_Scr_AddInt(*(int*)mysql.bindsResult[i].bind.buffer);
+				break;
+			case VAR_FLOAT:
+				Plugin_Scr_AddFloat(*(float*)mysql.bindsResult[i].bind.buffer);
+				break;
+			}
+		}
+
+		// Add the value to an array
+		if (CGSC_SupportIndexedString() && stringIndexed)
+			Plugin_Scr_AddArrayStringIndexed(Plugin_Scr_AllocString(field->name));
+		else
+			Plugin_Scr_AddArray();
 	}
+}
+
+void Scr_MySQL_FetchQueryRows(qboolean stringIndexed)
+{
+	CHECK_MYSQL_INSTANCE();
+
+	Plugin_Scr_MakeArray();
+	mysql_data_seek(mysql.result, 0);
+
+	while (Scr_MySQL_FetchQueryRow(stringIndexed))
+		Plugin_Scr_AddArray();
+}
+
+qboolean Scr_MySQL_FetchQueryRow(qboolean stringIndexed)
+{
+	MYSQL_ROW row = mysql_fetch_row(mysql.result);
+	unsigned int num_fields = mysql_num_fields(mysql.result);
+	if (row == NULL) 
+		return qfalse;
+
+	Plugin_Scr_MakeArray();
+	mysql_field_seek(mysql.result, 0);
+
+	for (int i = 0; i < num_fields; i++)
+	{
+		// Get the field name
+		MYSQL_FIELD* field = mysql_fetch_field(mysql.result);
+		if (!field)
+		{
+			Plugin_Scr_AddUndefined();
+			Plugin_Scr_AddArray();
+			Plugin_Scr_Error("SQL_FetchRowsDict(): Error while fetching fields.");
+			return qfalse;
+		}
+
+		// Add the row value
+		if (!row[i])
+			Plugin_Scr_AddUndefined();
+		else
+			Plugin_Scr_AddString(row[i]);
+
+		// Add the value to an array
+		if (CGSC_SupportIndexedString() && stringIndexed)
+			Plugin_Scr_AddArrayStringIndexed(Plugin_Scr_AllocString(field->name));
+		else
+			Plugin_Scr_AddArray();
+	}
+	return qtrue;
 }
 
 void GScr_MySQL_NumRows()
@@ -555,12 +552,12 @@ void GScr_MySQL_NumRows()
 		Plugin_Scr_Error("Usage: SQL_NumRows()");
 		return;
 	}
-	MYSQL_CHECK_INSTANCE(instance.mysql);
+	CHECK_MYSQL_INSTANCE();
 
-	if (instance.result)
-		Plugin_Scr_AddInt(mysql_num_rows(instance.result));
-	else if (instance.stmt)
-		Plugin_Scr_AddInt(mysql_stmt_num_rows(instance.stmt));
+	if (mysql.result)
+		Plugin_Scr_AddInt(mysql_num_rows(mysql.result));
+	else if (mysql.stmt)
+		Plugin_Scr_AddInt(mysql_stmt_num_rows(mysql.stmt));
 }
 
 void GScr_MySQL_NumFields()
@@ -570,12 +567,12 @@ void GScr_MySQL_NumFields()
 		Plugin_Scr_Error("Usage: SQL_NumFields()");
 		return;
 	}
-	MYSQL_CHECK_INSTANCE(instance.mysql);
+	CHECK_MYSQL_INSTANCE();
 
-	if (instance.result)
-		Plugin_Scr_AddInt(mysql_num_fields(instance.result));
-	else if (instance.stmt)
-		Plugin_Scr_AddInt(mysql_stmt_field_count(instance.stmt));
+	if (mysql.result)
+		Plugin_Scr_AddInt(mysql_num_fields(mysql.result));
+	else if (mysql.stmt)
+		Plugin_Scr_AddInt(mysql_stmt_field_count(mysql.stmt));
 }
 
 void GScr_MySQL_AffectedRows()
@@ -585,12 +582,12 @@ void GScr_MySQL_AffectedRows()
 		Plugin_Scr_Error("Usage: SQL_AffectedRows()");
 		return;
 	}
-	MYSQL_CHECK_INSTANCE(instance.mysql);
+	CHECK_MYSQL_INSTANCE();
 
-	if (instance.result)
-		Plugin_Scr_AddInt(mysql_affected_rows(instance.mysql));
-	else if (instance.stmt)
-		Plugin_Scr_AddInt(mysql_stmt_affected_rows(instance.stmt));
+	if (mysql.result)
+		Plugin_Scr_AddInt(mysql_affected_rows(mysql.handle));
+	else if (mysql.stmt)
+		Plugin_Scr_AddInt(mysql_stmt_affected_rows(mysql.stmt));
 }
 
 void GScr_MySQL_Query()
@@ -600,19 +597,17 @@ void GScr_MySQL_Query()
 		Plugin_Scr_Error("Usage: SQL_Query(<query string>)");
 		return;
 	}
-	MYSQL_CHECK_INSTANCE(instance.mysql);
+	CHECK_MYSQL_INSTANCE();
 
 	MySQL_Free_Result();
-	if (mysql_query(instance.mysql, Plugin_Scr_GetString(0))) 
+	if (mysql_query(mysql.handle, Plugin_Scr_GetString(0))) 
 	{
-		char buffer[1024];
-		snprintf(buffer, sizeof(buffer), "SQL_Query(): Query failed: %s\n", mysql_error(instance.mysql));
-		Plugin_Scr_Error(buffer);
+		Plugin_Scr_Error(fmt("SQL_Query(): Query failed: %s\n", mysql_error(mysql.handle)));
 		Plugin_Scr_AddBool(qfalse);
 	} 
 	else 
 	{
-		instance.result = mysql_store_result(instance.mysql);
+		mysql.result = mysql_store_result(mysql.handle);
 		Plugin_Scr_AddBool(qtrue);
 	}
 }
@@ -624,14 +619,14 @@ void GScr_MySQL_Connect()
 		Plugin_Scr_Error("Usage: SQL_Connect(<host>, <port>, <user>, <password>)");
 		return;
 	}
-	if (instance.mysql)
+	if (mysql.handle)
 	{
-		mysql_close(instance.mysql);
-		instance.mysql = NULL;
+		mysql_close(mysql.handle);
+		mysql.handle = NULL;
 	}
 
-	instance.mysql = mysql_init(instance.mysql);
-	if (!instance.mysql)
+	mysql.handle = mysql_init(mysql.handle);
+	if (!mysql.handle)
 	{
 		Plugin_Scr_Error("SQL_Connect(): MySQL failed to initialize");
 		Plugin_Scr_AddBool(qfalse);
@@ -640,11 +635,11 @@ void GScr_MySQL_Connect()
 
 	// Auto reconnection
 	qboolean reconnect = qtrue;
-	mysql_options(instance.mysql, MYSQL_OPT_RECONNECT, &reconnect);
+	mysql_options(mysql.handle, MYSQL_OPT_RECONNECT, &reconnect);
 
-	if (!mysql_real_connect(instance.mysql, /* MYSQL structure to use */
+	if (!mysql_real_connect(mysql.handle, /* MYSQL structure to use */
 		Plugin_Scr_GetString(0),  			/* server hostname or IP address */ 
-		Plugin_Scr_GetString(2),  			/* mysql user */
+		Plugin_Scr_GetString(2),  			/* handle user */
 		Plugin_Scr_GetString(3),  			/* password */
 		NULL,  								/* default database to use, NULL for none */
 		Plugin_Scr_GetInt(1),     			/* port number, 0 for default */
@@ -659,7 +654,7 @@ void GScr_MySQL_Connect()
 	}
 	else
 	{
-		Plugin_Printf("SQL_Connect(): Connected MySQL Server: %s\n", mysql_get_server_info(instance.mysql));
+		Plugin_Printf("SQL_Connect(): Connected MySQL Server: %s\n", mysql_get_server_info(mysql.handle));
 		Plugin_Scr_AddBool(qtrue);
 	}
 }
@@ -679,36 +674,36 @@ void GScr_MySQL_Close()
 
 void MySQL_Free_Statement()
 {
-	if (instance.stmt)
+	if (mysql.stmt)
 	{
-		mysql_stmt_free_result(instance.stmt);
-		mysql_stmt_close(instance.stmt);
-		instance.stmt = NULL;
+		mysql_stmt_free_result(mysql.stmt);
+		mysql_stmt_close(mysql.stmt);
+		mysql.stmt = NULL;
 	}
 }
 
 void MySQL_Free_Result()
 {
-	if (instance.resultStmt)
+	if (mysql.resultStmt)
 	{
-		mysql_free_result(instance.resultStmt);
-		instance.resultStmt = NULL;
+		mysql_free_result(mysql.resultStmt);
+		mysql.resultStmt = NULL;
 
 		// Free results binds
-		if (instance.bindsResult)
+		if (mysql.bindsResult)
 		{
-			for (int i = 0; i < instance.bindsResultLength; i++)
-				free(instance.bindsResult[i].buffer);
+			for (int i = 0; i < mysql.bindsResultLength; i++)
+				free(mysql.bindsResult[i].buffer);
 
-			free(instance.bindsResult);
-			instance.bindsResult = NULL;
-			instance.bindsResultLength = 0;
+			free(mysql.bindsResult);
+			mysql.bindsResult = NULL;
+			mysql.bindsResultLength = 0;
 		}
 	}
-	if (instance.result)
+	else if (mysql.result)
 	{
-		mysql_free_result(instance.result);
-		instance.result = NULL;
+		mysql_free_result(mysql.result);
+		mysql.result = NULL;
 	}
 }
 
@@ -717,9 +712,9 @@ void MySQL_Free()
 	MySQL_Free_Statement();
 	MySQL_Free_Result();
 
-	if (instance.mysql)
+	if (mysql.handle)
 	{
-		mysql_close(instance.mysql);
-		instance.mysql = NULL;
+		mysql_close(mysql.handle);
+		mysql.handle = NULL;
 	}
 }

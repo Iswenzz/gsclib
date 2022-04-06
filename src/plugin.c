@@ -17,8 +17,8 @@
 
 PCL int OnInit()
 {
-	curl_library_init_code = curl_global_init(CURL_GLOBAL_ALL); 	// initialize curl library
-	mysql_library_init_code = mysql_library_init(0, NULL, NULL); 	// initialize mysql library
+	CURLinitCode = curl_global_init(CURL_GLOBAL_ALL); 	// initialize curl library
+	MySQLcode = mysql_library_init(0, NULL, NULL); 	// initialize handle library
 
 	//// data/regex
 	// Plugin_ScrAddFunction("regexmatch", 		&GScr_RegexMatch);
@@ -69,7 +69,7 @@ PCL int OnInit()
 	Plugin_ScrAddFunction("ftp_postfile", 		&GScr_FTP_PostFile);
 	Plugin_ScrAddFunction("ftp_getfile", 		&GScr_FTP_GetFile);
 
-	// net/mysql
+	// net/handle
 	Plugin_ScrAddFunction("sql_prepare", 		&GScr_MySQL_Prepare);
 	Plugin_ScrAddFunction("sql_bindparam", 		&GScr_MySQL_BindParam);
 	Plugin_ScrAddFunction("sql_bindresult", 	&GScr_MySQL_BindResult);
@@ -118,7 +118,7 @@ PCL int OnInit()
 PCL void OnTerminate()
 {
 	curl_global_cleanup(); 	// free curl library
-	mysql_library_end(); 	// free mysql library
+	mysql_library_end(); 	// free handle library
 }
 
 /**

@@ -4,9 +4,9 @@
 #include <sys/stat.h>
 #include <errno.h>
 
-size_t ftp_fwrite(void *buffer, size_t size, size_t nmemb, void *stream)
+size_t FTP_Write(void *buffer, size_t size, size_t nmemb, void *stream)
 {
-	struct FtpFile *out = (struct FtpFile *)stream;
+	FTPfile *out = (FTPfile *)stream;
 	if(!out->stream)
 	{
 		out->stream = fopen(out->filename, "wb");
@@ -16,7 +16,7 @@ size_t ftp_fwrite(void *buffer, size_t size, size_t nmemb, void *stream)
 	return fwrite(buffer, size, nmemb, out->stream);
 }
 
-size_t ftp_fread(void *ptr, size_t size, size_t nmemb, void *stream)
+size_t FTP_Read(void *ptr, size_t size, size_t nmemb, void *stream)
 {
 	return (curl_off_t)fread(ptr, size, nmemb, (FILE *)stream);
 }
@@ -28,8 +28,10 @@ void GScr_SFTP_Connect()
 		Plugin_Scr_Error("Usage: SFTP_Connect(<hostname>, <username>, <password>, <port>)");
 		return;
 	}
-	Plugin_Scr_AddBool(i_curl_connect("sftp", Plugin_Scr_GetString(0), Plugin_Scr_GetString(1),
-		Plugin_Scr_GetString(2), Plugin_Scr_GetInt(3)));
+	qboolean connect = CURL_FTP_Connect("sftp", 
+		Plugin_Scr_GetString(0), Plugin_Scr_GetString(1),
+		Plugin_Scr_GetString(2), Plugin_Scr_GetInt(3));
+	Plugin_Scr_AddBool(connect);
 }
 
 void GScr_FTP_Connect()
@@ -39,8 +41,10 @@ void GScr_FTP_Connect()
 		Plugin_Scr_Error("Usage: FTP_Connect(<hostname>, <username>, <password>, <port>)");
 		return;
 	}
-	Plugin_Scr_AddBool(i_curl_connect("ftp", Plugin_Scr_GetString(0), Plugin_Scr_GetString(1),
-		Plugin_Scr_GetString(2), Plugin_Scr_GetInt(3)));
+	qboolean connect = CURL_FTP_Connect("ftp",
+		Plugin_Scr_GetString(0), Plugin_Scr_GetString(1),
+		Plugin_Scr_GetString(2), Plugin_Scr_GetInt(3));
+	Plugin_Scr_AddBool(connect);
 }
 
 void GScr_FTP_Close()
@@ -50,7 +54,7 @@ void GScr_FTP_Close()
 		Plugin_Scr_Error("Usage: FTP_Close()");
 		return;
 	}
-	Plugin_Scr_AddBool(i_curl_close());
+	Plugin_Scr_AddBool(CURL_FTP_Close());
 }
 
 void GScr_FTP_Shell()
@@ -60,21 +64,21 @@ void GScr_FTP_Shell()
 		Plugin_Scr_Error("Usage: FTP_Shell() - Execute header from CURL_AddHeader()");
 		return;
 	}
-	CHECK_FTP_CONNECTION(ftp_instance);
+	CHECK_FTP_CONNECTION();
 	CURLcode res;
 
-	if(ftp_instance.curl)
+	if(ftp.handle)
 	{
-		curl_easy_reset(ftp_instance.curl);
+		curl_easy_reset(ftp.handle);
 
-		i_curl_setheader(ftp_instance.curl, CURLOPT_QUOTE);
-		curl_easy_setopt(ftp_instance.curl, CURLOPT_URL, ftp_instance.url);
-		curl_easy_setopt(ftp_instance.curl, CURLOPT_PASSWORD, ftp_instance.password);
-		curl_easy_setopt(ftp_instance.curl, CURLOPT_PORT, ftp_instance.port);
-		curl_easy_setopt(ftp_instance.curl, CURLOPT_SSH_AUTH_TYPES, CURLSSH_AUTH_PASSWORD);
-		i_curl_setopts(ftp_instance.curl);
+		CURL_SetHeader(ftp.handle, CURLOPT_QUOTE);
+		curl_easy_setopt(ftp.handle, CURLOPT_URL, ftp.url);
+		curl_easy_setopt(ftp.handle, CURLOPT_PASSWORD, ftp.password);
+		curl_easy_setopt(ftp.handle, CURLOPT_PORT, ftp.port);
+		curl_easy_setopt(ftp.handle, CURLOPT_SSH_AUTH_TYPES, CURLSSH_AUTH_PASSWORD);
+		CURL_SetOpts(ftp.handle);
 
-		res = curl_easy_perform(ftp_instance.curl);
+		res = curl_easy_perform(ftp.handle);
 		if(CURLE_OK != res)
 		{
 			Plugin_Printf("Error: curl_easy_perform: %s\n", curl_easy_strerror(res));
@@ -83,8 +87,8 @@ void GScr_FTP_Shell()
 		else
 			Plugin_Scr_AddBool(qtrue);
 	}
-	i_curl_opt_cleanup();
-	i_curl_header_cleanup();
+	CURL_OptCleanup();
+	CURL_HeaderCleanup();
 }
 
 void GScr_FTP_PostFile()
@@ -94,7 +98,7 @@ void GScr_FTP_PostFile()
 		Plugin_Scr_Error("Usage: FTP_PostFile(<filepath>, <uploadtopath>)");
 		return;
 	}
-	CHECK_FTP_CONNECTION(ftp_instance);
+	CHECK_FTP_CONNECTION();
 	const char *filepath = Plugin_Scr_GetString(0);
 
 	CURLcode res;
@@ -102,6 +106,7 @@ void GScr_FTP_PostFile()
 	struct stat file_info;
 	curl_off_t fsize;
 
+	// Check file
 	if(stat(filepath, &file_info))
 	{
 		Plugin_Printf("Couldn't open '%s': %s\n", filepath, strerror(errno));
@@ -118,26 +123,27 @@ void GScr_FTP_PostFile()
 		return;
 	}
 
-	if(ftp_instance.curl)
+	// Post file
+	if(ftp.handle)
 	{
-		curl_easy_reset(ftp_instance.curl);
+		curl_easy_reset(ftp.handle);
 
 		char url[4096];
-		strcpy(url, ftp_instance.url);
+		strcpy(url, ftp.url);
 		strcat(url, Plugin_Scr_GetString(1));
 
-		i_curl_setheader(ftp_instance.curl, CURLOPT_POSTQUOTE);
-		curl_easy_setopt(ftp_instance.curl, CURLOPT_URL, url);
-		curl_easy_setopt(ftp_instance.curl, CURLOPT_PASSWORD, ftp_instance.password);
-		curl_easy_setopt(ftp_instance.curl, CURLOPT_PORT, ftp_instance.port);
-		curl_easy_setopt(ftp_instance.curl, CURLOPT_READFUNCTION, ftp_fread);
-		curl_easy_setopt(ftp_instance.curl, CURLOPT_UPLOAD, 1L);
-		curl_easy_setopt(ftp_instance.curl, CURLOPT_READDATA, hd_src);
-		curl_easy_setopt(ftp_instance.curl, CURLOPT_INFILESIZE_LARGE, (curl_off_t)fsize);
-		curl_easy_setopt(ftp_instance.curl, CURLOPT_SSH_AUTH_TYPES, CURLSSH_AUTH_PASSWORD);
-		i_curl_setopts(ftp_instance.curl);
+		CURL_SetHeader(ftp.handle, CURLOPT_POSTQUOTE);
+		curl_easy_setopt(ftp.handle, CURLOPT_URL, url);
+		curl_easy_setopt(ftp.handle, CURLOPT_PASSWORD, ftp.password);
+		curl_easy_setopt(ftp.handle, CURLOPT_PORT, ftp.port);
+		curl_easy_setopt(ftp.handle, CURLOPT_READFUNCTION, FTP_Read);
+		curl_easy_setopt(ftp.handle, CURLOPT_UPLOAD, 1L);
+		curl_easy_setopt(ftp.handle, CURLOPT_READDATA, hd_src);
+		curl_easy_setopt(ftp.handle, CURLOPT_INFILESIZE_LARGE, (curl_off_t)fsize);
+		curl_easy_setopt(ftp.handle, CURLOPT_SSH_AUTH_TYPES, CURLSSH_AUTH_PASSWORD);
+		CURL_SetOpts(ftp.handle);
 
-		res = curl_easy_perform(ftp_instance.curl);
+		res = curl_easy_perform(ftp.handle);
 		if(res != CURLE_OK)
 		{
 			Plugin_Printf("Error: curl_easy_perform: %s\n", curl_easy_strerror(res));
@@ -148,8 +154,8 @@ void GScr_FTP_PostFile()
 	}
 	fclose(hd_src);
 
-	i_curl_opt_cleanup();
-	i_curl_header_cleanup();
+	CURL_OptCleanup();
+	CURL_HeaderCleanup();
 }
 
 void GScr_FTP_GetFile()
@@ -159,30 +165,30 @@ void GScr_FTP_GetFile()
 		Plugin_Scr_Error("Usage: FTP_GetFile(<savefilepath>, <download filepath>)");
 		return;
 	}
-	CHECK_FTP_CONNECTION(ftp_instance);
+	CHECK_FTP_CONNECTION();
 	const char *filepath = Plugin_Scr_GetString(0);
 
 	CURLcode res;
-	struct FtpFile ftpfile = { filepath, NULL};
+	FTPfile ftpfile = { filepath, NULL };
 
-	if(ftp_instance.curl)
+	if(ftp.handle)
 	{
-		curl_easy_reset(ftp_instance.curl);
+		curl_easy_reset(ftp.handle);
 
 		char url[4096];
-		strcpy(url, ftp_instance.url);
+		strcpy(url, ftp.url);
 		strcat(url, Plugin_Scr_GetString(1));
 
-		i_curl_setheader(ftp_instance.curl, CURLOPT_PREQUOTE);
-		curl_easy_setopt(ftp_instance.curl, CURLOPT_URL, url);
-		curl_easy_setopt(ftp_instance.curl, CURLOPT_PASSWORD, ftp_instance.password);
-		curl_easy_setopt(ftp_instance.curl, CURLOPT_PORT, ftp_instance.port);
-		curl_easy_setopt(ftp_instance.curl, CURLOPT_WRITEFUNCTION, ftp_fwrite);
-		curl_easy_setopt(ftp_instance.curl, CURLOPT_WRITEDATA, &ftpfile);
-		curl_easy_setopt(ftp_instance.curl, CURLOPT_SSH_AUTH_TYPES, CURLSSH_AUTH_PASSWORD);
-		i_curl_setopts(ftp_instance.curl);
+		CURL_SetHeader(ftp.handle, CURLOPT_PREQUOTE);
+		curl_easy_setopt(ftp.handle, CURLOPT_URL, url);
+		curl_easy_setopt(ftp.handle, CURLOPT_PASSWORD, ftp.password);
+		curl_easy_setopt(ftp.handle, CURLOPT_PORT, ftp.port);
+		curl_easy_setopt(ftp.handle, CURLOPT_WRITEFUNCTION, FTP_Write);
+		curl_easy_setopt(ftp.handle, CURLOPT_WRITEDATA, &ftpfile);
+		curl_easy_setopt(ftp.handle, CURLOPT_SSH_AUTH_TYPES, CURLSSH_AUTH_PASSWORD);
+		CURL_SetOpts(ftp.handle);
 
-		res = curl_easy_perform(ftp_instance.curl);
+		res = curl_easy_perform(ftp.handle);
 		if(CURLE_OK != res)
 		{
 			Plugin_Printf("Error: curl_easy_perform: %s\n", curl_easy_strerror(res));
@@ -194,6 +200,6 @@ void GScr_FTP_GetFile()
 	if(ftpfile.stream)
 		fclose(ftpfile.stream);
 
-	i_curl_opt_cleanup();
-	i_curl_header_cleanup();
+	CURL_OptCleanup();
+	CURL_HeaderCleanup();
 }

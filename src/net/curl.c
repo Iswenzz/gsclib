@@ -1,88 +1,88 @@
 #include "curl.h"
 #include <stdlib.h>
 
-CURLcode curl_library_init_code;
-CURL_INSTANCE curl_instance = { NULL, 0, { 0 } };
-FTP_INSTANCE ftp_instance = { NULL, { 0 }, { 0 }, 0};
+CURLcode CURLinitCode;
+CURLinstance curl = { NULL, 0, { 0 } };
+FTPinstance ftp = { NULL, { 0 }, { 0 }, 0};
 
-i_curl_string i_string_init() 
+CURLstring CURL_StringInit() 
 {
-	i_curl_string str;
-	memset(&str, 0, sizeof(i_curl_string));
+	CURLstring str;
+	memset(&str, 0, sizeof(CURLstring));
 	str.buffer = NULL;
 	return str;
 }
 
-void i_curl_setopts(CURL* curl)
+void CURL_SetHeader(CURL* handle, CURLoption headerType)
 {
-	if (curl_instance.opt_count > 0)
+	if (curl.header != NULL)
+		curl_easy_setopt(handle, headerType, curl.header);
+}
+
+void CURL_OptCleanup()
+{
+	curl.optsCount = 0;
+	memset(&curl.opts, 0, sizeof(curl.opts));
+}
+
+void CURL_HeaderCleanup()
+{
+	if (curl.header != NULL)
 	{
-		for (int i = 0; i < curl_instance.opt_count; i++)
+		curl_slist_free_all(curl.header);
+		curl.header = NULL;
+	}
+}
+
+void CURL_SetOpts(CURL* handle)
+{
+	if (curl.optsCount > 0)
+	{
+		for (int i = 0; i < curl.optsCount; i++)
 		{
-			if (curl_instance.opts[i].param != NULL)
+			if (curl.opts[i].param != NULL)
 			{
-				switch (curl_instance.opts[i].param->type)
+				switch (curl.opts[i].param->type)
 				{
-					case VAR_INTEGER:
-						curl_easy_setopt(curl, curl_instance.opts[i].opt, curl_instance.opts[i].param->u.intValue);
-						break;
-					case VAR_FLOAT:
-						curl_easy_setopt(curl, curl_instance.opts[i].opt, curl_instance.opts[i].param->u.floatValue);
-						break;
-					case VAR_ISTRING:
-					case VAR_STRING:
-						curl_easy_setopt(curl, curl_instance.opts[i].opt, 
-							Plugin_SL_ConvertToString(curl_instance.opts[i].param->u.stringValue));
-						break;
+				case VAR_INTEGER:
+					curl_easy_setopt(handle, curl.opts[i].opt, curl.opts[i].param->u.intValue);
+					break;
+				case VAR_FLOAT:
+					curl_easy_setopt(handle, curl.opts[i].opt, curl.opts[i].param->u.floatValue);
+					break;
+				case VAR_ISTRING:
+				case VAR_STRING:
+					curl_easy_setopt(handle, curl.opts[i].opt,
+						Plugin_SL_ConvertToString(curl.opts[i].param->u.stringValue));
+					break;
 				}
 			}
 		}
 	}
 }
 
-void i_curl_setheader(CURL* curl, CURLoption header_type)
+qboolean CURL_FTP_Close()
 {
-	if (curl_instance.header != NULL)
-		curl_easy_setopt(curl, header_type, curl_instance.header);
-}
-
-void i_curl_opt_cleanup()
-{
-	curl_instance.opt_count = 0;
-	memset(&curl_instance.opts, 0, sizeof(curl_instance.opts));
-}
-
-void i_curl_header_cleanup()
-{
-	if (curl_instance.header != NULL)
+	if (ftp.handle != NULL)
 	{
-		curl_slist_free_all(curl_instance.header);
-		curl_instance.header = NULL;
-	}
-}
-
-qboolean i_curl_close()
-{
-	if (ftp_instance.curl != NULL)
-	{
-		curl_easy_cleanup(ftp_instance.curl);
-		memset(&ftp_instance, 0, sizeof(ftp_instance));
-		ftp_instance.curl = NULL;
+		curl_easy_cleanup(ftp.handle);
+		memset(&ftp, 0, sizeof(ftp));
+		ftp.handle = NULL;
 		return qtrue;
 	}
 	return qfalse;
 }
 
-qboolean i_curl_connect(const char* protocol, const char* hostname, const char* username,
+qboolean CURL_FTP_Connect(const char* protocol, const char* hostname, const char* username,
 	const char* password, unsigned short port)
 {
-	i_curl_close();
+	CURL_FTP_Close();
 
-	snprintf(ftp_instance.url, sizeof(ftp_instance.url), "%s://%s@%s/", protocol, username, hostname);
-	strcpy(ftp_instance.password, password);
-	ftp_instance.port = port;
-	ftp_instance.curl = curl_easy_init();
-	return ftp_instance.curl != NULL;
+	snprintf(ftp.url, sizeof(ftp.url), "%s://%s@%s/", protocol, username, hostname);
+	strcpy(ftp.password, password);
+	ftp.port = port;
+	ftp.handle = curl_easy_init();
+	return ftp.handle != NULL;
 }
 
 void GScr_CURL_Version()
@@ -93,6 +93,7 @@ void GScr_CURL_Version()
 		return;
 	}
 	curl_version_info_data* info = curl_version_info(CURLVERSION_NOW);
+
 	if (info != NULL)
 	{
 		Plugin_Printf("----------[CURL INFO]----------\n");
@@ -144,7 +145,7 @@ void GScr_CURL_OptCleanup()
 		Plugin_Scr_Error("Usage: CURL_OptCleanup()");
 		return;
 	}
-	i_curl_opt_cleanup();
+	CURL_OptCleanup();
 }
 
 void GScr_CURL_HeaderCleanup()
@@ -154,7 +155,7 @@ void GScr_CURL_HeaderCleanup()
 		Plugin_Scr_Error("Usage: CURL_HeaderCleanup()");
 		return;
 	}
-	i_curl_header_cleanup();
+	CURL_HeaderCleanup();
 }
 
 void GScr_CURL_AddHeader()
@@ -164,7 +165,7 @@ void GScr_CURL_AddHeader()
 		Plugin_Scr_Error("Usage: CURL_AddHeader(<header parse>)");
 		return;
 	}
-	curl_instance.header = curl_slist_append(curl_instance.header, Plugin_Scr_GetString(0));
+	curl.header = curl_slist_append(curl.header, Plugin_Scr_GetString(0));
 }
 
 void GScr_CURL_AddOpt()
@@ -174,7 +175,7 @@ void GScr_CURL_AddOpt()
 		Plugin_Scr_Error("Usage: CURL_AddOpt(<opt int>, <param generic>)");
 		return;
 	}
-	curl_instance.opts[curl_instance.opt_count].opt = Plugin_Scr_GetInt(0);
-	curl_instance.opts[curl_instance.opt_count].param = Plugin_Scr_AllocVariable(Plugin_Scr_SelectParam(1));
-	curl_instance.opt_count++;
+	curl.opts[curl.optsCount].opt = Plugin_Scr_GetInt(0);
+	curl.opts[curl.optsCount].param = Plugin_Scr_AllocVariable(Plugin_Scr_SelectParam(1));
+	curl.optsCount++;
 }

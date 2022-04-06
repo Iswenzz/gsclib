@@ -2,7 +2,17 @@
 #include <mysql.h>
 #include <cgsc.h>
 
-extern int mysql_library_init_code;
+#define MYSQL_ERROR(x, msg)	\
+if (x == NULL)				\
+{							\
+	Plugin_Scr_Error(msg);	\
+	return;					\
+}
+
+#define CHECK_MYSQL_INSTANCE()	MYSQL_ERROR(mysql.handle, "MySQL connection not found.");
+#define CHECK_MYSQL_STMT()		MYSQL_ERROR(mysql.stmt, "MySQL statement not found.");
+
+extern int MySQLcode;
 
 typedef struct
 {
@@ -12,7 +22,7 @@ typedef struct
 
 typedef struct 
 {
-	MYSQL *mysql;
+	MYSQL *handle;
 	MYSQL_RES *result;
 	MYSQL_RES *resultStmt;
 	MYSQL_STMT *stmt;
@@ -22,173 +32,167 @@ typedef struct
 	int bindsResultLength;
 } MYSQL_INSTANCE;
 
-/**
- * @brief 
- * Free all MySQL resources.
- */
+/// <summary>
+/// Free all MySQL resources.
+/// </summary>
 void MySQL_Free();
 
-/**
- * @brief 
- * Free the MySQL query & statement result.
- */
+/// <summary>
+/// Free the MySQL query & statement result.
+/// </summary>
 void MySQL_Free_Result();
 
-/**
- * @brief 
- * Free the MySQL statement.
- */
+/// <summary>
+/// Free the MySQL statement.
+/// </summary>
 void MySQL_Free_Statement();
 
-/**
- * @brief 
- * Converts a MySQL type to a GSC variable type.
- * @param type - The MySQL type.
- * @return int - The GSC variable type.
- */
+/// <summary>
+/// Converts a MySQL type to a GSC variable type.
+/// </summary>
+/// <param name="type">The MySQL type.</param>
+/// <returns>The GSC variable type.</returns>
 int MySQL_TypeToGSC(enum_field_types type);
 
-/**
- * @brief 
- * Generic bind for a prepare statement.
- * @param b - The MySQL bind pointer.
- * @param value - The param bind value or NULL for a result bind.
- * @param valueLength - The length of the string to allocate (0 for other types).
- * @param type - The MySQL type to bind.
- */
+/// <summary>
+/// Generic bind for a prepare statement.
+/// </summary>
+/// <param name="b">The MySQL bind pointer.</param>
+/// <param name="value">The param bind value or NULL for a result bind.</param>
+/// <param name="valueLength">The length of the string to allocate (0 for other types).</param>
+/// <param name="type">The MySQL type to bind.</param>
 void MySQL_PrepareBindBuffer(MYSQL_BIND_BUFFER *b, const char *value, int valueLength, enum_field_types type);
 
-/**
- * @brief 
- * Generic fetch row function for both queries and statements.
- * @param all - Retrieve all rows or only one.
- * @param stringIndexed - Return as a string indexed array or a regular array.
- */
-void MySQL_FetchRowsInternal(qboolean all, qboolean stringIndexed);
-
-/**
- * @brief 
- * Prepare a MySQL statement.
- */
+/// <summary>
+/// Prepare a MySQL statement.
+/// </summary>
 void GScr_MySQL_Prepare();
 
-/**
- * @brief 
- * Bind a value param for the MySQL statement.
- */
+/// <summary>
+/// Bind a value param for the MySQL statement.
+/// </summary>
 void GScr_MySQL_BindParam();
 
-/**
- * @brief 
- * Bind a result param for the MySQL statement.
- */
+/// <summary>
+/// Bind a result param for the MySQL statement.
+/// </summary>
 void GScr_MySQL_BindResult();
 
-/**
- * @brief 
- * Execute the MySQL statement.
- */
+/// <summary>
+/// Execute the MySQL statement.
+/// </summary>
 void GScr_MySQL_Execute();
 
-/**
- * @brief 
- * Print information about the MySQL client.
- */
+/// <summary>
+/// Print information about the MySQL client.
+/// </summary>
 void GScr_MySQL_Version();
 
-/**
- * @brief 
- * Connect to a MySQL server.
- */
+/// <summary>
+/// Connect to a MySQL server.
+/// </summary>
 void GScr_MySQL_Connect();
 
-/**
- * @brief 
- * Return the number of affected rows after a query.
- */
+/// <summary>
+/// Return the number of affected rows after a query.
+/// </summary>
 void GScr_MySQL_AffectedRows();
 
-/**
- * @brief 
- * Close the MySQL connection.
- */
+/// <summary>
+/// Close the MySQL connection.
+/// </summary>
 void GScr_MySQL_Close();
 
-/**
- * @brief 
- * Select a MySQL database.
- */
+/// <summary>
+/// Select a MySQL database.
+/// </summary>
 void GScr_MySQL_SelectDB();
 
-/**
- * @brief 
- * Get all database names.
- */
+/// <summary>
+/// Get all database names.
+/// </summary>
 void GScr_MySQL_ListDB();
 
-/**
- * @brief 
- * Get all table names.
- */
+/// <summary>
+/// Get all table names.
+/// </summary>
 void GScr_MySQL_ListTables();
 
-/**
- * @brief 
- * Command for performing a statement on the database server.
- */
+/// <summary>
+/// Command for performing a statement on the database server.
+/// </summary>
 void GScr_MySQL_Query();
 
-/**
- * @brief 
- * Return the number of rows after a SELECT query.
- */
+/// <summary>
+/// Return the number of rows after a SELECT query.
+/// </summary>
 void GScr_MySQL_NumRows();
 
-/**
- * @brief 
- * Return the number of fields after a SELECT query.
- */
+/// <summary>
+/// Return the number of fields after a SELECT query.
+/// </summary>
 void GScr_MySQL_NumFields();
 
-/**
- * @brief 
- * Retrieve a single row data in a GSC array after a query.
- */
+/// <summary>
+/// Retrieve a single row data in a GSC array after a query.
+/// </summary>
 void GScr_MySQL_FetchRow();
 
-/**
- * @brief 
- * Retrieve rows data in a two dimensional GSC array after a query.
- */
+/// <summary>
+/// Retrieve rows data in a two dimensional GSC array after a query.
+/// </summary>
 void GScr_MySQL_FetchRows();
 
-/**
- * @brief 
- * Retrieve a single row data in a GSC string indexed array after a query.
- */
+/// <summary>
+/// Retrieve a single row data in a GSC string indexed array after a query.
+/// </summary>
 void GScr_MySQL_FetchRowDict();
 
-/**
- * @brief 
- * Retrieve rows data in a two dimensional GSC string indexed array after a query.
- */
+/// <summary>
+/// Retrieve rows data in a two dimensional GSC string indexed array after a query.
+/// </summary>
 void GScr_MySQL_FetchRowsDict();
 
-/**
- * @brief 
- * Retrieve all fields in a GSC array after a query.
- */
+/// <summary>
+/// Retrieve all fields in a GSC array after a query.
+/// </summary>
 void GScr_MySQL_FetchFields();
 
-/**
- * @brief 
- * Prepends backslashes to the following characters: \x00 , \n , \r , \ , ' , " and \x1a. 
- * This function must always (with few exceptions) be used to make data safe before sending a query to MySQL.
- */
+/// <summary>
+/// Prepends backslashes to the following characters: \x00 , \n , \r , \ , ' , " and \x1a. 
+/// This function must always(with few exceptions) be used to make data safe before sending a query to MySQL.
+/// </summary>
 void GScr_MySQL_EscapeString();
 
-/**
- * @brief 
- * Return a hex representation of the string.
- */
+/// <summary>
+/// Return a hex representation of the string.
+/// </summary>
 void GScr_MySQL_HexString();
+
+/// <summary>
+/// Fetch row for queries.
+/// </summary>
+/// <param name="stringIndexed">Return as a string indexed array.</param>
+/// <returns></returns>
+qboolean Scr_MySQL_FetchQueryRow(qboolean stringIndexed);
+
+/// <summary>
+/// Fetch rows for queries.
+/// </summary>
+/// <param name="stringIndexed">Return as a string indexed array.</param>
+/// <returns></returns>
+void Scr_MySQL_FetchQueryRows(qboolean stringIndexed);
+
+/// <summary>
+/// Fetch row for statement.
+/// </summary>
+/// <param name="stringIndexed">Return as a string indexed array.</param>
+/// <returns></returns>
+void Scr_MySQL_FetchStatementRow(qboolean stringIndexed);
+
+/// <summary>
+/// Fetch rows for statement.
+/// </summary>
+/// <param name="stringIndexed">Return as a string indexed array.</param>
+/// <returns></returns>
+void Scr_MySQL_FetchStatementRows(qboolean stringIndexed);
