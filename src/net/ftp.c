@@ -23,11 +23,8 @@ size_t FTP_Read(void *ptr, size_t size, size_t nmemb, void *stream)
 
 void GScr_SFTP_Connect()
 {
-	if (Plugin_Scr_GetNumParam() != 4)
-	{
-		Plugin_Scr_Error("Usage: SFTP_Connect(<hostname>, <username>, <password>, <port>)");
-		return;
-	}
+	CHECK_PARAMS(4, "Usage: SFTP_Connect(<hostname>, <username>, <password>, <port>)");
+
 	qboolean connect = CURL_FTP_Connect("sftp", 
 		Plugin_Scr_GetString(0), Plugin_Scr_GetString(1),
 		Plugin_Scr_GetString(2), Plugin_Scr_GetInt(3));
@@ -36,11 +33,8 @@ void GScr_SFTP_Connect()
 
 void GScr_FTP_Connect()
 {
-	if (Plugin_Scr_GetNumParam() != 4)
-	{
-		Plugin_Scr_Error("Usage: FTP_Connect(<hostname>, <username>, <password>, <port>)");
-		return;
-	}
+	CHECK_PARAMS(4, "Usage: FTP_Connect(<hostname>, <username>, <password>, <port>)");
+
 	qboolean connect = CURL_FTP_Connect("ftp",
 		Plugin_Scr_GetString(0), Plugin_Scr_GetString(1),
 		Plugin_Scr_GetString(2), Plugin_Scr_GetInt(3));
@@ -49,24 +43,16 @@ void GScr_FTP_Connect()
 
 void GScr_FTP_Close()
 {
-	if (Plugin_Scr_GetNumParam() != 0)
-	{
-		Plugin_Scr_Error("Usage: FTP_Close()");
-		return;
-	}
+	CHECK_PARAMS(0, "Usage: FTP_Close()");
 	Plugin_Scr_AddBool(CURL_FTP_Close());
 }
 
 void GScr_FTP_Shell()
 {
-	if (Plugin_Scr_GetNumParam() != 0)
-	{
-		Plugin_Scr_Error("Usage: FTP_Shell() - Execute header from CURL_AddHeader()");
-		return;
-	}
+	CHECK_PARAMS(0, "Usage: FTP_Shell() - Execute header from CURL_AddHeader()");
 	CHECK_FTP_CONNECTION();
-	CURLcode res;
 
+	CURLcode res;
 	if(ftp.handle)
 	{
 		curl_easy_reset(ftp.handle);
@@ -81,7 +67,7 @@ void GScr_FTP_Shell()
 		res = curl_easy_perform(ftp.handle);
 		if(CURLE_OK != res)
 		{
-			Plugin_Printf("Error: curl_easy_perform: %s\n", curl_easy_strerror(res));
+			Plugin_Printf("curl_easy_perform() failed %s\n", curl_easy_strerror(res));
 			Plugin_Scr_AddBool(qfalse);
 		}
 		else
@@ -93,14 +79,10 @@ void GScr_FTP_Shell()
 
 void GScr_FTP_PostFile()
 {
-	if (Plugin_Scr_GetNumParam() != 2)
-	{
-		Plugin_Scr_Error("Usage: FTP_PostFile(<filepath>, <uploadtopath>)");
-		return;
-	}
+	CHECK_PARAMS(2, "Usage: FTP_PostFile(<filepath>, <uploadtopath>)");
 	CHECK_FTP_CONNECTION();
-	const char *filepath = Plugin_Scr_GetString(0);
 
+	const char *filepath = Plugin_Scr_GetString(0);
 	CURLcode res;
 	FILE *hd_src;
 	struct stat file_info;
@@ -146,7 +128,7 @@ void GScr_FTP_PostFile()
 		res = curl_easy_perform(ftp.handle);
 		if(res != CURLE_OK)
 		{
-			Plugin_Printf("Error: curl_easy_perform: %s\n", curl_easy_strerror(res));
+			Plugin_Printf("curl_easy_perform() failed %s\n", curl_easy_strerror(res));
 			Plugin_Scr_AddBool(qfalse);
 		}
 		else
@@ -160,14 +142,10 @@ void GScr_FTP_PostFile()
 
 void GScr_FTP_GetFile()
 {
-	if (Plugin_Scr_GetNumParam() != 2)
-	{
-		Plugin_Scr_Error("Usage: FTP_GetFile(<savefilepath>, <download filepath>)");
-		return;
-	}
+	CHECK_PARAMS(2, "Usage: FTP_GetFile(<savefilepath>, <download filepath>)");
 	CHECK_FTP_CONNECTION();
-	const char *filepath = Plugin_Scr_GetString(0);
 
+	const char *filepath = Plugin_Scr_GetString(0);
 	CURLcode res;
 	FTPfile ftpfile = { filepath, NULL };
 
@@ -191,7 +169,7 @@ void GScr_FTP_GetFile()
 		res = curl_easy_perform(ftp.handle);
 		if(CURLE_OK != res)
 		{
-			Plugin_Printf("Error: curl_easy_perform: %s\n", curl_easy_strerror(res));
+			Plugin_Printf("curl_easy_perform() failed %s\n", curl_easy_strerror(res));
 			Plugin_Scr_AddBool(qfalse);
 		}
 		else

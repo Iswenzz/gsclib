@@ -5,16 +5,8 @@
 
 void GScr_LINQ_Select()
 {
-	if (CGSC_Unsupported(CGSC_EQ(3)))
-	{
-		Plugin_Scr_AddUndefined();
-		return;
-	}
-	if (Plugin_Scr_GetNumParam() != 2)
-	{
-		Plugin_Scr_Error("Usage: Select(<array>, <::delegate>)");
-		return;
-	}
+	CHECK_PARAMS(2, "Usage: Select(<array>, <::delegate>)");
+	CHECK_UNSUPPORTED(CGSC_EQ(3));
 
 	VariableValueArray *array = Plugin_Scr_GetArray(0);
 	const int threadId = Plugin_Scr_GetFunc(1);

@@ -3,11 +3,8 @@
 
 void GScr_LINQ_All()
 {
-	if (Plugin_Scr_GetNumParam() != 2)
-	{
-		Plugin_Scr_Error("Usage: All(<array>, <::predicate>)");
-		return;
-	}
+	CHECK_PARAMS(2, "Usage: All(<array>, <::predicate>)");
+
 	VariableValueArray *array = Plugin_Scr_GetArray(0);
 	const int threadId = Plugin_Scr_GetFunc(1);
 	qboolean result = qtrue;
@@ -32,11 +29,8 @@ void GScr_LINQ_All()
 
 void GScr_LINQ_Any()
 {
-	if (Plugin_Scr_GetNumParam() != 2)
-	{
-		Plugin_Scr_Error("Usage: Any(<array>, <::predicate>)");
-		return;
-	}
+	CHECK_PARAMS(2, "Usage: Any(<array>, <::predicate>)");
+
 	VariableValueArray *array = Plugin_Scr_GetArray(0);
 	const int threadId = Plugin_Scr_GetFunc(1);
 	qboolean result = qfalse;
@@ -61,11 +55,8 @@ void GScr_LINQ_Any()
 
 void GScr_LINQ_Where()
 {
-	if (Plugin_Scr_GetNumParam() != 2)
-	{
-		Plugin_Scr_Error("Usage: Where(<array>, <::predicate>)");
-		return;
-	}
+	CHECK_PARAMS(2, "Usage: Where(<array>, <::predicate>)");
+
 	VariableValueArray *array = Plugin_Scr_GetArray(0);
 	const int threadId = Plugin_Scr_GetFunc(1);
 
@@ -88,11 +79,8 @@ void GScr_LINQ_Where()
 
 void GScr_LINQ_Last()
 {
-	if (Plugin_Scr_GetNumParam() != 2)
-	{
-		Plugin_Scr_Error("Usage: Last(<array>, <::predicate>)");
-		return;
-	}
+	CHECK_PARAMS(2, "Usage: Last(<array>, <::predicate>)");
+
 	VariableValueArray *array = Plugin_Scr_GetArray(0);
 	const int threadId = Plugin_Scr_GetFunc(1);
 	VariableValue *last = NULL;
@@ -109,18 +97,13 @@ void GScr_LINQ_Last()
 	}
 	if (last != NULL)
 		Plugin_Scr_AddVariable(last);
-	else
-		Plugin_Scr_AddUndefined();
 	Plugin_Scr_FreeArray(array);
 }
 
 void GScr_LINQ_First()
 {
-	if (Plugin_Scr_GetNumParam() != 2)
-	{
-		Plugin_Scr_Error("Usage: First(<array>, <::predicate>)");
-		return;
-	}
+	CHECK_PARAMS(2, "Usage: First(<array>, <::predicate>)");
+
 	VariableValueArray *array = Plugin_Scr_GetArray(0);
 	const int threadId = Plugin_Scr_GetFunc(1);
 
@@ -143,11 +126,8 @@ void GScr_LINQ_First()
 
 void GScr_LINQ_Count()
 {
-	if (Plugin_Scr_GetNumParam() != 2)
-	{
-		Plugin_Scr_Error("Usage: Count(<array>, <::predicate>)");
-		return;
-	}
+	CHECK_PARAMS(2, "Usage: Count(<array>, <::predicate>)");
+
 	VariableValueArray *array = Plugin_Scr_GetArray(0);
 	const int threadId = Plugin_Scr_GetFunc(1);
 	int result = 0;

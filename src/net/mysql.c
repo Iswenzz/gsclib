@@ -6,28 +6,21 @@ static MYSQL_INSTANCE mysql;
 
 void GScr_MySQL_Version()
 {
-    if (Plugin_Scr_GetNumParam() != 0)
-	{
-		Plugin_Scr_Error("Usage: SQL_Version()");
-		return;
-	}
+	CHECK_PARAMS(0, "Usage: SQL_Version()");
     Plugin_Scr_AddString(mysql_get_client_info());
 }
 
 void GScr_MySQL_Prepare()
 {
-	if (Plugin_Scr_GetNumParam() != 1)
-	{
-		Plugin_Scr_Error("Usage: SQL_Prepare(<query>)");
-		return;
-	}
+	CHECK_PARAMS(1, "Usage: SQL_Prepare(<query>)");
 	CHECK_MYSQL_INSTANCE();
+
 	MySQL_Free_Statement();
 	MySQL_Free_Result();
 	
 	const char *query = Plugin_Scr_GetString(0);
-
 	mysql.stmt = mysql_stmt_init(mysql.handle);
+
 	if (mysql_stmt_prepare(mysql.stmt, query, strlen(query)))
 	{
 		Plugin_Scr_Error(fmt("SQL_Prepare(): Prepare statement failed: %s", mysql_stmt_error(mysql.stmt)));
@@ -39,11 +32,7 @@ void GScr_MySQL_Prepare()
 
 void GScr_MySQL_BindParam()
 {
-	if (Plugin_Scr_GetNumParam() != 2)
-	{
-		Plugin_Scr_Error("Usage: SQL_BindParam(<value>, <type>)");
-		return;
-	}
+	CHECK_PARAMS(2, "Usage: SQL_BindParam(<value>, <type>)");
 	CHECK_MYSQL_INSTANCE();
 	CHECK_MYSQL_STMT();
 
@@ -175,11 +164,7 @@ int MySQL_TypeToGSC(enum_field_types type)
 
 void GScr_MySQL_Execute()
 {
-	if (Plugin_Scr_GetNumParam() != 0)
-	{
-		Plugin_Scr_Error("Usage: SQL_Execute()");
-		return;
-	}
+	CHECK_PARAMS(0, "Usage: SQL_Execute()");
 	CHECK_MYSQL_INSTANCE();
 	CHECK_MYSQL_STMT();
 
@@ -236,11 +221,7 @@ void GScr_MySQL_Execute()
 
 void GScr_MySQL_ListDB()
 {
-	if (Plugin_Scr_GetNumParam() != 0)
-	{
-		Plugin_Scr_Error("Usage: SQL_ListDB()");
-		return;
-	}
+	CHECK_PARAMS(0, "Usage: SQL_ListDB()");
 	CHECK_MYSQL_INSTANCE();
 
 	MYSQL_RES *result = mysql_list_dbs(mysql.handle, "%");
@@ -263,11 +244,7 @@ void GScr_MySQL_ListDB()
 
 void GScr_MySQL_ListTables()
 {
-	if (Plugin_Scr_GetNumParam() != 0)
-	{
-		Plugin_Scr_Error("Usage: SQL_ListTables()");
-		return;
-	}
+	CHECK_PARAMS(0, "Usage: SQL_ListTables()");
 	CHECK_MYSQL_INSTANCE();
 
 	MYSQL_RES *result = mysql_list_tables(mysql.handle, "%");
@@ -290,11 +267,7 @@ void GScr_MySQL_ListTables()
 
 void GScr_MySQL_EscapeString()
 {
-	if (Plugin_Scr_GetNumParam() != 1)
-	{
-		Plugin_Scr_Error("Usage: SQL_EscapeString(<string>)");
-		return;
-	}
+	CHECK_PARAMS(1, "Usage: SQL_EscapeString(<string>)");
 	CHECK_MYSQL_INSTANCE();
 
 	const char *from = Plugin_Scr_GetString(0);
@@ -307,11 +280,8 @@ void GScr_MySQL_EscapeString()
 
 void GScr_MySQL_HexString()
 {
-	if (Plugin_Scr_GetNumParam() != 1)
-	{
-		Plugin_Scr_Error("Usage: SQL_HexString(<string>)");
-		return;
-	}
+	CHECK_PARAMS(1, "Usage: SQL_HexString(<string>)");
+
 	const char *from = Plugin_Scr_GetString(0);
     char to[(strlen(from) * 2) + 1];
     unsigned long len = mysql_hex_string(to, from, strlen(from));
@@ -322,11 +292,7 @@ void GScr_MySQL_HexString()
 
 void GScr_MySQL_SelectDB()
 {
-	if (Plugin_Scr_GetNumParam() != 1)
-	{
-		Plugin_Scr_Error("Usage: SQL_SelectDB(<name>)");
-		return;
-	}
+	CHECK_PARAMS(1, "Usage: SQL_SelectDB(<name>)");
 	CHECK_MYSQL_INSTANCE();
 
 	if (mysql_select_db(mysql.handle, Plugin_Scr_GetString(0)) == 0) 
@@ -340,11 +306,7 @@ void GScr_MySQL_SelectDB()
 
 void GScr_MySQL_FetchFields()
 {
-	if (Plugin_Scr_GetNumParam() != 0)
-	{
-		Plugin_Scr_Error("Usage: SQL_FetchFields()");
-		return;
-	}
+	CHECK_PARAMS(0, "Usage: SQL_FetchFields()");
 	CHECK_MYSQL_INSTANCE();
 
 	MYSQL_RES *res = mysql.result ? mysql.result : mysql.resultStmt;
@@ -377,11 +339,7 @@ void GScr_MySQL_FetchFields()
 
 void GScr_MySQL_FetchRow()
 {
-	if (Plugin_Scr_GetNumParam() != 0)
-	{
-		Plugin_Scr_Error("Usage: SQL_FetchRow()");
-		return;
-	}
+	CHECK_PARAMS(0, "Usage: SQL_FetchRow()");
 	CHECK_MYSQL_INSTANCE();
 
 	if (mysql.result)
@@ -392,11 +350,7 @@ void GScr_MySQL_FetchRow()
 
 void GScr_MySQL_FetchRows()
 {
-	if (Plugin_Scr_GetNumParam() != 0)
-	{
-		Plugin_Scr_Error("Usage: SQL_FetchRows()");
-		return;
-	}
+	CHECK_PARAMS(0, "Usage: SQL_FetchRows()");
 	CHECK_MYSQL_INSTANCE();
 
 	if (mysql.result)
@@ -407,11 +361,7 @@ void GScr_MySQL_FetchRows()
 
 void GScr_MySQL_FetchRowDict()
 {
-	if (Plugin_Scr_GetNumParam() != 0)
-	{
-		Plugin_Scr_Error("Usage: SQL_FetchRowDict()");
-		return;
-	}
+	CHECK_PARAMS(0, "Usage: SQL_FetchRowDict()");
 	CHECK_MYSQL_INSTANCE();
 
 	if (mysql.result)
@@ -422,11 +372,7 @@ void GScr_MySQL_FetchRowDict()
 
 void GScr_MySQL_FetchRowsDict()
 {
-	if (Plugin_Scr_GetNumParam() != 0)
-	{
-		Plugin_Scr_Error("Usage: SQL_FetchRowsDict()");
-		return;
-	}
+	CHECK_PARAMS(0, "Usage: SQL_FetchRowsDict()");
 	CHECK_MYSQL_INSTANCE();
 
 	if (mysql.result)
@@ -547,11 +493,7 @@ qboolean Scr_MySQL_FetchQueryRow(qboolean stringIndexed)
 
 void GScr_MySQL_NumRows()
 {
-	if (Plugin_Scr_GetNumParam() != 0)
-	{
-		Plugin_Scr_Error("Usage: SQL_NumRows()");
-		return;
-	}
+	CHECK_PARAMS(0, "Usage: SQL_NumRows()");
 	CHECK_MYSQL_INSTANCE();
 
 	if (mysql.result)
@@ -562,11 +504,7 @@ void GScr_MySQL_NumRows()
 
 void GScr_MySQL_NumFields()
 {
-	if (Plugin_Scr_GetNumParam() != 0)
-	{
-		Plugin_Scr_Error("Usage: SQL_NumFields()");
-		return;
-	}
+	CHECK_PARAMS(0, "Usage: SQL_NumFields()");
 	CHECK_MYSQL_INSTANCE();
 
 	if (mysql.result)
@@ -577,11 +515,7 @@ void GScr_MySQL_NumFields()
 
 void GScr_MySQL_AffectedRows()
 {
-	if (Plugin_Scr_GetNumParam() != 0)
-	{
-		Plugin_Scr_Error("Usage: SQL_AffectedRows()");
-		return;
-	}
+	CHECK_PARAMS(0, "Usage: SQL_AffectedRows()");
 	CHECK_MYSQL_INSTANCE();
 
 	if (mysql.result)
@@ -592,11 +526,7 @@ void GScr_MySQL_AffectedRows()
 
 void GScr_MySQL_Query()
 {
-	if (Plugin_Scr_GetNumParam() != 1)
-	{
-		Plugin_Scr_Error("Usage: SQL_Query(<query string>)");
-		return;
-	}
+	CHECK_PARAMS(1, "Usage: SQL_Query(<query string>)");
 	CHECK_MYSQL_INSTANCE();
 
 	MySQL_Free_Result();
@@ -614,11 +544,8 @@ void GScr_MySQL_Query()
 
 void GScr_MySQL_Connect()
 {
-	if (Plugin_Scr_GetNumParam() != 4)
-	{
-		Plugin_Scr_Error("Usage: SQL_Connect(<host>, <port>, <user>, <password>)");
-		return;
-	}
+	CHECK_PARAMS(4, "Usage: SQL_Connect(<host>, <port>, <user>, <password>)");
+
 	if (mysql.handle)
 	{
 		mysql_close(mysql.handle);
@@ -637,7 +564,7 @@ void GScr_MySQL_Connect()
 	qboolean reconnect = qtrue;
 	mysql_options(mysql.handle, MYSQL_OPT_RECONNECT, &reconnect);
 
-	if (!mysql_real_connect(mysql.handle, /* MYSQL structure to use */
+	if (!mysql_real_connect(mysql.handle,	/* MYSQL structure to use */
 		Plugin_Scr_GetString(0),  			/* server hostname or IP address */ 
 		Plugin_Scr_GetString(2),  			/* handle user */
 		Plugin_Scr_GetString(3),  			/* password */
@@ -661,11 +588,7 @@ void GScr_MySQL_Connect()
 
 void GScr_MySQL_Close()
 {
-	if (Plugin_Scr_GetNumParam() != 0)
-	{
-		Plugin_Scr_Error("Usage: SQL_Close()");
-		return;
-	}
+	CHECK_PARAMS(0, "Usage: SQL_Close()");
 
 	MySQL_Free();
 	Plugin_Printf("SQL_Close(): Successfully closed MySQL connection.\n");

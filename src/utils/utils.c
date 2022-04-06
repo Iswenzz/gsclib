@@ -2,11 +2,8 @@
 
 void GScr_Ternary()
 {
-	if (Plugin_Scr_GetNumParam() != 3)
-	{
-		Plugin_Scr_Error("Usage: Ternary(<condition>, <var if true>, <var if false>)");
-		return;
-	}
+	CHECK_PARAMS(3, "Usage: Ternary(<condition>, <var if true>, <var if false>)");
+
 	qboolean condition = Plugin_Scr_GetInt(0);
 	VariableValue *a = Plugin_Scr_SelectParam(1);
 	VariableValue *b = Plugin_Scr_SelectParam(2);
@@ -15,11 +12,8 @@ void GScr_Ternary()
 
 void GScr_IfUndef()
 {
-	if (Plugin_Scr_GetNumParam() != 2)
-	{
-		Plugin_Scr_Error("Usage: IfUndef(<var>, <default if undef>)");
-		return;
-	}
+	CHECK_PARAMS(2, "Usage: IfUndef(<var>, <default if undef>)");
+
 	VariableValue *a = Plugin_Scr_SelectParam(0);
 	VariableValue *b = Plugin_Scr_SelectParam(1);
 	Plugin_Scr_AddVariable(a->type == VAR_UNDEFINED ? b : a);
@@ -37,11 +31,8 @@ void GScr_ComPrintF()
 
 void GScr_GetType()
 {
-	if (Plugin_Scr_GetNumParam() != 1)
-	{
-		Plugin_Scr_Error("Usage: GetType(<var>)");
-		return;
-	}
+	CHECK_PARAMS(1, "Usage: GetType(<var>)");
+
 	VariableValue *var = Plugin_Scr_SelectParam(0);
 	switch (var->type)
 	{

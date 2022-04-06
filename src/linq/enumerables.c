@@ -8,14 +8,11 @@
 
 void GScr_LINQ_Reverse()
 {
-	if (Plugin_Scr_GetNumParam() != 1)
-	{
-		Plugin_Scr_Error("Usage: Reverse(<array>)");
-		return;
-	}
-	VariableValueArray *array = Plugin_Scr_GetArray(0);
+	CHECK_PARAMS(1, "Usage: Reverse(<array>)");
 
+	VariableValueArray *array = Plugin_Scr_GetArray(0);
 	Plugin_Scr_MakeArray();
+
 	for (int i = array->length - 1; i > -1; i--)
 	{
 		Plugin_Scr_AddVariable(array->items[i]);
@@ -26,17 +23,14 @@ void GScr_LINQ_Reverse()
 
 void GScr_LINQ_Min()
 {
-	if (Plugin_Scr_GetNumParam() != 1)
-	{
-		Plugin_Scr_Error("Usage: Min(<array>)");
-		return;
-	}
+	CHECK_PARAMS(1, "Usage: Min(<array>)");
+
 	VariableValueArray *array = Plugin_Scr_GetArray(0);
 	int flags = Plugin_Scr_GetFlagsFromGSCArray(array);
 
 	if (!array->length)
 	{
-		Plugin_Scr_AddUndefined();
+		Plugin_Scr_FreeArray(array);
 		return;
 	}
 
@@ -46,8 +40,6 @@ void GScr_LINQ_Min()
 		Scr_VectorMin(array);
 	else if (HasFlag(flags, FLAG_INTEGER) || HasFlag(flags, FLAG_FLOAT))
 		Scr_NumberMin(array, flags);
-	else
-		Plugin_Scr_AddUndefined();
 	Plugin_Scr_FreeArray(array);
 }
 
@@ -117,17 +109,14 @@ void Scr_NumberMin(VariableValueArray* array, int flags)
 
 void GScr_LINQ_Max()
 {
-	if (Plugin_Scr_GetNumParam() != 1)
-	{
-		Plugin_Scr_Error("Usage: Max(<array>)");
-		return;
-	}
+	CHECK_PARAMS(1, "Usage: Max(<array>)");
+
 	VariableValueArray *array = Plugin_Scr_GetArray(0);
 	uint32_t flags = Plugin_Scr_GetFlagsFromGSCArray(array);
 
 	if (!array->length)
 	{
-		Plugin_Scr_AddUndefined();
+		Plugin_Scr_FreeArray(array);
 		return;
 	}
 
@@ -137,8 +126,6 @@ void GScr_LINQ_Max()
 		Scr_VectorMax(array);
 	else if (HasFlag(flags, FLAG_INTEGER) || HasFlag(flags, FLAG_FLOAT))
 		Scr_NumberMax(array, flags);
-	else
-		Plugin_Scr_AddUndefined();
 	Plugin_Scr_FreeArray(array);
 }
 
@@ -208,11 +195,8 @@ void Scr_NumberMax(VariableValueArray* array, int flags)
 
 void GScr_LINQ_Cast()
 {
-	if (Plugin_Scr_GetNumParam() != 2)
-	{
-		Plugin_Scr_Error("Usage: Cast(<array>, <type>)");
-		return;
-	}
+	CHECK_PARAMS(2, "Usage: Cast(<array>, <type>)");
+
 	VariableValueArray *array = Plugin_Scr_GetArray(0);
 	const char *typename = Plugin_Scr_GetString(1);
 
@@ -335,11 +319,8 @@ void Scr_FloatCast(VariableValueArray* array)
 
 void GScr_LINQ_OfType()
 {
-	if (Plugin_Scr_GetNumParam() != 2)
-	{
-		Plugin_Scr_Error("Usage: OfType(<array>, <type>)");
-		return;
-	}
+	CHECK_PARAMS(2, "Usage: OfType(<array>, <type>)");
+
 	VariableValueArray *array = Plugin_Scr_GetArray(0);
 	const char *typename = Plugin_Scr_GetString(1);
 
@@ -378,11 +359,8 @@ void GScr_LINQ_OfType()
 
 void GScr_LINQ_Sort()
 {
-	if (Plugin_Scr_GetNumParam() != 1)
-	{
-		Plugin_Scr_Error("Usage: Sort(<array>)");
-		return;
-	}
+	CHECK_PARAMS(1, "Usage: Sort(<array>)");
+
 	VariableValueArray *array = Plugin_Scr_GetArray(0);
 	uint32_t flags = Plugin_Scr_GetFlagsFromGSCArray(array);
 
@@ -406,11 +384,8 @@ void GScr_LINQ_Sort()
 
 void GScr_LINQ_Average()
 {
-	if (Plugin_Scr_GetNumParam() != 1)
-	{
-		Plugin_Scr_Error("Usage: Average(<array>)");
-		return;
-	}
+	CHECK_PARAMS(1, "Usage: Average(<array>)");
+
 	VariableValueArray *array = Plugin_Scr_GetArray(0);
 	const uint32_t flags = Plugin_Scr_GetFlagsFromGSCArray(array);
 
@@ -461,11 +436,8 @@ void Scr_NumberAverage(VariableValueArray* array, int flags)
 
 void GScr_LINQ_Sum()
 {
-	if (Plugin_Scr_GetNumParam() != 1)
-	{
-		Plugin_Scr_Error("Usage: Sum(<array>)");
-		return;
-	}
+	CHECK_PARAMS(1, "Usage: Sum(<array>)");
+
 	VariableValueArray *array = Plugin_Scr_GetArray(0);
 	uint32_t flags = Plugin_Scr_GetFlagsFromGSCArray(array);
 
@@ -475,8 +447,6 @@ void GScr_LINQ_Sum()
 		Scr_VectorSum(array);
 	else if (HasFlag(flags, FLAG_INTEGER) || HasFlag(flags, FLAG_FLOAT))
 		Scr_NumberSum(array, flags);
-	else
-		Plugin_Scr_AddUndefined();
 	Plugin_Scr_FreeArray(array);
 }
 
@@ -536,11 +506,8 @@ void Scr_NumberSum(VariableValueArray* array, int flags)
 
 void GScr_LINQ_Range()
 {
-	if (Plugin_Scr_GetNumParam() != 3)
-	{
-		Plugin_Scr_Error("Usage: Range(<array>, <min>, <max>)");
-		return;
-	}
+	CHECK_PARAMS(3, "Usage: Range(<array>, <min>, <max>)");
+
 	VariableValueArray *array = Plugin_Scr_GetArray(0);
 	const int min = Plugin_Scr_GetInt(1);
 	const int max = Plugin_Scr_GetInt(2);
@@ -562,11 +529,8 @@ void GScr_LINQ_Range()
 
 void GScr_LINQ_Repeat()
 {
-	if (Plugin_Scr_GetNumParam() != 2)
-	{
-		Plugin_Scr_Error("Usage: Repeat(<array>, <count>)");
-		return;
-	}
+	CHECK_PARAMS(2, "Usage: Repeat(<array>, <count>)");
+
 	VariableValueArray *array = Plugin_Scr_GetArray(0);
 	const int count = Plugin_Scr_GetInt(1);
 

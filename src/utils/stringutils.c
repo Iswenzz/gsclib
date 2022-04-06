@@ -6,11 +6,8 @@
 
 void GScr_IsStringAlpha()
 {
-	if (Plugin_Scr_GetNumParam() != 1)
-	{
-		Plugin_Scr_Error("Usage: IsStringAlpha(<string>)");
-		return;
-	}
+	CHECK_PARAMS(1, "Usage: IsStringAlpha(<string>)");
+
 	const char *str = Plugin_Scr_GetString(0);
 	for (int i = 0; i < strlen(str); i++)
 	{
@@ -25,11 +22,8 @@ void GScr_IsStringAlpha()
 
 void GScr_IsStringFloat()
 {
-	if (Plugin_Scr_GetNumParam() != 1)
-	{
-		Plugin_Scr_Error("Usage: IsStringFloat(<string>)");
-		return;
-	}
+	CHECK_PARAMS(1, "Usage: IsStringFloat(<string>)");
+
 	const char *nptr = Plugin_Scr_GetString(0);
 	char *endptr = NULL;
 	strtof(nptr, &endptr);
@@ -38,11 +32,8 @@ void GScr_IsStringFloat()
 
 void GScr_IsStringInt()
 {
-	if (Plugin_Scr_GetNumParam() != 1)
-	{
-		Plugin_Scr_Error("Usage: IsStringInt(<string>)");
-		return;
-	}
+	CHECK_PARAMS(1, "Usage: IsStringInt(<string>)");
+
 	const char *nptr = Plugin_Scr_GetString(0);
 	char *endptr = NULL;
 	strtol(nptr, &endptr, 10);
@@ -51,11 +42,8 @@ void GScr_IsStringInt()
 
 void GScr_ToUpper()
 {
-	if (Plugin_Scr_GetNumParam() != 1)
-	{
-		Plugin_Scr_Error("Usage: ToUpper(<string>)");
-		return;
-	}
+	CHECK_PARAMS(1, "Usage: ToUpper(<string>)");
+
 	char *str = Plugin_Scr_GetString(0);
 	char buffer[strlen(str) + 1];
 	
@@ -67,11 +55,8 @@ void GScr_ToUpper()
 
 void GScr_IsNullOrEmpty()
 {
-	if (Plugin_Scr_GetNumParam() != 1)
-	{
-		Plugin_Scr_Error("Usage: IsNullOrEmpty(<string>)");
-		return;
-	}
+	CHECK_PARAMS(1, "Usage: IsNullOrEmpty(<string>)");
+
 	VariableValue* var = Plugin_Scr_SelectParam(0);
 	qboolean isString = var->type == VAR_STRING || var->type == VAR_ISTRING;
 
@@ -80,27 +65,21 @@ void GScr_IsNullOrEmpty()
 
 void GScr_ToRGB()
 {
-	if (Plugin_Scr_GetNumParam() != 3)
-	{
-		Plugin_Scr_Error("Usage: ToRGB(<r>, <g>, <b>)");
-		return;
-	}
-	vec3_t vec = { 0, 0, 0 };
+	CHECK_PARAMS(3, "Usage: ToRGB(<r>, <g>, <b>)");
 
 	// Normalize vector for cod4 rgb
+	vec3_t vec = { 0, 0, 0 };
 	vec[0] = ((float)Plugin_Scr_GetInt(0)) / 255;
 	vec[1] = ((float)Plugin_Scr_GetInt(1)) / 255;
 	vec[2] = ((float)Plugin_Scr_GetInt(2)) / 255;
+
 	Plugin_Scr_AddVector(vec);
 }
 
 void GScr_HexToRGB()
 {
-	if (Plugin_Scr_GetNumParam() != 1)
-	{
-		Plugin_Scr_Error("Usage: HexToRGB(<hex string>)");
-		return;
-	}
+	CHECK_PARAMS(1, "Usage: HexToRGB(<hex string>)");
+
 	char *string = Plugin_Scr_GetString(0);
     int rgb = 0;
     vec3_t vec = { 0, 0, 0 };

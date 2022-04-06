@@ -6,11 +6,8 @@
 
 void GScr_ToInt()
 {
-	if (Plugin_Scr_GetNumParam() != 1)
-	{
-		Plugin_Scr_Error("Usage: ToInt(<type>)");
-		return;
-	}
+	CHECK_PARAMS(1, "Usage: ToInt(<type>)");
+
 	VariableValue *var = Plugin_Scr_SelectParam(0);
 	switch (var->type)
 	{
@@ -25,7 +22,6 @@ void GScr_ToInt()
 				Plugin_Scr_AddInt((int)number);
 			break;
 		}
-		
 		case VAR_VECTOR:
 			Plugin_Scr_AddInt((int)(var->u.vectorValue[0] + var->u.vectorValue[1] + var->u.vectorValue[2]));
 			break;
@@ -35,18 +31,13 @@ void GScr_ToInt()
 		case VAR_FLOAT:
 			Plugin_Scr_AddInt((int)var->u.floatValue);
 			break;
-		default:
-			Plugin_Scr_AddUndefined();
 	}
 }
 
 void GScr_ToFloat()
 {
-	if (Plugin_Scr_GetNumParam() != 1)
-	{
-		Plugin_Scr_Error("Usage: ToFloat(<type>)");
-		return;
-	}
+	CHECK_PARAMS(1, "Usage: ToFloat(<type>)");
+
 	VariableValue *var = Plugin_Scr_SelectParam(0);
 	switch (var->type)
 	{
@@ -61,7 +52,6 @@ void GScr_ToFloat()
 				Plugin_Scr_AddFloat(number);
 			break;
 		}
-		
 		case VAR_VECTOR:
 			Plugin_Scr_AddFloat(var->u.vectorValue[0] + var->u.vectorValue[1] + var->u.vectorValue[2]);
 			break;
@@ -71,27 +61,20 @@ void GScr_ToFloat()
 		case VAR_FLOAT:
 			Plugin_Scr_AddFloat(var->u.floatValue);
 			break;
-		default:
-			Plugin_Scr_AddUndefined();
 	}
 }
 
 void GScr_ToString()
 {
-	if (Plugin_Scr_GetNumParam() != 1)
-	{
-		Plugin_Scr_Error("Usage: ToString(<type>)");
-		return;
-	}
-	VariableValue *var = Plugin_Scr_SelectParam(0);
+	CHECK_PARAMS(1, "Usage: ToString(<type>)");
 
+	VariableValue *var = Plugin_Scr_SelectParam(0);
 	switch (var->type)
 	{
 		case VAR_ISTRING:
 		case VAR_STRING:
 			Plugin_Scr_AddString(Plugin_SL_ConvertToString(var->u.stringValue));
 			break;
-		
 		case VAR_VECTOR:
 			Plugin_Scr_AddString(fmt("(%f, %f, %f)", 
 				var->u.vectorValue[0],
@@ -104,7 +87,5 @@ void GScr_ToString()
 		case VAR_FLOAT:
 			Plugin_Scr_AddString(fmt("%f", var->u.floatValue));
 			break;
-		default:
-			Plugin_Scr_AddUndefined();
 	}
 }

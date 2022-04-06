@@ -30,16 +30,12 @@ size_t HTTPS_WriteString(void *ptr, size_t size, size_t nmemb, void *stream)
 
 void GScr_HTTPS_GetString()
 {
-	if (Plugin_Scr_GetNumParam() != 1)
-	{
-		Plugin_Scr_Error("Usage: HTTPS_GetString(<url>)");
-		return;
-	}
-	CURL *handle;
+	CHECK_PARAMS(1, "Usage: HTTPS_GetString(<url>)");
+
+	CURL* handle = curl_easy_init();
 	CURLcode res;
-	
 	CURLstring str = CURL_StringInit();
-	handle = curl_easy_init();
+
 	if(handle) 
 	{
 		CURL_SetHeader(handle, CURLOPT_HTTPHEADER);
@@ -58,8 +54,6 @@ void GScr_HTTPS_GetString()
 		}
 		else if (str.buffer != NULL)
 			Plugin_Scr_AddString(str.buffer);
-		else
-			Plugin_Scr_AddUndefined();
 
 		curl_easy_cleanup(handle);
 	}
@@ -72,16 +66,12 @@ void GScr_HTTPS_GetString()
 
 void GScr_HTTPS_GetFile()
 {
-	if (Plugin_Scr_GetNumParam() != 2)
-	{
-		Plugin_Scr_Error("Usage: HTTPS_GetFile(<filepath>, <url>)");
-		return;
-	}
-	CURL *handle;
+	CHECK_PARAMS(2, "Usage: HTTPS_GetFile(<filepath>, <url>)");
+	
+	CURL *handle = curl_easy_init();
 	CURLcode res;
 	FILE *pagefile;
 
-	handle = curl_easy_init();
 	if (handle)
 	{
 		CURL_SetHeader(handle, CURLOPT_HTTPHEADER);
@@ -118,16 +108,12 @@ void GScr_HTTPS_GetFile()
 
 void GScr_HTTPS_PostString()
 {
-	if (Plugin_Scr_GetNumParam() != 2)
-	{
-		Plugin_Scr_Error("Usage: HTTPS_PostString(<string>, <url>)");
-		return;
-	}
-	CURL *handle;
+	CHECK_PARAMS(2, "Usage: HTTPS_PostString(<string>, <url>)");
+
+	CURL *handle = curl_easy_init();
+	CURLstring str = CURL_StringInit();
 	CURLcode res;
 
-	CURLstring str = CURL_StringInit();
-	handle = curl_easy_init();
 	if(handle) 
 	{
 		CURL_SetHeader(handle, CURLOPT_HTTPHEADER);
@@ -147,8 +133,6 @@ void GScr_HTTPS_PostString()
 		}
 		else if (str.buffer != NULL)
 			Plugin_Scr_AddString(str.buffer);
-		else
-			Plugin_Scr_AddUndefined();
 
 		curl_easy_cleanup(handle);
 	}
@@ -161,11 +145,8 @@ void GScr_HTTPS_PostString()
 
 void GScr_HTTPS_PostFile()
 {
-	if (Plugin_Scr_GetNumParam() != 2)
-	{
-		Plugin_Scr_Error("Usage: HTTPS_PostFile(<filepath>, <url>)");
-		return;
-	}
+	CHECK_PARAMS(2, "Usage: HTTPS_PostFile(<filepath>, <url>)");
+
 	CURL *handle;
 	CURLcode res;
 	void *buffer = NULL;
