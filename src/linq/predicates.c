@@ -9,7 +9,7 @@ void GScr_LINQ_All()
 		return;
 	}
 	VariableValueArray *array = Plugin_Scr_GetArray(0);
-	const uint32_t threadId = Plugin_Scr_GetFunc(1);
+	const int threadId = Plugin_Scr_GetFunc(1);
 	qboolean result = qtrue;
 
 	for (int i = 0; i < array->length; i++)
@@ -38,7 +38,7 @@ void GScr_LINQ_Any()
 		return;
 	}
 	VariableValueArray *array = Plugin_Scr_GetArray(0);
-	const uint32_t threadId = Plugin_Scr_GetFunc(1);
+	const int threadId = Plugin_Scr_GetFunc(1);
 	qboolean result = qfalse;
 
 	for (int i = 0; i < array->length; i++)
@@ -67,7 +67,7 @@ void GScr_LINQ_Where()
 		return;
 	}
 	VariableValueArray *array = Plugin_Scr_GetArray(0);
-	const uint32_t threadId = Plugin_Scr_GetFunc(1);
+	const int threadId = Plugin_Scr_GetFunc(1);
 
 	Plugin_Scr_MakeArray();
 	for (int i = 0; i < array->length; i++)
@@ -94,7 +94,7 @@ void GScr_LINQ_Last()
 		return;
 	}
 	VariableValueArray *array = Plugin_Scr_GetArray(0);
-	const uint32_t threadId = Plugin_Scr_GetFunc(1);
+	const int threadId = Plugin_Scr_GetFunc(1);
 	VariableValue *last = NULL;
 
 	for (int i = 0; i < array->length; i++)
@@ -122,7 +122,7 @@ void GScr_LINQ_First()
 		return;
 	}
 	VariableValueArray *array = Plugin_Scr_GetArray(0);
-	const uint32_t threadId = Plugin_Scr_GetFunc(1);
+	const int threadId = Plugin_Scr_GetFunc(1);
 
 	for (int i = 0; i < array->length; i++)
 	{
@@ -149,7 +149,7 @@ void GScr_LINQ_Count()
 		return;
 	}
 	VariableValueArray *array = Plugin_Scr_GetArray(0);
-	const uint32_t threadId = Plugin_Scr_GetFunc(1);
+	const int threadId = Plugin_Scr_GetFunc(1);
 	int result = 0;
 
 	for (int i = 0; i < array->length; i++)

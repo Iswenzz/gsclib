@@ -2,7 +2,6 @@
 #include "utils/polycmp.h"
 #include "utils/utils.h"
 
-#include <cgsc.h>
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
@@ -33,110 +32,87 @@ void GScr_LINQ_Min()
 		return;
 	}
 	VariableValueArray *array = Plugin_Scr_GetArray(0);
-	uint32_t flags = Plugin_Scr_GetFlagsFromGSCArray(array);
+	int flags = Plugin_Scr_GetFlagsFromGSCArray(array);
+
+	if (!array->length)
+	{
+		Plugin_Scr_AddUndefined();
+		return;
+	}
 
 	if (HasFlag(flags, FLAG_STRING) || HasFlag(flags, FLAG_ISTRING))
-	{
-		int index = 0;
-		int strLength = 0;
-		qboolean hasValue = qfalse;
-		for (int i = 0; i < array->length; i++)
-		{
-			if (hasValue)
-			{
-				if (strlen(Plugin_SL_ConvertToString(array->items[i]->u.stringValue)) < strLength)
-				{
-					strLength = strlen(Plugin_SL_ConvertToString(array->items[i]->u.stringValue));
-					index = i;
-				}
-			}
-			else
-			{
-				strLength = strlen(Plugin_SL_ConvertToString(array->items[i]->u.stringValue));
-				hasValue = qtrue;
-				index = i;
-			}
-		}
-		if (hasValue)
-			Plugin_Scr_AddString(Plugin_SL_ConvertToString(array->items[index]->u.stringValue));
-		else
-			Plugin_Scr_AddUndefined();
-	}
+		Scr_StringMin(array);
 	else if (HasFlag(flags, FLAG_VECTOR))
-	{
-		int index = 0;
-		vec3_t zero = { 0, 0, 0 };
-		float distance = 0;
-		qboolean hasValue = qfalse;
-		for (int i = 0; i < array->length; i++)
-		{
-			if (hasValue)
-			{
-				if (vec_distance((float *)array->items[i]->u.vectorValue, zero) < distance)
-				{
-					distance = vec_distance((float *)array->items[i]->u.vectorValue, zero);
-					index = i;
-				}
-			}
-			else
-			{
-				distance = vec_distance((float *)array->items[i]->u.vectorValue, zero);
-				hasValue = qtrue;
-				index = i;
-			}
-		}
-		if (hasValue)
-			Plugin_Scr_AddVector((float *)array->items[index]->u.vectorValue);
-		else
-			Plugin_Scr_AddUndefined();
-	}
+		Scr_VectorMin(array);
 	else if (HasFlag(flags, FLAG_INTEGER) || HasFlag(flags, FLAG_FLOAT))
-	{
-		float value = 0;
-		qboolean hasValue = qfalse;
-		for (int i = 0; i < array->length; i++)
-		{
-			if (array->items[i]->type == VAR_INTEGER)
-			{
-				if (hasValue)
-				{
-					if (array->items[i]->u.intValue < value)
-						value = array->items[i]->u.intValue;
-				}
-				else
-				{
-					value = array->items[i]->u.intValue;
-					hasValue = qtrue;
-				}
-			}
-			else if (array->items[i]->type == VAR_FLOAT)
-			{
-				if (hasValue)
-				{
-					if (array->items[i]->u.floatValue < value)
-						value = array->items[i]->u.floatValue;
-				}
-				else
-				{
-					value = array->items[i]->u.floatValue;
-					hasValue = qtrue;
-				}
-			}
-		}
-		if (hasValue)
-		{
-			if (!HasFlag(flags, FLAG_FLOAT))
-				Plugin_Scr_AddInt((int)value);
-			else
-				Plugin_Scr_AddFloat(value);
-		}
-		else
-			Plugin_Scr_AddUndefined();
-	}
+		Scr_NumberMin(array, flags);
 	else
 		Plugin_Scr_AddUndefined();
-
 	Plugin_Scr_FreeArray(array);
+}
+
+void Scr_StringMin(VariableValueArray* array)
+{
+	char* result = Plugin_SL_ConvertToString(array->items[0]->u.stringValue);;
+	int currentLength = strlen(result);
+
+	for (int i = 1; i < array->length; i++)
+	{
+		char* value = Plugin_SL_ConvertToString(array->items[i]->u.stringValue);
+		int length = strlen(value);
+
+		if (length < currentLength)
+		{
+			currentLength = length;
+			result = value;
+		}
+	}
+	Plugin_Scr_AddString(result);
+}
+
+void Scr_VectorMin(VariableValueArray* array)
+{
+	vec3_t zero = { 0, 0, 0 };
+	float* result = (float*)array->items[0]->u.vectorValue;
+	float currentDistance = VectorDistance(result, zero);
+
+	for (int i = 1; i < array->length; i++)
+	{
+		float* value = (float*)array->items[i]->u.vectorValue;
+		float distance = VectorDistance(value, zero);
+
+		if (distance < currentDistance)
+		{
+			currentDistance = distance;
+			result = value;
+		}
+	}
+	Plugin_Scr_AddVector(result);
+}
+
+void Scr_NumberMin(VariableValueArray* array, int flags)
+{
+	float result = array->items[0]->type == VAR_INTEGER
+		? array->items[0]->u.intValue
+		: array->items[0]->u.floatValue;
+
+	for (int i = 1; i < array->length; i++)
+	{
+		if (array->items[i]->type == VAR_INTEGER)
+		{
+			if (array->items[i]->u.intValue < result)
+				result = array->items[i]->u.intValue;
+		}
+		else if (array->items[i]->type == VAR_FLOAT)
+		{
+			if (array->items[i]->u.floatValue < result)
+				result = array->items[i]->u.floatValue;
+		}
+	}
+	if (!HasFlag(flags, FLAG_FLOAT))
+		Plugin_Scr_AddInt((int)result);
+	else
+		Plugin_Scr_AddFloat(result);
 }
 
 void GScr_LINQ_Max()
@@ -149,102 +125,85 @@ void GScr_LINQ_Max()
 	VariableValueArray *array = Plugin_Scr_GetArray(0);
 	uint32_t flags = Plugin_Scr_GetFlagsFromGSCArray(array);
 
+	if (!array->length)
+	{
+		Plugin_Scr_AddUndefined();
+		return;
+	}
+
 	if (HasFlag(flags, FLAG_STRING) || HasFlag(flags, FLAG_ISTRING))
-	{
-		int index = 0;
-		int strLength = 0;
-		qboolean hasValue = qfalse;
-		for (int i = 0; i < array->length; i++)
-		{
-			if (hasValue)
-			{
-				if (strlen(Plugin_SL_ConvertToString(array->items[i]->u.stringValue)) > strLength)
-				{
-					strLength = strlen(Plugin_SL_ConvertToString(array->items[i]->u.stringValue));
-					index = i;
-				}
-			}
-			else
-			{
-				strLength = strlen(Plugin_SL_ConvertToString(array->items[i]->u.stringValue));
-				hasValue = qtrue;
-				index = i;
-			}
-		}
-		if (hasValue)
-			Plugin_Scr_AddString(Plugin_SL_ConvertToString(array->items[index]->u.stringValue));
-	}
+		Scr_StringMax(array);
 	else if (HasFlag(flags, FLAG_VECTOR))
-	{
-		int index = 0;
-		vec3_t zero = { 0, 0, 0 };
-		float distance = 0;
-		qboolean hasValue = qfalse;
-		for (int i = 0; i < array->length; i++)
-		{
-			if (hasValue)
-			{
-				if (vec_distance((float *)array->items[i]->u.vectorValue, zero) > distance)
-				{
-					distance = vec_distance((float *)array->items[i]->u.vectorValue, zero);
-					index = i;
-				}
-			}
-			else
-			{
-				distance = vec_distance((float *)array->items[i]->u.vectorValue, zero);
-				hasValue = qtrue;
-				index = i;
-			}
-		}
-		if (hasValue)
-			Plugin_Scr_AddVector((float *)array->items[index]->u.vectorValue);
-	}
+		Scr_VectorMax(array);
 	else if (HasFlag(flags, FLAG_INTEGER) || HasFlag(flags, FLAG_FLOAT))
-	{
-		float value = 0;
-		qboolean hasValue = qfalse;
-		for (int i = 0; i < array->length; i++)
-		{
-			if (array->items[i]->type == VAR_INTEGER)
-			{
-				if (hasValue)
-				{
-					if (array->items[i]->u.intValue > value)
-						value = array->items[i]->u.intValue;
-				}
-				else
-				{
-					value = array->items[i]->u.intValue;
-					hasValue = qtrue;
-				}
-			}
-			else if (array->items[i]->type == VAR_FLOAT)
-			{
-				if (hasValue)
-				{
-					if (array->items[i]->u.floatValue > value)
-						value = array->items[i]->u.floatValue;
-				}
-				else
-				{
-					value = array->items[i]->u.floatValue;
-					hasValue = qtrue;
-				}
-			}
-		}
-		if (hasValue)
-		{
-			if (!HasFlag(flags, FLAG_FLOAT))
-				Plugin_Scr_AddInt((int)value);
-			else
-				Plugin_Scr_AddFloat(value);
-		}
-	}
+		Scr_NumberMax(array, flags);
 	else
 		Plugin_Scr_AddUndefined();
-
 	Plugin_Scr_FreeArray(array);
+}
+
+void Scr_StringMax(VariableValueArray* array)
+{
+	char* result = Plugin_SL_ConvertToString(array->items[0]->u.stringValue);
+	int currentLength = strlen(result);
+
+	for (int i = 1; i < array->length; i++)
+	{
+		char* value = Plugin_SL_ConvertToString(array->items[i]->u.stringValue);
+		int length = strlen(value);
+
+		if (length > currentLength)
+		{
+			currentLength = length;
+			result = value;
+		}
+	}
+	Plugin_Scr_AddString(result);
+}
+
+void Scr_VectorMax(VariableValueArray* array)
+{
+	vec3_t zero = { 0, 0, 0 };
+	float* result = (float*)array->items[0]->u.vectorValue;
+	float currentDistance = VectorDistance(result, zero);
+
+	for (int i = 1; i < array->length; i++)
+	{
+		float* value = (float*)array->items[i]->u.vectorValue;
+		float distance = VectorDistance(value, zero);
+
+		if (distance > currentDistance)
+		{
+			currentDistance = distance;
+			result = value;
+		}
+	}
+	Plugin_Scr_AddVector(result);
+}
+
+void Scr_NumberMax(VariableValueArray* array, int flags)
+{
+	float result = array->items[0]->type == VAR_INTEGER
+		? array->items[0]->u.intValue
+		: array->items[0]->u.floatValue;
+
+	for (int i = 0; i < array->length; i++)
+	{
+		if (array->items[i]->type == VAR_INTEGER)
+		{
+			if (array->items[i]->u.intValue > result)
+				result = array->items[i]->u.intValue;
+		}
+		else if (array->items[i]->type == VAR_FLOAT)
+		{
+			if (array->items[i]->u.floatValue > result)
+				result = array->items[i]->u.floatValue;
+		}
+	}
+	if (!HasFlag(flags, FLAG_FLOAT))
+		Plugin_Scr_AddInt((int)result);
+	else
+		Plugin_Scr_AddFloat(result);
 }
 
 void GScr_LINQ_Cast()
@@ -259,118 +218,119 @@ void GScr_LINQ_Cast()
 
 	Plugin_Scr_MakeArray();
 	if (stricmp(typename, "string") == 0)
-	{
-		for (int i = 0; i < array->length; i++)
-		{
-			switch (array->items[i]->type)
-			{
-				case VAR_FLOAT:
-				{
-					int cpyBufferSize = snprintf(NULL, 0, "%f", array->items[i]->u.floatValue);
-					char buffer[cpyBufferSize + 1];
-					snprintf(buffer, cpyBufferSize + 1, "%f", array->items[i]->u.floatValue);
-					Plugin_Scr_AddString(buffer);
-					Plugin_Scr_AddArray();
-					break;
-				}
-				case VAR_INTEGER:
-				{
-					int cpyBufferSize = snprintf(NULL, 0, "%d", array->items[i]->u.intValue);
-					char buffer[cpyBufferSize + 1];
-					snprintf(buffer, cpyBufferSize + 1, "%d", array->items[i]->u.intValue);
-					Plugin_Scr_AddString(buffer);
-					Plugin_Scr_AddArray();
-					break;
-				}
-				case VAR_STRING:
-				{
-					Plugin_Scr_AddVariable(array->items[i]);
-					Plugin_Scr_AddArray();
-					break;
-				}
-				case VAR_VECTOR:
-				{
-					int cpyBufferSize = snprintf(NULL, 0, "(%f, %f, %f)", array->items[i]->u.vectorValue[0],
-						array->items[i]->u.vectorValue[1], array->items[i]->u.vectorValue[2]);
-					char buffer[cpyBufferSize + 1];
-					snprintf(buffer, cpyBufferSize + 1, "(%f, %f, %f)", array->items[i]->u.vectorValue[0],
-						array->items[i]->u.vectorValue[1], array->items[i]->u.vectorValue[2]);
-					Plugin_Scr_AddString(buffer);
-					Plugin_Scr_AddArray();
-					break;
-				}
-			}
-		}
-	}
+		Scr_StringCast(array);
 	else if (stricmp(typename, "int") == 0)
-	{
-		for (int i = 0; i < array->length; i++)
-		{
-			switch (array->items[i]->type)
-			{
-				case VAR_FLOAT:
-				{
-					Plugin_Scr_AddInt((int)array->items[i]->u.floatValue);
-					Plugin_Scr_AddArray();
-					break;
-				}
-				case VAR_INTEGER:
-				{
-					Plugin_Scr_AddVariable(array->items[i]);
-					Plugin_Scr_AddArray();
-					break;
-				}
-				case VAR_STRING:
-				{
-					const char *nptr = Plugin_SL_ConvertToString(array->items[i]->u.stringValue);
-					char *endptr = NULL;
-					long number = strtol(nptr, &endptr, 10);
-
-					if (*endptr == '\0')
-					{
-						Plugin_Scr_AddInt((int)number);
-						Plugin_Scr_AddArray();
-					}
-					break;
-				}
-			}
-		}
-	}
+		Scr_IntCast(array);
 	else if (stricmp(typename, "float") == 0)
-	{
-		for (int i = 0; i < array->length; i++)
-		{
-			switch (array->items[i]->type)
-			{
-				case VAR_FLOAT:
-				{
-					Plugin_Scr_AddVariable(array->items[i]);
-					Plugin_Scr_AddArray();
-					break;
-				}
-				case VAR_INTEGER:
-				{
-					Plugin_Scr_AddFloat((float)array->items[i]->u.intValue);
-					Plugin_Scr_AddArray();
-					break;
-				}
-				case VAR_STRING:
-				{
-					const char *nptr = Plugin_SL_ConvertToString(array->items[i]->u.stringValue);
-					char *endptr = NULL;
-					float number = strtof(nptr, &endptr);
+		Scr_FloatCast(array);
+	Plugin_Scr_FreeArray(array);
+}
 
-					if (*endptr == '\0')
-					{
-						Plugin_Scr_AddFloat(number);
-						Plugin_Scr_AddArray();
-					}
-					break;
-				}
+void Scr_StringCast(VariableValueArray *array)
+{
+	for (int i = 0; i < array->length; i++)
+	{
+		switch (array->items[i]->type)
+		{
+			case VAR_FLOAT:
+			{
+				Plugin_Scr_AddString(fmt("%f", array->items[i]->u.floatValue));
+				Plugin_Scr_AddArray();
+				break;
+			}
+			case VAR_INTEGER:
+			{
+				Plugin_Scr_AddString(fmt("%d", array->items[i]->u.intValue));
+				Plugin_Scr_AddArray();
+				break;
+			}
+			case VAR_STRING:
+			{
+				Plugin_Scr_AddVariable(array->items[i]);
+				Plugin_Scr_AddArray();
+				break;
+			}
+			case VAR_VECTOR:
+			{
+				Plugin_Scr_AddString(fmt("(%f, %f, %f)",
+					array->items[i]->u.vectorValue[0],
+					array->items[i]->u.vectorValue[1],
+					array->items[i]->u.vectorValue[2]));
+				Plugin_Scr_AddArray();
+				break;
 			}
 		}
 	}
-	Plugin_Scr_FreeArray(array);
+}
+
+void Scr_IntCast(VariableValueArray* array)
+{
+	for (int i = 0; i < array->length; i++)
+	{
+		switch (array->items[i]->type)
+		{
+			case VAR_FLOAT:
+			{
+				Plugin_Scr_AddInt((int)array->items[i]->u.floatValue);
+				Plugin_Scr_AddArray();
+				break;
+			}
+			case VAR_INTEGER:
+			{
+				Plugin_Scr_AddVariable(array->items[i]);
+				Plugin_Scr_AddArray();
+				break;
+			}
+			case VAR_STRING:
+			{
+				const char* nptr = Plugin_SL_ConvertToString(array->items[i]->u.stringValue);
+				char* endptr = NULL;
+				long number = strtol(nptr, &endptr, 10);
+
+				if (*endptr == '\0')
+				{
+					Plugin_Scr_AddInt((int)number);
+					Plugin_Scr_AddArray();
+				}
+				break;
+			}
+		}
+	}
+}
+
+void Scr_FloatCast(VariableValueArray* array)
+{
+	for (int i = 0; i < array->length; i++)
+	{
+		switch (array->items[i]->type)
+		{
+			case VAR_FLOAT:
+			{
+				Plugin_Scr_AddVariable(array->items[i]);
+				Plugin_Scr_AddArray();
+				break;
+			}
+			case VAR_INTEGER:
+			{
+				Plugin_Scr_AddFloat((float)array->items[i]->u.intValue);
+				Plugin_Scr_AddArray();
+				break;
+			}
+			case VAR_STRING:
+			{
+				const char* nptr = Plugin_SL_ConvertToString(array->items[i]->u.stringValue);
+				char* endptr = NULL;
+				float number = strtof(nptr, &endptr);
+
+				if (*endptr == '\0')
+				{
+					Plugin_Scr_AddFloat(number);
+					Plugin_Scr_AddArray();
+				}
+				break;
+			}
+		}
+	}
 }
 
 void GScr_LINQ_OfType()
@@ -383,22 +343,31 @@ void GScr_LINQ_OfType()
 	VariableValueArray *array = Plugin_Scr_GetArray(0);
 	const char *typename = Plugin_Scr_GetString(1);
 
-	int reqtype = VAR_UNDEFINED;
-	if (stricmp(typename, "int") == 0) reqtype = VAR_INTEGER;
-	else if (stricmp(typename, "float") == 0) reqtype = VAR_FLOAT;
-	else if (stricmp(typename, "vector") == 0) reqtype = VAR_VECTOR;
-	else if (stricmp(typename, "array") == 0) reqtype = VAR_ARRAY;
-	else if (stricmp(typename, "struct") == 0) reqtype = VAR_OBJECT;
-	else if (stricmp(typename, "string") == 0) reqtype = VAR_STRING;
-	else if (stricmp(typename, "istring") == 0) reqtype = VAR_ISTRING;
-	else if (stricmp(typename, "ent") == 0) reqtype = VAR_ENTITY;
+	int ofType = VAR_UNDEFINED;
+	if (stricmp(typename, "int") == 0) 
+		ofType = VAR_INTEGER;
+	else if (stricmp(typename, "float") == 0) 
+		ofType = VAR_FLOAT;
+	else if (stricmp(typename, "vector") == 0) 
+		ofType = VAR_VECTOR;
+	else if (stricmp(typename, "array") == 0) 
+		ofType = VAR_ARRAY;
+	else if (stricmp(typename, "struct") == 0) 
+		ofType = VAR_OBJECT;
+	else if (stricmp(typename, "string") == 0) 
+		ofType = VAR_STRING;
+	else if (stricmp(typename, "istring") == 0) 
+		ofType = VAR_ISTRING;
+	else if (stricmp(typename, "ent") == 0) 
+		ofType = VAR_ENTITY;
 
 	Plugin_Scr_MakeArray();
 	for (int i = 0; i < array->length; i++)
 	{
-		int varType = (array->items[i]->type == VAR_POINTER)
-			? Plugin_Scr_GetObjectType(array->items[i]->u.pointerValue) : array->items[i]->type;
-		if (reqtype == varType)
+		int type = (array->items[i]->type == VAR_POINTER)
+			? Plugin_Scr_GetObjectType(array->items[i]->u.pointerValue) 
+			: array->items[i]->type;
+		if (ofType == type)
 		{
 			Plugin_Scr_AddVariable(array->items[i]);
 			Plugin_Scr_AddArray();
@@ -417,28 +386,21 @@ void GScr_LINQ_Sort()
 	VariableValueArray *array = Plugin_Scr_GetArray(0);
 	uint32_t flags = Plugin_Scr_GetFlagsFromGSCArray(array);
 
-	if (IsFlag(flags, FLAG_FLOAT) || IsFlag(flags, FLAG_INTEGER) || IsFlag(flags, FLAG_STRING)
-		|| IsFlag(flags, FLAG_ISTRING) || IsFlag(flags, FLAG_VECTOR))
+	Plugin_Scr_MakeArray();
+	if (IsFlag(flags, FLAG_FLOAT))
+		qsort(array->items, array->length, sizeof(VariableValue *), Scr_FloatCmp);
+	else if (IsFlag(flags, FLAG_INTEGER))
+		qsort(array->items, array->length, sizeof(VariableValue *), Scr_IntCmp);
+	else if (IsFlag(flags, FLAG_STRING) || IsFlag(flags, FLAG_ISTRING))
+		qsort(array->items, array->length, sizeof(VariableValue *), Scr_StringCmp);
+	else if (IsFlag(flags, FLAG_VECTOR))
+		qsort(array->items, array->length, sizeof(VariableValue *), Scr_VectorCmp);
+
+	for (int i = 0; i < array->length; i++)
 	{
-		Plugin_Scr_MakeArray();
-		if (IsFlag(flags, FLAG_FLOAT))
-			qsort(array->items, array->length, sizeof(VariableValue *), gsc_float_cmp);
-		else if (IsFlag(flags, FLAG_INTEGER))
-			qsort(array->items, array->length, sizeof(VariableValue *), gsc_int_cmp);
-		else if (IsFlag(flags, FLAG_STRING) || IsFlag(flags, FLAG_ISTRING))
-			qsort(array->items, array->length, sizeof(VariableValue *), gsc_cstring_cmp);
-		else if (IsFlag(flags, FLAG_VECTOR))
-			qsort(array->items, array->length, sizeof(VariableValue *), gsc_vec3_cmp);
-
-		for (int i = 0; i < array->length; i++)
-		{
-			Plugin_Scr_AddVariable(array->items[i]);
-			Plugin_Scr_AddArray();
-		}
+		Plugin_Scr_AddVariable(array->items[i]);
+		Plugin_Scr_AddArray();
 	}
-	else
-		Plugin_Scr_AddUndefined();
-
 	Plugin_Scr_FreeArray(array);
 }
 
@@ -450,42 +412,51 @@ void GScr_LINQ_Average()
 		return;
 	}
 	VariableValueArray *array = Plugin_Scr_GetArray(0);
-	int count = 0;
 	const uint32_t flags = Plugin_Scr_GetFlagsFromGSCArray(array);
 
 	if (IsFlag(flags, FLAG_VECTOR))
+		Scr_VectorAverage(array);
+	else if (IsFlag(flags, FLAG_INTEGER) || IsFlag(flags, FLAG_FLOAT))
+		Scr_NumberAverage(array, flags);
+	Plugin_Scr_FreeArray(array);
+}
+
+void Scr_VectorAverage(VariableValueArray* array)
+{
+	int count = 0;
+	vec3_t vec = { 0, 0, 0 };
+
+	for (int i = 0; i < array->length; i++)
 	{
-		vec3_t vec = { 0, 0, 0 };
-		for (int i = 0; i < array->length; i++)
+		if (array->items[i]->type == VAR_VECTOR)
 		{
-			if (array->items[i]->type == VAR_VECTOR)
-			{
-				vec[0] += array->items[i]->u.vectorValue[0];
-				vec[1] += array->items[i]->u.vectorValue[1];
-				vec[2] += array->items[i]->u.vectorValue[2];
-				count++;
-			}
-		}
-		vec[0] /= count;
-		vec[1] /= count;
-		vec[2] /= count;
-		Plugin_Scr_AddVector(vec);
-	}
-	else
-	{
-		float sum = 0;
-		for (int i = 0; i < array->length; i++)
-		{
-			if (array->items[i]->type == VAR_FLOAT)
-				sum += array->items[i]->u.floatValue;
-			else
-				sum += array->items[i]->u.intValue;
+			vec[0] += array->items[i]->u.vectorValue[0];
+			vec[1] += array->items[i]->u.vectorValue[1];
+			vec[2] += array->items[i]->u.vectorValue[2];
 			count++;
 		}
-		Plugin_Scr_AddFloat(sum / count);
 	}
+	vec[0] /= count;
+	vec[1] /= count;
+	vec[2] /= count;
 
-	Plugin_Scr_FreeArray(array);
+	Plugin_Scr_AddVector(vec);
+}
+
+void Scr_NumberAverage(VariableValueArray* array, int flags)
+{
+	int count = 0;
+	float sum = 0;
+
+	for (int i = 0; i < array->length; i++)
+	{
+		if (array->items[i]->type == VAR_FLOAT)
+			sum += array->items[i]->u.floatValue;
+		else
+			sum += array->items[i]->u.intValue;
+		count++;
+	}
+	Plugin_Scr_AddFloat(sum / count);
 }
 
 void GScr_LINQ_Sum()
@@ -499,90 +470,68 @@ void GScr_LINQ_Sum()
 	uint32_t flags = Plugin_Scr_GetFlagsFromGSCArray(array);
 
 	if (HasFlag(flags, FLAG_STRING) || HasFlag(flags, FLAG_ISTRING))
-	{
-		unsigned int bufferSize = 1;
-		char* buffer = (char*)malloc(sizeof(char));
-		for (int i = 0; i < array->length; i++)
-		{
-			switch (array->items[i]->type)
-			{
-				case VAR_INTEGER:
-				{
-					int strSize = snprintf(NULL, 0, "%d", array->items[i]->u.intValue);
-					bufferSize += strSize;
-					char* temp = (char*)realloc(buffer, bufferSize * sizeof(char));
-					if (temp != NULL)
-					{
-						buffer = temp;
-						snprintf(buffer + bufferSize - strSize - 1, bufferSize, "%d", array->items[i]->u.intValue);
-					}
-				}
-				break;
-				case VAR_FLOAT:
-				{
-					int strSize = snprintf(NULL, 0, "%f", array->items[i]->u.floatValue);
-					bufferSize += strSize;
-					char* temp = (char*)realloc(buffer, bufferSize * sizeof(char));
-					if (temp != NULL)
-					{
-						buffer = temp;
-						snprintf(buffer + bufferSize - strSize - 1, bufferSize, "%f", array->items[i]->u.floatValue);
-					}
-				}
-				break;
-				case VAR_ISTRING:
-				case VAR_STRING:
-				{
-					const char* gsc_str = Plugin_SL_ConvertToString(array->items[i]->u.stringValue);
-					int strSize = snprintf(NULL, 0, "%s", gsc_str);
-					bufferSize += strSize;
-					char* temp = (char*)realloc(buffer, bufferSize * sizeof(char));
-					if (temp != NULL)
-					{
-						buffer = temp;
-						snprintf(buffer + bufferSize - strSize - 1, bufferSize, "%s", gsc_str);
-					}
-				}
-				break;
-			}
-		}
-		Plugin_Scr_AddString(buffer);
-		free(buffer);
-	}
+		Scr_StringSum(array);
 	else if (HasFlag(flags, FLAG_VECTOR))
-	{
-		vec3_t sum = { 0, 0, 0 };
-		for (int i = 0; i < array->length; i++)
-		{
-			if (array->items[i]->type == VAR_VECTOR)
-			{
-				sum[0] += array->items[i]->u.vectorValue[0];
-				sum[1] += array->items[i]->u.vectorValue[1];
-				sum[2] += array->items[i]->u.vectorValue[2];
-			}
-		}
-		Plugin_Scr_AddVector(sum);
-	}
+		Scr_VectorSum(array);
 	else if (HasFlag(flags, FLAG_INTEGER) || HasFlag(flags, FLAG_FLOAT))
-	{
-		float sum = 0;
-		for (int i = 0; i < array->length; i++)
-		{
-			switch (array->items[i]->type)
-			{
-				case VAR_INTEGER: sum += array->items[i]->u.intValue; break;
-				case VAR_FLOAT: sum += array->items[i]->u.floatValue; break;
-			}
-		}
-		if (!HasFlag(flags, FLAG_FLOAT))
-			Plugin_Scr_AddInt((int)sum);
-		else
-			Plugin_Scr_AddFloat(sum);
-	}
+		Scr_NumberSum(array, flags);
 	else
 		Plugin_Scr_AddUndefined();
-
 	Plugin_Scr_FreeArray(array);
+}
+
+void Scr_StringSum(VariableValueArray* array)
+{
+	char result[MAX_STRING_CHARS] = { 0 };
+	for (int i = 0; i < array->length; i++)
+	{
+		switch (array->items[i]->type)
+		{
+		case VAR_INTEGER:
+			strcat(result, fmt("%d", array->items[i]->u.intValue));
+			break;
+		case VAR_FLOAT:
+			strcat(result, fmt("%f", array->items[i]->u.floatValue));
+			break;
+		case VAR_ISTRING:
+		case VAR_STRING:
+			strcat(result, fmt("%s", Plugin_SL_ConvertToString(array->items[i]->u.stringValue)));
+			break;
+		}
+	}
+	Plugin_Scr_AddString(result);
+}
+
+void Scr_VectorSum(VariableValueArray* array)
+{
+	vec3_t sum = { 0, 0, 0 };
+	for (int i = 0; i < array->length; i++)
+	{
+		if (array->items[i]->type == VAR_VECTOR)
+		{
+			sum[0] += array->items[i]->u.vectorValue[0];
+			sum[1] += array->items[i]->u.vectorValue[1];
+			sum[2] += array->items[i]->u.vectorValue[2];
+		}
+	}
+	Plugin_Scr_AddVector(sum);
+}
+
+void Scr_NumberSum(VariableValueArray* array, int flags)
+{
+	float sum = 0;
+	for (int i = 0; i < array->length; i++)
+	{
+		switch (array->items[i]->type)
+		{
+			case VAR_INTEGER: sum += array->items[i]->u.intValue; break;
+			case VAR_FLOAT: sum += array->items[i]->u.floatValue; break;
+		}
+	}
+	if (!HasFlag(flags, FLAG_FLOAT))
+		Plugin_Scr_AddInt((int)sum);
+	else
+		Plugin_Scr_AddFloat(sum);
 }
 
 void GScr_LINQ_Range()
@@ -593,12 +542,12 @@ void GScr_LINQ_Range()
 		return;
 	}
 	VariableValueArray *array = Plugin_Scr_GetArray(0);
-	const uint32_t min = Plugin_Scr_GetInt(1);
-	const uint32_t max = Plugin_Scr_GetInt(2);
+	const int min = Plugin_Scr_GetInt(1);
+	const int max = Plugin_Scr_GetInt(2);
 
 	if (min >= max || max < min)
 	{
-		Plugin_Scr_Error("Range() - wrong min/max value");
+		Plugin_Scr_Error("Range() - Wrong min/max value");
 		return;
 	}
 
@@ -619,7 +568,7 @@ void GScr_LINQ_Repeat()
 		return;
 	}
 	VariableValueArray *array = Plugin_Scr_GetArray(0);
-	const uint32_t count = Plugin_Scr_GetInt(1);
+	const int count = Plugin_Scr_GetInt(1);
 
 	Plugin_Scr_MakeArray();
 	for (int r = 0; r < count; r++)

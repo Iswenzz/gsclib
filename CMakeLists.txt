@@ -5,6 +5,7 @@ set(CMAKE_C_STANDARD 11)
 set(CMAKE_C_STANDARD_REQUIRED ON)
 set(CMAKE_C_FLAGS "-m32 -Wall -O1 -s -mtune=core2")
 set(CMAKE_SHARED_LINKER_FLAGS "-enable-stdcall-fixup -m32 -s -shared -static-libgcc -static-libstdc++")
+add_definitions(-D_CRT_SECURE_NO_WARNINGS)
 
 # CPack
 set(CPACK_PROJECT_NAME ${PROJECT_NAME})
