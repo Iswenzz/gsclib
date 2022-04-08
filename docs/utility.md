@@ -1,10 +1,18 @@
 # Utilities
 
-#### ``ComPrintf(<string>)``
+#### ``ComPrintF(<string>)``
 Print a message to the console output.
 
 ```c
-ComPrintf("Hello World!");
+ComPrintF("Hello World!");
+```
+<hr>
+
+#### ``GetSysTime()``
+Get the system time in milliseconds.
+
+```c
+time = GetSysTime();
 ```
 <hr>
 

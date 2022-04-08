@@ -1,4 +1,5 @@
 #include "utils.h"
+#include <cgsc.h>
 
 void GScr_Ternary()
 {
@@ -21,12 +22,18 @@ void GScr_IfUndef()
 
 void GScr_ComPrintF()
 {
-	if (!Plugin_Scr_GetNumParam())
-		Plugin_Printf("\n");
-	else if (Plugin_Scr_GetNumParam() == 1)
-		Plugin_Printf(Plugin_Scr_GetString(0));
-	else
-		Plugin_Scr_Error("Usage: ComPrintf(<message>)");
+	Plugin_Printf(Plugin_Scr_GetString(0));
+}
+
+void GScr_ComPrintLn()
+{
+	Plugin_Printf(Plugin_Scr_GetString(0));
+}
+
+void GScr_GetSysTime()
+{
+	CHECK_PARAMS(0, "Usage: GetSysTime()");
+	Plugin_Scr_AddInt(Plugin_Milliseconds());
 }
 
 void GScr_GetType()

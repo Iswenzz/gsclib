@@ -1,10 +1,14 @@
 #pragma once
-#include <cgsc.h>
 
 /// <summary>
 /// Print a message to the console output.
 /// </summary>
 void GScr_ComPrintF();
+
+/// <summary>
+/// Get the time since epoch in milliseconds.
+/// </summary>
+void GScr_GetSysTime();
 
 /// <summary>
 /// Get the type name of a GSC variable.
