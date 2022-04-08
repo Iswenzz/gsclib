@@ -19,14 +19,14 @@ string = trim("    hello world    ");
 ```
 <hr>
 
-#### ``ComPrintF(<fmt>, <?arguments...>)``
+#### ``ComPrint(<fmt>, <?arguments...>)``
 Print a formatted message to the console output.
 
 ```c
 a = "Iswenzz";
 
-ComPrintF("Hello World!");
-ComPrintF("Hello %s!", a);
+ComPrint("Hello World!");
+ComPrint("Hello %s!", a);
 ```
 <hr>
 

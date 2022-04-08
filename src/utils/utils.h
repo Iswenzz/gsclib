@@ -1,14 +1,22 @@
 #pragma once
+#include <cgsc.h>
 
 /// <summary>
 /// Print a formatted message to the console output.
 /// </summary>
-void GScr_ComPrintF();
+void GScr_ComPrint();
 
 /// <summary>
 /// Print a formatted message on a new line to the console output.
 /// </summary>
 void GScr_ComPrintLn();
+
+/// <summary>
+/// Print a formatted message.
+/// </summary>
+/// <param name="newLine">Should add a new line at the end.</param>
+/// <param name="print">The function used for printing.</param>
+void Scr_PrintF(qboolean newLine, void (*print)(const char *, ...));
 
 /// <summary>
 /// Get the time since epoch in milliseconds.

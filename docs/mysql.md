@@ -176,7 +176,7 @@ if (isDefined(rows) && isDefined(rows.size))
         if (isDefined(rows[i]) && isDefined(rows[i].size))
         {
             for (j = 0; j < rows[i].size; j++)
-                comPrintF(rows[i][j]);
+                comPrint(rows[i][j]);
         }
     }
 }
@@ -195,7 +195,7 @@ if (isDefined(rows) && isDefined(rows.size))
         if (isDefined(rows[i]) && isDefined(rows[i].size))
         {
             for (j = 0; j < rows[i].size; j++)
-                comPrintF(rows[i][j]);
+                comPrint(rows[i][j]);
         }
     }
 }
@@ -208,7 +208,7 @@ Retrieve a single row data in a GSC array after a query.
 ```c
 row = SQL_FetchRow();
 for (i = 0; i < row.size; i++)
-    comPrintF(row[i]);
+    comPrint(row[i]);
 ```
 <hr>
 
@@ -218,7 +218,7 @@ Retrieve a single row data in a GSC string indexed array after a query.
 ```c
 row = SQL_FetchRowDict();
 for (i = 0; i < row.size; i++)
-    comPrintF(row[i]);
+    comPrint(row[i]);
 ```
 <hr>
 

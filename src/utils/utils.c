@@ -1,8 +1,8 @@
 #include "utils.h"
 #include "vsnprintf.h"
 
-#include <cgsc.h>
 #include <stdlib.h>
+#include <stdarg.h>
 
 void GScr_Ternary()
 {
@@ -23,38 +23,22 @@ void GScr_IfUndef()
 	Plugin_Scr_AddVariable(a->type == VAR_UNDEFINED ? b : a);
 }
 
-void GScr_ComPrintF()
+void GScr_ComPrint()
 {
-	const int argCount = Plugin_Scr_GetNumParam();
-	if (argCount < 1)
-	{
-		Plugin_Scr_Error("Usage: comPrintF(<fmt>, <?arguments...>)");
-		return;
-	}
-	char buffer[MAX_STRING_CHARS];
-	const char* format = Plugin_Scr_GetString(0);
-
-	if (argCount == 1)
-	{
-		Plugin_Printf(format);
-		return;
-	}
-	VariableValue* args = (VariableValue*)malloc((argCount - 1) * sizeof(VariableValue));
-
-	for (int i = 1; i < argCount; i++)
-		args[i - 1] = *Plugin_Scr_SelectParam(i);
-	Scr_vsnprintf(buffer, sizeof(buffer), format, args);
-
-	Plugin_Printf(buffer);
-	free(args);
+	Scr_PrintF(qfalse, &Plugin_Printf);
 }
 
 void GScr_ComPrintLn()
 {
+	Scr_PrintF(qtrue, &Plugin_Printf);
+}
+
+void Scr_PrintF(qboolean newLine, void (*print)(const char*, ...))
+{
 	const int argCount = Plugin_Scr_GetNumParam();
 	if (argCount == 0)
 	{
-		Plugin_Printf("\n");
+		print(newLine ? "\n" : "");
 		return;
 	}
 	char buffer[MAX_STRING_CHARS];
@@ -62,17 +46,18 @@ void GScr_ComPrintLn()
 
 	if (argCount == 1)
 	{
-		Plugin_Printf(fmt("%s\n", format));
+		print(fmt("%s%s", format, newLine ? "\n" : ""));
 		return;
 	}
 	VariableValue* args = (VariableValue*)malloc((argCount - 1) * sizeof(VariableValue));
 
 	for (int i = 1; i < argCount; i++)
 		args[i - 1] = *Plugin_Scr_SelectParam(i);
-	Scr_vsnprintf(buffer, sizeof(buffer), format, args);
-	strcat(buffer, "\n");
 
-	Plugin_Printf(buffer);
+	Scr_vsnprintf(buffer, sizeof(buffer), format, args);
+	if (newLine) strcat(buffer, "\n");
+
+	print(buffer);
 	free(args);
 }
 

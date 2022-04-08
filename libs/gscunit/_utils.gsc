@@ -5,7 +5,7 @@ logArrayTypes(arr)
 		for (i = 0; i < arr.size; i++)
 		{
 			if (isDefined(arr[i]))
-				comPrintf(GetType(arr[i]) + " " + arr[i] + "\n");
+				comPrint(GetType(arr[i]) + " " + arr[i] + "\n");
 		}
 	}
 }
@@ -20,7 +20,7 @@ logArrayKeys(arr)
 			for (i = 0; i < keys.size; i++)
 			{
 				if (isDefined(arr[keys[i]]))
-					comPrintf(keys[i] + ": " + arr[keys[i]] + "\n");
+					comPrint(keys[i] + ": " + arr[keys[i]] + "\n");
 			}
 		}
 	}
@@ -33,7 +33,7 @@ logArray(arr)
 		for (i = 0; i < arr.size; i++)
 		{
 			if (isDefined(arr[i]))
-				comPrintf(arr[i] + "\n");
+				comPrint(arr[i] + "\n");
 		}
 	}
 }
@@ -41,13 +41,13 @@ logArray(arr)
 logVariable(var)
 {
 	if (isDefined(var))
-		comPrintf(var + "\n");
+		comPrint(var + "\n");
 }
 
 logVariableType(var)
 {
 	if (isDefined(var))
-		comPrintf(GetType(var) + " " + var + "\n");
+		comPrint(GetType(var) + " " + var + "\n");
 }
 
 spawnBots(number)
