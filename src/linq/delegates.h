@@ -5,3 +5,8 @@
 /// the same way select clause in a SQL database to fetch specific columns of a table.
 /// </summary>
 void GScr_LINQ_Select();
+
+/// <summary>
+/// Executes a provided function for each array element.
+/// </summary>
+void GScr_LINQ_Foreach();

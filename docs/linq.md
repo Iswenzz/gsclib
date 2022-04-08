@@ -8,6 +8,14 @@ new_array = Select(array, ::delegate);
 ```
 <hr>
 
+#### ``Foreach(<array>, <delegate>)``
+Executes a provided function for each array element.
+
+```c
+Foreach(players, ::heal);
+```
+<hr>
+
 #### ``All(<array>, <predicate>)``
 Check if all items match the predicate.
 

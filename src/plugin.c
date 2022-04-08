@@ -27,6 +27,7 @@ PCL int OnInit()
 
 	// linq/delegates
 	Plugin_ScrAddFunction("select", 			&GScr_LINQ_Select);
+	Plugin_ScrAddFunction("foreach", 			&GScr_LINQ_Foreach);
 
 	// linq/predicates
 	Plugin_ScrAddFunction("all", 				&GScr_LINQ_All);
