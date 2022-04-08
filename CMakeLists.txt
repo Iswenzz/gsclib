@@ -20,7 +20,7 @@ conan_basic_setup()
 # Tests
 include(CTest)
 add_executable(gsclib.Tests)
-target_link_libraries(gsclib.Tests PUBLIC ${CONAN_LIBS} gsclib)
+target_link_libraries(gsclib.Tests PUBLIC ${CONAN_LIBS} gsclib.Static)
 add_test(NAME Tests COMMAND gsclib.Tests)
 
 # Build
@@ -28,6 +28,9 @@ add_subdirectory(src)
 target_include_directories(gsclib PUBLIC ..)
 target_link_directories(gsclib PUBLIC ..)
 target_link_libraries(gsclib PUBLIC ${CONAN_LIBS} libcom_plugin)
+target_include_directories(gsclib.Static PUBLIC ..)
+target_link_directories(gsclib.Static PUBLIC ..)
+target_link_libraries(gsclib.Static PUBLIC ${CONAN_LIBS})
 
 # Pack
 install(TARGETS gsclib LIBRARY DESTINATION lib)

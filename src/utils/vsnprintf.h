@@ -163,9 +163,9 @@ extern int errno;
 /// <param name="str">The buffer string.</param>
 /// <param name="size">The buffer size.</param>
 /// <param name="format">The format string.</param>
-/// <param name="args">The GSC variables pointer array.</param>
+/// <param name="args">The GSC variables array.</param>
 /// <returns></returns>
-int PCL Scr_vsnprintf(char* str, size_t size, const char* format, VariableValue **args);
+int Scr_vsnprintf(char* str, size_t size, const char* format, VariableValue *args);
 
 /// <summary>
 /// Format strings.

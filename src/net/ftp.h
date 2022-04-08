@@ -6,13 +6,13 @@
 /// File write function to use with ftp CURL write callback.
 /// </summary>
 /// <returns></returns>
-size_t PCL FTP_Write(void *buffer, size_t size, size_t nmemb, void *stream);
+size_t FTP_Write(void *buffer, size_t size, size_t nmemb, void *stream);
 
 /// <summary>
 /// File read function to use with ftp CURL read callback.
 /// </summary>
 /// <returns></returns>
-size_t PCL FTP_Read(void *ptr, size_t size, size_t nmemb, void *stream);
+size_t FTP_Read(void *ptr, size_t size, size_t nmemb, void *stream);
 
 /// <summary>
 /// Connect to an SFTP server, the connection can be closed with FTP_Close.

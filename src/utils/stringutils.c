@@ -112,17 +112,17 @@ void GScr_Fmt()
 	char buffer[MAX_STRING_CHARS];
 	const char* format = Plugin_Scr_GetString(0);
 	
-	if (argCount > 1)
+	if (argCount == 1)
 	{
-		VariableValue* args = (VariableValue*)malloc((argCount - 1) * sizeof(VariableValue));
-
-		for (int i = 1; i < argCount; i++)
-			args[i - 1] = *Plugin_Scr_SelectParam(i);
-		Scr_vsnprintf(buffer, sizeof(buffer), format, &args);
-
-		Plugin_Scr_AddString(buffer);
-		free(args);
-	}
-	else
 		Plugin_Scr_AddString(format);
+		return;
+	}
+	VariableValue* args = (VariableValue*)malloc((argCount - 1) * sizeof(VariableValue));
+
+	for (int i = 1; i < argCount; i++)
+		args[i - 1] = *Plugin_Scr_SelectParam(i);
+	Scr_vsnprintf(buffer, sizeof(buffer), format, args);
+
+	Plugin_Scr_AddString(buffer);
+	free(args);
 }

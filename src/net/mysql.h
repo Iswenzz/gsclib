@@ -35,24 +35,24 @@ typedef struct
 /// <summary>
 /// Free all MySQL resources.
 /// </summary>
-void PCL MySQL_Free();
+void MySQL_Free();
 
 /// <summary>
 /// Free the MySQL query & statement result.
 /// </summary>
-void PCL MySQL_Free_Result();
+void MySQL_Free_Result();
 
 /// <summary>
 /// Free the MySQL statement.
 /// </summary>
-void PCL MySQL_Free_Statement();
+void MySQL_Free_Statement();
 
 /// <summary>
 /// Converts a MySQL type to a GSC variable type.
 /// </summary>
 /// <param name="type">The MySQL type.</param>
 /// <returns>The GSC variable type.</returns>
-int PCL MySQL_TypeToGSC(enum_field_types type);
+int MySQL_TypeToGSC(enum_field_types type);
 
 /// <summary>
 /// Generic bind for a prepare statement.
@@ -61,7 +61,7 @@ int PCL MySQL_TypeToGSC(enum_field_types type);
 /// <param name="value">The param bind value or NULL for a result bind.</param>
 /// <param name="valueLength">The length of the string to allocate (0 for other types).</param>
 /// <param name="type">The MySQL type to bind.</param>
-void PCL MySQL_PrepareBindBuffer(MYSQL_BIND_BUFFER *b, const char *value, int valueLength, enum_field_types type);
+void MySQL_PrepareBindBuffer(MYSQL_BIND_BUFFER *b, const char *value, int valueLength, enum_field_types type);
 
 /// <summary>
 /// Prepare a MySQL statement.

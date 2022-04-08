@@ -5,7 +5,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-int Scr_vsnprintf(char* str, size_t size, const char* format, VariableValue** args)
+int Scr_vsnprintf(char* str, size_t size, const char* format, VariableValue* args)
 {
 	LDOUBLE fvalue;
 	INTMAX_T value;
@@ -102,7 +102,7 @@ int Scr_vsnprintf(char* str, size_t size, const char* format, VariableValue** ar
 				 * taken as a `-' flag followed by a positive
 				 * field width." (7.19.6.1, 5)
 				 */
-				if ((width = (*args++)->u.intValue) < 0) 
+				if ((width = (*(args++)).u.intValue) < 0) 
 				{
 					flags |= PRINT_F_MINUS;
 					width = -width;
@@ -143,7 +143,7 @@ int Scr_vsnprintf(char* str, size_t size, const char* format, VariableValue** ar
 				 * taken as if the precision were omitted."
 				 * (7.19.6.1, 5)
 				 */
-				if ((precision = (*args++)->u.intValue) < 0)
+				if ((precision = (*(args++)).u.intValue) < 0)
 					precision = -1;
 				ch = *format++;
 				state = PRINT_S_MOD;
@@ -201,7 +201,7 @@ int Scr_vsnprintf(char* str, size_t size, const char* format, VariableValue** ar
 				switch (cflags) 
 				{
 				case PRINT_C_CHAR:
-					value = Plugin_SL_ConvertToString((*args++)->u.stringValue)[0];
+					value = Plugin_SL_ConvertToString((*(args++)).u.stringValue)[0];
 					break;
 				case PRINT_C_SHORT:
 				case PRINT_C_LONG:
@@ -210,7 +210,7 @@ int Scr_vsnprintf(char* str, size_t size, const char* format, VariableValue** ar
 				case PRINT_C_INTMAX:
 				case PRINT_C_PTRDIFF:
 				default:
-					value = (*args++)->u.intValue;
+					value = (*(args++)).u.intValue;
 					break;
 				}
 				fmtint(str, &len, size, value, 10, width, precision, flags);
@@ -232,7 +232,7 @@ int Scr_vsnprintf(char* str, size_t size, const char* format, VariableValue** ar
 				switch (cflags) 
 				{
 				case PRINT_C_CHAR:
-					value = Plugin_SL_ConvertToString((*args++)->u.stringValue)[0];
+					value = Plugin_SL_ConvertToString((*(args++)).u.stringValue)[0];
 					break;
 				case PRINT_C_SHORT:
 				case PRINT_C_LONG:
@@ -241,7 +241,7 @@ int Scr_vsnprintf(char* str, size_t size, const char* format, VariableValue** ar
 				case PRINT_C_INTMAX:
 				case PRINT_C_PTRDIFF:
 				default:
-					value = (*args++)->u.intValue;
+					value = (*(args++)).u.intValue;
 					break;
 				}
 				fmtint(str, &len, size, value, base, width, precision, flags);
@@ -256,9 +256,9 @@ int Scr_vsnprintf(char* str, size_t size, const char* format, VariableValue** ar
 				// FALLTHROUGH
 			case 'f':
 				if (cflags == PRINT_C_LDOUBLE)
-					fvalue = (*args++)->u.floatValue;
+					fvalue = (*(args++)).u.floatValue;
 				else
-					fvalue = (*args++)->u.floatValue;
+					fvalue = (*(args++)).u.floatValue;
 				fmtflt(str, &len, size, fvalue, width, precision, flags, &overflow);
 				if (overflow)
 					goto out;
@@ -269,9 +269,9 @@ int Scr_vsnprintf(char* str, size_t size, const char* format, VariableValue** ar
 			case 'e':
 				flags |= PRINT_F_TYPE_E;
 				if (cflags == PRINT_C_LDOUBLE)
-					fvalue = (*args++)->u.floatValue;
+					fvalue = (*(args++)).u.floatValue;
 				else
-					fvalue = (*args++)->u.floatValue;
+					fvalue = (*(args++)).u.floatValue;
 				fmtflt(str, &len, size, fvalue, width, precision, flags, &overflow);
 				if (overflow)
 					goto out;
@@ -282,9 +282,9 @@ int Scr_vsnprintf(char* str, size_t size, const char* format, VariableValue** ar
 			case 'g':
 				flags |= PRINT_F_TYPE_G;
 				if (cflags == PRINT_C_LDOUBLE)
-					fvalue = (*args++)->u.floatValue;
+					fvalue = (*(args++)).u.floatValue;
 				else
-					fvalue = (*args++)->u.floatValue;
+					fvalue = (*(args++)).u.floatValue;
 				/**
 				 * If the precision is zero, it is treated as
 				 * one (cf. C99: 7.19.6.1, 8).
@@ -296,11 +296,11 @@ int Scr_vsnprintf(char* str, size_t size, const char* format, VariableValue** ar
 					goto out;
 				break;
 			case 'c':
-				cvalue = Plugin_SL_ConvertToString((*args++)->u.stringValue)[0];
+				cvalue = Plugin_SL_ConvertToString((*(args++)).u.stringValue)[0];
 				OUTCHAR(str, len, size, cvalue);
 				break;
 			case 's':
-				strvalue = Plugin_SL_ConvertToString((*args++)->u.stringValue);
+				strvalue = Plugin_SL_ConvertToString((*(args++)).u.stringValue);
 				fmtstr(str, &len, size, strvalue, width, precision, flags);
 				break;
 			case 'p':
@@ -310,7 +310,7 @@ int Scr_vsnprintf(char* str, size_t size, const char* format, VariableValue** ar
 				 * characters, in an implementation-defined
 				 * manner." (C99: 7.19.6.1, 8)
 				 */
-				if ((strvalue = (*args++)->u.pointerValue) == NULL)
+				if ((strvalue = (*(args++)).u.pointerValue) == NULL)
 				{
 					/**
 					 * We use the glibc format.  BSD prints
