@@ -94,6 +94,7 @@ PCL int OnInit()
 
 	// utils/utils
 	Plugin_ScrAddFunction("comprintf", 			&GScr_ComPrintF);
+	Plugin_ScrAddFunction("comprintln", 		&GScr_ComPrintLn);
 	Plugin_ScrAddFunction("getsystime", 		&GScr_GetSysTime);
 	Plugin_ScrAddFunction("gettype", 			&GScr_GetType);
 	Plugin_ScrAddFunction("ternary", 			&GScr_Ternary);

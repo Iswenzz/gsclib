@@ -1,10 +1,36 @@
 # Utilities
 
-#### ``ComPrintF(<string>)``
-Print a message to the console output.
+#### ``fmt(<string>, <?arguments...>)``
+Get a formatted string.
 
 ```c
+a = "Iswenzz";
+b = 10;
+
+string = fmt("%s %d", a, b);
+```
+<hr>
+
+#### ``ComPrintF(<fmt>, <?arguments...>)``
+Print a formatted message to the console output.
+
+```c
+a = "Iswenzz";
+
 ComPrintF("Hello World!");
+ComPrintF("Hello %s!", a);
+```
+<hr>
+
+#### ``ComPrintLn(<fmt>, <?arguments...>)``
+Print a formatted message on a new line to the console output.
+
+```c
+a = "Iswenzz";
+
+ComPrintLn("Hello World!");
+ComPrintLn("Hello %s!", a);
+ComPrintLn();
 ```
 <hr>
 

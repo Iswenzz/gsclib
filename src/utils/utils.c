@@ -1,5 +1,8 @@
 #include "utils.h"
+#include "vsnprintf.h"
+
 #include <cgsc.h>
+#include <stdlib.h>
 
 void GScr_Ternary()
 {
@@ -22,12 +25,55 @@ void GScr_IfUndef()
 
 void GScr_ComPrintF()
 {
-	Plugin_Printf(Plugin_Scr_GetString(0));
+	const int argCount = Plugin_Scr_GetNumParam();
+	if (argCount < 1)
+	{
+		Plugin_Scr_Error("Usage: comPrintF(<fmt>, <?arguments...>)");
+		return;
+	}
+	char buffer[MAX_STRING_CHARS];
+	const char* format = Plugin_Scr_GetString(0);
+
+	if (argCount == 1)
+	{
+		Plugin_Printf(format);
+		return;
+	}
+	VariableValue* args = (VariableValue*)malloc((argCount - 1) * sizeof(VariableValue));
+
+	for (int i = 1; i < argCount; i++)
+		args[i - 1] = *Plugin_Scr_SelectParam(i);
+	Scr_vsnprintf(buffer, sizeof(buffer), format, args);
+
+	Plugin_Printf(buffer);
+	free(args);
 }
 
 void GScr_ComPrintLn()
 {
-	Plugin_Printf(Plugin_Scr_GetString(0));
+	const int argCount = Plugin_Scr_GetNumParam();
+	if (argCount == 0)
+	{
+		Plugin_Printf("\n");
+		return;
+	}
+	char buffer[MAX_STRING_CHARS];
+	char* format = Plugin_Scr_GetString(0);
+
+	if (argCount == 1)
+	{
+		Plugin_Printf(fmt("%s\n", format));
+		return;
+	}
+	VariableValue* args = (VariableValue*)malloc((argCount - 1) * sizeof(VariableValue));
+
+	for (int i = 1; i < argCount; i++)
+		args[i - 1] = *Plugin_Scr_SelectParam(i);
+	Scr_vsnprintf(buffer, sizeof(buffer), format, args);
+	strcat(buffer, "\n");
+
+	Plugin_Printf(buffer);
+	free(args);
 }
 
 void GScr_GetSysTime()

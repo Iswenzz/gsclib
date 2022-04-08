@@ -11,7 +11,7 @@
 * [Regular expression](https://github.com/Iswenzz/gsclib/blob/master/docs/regex.md)
 * [Language Integrated Query (Linq)](https://github.com/Iswenzz/gsclib/blob/master/docs/linq.md)
 * [MySQL](https://github.com/Iswenzz/gsclib/blob/master/docs/mysql.md)
-* [Type utilities](https://github.com/Iswenzz/gsclib/blob/master/docs/utility.md)
+* [Utilities](https://github.com/Iswenzz/gsclib/blob/master/docs/utility.md)
 
 ## Instructions
 In order to use this library, just download the archived file down below, and extract it to the Call of Duty 4X ``plugins/gsclib`` directory.

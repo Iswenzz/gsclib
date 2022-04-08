@@ -1,9 +1,14 @@
 #pragma once
 
 /// <summary>
-/// Print a message to the console output.
+/// Print a formatted message to the console output.
 /// </summary>
 void GScr_ComPrintF();
+
+/// <summary>
+/// Print a formatted message on a new line to the console output.
+/// </summary>
+void GScr_ComPrintLn();
 
 /// <summary>
 /// Get the time since epoch in milliseconds.
