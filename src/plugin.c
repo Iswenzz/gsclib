@@ -115,6 +115,7 @@ PCL int OnInit()
 	Plugin_ScrAddFunction("torgb", 				&GScr_ToRGB);
 	Plugin_ScrAddFunction("hextorgb", 			&GScr_HexToRGB);
 	Plugin_ScrAddFunction("fmt", 				&GScr_Fmt);
+	Plugin_ScrAddFunction("trim", 				&GScr_Trim);
 
 	return 0;
 }

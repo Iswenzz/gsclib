@@ -40,3 +40,8 @@ void GScr_ToRGB();
 /// Format a string.
 /// </summary>
 void GScr_Fmt();
+
+/// <summary>
+/// Trim a string.
+/// </summary>
+void GScr_Trim();

@@ -126,3 +126,22 @@ void GScr_Fmt()
 	Plugin_Scr_AddString(buffer);
 	free(args);
 }
+
+void GScr_Trim()
+{
+	CHECK_PARAMS(1, "Usage: Trim(<string>)");
+
+	char* ptr = NULL;
+	char* string = Plugin_Scr_GetString(0);
+
+	while (*string == ' ') 
+		string++;
+
+	ptr = string + strlen(string) - 1;
+	while (*ptr == ' ') 
+	{ 
+		*ptr = '\0'; 
+		ptr--; 
+	}
+	Plugin_Scr_AddString(string);
+}

@@ -11,6 +11,14 @@ string = fmt("%s %d", a, b);
 ```
 <hr>
 
+#### ``trim(<string>)``
+Trim a string.
+
+```c
+string = trim("    hello world    ");
+```
+<hr>
+
 #### ``ComPrintF(<fmt>, <?arguments...>)``
 Print a formatted message to the console output.
 
