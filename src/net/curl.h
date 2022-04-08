@@ -61,7 +61,7 @@ extern FTPinstance ftp;
 /// Alloc a string buffer for curl manipulation. The buffer needs to call free().
 /// </summary>
 /// <returns></returns>
-CURLstring CURL_StringInit();
+CURLstring PCL CURL_StringInit();
 
 /// <summary>
 /// Close all connections.
@@ -73,24 +73,24 @@ qboolean CURL_FTP_Close();
 /// Set the options that has been set in the CURLinstance struct.
 /// </summary>
 /// <param name="curl"></param>
-void CURL_SetOpts(CURL* handle);
+void PCL CURL_SetOpts(CURL* handle);
 
 /// <summary>
 /// Set the header that has been set in the CURLinstance struct.
 /// </summary>
 /// <param name="handle">The CURL handle.</param>
 /// <param name="header_type">The header option type.</param>
-void CURL_SetHeader(CURL* handle, CURLoption header_type);
+void PCL CURL_SetHeader(CURL* handle, CURLoption header_type);
 
 /// <summary>
 /// Cleanup all CURL options from the CURLinstance struct.
 /// </summary>
-void CURL_OptCleanup();
+void PCL CURL_OptCleanup();
 
 /// <summary>
 /// Cleanup the CURL header from the CURLinstance struct.
 /// </summary>
-void CURL_HeaderCleanup();
+void PCL CURL_HeaderCleanup();
 
 /// <summary>
 /// Connect to a FTP/FTPS/SFTP server.

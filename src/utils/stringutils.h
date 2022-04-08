@@ -1,4 +1,5 @@
 #pragma once
+#include <cgsc.h>
 
 /// <summary>
 /// Check if a string is undefined or empty.
@@ -34,3 +35,8 @@ void GScr_HexToRGB();
 /// Normalize RGB vector.
 /// </summary>
 void GScr_ToRGB();
+
+/// <summary>
+/// Format a string.
+/// </summary>
+void GScr_Fmt();

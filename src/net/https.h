@@ -1,17 +1,18 @@
 #pragma once
 #include "curl.h"
+#include <cgsc.h>
 
 /// <summary>
 /// File write function to use with CURL https write callback.
 /// </summary>
 /// <returns></returns>
-size_t HTTPS_Write(void *ptr, size_t size, size_t nmemb, void *stream);
+size_t PCL HTTPS_Write(void *ptr, size_t size, size_t nmemb, void *stream);
 
 /// <summary>
 /// String write function to use with CURL https write callback.
 /// </summary>
 /// <returns></returns>
-size_t HTTPS_WriteString(void *ptr, size_t size, size_t nmemb, void *stream);
+size_t PCL HTTPS_WriteString(void *ptr, size_t size, size_t nmemb, void *stream);
 
 /// <summary>
 /// Upload a file to an HTTP/HTTPS url.

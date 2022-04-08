@@ -1,3 +1,5 @@
+add_subdirectory(__test__)
+
 target_sources(gsclib PRIVATE
    convert.c
    convert.h
@@ -6,4 +8,6 @@ target_sources(gsclib PRIVATE
    stringutils.c
    stringutils.h
    utils.c
-   utils.h)
+   utils.h
+   vsnprintf.c
+   vsnprintf.h)

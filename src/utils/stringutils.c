@@ -1,4 +1,5 @@
 #include "stringutils.h"
+#include "vsnprintf.h"
 
 #include <cgsc.h>
 #include <stdlib.h>
@@ -98,4 +99,30 @@ void GScr_HexToRGB()
     vec[1] = ((float)((rgb >> 8) & 0xFF)) / 255;
     vec[2] = ((float)(rgb & 0xFF)) / 255;
 	Plugin_Scr_AddVector(vec);
+}
+
+void GScr_Fmt()
+{
+	const int argCount = Plugin_Scr_GetNumParam();
+	if (argCount < 1)
+	{
+		Plugin_Scr_Error("Usage: fmt(<string>, <?arguments...>)");
+		return;
+	}
+	char buffer[MAX_STRING_CHARS];
+	const char* format = Plugin_Scr_GetString(0);
+	
+	if (argCount > 1)
+	{
+		VariableValue* args = (VariableValue*)malloc((argCount - 1) * sizeof(VariableValue));
+
+		for (int i = 1; i < argCount; i++)
+			args[i - 1] = *Plugin_Scr_SelectParam(i);
+		Scr_vsnprintf(buffer, sizeof(buffer), format, &args);
+
+		Plugin_Scr_AddString(buffer);
+		free(args);
+	}
+	else
+		Plugin_Scr_AddString(format);
 }

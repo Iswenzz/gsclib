@@ -1,6 +1,7 @@
 add_library(gsclib SHARED)
 set_target_properties(gsclib PROPERTIES OUTPUT_NAME gsclib)
 
+add_subdirectory(__test__)
 # add_subdirectory(data)
 add_subdirectory(linq)
 add_subdirectory(net)

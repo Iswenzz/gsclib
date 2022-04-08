@@ -18,10 +18,10 @@ include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
 conan_basic_setup()
 
 # Tests
-# include(CTest)
-# add_executable(gsclib.Tests)
-# target_link_libraries(gsclib.Tests PUBLIC ${CONAN_LIBS} gsclib)
-# add_test(NAME Tests COMMAND gsclib.Tests)
+include(CTest)
+add_executable(gsclib.Tests)
+target_link_libraries(gsclib.Tests PUBLIC ${CONAN_LIBS} gsclib)
+add_test(NAME Tests COMMAND gsclib.Tests)
 
 # Build
 add_subdirectory(src)

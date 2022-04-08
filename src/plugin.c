@@ -20,7 +20,7 @@ PCL int OnInit()
 	CURLinitCode = curl_global_init(CURL_GLOBAL_ALL); 	// initialize curl library
 	MySQLcode = mysql_library_init(0, NULL, NULL); 	// initialize handle library
 
-	//// data/regex
+	// data/regex
 	// Plugin_ScrAddFunction("regexmatch", 		&GScr_RegexMatch);
 	// Plugin_ScrAddFunction("regexsplit", 		&GScr_RegexSplit);
 	// Plugin_ScrAddFunction("regexreplace", 	&GScr_RegexReplace);
@@ -94,6 +94,7 @@ PCL int OnInit()
 
 	// utils/utils
 	Plugin_ScrAddFunction("comprintf", 			&GScr_ComPrintF);
+	Plugin_ScrAddFunction("getsystime", 		&GScr_GetSysTime);
 	Plugin_ScrAddFunction("gettype", 			&GScr_GetType);
 	Plugin_ScrAddFunction("ternary", 			&GScr_Ternary);
 	Plugin_ScrAddFunction("ifundef", 			&GScr_IfUndef);
@@ -111,6 +112,7 @@ PCL int OnInit()
 	Plugin_ScrAddFunction("toupper", 			&GScr_ToUpper);
 	Plugin_ScrAddFunction("torgb", 				&GScr_ToRGB);
 	Plugin_ScrAddFunction("hextorgb", 			&GScr_HexToRGB);
+	Plugin_ScrAddFunction("fmt", 				&GScr_Fmt);
 
 	return 0;
 }
