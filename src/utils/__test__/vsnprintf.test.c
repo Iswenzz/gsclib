@@ -3,8 +3,6 @@
 #include <greatest.h>
 #include <cgsc.h>
 
-const char* Plugin_SL_ConvertToString(int index) { return "string"; }
-
 TEST test_vsnprintf()
 {
 	char buffer[MAX_STRING_CHARS];

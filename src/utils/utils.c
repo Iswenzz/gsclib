@@ -41,7 +41,7 @@ void Scr_PrintF(qboolean newLine, void (*print)(const char*, ...))
 		print(newLine ? "\n" : "");
 		return;
 	}
-	char buffer[MAX_STRING_CHARS];
+	char buffer[MAX_STRING_CHARS] = { 0 };
 	char* format = Plugin_Scr_GetString(0);
 
 	if (argCount == 1)

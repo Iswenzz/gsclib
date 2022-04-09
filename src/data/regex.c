@@ -1,230 +1,294 @@
 #include "regex.h"
+
 #include <cgsc.h>
 #include <stdlib.h>
 #include <string.h>
 
-regex_items *dre2_get_matches(struct dre2 *re, unsigned char *input)
-{
-	regex_items *matches = malloc(sizeof(regex_items));
-	matches->count = 0;
-	matches->items = NULL;
-
-	// Check if input strings match the regex
-	unsigned char *it_match = (unsigned char *)calloc(strlen((const char *)input), sizeof(unsigned char));
-	struct dre2_match_value result = dre2_match(re, input);
-	unsigned char *p = input;
-
-	while (result.matched)
-	{
-		// Resize matches array
-		matches->count++;
-		if (matches->items == NULL)
-			matches->items = (unsigned char **)malloc(matches->count * sizeof(unsigned char *));
-		else
-		{
-			unsigned char **temp = (unsigned char **)realloc(matches->items, matches->count * sizeof(unsigned char *));
-			if (temp != NULL)
-				matches->items = temp;
-		}
-
-		// Get match string
-		dre2_matched_substring(p, &result, &it_match);
-		matches->items[matches->count - 1] = (unsigned char *)calloc(strlen((const char *)it_match), sizeof(unsigned char));
-		strncpy((char *)matches->items[matches->count - 1], (char *)it_match, strlen((const char *)it_match));
-
-		// Sub matched string from input string
-		p += result.end_pos;
-		result = dre2_match(re, p);
-	}
-	free(it_match);
-	it_match = NULL;
-	return matches;
-}
-
-regex_items *dre2_get_splits(struct dre2 *re, unsigned char *input)
-{
-	regex_items *splits = malloc(sizeof(regex_items));
-	splits->count = 0;
-	splits->items = NULL;
-
-	// Check if input strings match the regex
-	unsigned char *it_match = (unsigned char *)calloc(strlen((const char *)input), sizeof(unsigned char));
-	struct dre2_match_value result = dre2_match(re, input);
-	unsigned char *p = input;
-
-	while (result.matched)
-	{
-		// Resize splits array
-		splits->count++;
-		if (splits->items == NULL)
-			splits->items = (unsigned char **)malloc(splits->count * sizeof(unsigned char *));
-		else
-		{
-			unsigned char **temp = (unsigned char **)realloc(splits->items, splits->count * sizeof(unsigned char *));
-			if (temp != NULL)
-				splits->items = temp;
-		}
-
-		// Get split string
-		dre2_matched_substring(p, &result, &it_match);
-		splits->items[splits->count - 1] = (unsigned char *)calloc(result.start_pos + 1, sizeof(unsigned char));
-		memcpy(splits->items[splits->count - 1], p, result.start_pos);
-
-		// Sub matched string from input string
-		p += result.end_pos;
-		result = dre2_match(re, p);
-	}
-	if (*p != '\0')
-	{
-		// Resize splits array
-		splits->count++;
-		if (splits->items == NULL)
-			splits->items = (unsigned char **)malloc(splits->count * sizeof(unsigned char *));
-		else
-		{
-			unsigned char **temp = (unsigned char **)realloc(splits->items, splits->count * sizeof(unsigned char *));
-			if (temp != NULL)
-				splits->items = temp;
-		}
-
-		// Get the last split
-		splits->items[splits->count - 1] = (unsigned char *)calloc(strlen((const char *)p), sizeof(unsigned char));
-		memcpy(splits->items[splits->count - 1], p, strlen((const char *)p));
-	}
-
-	free(it_match);
-	it_match = NULL;
-	return splits;
-}
-
-void cleanup_dre2_matches(regex_items *matches)
-{
-	for (int i = 0; i < matches->count; i++)
-	{
-		if (matches->items[i] != NULL)
-		{
-			free(matches->items[i]);
-			matches->items[i] = NULL;
-		}
-	}
-	free(matches);
-	matches = NULL;
-}
-
 void GScr_RegexSplit()
 {
-	if (Plugin_Scr_GetNumParam() != 2)
-	{
-		Plugin_Scr_Error("Usage: RegexSplit(<string>, <pattern>)");
-		return;
-	}
-	unsigned char *input = (unsigned char *)Plugin_Scr_GetString(0);
-	unsigned char *regex_pattern = (unsigned char *)Plugin_Scr_GetString(1);
-	struct dre2 *re;
+    CHECK_PARAMS(2, "Usage: RegexSplit(<string>, <regex>)");
 
-	// Parse the regex string into the dre2 object
-	re = dre2_parse(regex_pattern, DRE2_GREEDY);
-	if (re == NULL)
-	{
-		printf("RegexMatch(): Failed to parse!\n");
-		return;
-	}
-	regex_items *splits = dre2_get_splits(re, input);
+    const char* subject = Plugin_Scr_GetString(0);
+    const char* regex = Plugin_Scr_GetString(1);
 
-	if (splits->count > 0)
-	{
-		Plugin_Scr_MakeArray();
-		for (int i = 0; i < splits->count; i++)
-		{
-			Plugin_Scr_AddString((const char *)splits->items[i]);
-			Plugin_Scr_AddArray();
-		}
-	}
-	else
-		Plugin_Scr_AddUndefined();
+    PCRE2_VALUES* splits = PCRE2_Split(subject, regex);
+    if (splits == NULL) return;
 
-	cleanup_dre2(re);
-	cleanup_dre2_matches(splits);
-}
-
-void GScr_RegexReplace()
-{
-	if (Plugin_Scr_GetNumParam() != 3)
-	{
-		Plugin_Scr_Error("Usage: RegexReplace(<string>, <replace_string>, <pattern>)");
-		return;
-	}
-	unsigned char *input = (unsigned char *)Plugin_Scr_GetString(0);
-	unsigned char *replace_str = (unsigned char *)Plugin_Scr_GetString(1);
-	unsigned char *regex_pattern = (unsigned char *)Plugin_Scr_GetString(2);
-	struct dre2 *re;
-
-	// Parse the regex string into the dre2 object
-	re = dre2_parse(regex_pattern, DRE2_GREEDY);
-	if (re == NULL)
-	{
-		printf("RegexReplace(): Failed to parse!\n");
-		return;
-	}
-	regex_items *splits = dre2_get_splits(re, input);
-	size_t buffer_size = 1;
-	unsigned char *buffer = (unsigned char *)malloc(sizeof(unsigned char));
-
-	if (splits->count > 0)
-	{
-		for (int i = 0; i < splits->count; i++)
-		{
-			int strSize = snprintf(NULL, 0, "%s%s", splits->items[i], replace_str);
-			buffer_size += strSize;
-			unsigned char *temp = (unsigned char *)realloc(buffer, buffer_size * sizeof(unsigned char));
-			if (temp != NULL)
-			{
-				buffer = temp;
-				snprintf((char *)(buffer + buffer_size - strSize - 1), buffer_size, "%s%s", splits->items[i], replace_str);
-			}
-		}
-		Plugin_Scr_AddString((const char *)buffer);
-	}
-	else
-		Plugin_Scr_AddUndefined();
-
-	cleanup_dre2(re);
-	cleanup_dre2_matches(splits);
-	free(buffer);
+    Plugin_Scr_MakeArray();
+    for (int i = 0; i < splits->count; i++)
+    {
+        Plugin_Scr_AddString(splits->results[i].string);
+        Plugin_Scr_AddArray();
+    }
+    PCRE2_FreeValues(splits);
 }
 
 void GScr_RegexMatch()
 {
-	if (Plugin_Scr_GetNumParam() != 2)
-	{
-		Plugin_Scr_Error("Usage: RegexMatch(<string>, <pattern>)");
-		return;
-	}
-	unsigned char *input = (unsigned char *)Plugin_Scr_GetString(0);
-	unsigned char *regex_pattern = (unsigned char *)Plugin_Scr_GetString(1);
-	struct dre2 *re;
+    CHECK_PARAMS(2, "Usage: RegexMatch(<string>, <regex>)");
 
-	// Parse the regex string into the dre2 object
-	re = dre2_parse(regex_pattern, DRE2_GREEDY);
-	if (re == NULL)
-	{
-		printf("RegexMatch(): Failed to parse!\n");
-		return;
-	}
-	regex_items *matches = dre2_get_matches(re, input);
+    const char* subject = Plugin_Scr_GetString(0);
+    const char* regex = Plugin_Scr_GetString(1);
 
-	if (matches->count > 0)
-	{
-		Plugin_Scr_MakeArray();
-		for (int i = 0; i < matches->count; i++)
-		{
-			Plugin_Scr_AddString((const char *)matches->items[i]);
-			Plugin_Scr_AddArray();
-		}
-	}
-	else
-		Plugin_Scr_AddUndefined();
+    PCRE2_VALUES* matches = PCRE2_Match(subject, regex);
+    if (matches == NULL) return;
 
-	cleanup_dre2(re);
-	cleanup_dre2_matches(matches);
+    Plugin_Scr_MakeArray();
+    for (int i = 0; i < matches->count; i++)
+    {
+        Plugin_Scr_AddString(matches->results[i].string);
+        Plugin_Scr_AddArray();
+    }
+    PCRE2_FreeValues(matches);
+}
+
+void GScr_RegexReplace()
+{
+    CHECK_PARAMS(3, "Usage: RegexReplace(<string>, <replace>, <regex>)");
+
+    const char* subject = Plugin_Scr_GetString(0);
+    const char* replace = Plugin_Scr_GetString(1);
+    const char* regex = Plugin_Scr_GetString(2);
+
+    char* string = PCRE2_Replace(subject, regex, replace);
+    if (string == NULL) return;
+
+    Plugin_Scr_AddString(string);
+    free(string);
+}
+
+qboolean PCRE2_GetUTFOption(pcre2_code* re, uint32_t* optionBits)
+{
+    pcre2_pattern_info(re, PCRE2_INFO_ALLOPTIONS, optionBits);
+    return (*optionBits & PCRE2_UTF) != 0;
+}
+
+qboolean PCRE2_IsNewlineCRLF(pcre2_code* re, uint32_t* newline)
+{
+    pcre2_pattern_info(re, PCRE2_INFO_NEWLINE, newline);
+    return *newline == PCRE2_NEWLINE_ANY ||
+        *newline == PCRE2_NEWLINE_CRLF ||
+        *newline == PCRE2_NEWLINE_ANYCRLF;
+}
+
+qboolean PCRE2_HasMatches(int rc, pcre2_code* re, pcre2_match_data* matchData)
+{
+    if (rc < 0)
+    {
+        switch (rc)
+        {
+        case PCRE2_ERROR_NOMATCH:
+            break;
+        default:
+            printf("Matching error %d\n", rc);
+            break;
+        }
+        pcre2_match_data_free(matchData);
+        pcre2_code_free(re);
+        return qfalse;
+    }
+    return qtrue;
+}
+
+qboolean PCRE2_CompileSuccess(pcre2_code* re, int* errorCode, PCRE2_SIZE* errorOffset)
+{
+    if (re != NULL)
+        return qtrue;
+
+    PCRE2_UCHAR buffer[256];
+    pcre2_get_error_message(*errorCode, buffer, sizeof(buffer));
+
+    Plugin_Printf("PCRE2 compilation failed at offset %d: %s\n", *(int*)errorOffset, buffer);
+    pcre2_code_free(re);
+    return qfalse;
+}
+
+void PCRE2_AddValue(PCRE2_VALUE* value, char* string, int length, PCRE2_VALUES* values)
+{
+    if (values->results == NULL)
+        values->results = (PCRE2_VALUE*)calloc(1, sizeof(PCRE2_VALUE));
+    else
+    {
+        PCRE2_VALUE* temp = (PCRE2_VALUE*)realloc(values->results, (values->count + 1) * sizeof(PCRE2_VALUE));
+        if (temp != NULL) values->results = temp;
+    }
+    values->results[values->count] = *value;
+    strncpy(&values->results[values->count].string, string, length);
+    values->results[values->count].string[length] = '\0';
+    values->count++;
+}
+
+PCRE2_VALUES* PCRE2_Compile(PCRE2_SPTR subject, PCRE2_SPTR regex)
+{
+    PCRE2_SIZE subjectLength = strlen(subject);
+    PCRE2_SIZE errorOffset;
+    const int groupIndex = 0; // Capturing groups won't be part of the result values.
+    int errorCode;
+    int vectorMatchesCount = 0;
+    PCRE2_VECTOR vectors[subjectLength + 1];
+    PCRE2_VALUES* values = (PCRE2_VALUES*)calloc(1, sizeof(PCRE2_VALUES));
+
+    pcre2_code* re = pcre2_compile(regex, PCRE2_ZERO_TERMINATED, 0, &errorCode, &errorOffset, NULL);
+    if (!PCRE2_CompileSuccess(re, &errorCode, &errorOffset))
+    {
+        free(values);
+        return NULL;
+    }
+
+    pcre2_match_data* matchData = pcre2_match_data_create_from_pattern(re, NULL);
+    int rc = pcre2_match(re, subject, subjectLength, 0, 0, matchData, NULL);
+    if (!PCRE2_HasMatches(rc, re, matchData))
+    {
+        free(values);
+        return NULL;
+    }
+
+    PCRE2_SIZE* ovector = pcre2_get_ovector_pointer(matchData);
+    vectors[vectorMatchesCount].position = subject + ovector[2 * groupIndex] - subject;
+    vectors[vectorMatchesCount].length = ovector[2 * groupIndex + 1] - ovector[2 * groupIndex];
+    vectorMatchesCount++;
+
+    uint32_t optionBits;
+    qboolean utf8 = PCRE2_GetUTFOption(re, &optionBits);
+
+    uint32_t newline;
+    qboolean isNewlineCRLF = PCRE2_IsNewlineCRLF(re, &newline);
+
+    // Find sub matches
+    for (;;)
+    {
+        uint32_t options = 0;
+        PCRE2_SIZE startOffset = ovector[1];
+
+        /* If the previous match was for an empty subject, we are finished if we are
+        at the end of the subject. Otherwise, arrange to run another match at the
+        same point to see if a non-empty match can be found. */
+
+        if (ovector[0] == ovector[1])
+        {
+            if (ovector[0] == subjectLength) break;
+            options = PCRE2_NOTEMPTY_ATSTART | PCRE2_ANCHORED;
+        }
+
+        rc = pcre2_match(re, subject, subjectLength, startOffset, options, matchData, NULL);
+        if (rc == PCRE2_ERROR_NOMATCH)
+        {
+            if (options == 0) break;
+            ovector[1] = startOffset + 1;
+
+            // If CRLF is a newline advance by one more character
+            if (isNewlineCRLF && startOffset < subjectLength - 1 &&
+                subject[startOffset] == '\r' && subject[startOffset + 1] == '\n')
+                ovector[1] += 1;
+            else if (utf8)
+            {
+                // Otherwise, ensure we advance a whole UTF-8 character
+                while (ovector[1] < subjectLength)
+                {
+                    if ((subject[ovector[1]] & 0xc0) != 0x80) break;
+                    ovector[1] += 1;
+                }
+            }
+            continue;
+        }
+        if (!PCRE2_HasMatches(rc, re, matchData))
+            break;
+
+        vectors[vectorMatchesCount].position = subject + ovector[2 * groupIndex] - subject;
+        vectors[vectorMatchesCount].length = ovector[2 * groupIndex + 1] - ovector[2 * groupIndex];
+        vectorMatchesCount++;
+    }
+
+    // Build values
+    for (int i = 0; i < vectorMatchesCount; i++)
+    {
+        PCRE2_VALUE value = { 0 };
+        PCRE2_VECTOR current = vectors[i];
+        PCRE2_VECTOR last = vectors[i - 1];
+
+        // Check for unmatched string
+        if (current.position != 0)
+        {
+            if (!i)
+            {
+                int length = current.position;
+                value.matched = qfalse;
+                PCRE2_AddValue(&value, subject, length, values);
+            }
+            else if (i > 0)
+            {
+                int pos = last.position + last.length;
+                if (pos != current.position)
+                {
+                    int length = current.position - pos;
+                    value.matched = qfalse;
+                    PCRE2_AddValue(&value, subject + pos, length, values);
+                }
+            }
+        }
+
+        // Matched string
+        value.matched = qtrue;
+        PCRE2_AddValue(&value, subject + current.position, current.length, values);
+    }
+    pcre2_match_data_free(matchData);
+    pcre2_code_free(re);
+
+    return values;
+}
+
+void PCRE2_FreeValues(PCRE2_VALUES* values)
+{
+    if (values != NULL)
+    {
+        if (values->results != NULL)
+            free(values->results);
+        free(values);
+    }
+    values = NULL;
+}
+
+PCRE2_VALUES* PCRE2_Match(PCRE2_SPTR subject, PCRE2_SPTR regex)
+{
+    PCRE2_VALUES* matches = (PCRE2_VALUES*)calloc(1, sizeof(PCRE2_VALUES));
+    PCRE2_VALUES* values = PCRE2_Compile(subject, regex);
+
+    for (int i = 0; i < values->count; i++)
+    {
+        if (values->results[i].matched)
+        {
+            PCRE2_AddValue(&values->results[i], values->results[i].string,
+                strlen(values->results[i].string), matches);
+        }
+    }
+    PCRE2_FreeValues(values);
+    return matches;
+}
+
+PCRE2_VALUES* PCRE2_Split(PCRE2_SPTR subject, PCRE2_SPTR regex)
+{
+    PCRE2_VALUES* splits = (PCRE2_VALUES*)calloc(1, sizeof(PCRE2_VALUES));
+    PCRE2_VALUES* values = PCRE2_Compile(subject, regex);
+
+    for (int i = 0; i < values->count; i++)
+    {
+        if (!values->results[i].matched)
+        {
+            PCRE2_AddValue(&values->results[i], values->results[i].string,
+                strlen(values->results[i].string), splits);
+        }
+    }
+    PCRE2_FreeValues(values);
+    return splits;
+}
+
+char* PCRE2_Replace(PCRE2_SPTR subject, PCRE2_SPTR regex, char* replace)
+{
+    char* string = (char*)calloc(MAX_STRING_CHARS, sizeof(char));
+    PCRE2_VALUES* values = PCRE2_Compile(subject, regex);
+
+    for (int i = 0; i < values->count; i++)
+        strcat(string, !values->results[i].matched ? values->results[i].string : replace);
+    PCRE2_FreeValues(values);
+    return string;
 }

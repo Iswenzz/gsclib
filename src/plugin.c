@@ -1,4 +1,4 @@
-// #include "data/regex.h"
+ #include "data/regex.h"
 
 #include "linq/enumerables.h"
 #include "linq/predicates.h"
@@ -24,9 +24,9 @@ PCL int OnInit()
 	MySQLcode = mysql_library_init(0, NULL, NULL); 		// initialize handle library
 
 	// data/regex
-	// FUNCTION("regexmatch", 			&GScr_RegexMatch);
-	// FUNCTION("regexsplit", 			&GScr_RegexSplit);
-	// FUNCTION("regexreplace", 		&GScr_RegexReplace);
+	FUNCTION("regexmatch", 				&GScr_RegexMatch);
+	FUNCTION("regexsplit", 				&GScr_RegexSplit);
+	FUNCTION("regexreplace", 			&GScr_RegexReplace);
 
 	// linq/delegates
 	FUNCTION("select", 					&GScr_LINQ_Select);

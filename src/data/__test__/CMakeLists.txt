@@ -1,3 +1,2 @@
 target_sources(gsclib.Tests PRIVATE
-	main.test.c
-	mock.test.c)
+	regex.test.c)

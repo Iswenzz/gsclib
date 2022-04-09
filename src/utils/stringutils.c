@@ -109,7 +109,7 @@ void GScr_Fmt()
 		Plugin_Scr_Error("Usage: fmt(<string>, <?arguments...>)");
 		return;
 	}
-	char buffer[MAX_STRING_CHARS];
+	char buffer[MAX_STRING_CHARS] = { 0 };
 	const char* format = Plugin_Scr_GetString(0);
 	
 	if (argCount == 1)
