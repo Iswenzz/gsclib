@@ -12,13 +12,13 @@ gscunit()
 it(callback, name, beforeCallback, afterCallback)
 {
 	// Before
-	comPrint(name + " ");
+	comPrint("%s ", name);
 	if (isDefined(beforeCallback) && ![[beforeCallback]]())
 	{
-		comPrint(" (ERROR beforeCallback)\n");
+		comPrintLn(" (ERROR beforeCallback)");
 		return;
 	}
-	comPrint("\n");
+	comPrintLn();
 
 	// Test
 	clock = startClock();
@@ -27,12 +27,12 @@ it(callback, name, beforeCallback, afterCallback)
 
 	// Result
 	result = Ternary(level.gscunit.fail, "FAIL", "PASS");
-	comPrint(name + " " + result + " (" + time + "ms) ");
+	comPrint("%s %s (%dms) ", name, result, time);
 
 	// After
 	if (isDefined(afterCallback) && ![[afterCallback]]())
-		comPrint(" (ERROR afterCallback)\n");
-	comPrint("\n");
+		comPrintLn(" (ERROR afterCallback)");
+	comPrintLn("");
 
 	// Summarize
 	if (result == "PASS")
@@ -44,22 +44,22 @@ it(callback, name, beforeCallback, afterCallback)
 
 suite(name)
 {
-    comPrint("\n<|>-------------------[" + name + "]-------------------<|>\n");
+    comPrint("\n<|>-------------------[%s]-------------------<|>\n", name);
 }
 
 startClock()
 {
-	return getTime();
+	return GetSysTime();
 }
 
 stopClock(clock)
 {
-	return getTime() - clock;
+	return GetSysTime() - clock;
 }
 
 summarize()
 {
-	comPrint("\nPassed: " + level.gscunit.count_pass + " Failed: " + level.gscunit.count_fail + "\n\n");
+	comPrintLn("\nPassed: %d Failed: %d\n", level.gscunit.count_pass, level.gscunit.count_fail);
 
 	level.gscunit.fail = false;
 	level.gscunit.count_pass = 0;
@@ -369,7 +369,7 @@ printable(a)
 		case "VECTOR":
 		case "FLOAT":
 		case "INTEGER":
-			return a;
+			return toString(a);
 	}
 	return "";
 }
@@ -379,7 +379,7 @@ error_expect(a, b)
 	received = printable(a);
 	expected = printable(b);
 
-	comPrint("\n\tReceived: " + received + "\n\tExpected: " + expected + "\n\n");
+	comPrintLn("\n\tReceived: %s\n\tExpected: %s\n", received, expected);
 }
 
 gscunit_debug(a)

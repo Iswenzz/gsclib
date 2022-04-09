@@ -13,19 +13,23 @@ main()
 
 test_RegexMatch()
 {
-	matches = RegexMatch("hello123 world12345", "\\d+");
+	matches = RegexMatch("hello123world456", "\\d+");
 	EXPECT_CONTAIN(matches, "123");
-	EXPECT_CONTAIN(matches, "12345");
+	EXPECT_CONTAIN(matches, "456");
+
+	emailPattern = "^([a-z0-9\\+_\\-]+)(\\.[a-z0-9\\+_\\-]+)*@([a-z0-9\\-]+\\.)+[a-z]{2,6}$";
+	matches = RegexMatch("suxlolz1528@gmail.com", emailPattern);
+	EXPECT_CONTAIN(matches, "suxlolz1528@gmail.com");
 }
 
 test_RegexSplit()
 {
-	matches = RegexMatch("hello123 world12345", "\\d+");
+	matches = RegexSplit("hello123world456", "\\d+");
 	EXPECT_CONTAIN(matches, "hello");
 	EXPECT_CONTAIN(matches, "world");
 }
 
 test_RegexReplace()
 {
-	EXPECT_EQ(RegexReplace("hello123 world12345", "", "\\d+"), "hello world");
+	EXPECT_EQ(RegexReplace("123hello456world789", "_", "\\d+"), "_hello_world_");
 }

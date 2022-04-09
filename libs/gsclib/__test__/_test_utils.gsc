@@ -13,6 +13,8 @@ main()
 	it(::test_IsStringFloat, "IsStringFloat");
 	it(::test_ToRGB, "ToRGB");
 	it(::test_HexToRGB, "HexToRGB");
+	it(::test_Fmt, "Fmt");
+	it(::test_Trim, "Trim");
 
 	// utils/utils
 	it(::test_GetType, "GetType");
@@ -21,6 +23,24 @@ main()
 	it(::test_ToInt, "ToInt");
 	it(::test_ToFloat, "ToFloat");
 	it(::test_ToString, "ToString");
+	it(::test_GetSysTime, "GetSysTime");
+}
+
+test_Trim()
+{
+	EXPECT_EQ(trim("   hello world    "), "hello world");
+}
+
+test_Fmt()
+{
+	EXPECT_EQ(fmt("%d %d", 1, 2), "1 2");
+	EXPECT_EQ(fmt("%f %s", 1.4, "test"), "1.400000 test");
+	EXPECT_EQ(fmt("%s %s", "hello", "world"), "hello world");
+}
+
+test_GetSysTime()
+{
+	EXPECT_GT(GetSysTime(), 0);
 }
 
 test_GetType()

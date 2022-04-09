@@ -7,27 +7,28 @@ main()
 	setup();
 
 	// linq/delegates
-	it(::test_select, "Select");
+	it(::test_Select, "Select");
+	it(::test_Foreach, "Foreach");
 
 	// linq/enumerables
-	it(::test_getmin, "GetMin");
-	it(::test_getmax, "GetMax");
-	it(::test_cast, "Cast");
-	it(::test_oftype, "OfType");
-	it(::test_sort, "Sort");
-	it(::test_average, "Average");
-	it(::test_sum, "Sum");
-	it(::test_range, "Range");
-	it(::test_repeat, "Repeat");
-	it(::test_reverse, "Reverse");
+	it(::test_GetMin, "GetMin");
+	it(::test_GetMax, "GetMax");
+	it(::test_Cast, "Cast");
+	it(::test_OfType, "OfType");
+	it(::test_Sort, "Sort");
+	it(::test_Average, "Average");
+	it(::test_Sum, "Sum");
+	it(::test_Range, "Range");
+	it(::test_Repeat, "Repeat");
+	it(::test_Reverse, "Reverse");
 
 	// linq/predicates
-	it(::test_all, "All");
-	it(::test_any, "Any");
-	it(::test_where, "Where");
-	it(::test_last, "Last");
-	it(::test_first, "First");
-	it(::test_count, "Count");
+	it(::test_All, "All");
+	it(::test_Any, "Any");
+	it(::test_Where, "Where");
+	it(::test_Last, "Last");
+	it(::test_First, "First");
+	it(::test_Count, "Count");
 }
 
 setup()
@@ -82,7 +83,21 @@ setup()
 	level.tests.ents = getEntArray("player", "classname");
 }
 
-test_all()
+test_Foreach()
+{
+	ints = [];
+	for (i = 0; i < 10; i++)
+	{
+		ints[i] = spawnStruct();
+		ints[i].value = i;
+	}
+
+	Foreach(ints, ::delegateForeachIncrement);
+	EXPECT_EQ(ints[0].value, 1);
+	EXPECT_EQ(ints[1].value, 2);
+}
+
+test_All()
 {
 	EXPECT_EQ(all(level.tests.ints, ::predicate), false);
 	EXPECT_EQ(all(level.tests.strings, ::predicateString), false);
@@ -92,7 +107,7 @@ test_all()
 	EXPECT_EQ(all(level.tests.ents, ::predicateEnt), true);
 }
 
-test_any()
+test_Any()
 {
 	EXPECT_EQ(any(level.tests.ints, ::predicate), true);
 	EXPECT_EQ(any(level.tests.strings, ::predicateString), true);
@@ -101,28 +116,28 @@ test_any()
 	EXPECT_EQ(any(level.tests.arrays, ::predicateArray), true);
 }
 
-test_where()
+test_Where()
 {
 	EXPECT_NOT_CONTAIN(where(level.tests.ints, ::predicate), 5);
 	EXPECT_NOT_CONTAIN(where(level.tests.strings, ::predicateString), "Iswenzz");
 	EXPECT_NOT_CONTAIN(where(level.tests.vectors, ::predicateVector), (0, 0, 0));
 }
 
-test_getmin()
+test_GetMin()
 {
 	EXPECT_EQ(getMin(level.tests.ints), 0);
 	EXPECT_EQ(getMin(level.tests.strings), "10");
 	EXPECT_EQ(getMin(level.tests.vectors), (0, 0, 0));
 }
 
-test_getmax()
+test_GetMax()
 {
 	EXPECT_EQ(getMax(level.tests.ints), 9);
 	EXPECT_EQ(getMax(level.tests.strings), "Iswenzz");
 	EXPECT_EQ(getMax(level.tests.vectors), (9.45, 9.45, 9.45));
 }
 
-test_last()
+test_Last()
 {
 	EXPECT_EQ(last(level.tests.ints, ::predicate), 9);
 	EXPECT_EQ(last(level.tests.strings, ::predicateString), "10");
@@ -132,7 +147,7 @@ test_last()
 	EXPECT_CONTAIN(last(level.tests.ents, ::predicateEnt).name, "bot");
 }
 
-test_first()
+test_First()
 {
 	EXPECT_EQ(first(level.tests.ints, ::predicate), 0);
 	EXPECT_EQ(first(level.tests.strings, ::predicateString), "Ellin");
@@ -142,7 +157,7 @@ test_first()
 	EXPECT_CONTAIN(first(level.tests.ents, ::predicateEnt).name, "bot");
 }
 
-test_cast()
+test_Cast()
 {
 	casts = [];
 	casts[casts.size] = "100";
@@ -164,7 +179,7 @@ test_cast()
 	EXPECT_CONTAIN(cast(casts, "float"), 300.3);
 }
 
-test_oftype()
+test_OfType()
 {
 	vars = [];
 	vars[vars.size] = "100";
@@ -185,7 +200,7 @@ test_oftype()
 	EXPECT_CONTAIN(ofType(vars, "ent")[0].name, "bot");
 }
 
-test_sort()
+test_Sort()
 {
 	EXPECT_EQ(sort(level.tests.ints)[0], 0);
 	EXPECT_EQ(sort(level.tests.floats)[0], 0);
@@ -193,13 +208,13 @@ test_sort()
 	EXPECT_EQ(sort(level.tests.vectors)[0], (1.05, 1.05, 1.05));
 }
 
-test_average()
+test_Average()
 {
 	EXPECT_EQ(average(level.tests.ints), 4.5);
 	EXPECT_EQ(average(level.tests.vectors), (4.725, 4.725, 4.725));
 }
 
-test_count()
+test_Count()
 {
 	EXPECT_EQ(count(level.tests.ints, ::predicate), 9);
 	EXPECT_EQ(count(level.tests.floats, ::predicate), 10);
@@ -209,7 +224,7 @@ test_count()
 	EXPECT_EQ(count(level.tests.arrays, ::predicateArray), 1);
 }
 
-test_sum()
+test_Sum()
 {
 	EXPECT_EQ(sum(level.tests.ints), 45);
 	EXPECT_EQ(sum(level.tests.floats), 47.25);
@@ -217,27 +232,27 @@ test_sum()
 	EXPECT_EQ(sum(level.tests.vectors), (47.25, 47.25, 47.25));
 }
 
-test_select()
+test_Select()
 {
 	EXPECT_CONTAIN(select(level.tests.structs, ::delegateStructString), "AK47");
 	EXPECT_CONTAIN(select(level.tests.structs, ::delegateStructInt), 30);
 }
 
-test_range()
+test_Range()
 {
 	EXPECT_EQ(range(level.tests.ints, 0, 2).size, 2);
 	EXPECT_EQ(range(level.tests.strings, 0, 2).size, 2);
 	EXPECT_EQ(range(level.tests.vectors, 0, 2).size, 2);
 }
 
-test_repeat()
+test_Repeat()
 {
 	EXPECT_EQ(repeat(level.tests.ints, 2).size, 20);
 	EXPECT_EQ(repeat(level.tests.strings, 2).size, 10);
 	EXPECT_EQ(repeat(level.tests.vectors, 2).size, 20);
 }
 
-test_reverse()
+test_Reverse()
 {
 	EXPECT_EQ(reverse(level.tests.ints)[0], 9);
 	EXPECT_EQ(reverse(level.tests.strings)[0], "10");

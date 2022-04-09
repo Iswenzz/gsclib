@@ -4,7 +4,7 @@ gsclib()
 {
 	suite("GSCLIB");
 
-	// libs\gsclib\__test__\_test_data::main();
+	libs\gsclib\__test__\_test_data::main();
 	libs\gsclib\__test__\_test_linq::main();
 	libs\gsclib\__test__\_test_net::main();
 	libs\gsclib\__test__\_test_utils::main();
@@ -77,4 +77,10 @@ delegateStructInt(item)
 	if (isDefined(item) && isDefined(item.int))
 		return item.int;
 	return 0;
+}
+
+delegateForeachIncrement(item)
+{
+	if (isDefined(item) && isDefined(item.value))
+		item.value++;
 }
