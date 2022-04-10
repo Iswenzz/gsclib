@@ -6,3 +6,4 @@ cd ..
 mkdir build -p && cd build
 conan install .. --build --profile ../.conan/linux.conf
 cmake ..
+cmake --build .

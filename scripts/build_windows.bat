@@ -11,3 +11,4 @@ if not exist build mkdir build
 cd build
 conan install .. --build --profile ../.conan/windows.conf
 cmake .. -A Win32 -T ClangCL
+cmake --build .
