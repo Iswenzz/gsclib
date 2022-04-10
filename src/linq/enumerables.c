@@ -26,7 +26,7 @@ void GScr_LINQ_Min()
 	CHECK_PARAMS(1, "Usage: Min(<array>)");
 
 	VariableValueArray *array = Plugin_Scr_GetArray(0);
-	int flags = Plugin_Scr_GetFlagsFromGSCArray(array);
+	int flags = Plugin_Scr_GetArrayFlags(array);
 
 	if (!array->length)
 	{
@@ -112,7 +112,7 @@ void GScr_LINQ_Max()
 	CHECK_PARAMS(1, "Usage: Max(<array>)");
 
 	VariableValueArray *array = Plugin_Scr_GetArray(0);
-	uint32_t flags = Plugin_Scr_GetFlagsFromGSCArray(array);
+	uint32_t flags = Plugin_Scr_GetArrayFlags(array);
 
 	if (!array->length)
 	{
@@ -362,7 +362,7 @@ void GScr_LINQ_Sort()
 	CHECK_PARAMS(1, "Usage: Sort(<array>)");
 
 	VariableValueArray *array = Plugin_Scr_GetArray(0);
-	uint32_t flags = Plugin_Scr_GetFlagsFromGSCArray(array);
+	uint32_t flags = Plugin_Scr_GetArrayFlags(array);
 
 	Plugin_Scr_MakeArray();
 	if (IsFlag(flags, FLAG_FLOAT))
@@ -387,7 +387,7 @@ void GScr_LINQ_Average()
 	CHECK_PARAMS(1, "Usage: Average(<array>)");
 
 	VariableValueArray *array = Plugin_Scr_GetArray(0);
-	const uint32_t flags = Plugin_Scr_GetFlagsFromGSCArray(array);
+	const uint32_t flags = Plugin_Scr_GetArrayFlags(array);
 
 	if (IsFlag(flags, FLAG_VECTOR))
 		Scr_VectorAverage(array);
@@ -439,7 +439,7 @@ void GScr_LINQ_Sum()
 	CHECK_PARAMS(1, "Usage: Sum(<array>)");
 
 	VariableValueArray *array = Plugin_Scr_GetArray(0);
-	uint32_t flags = Plugin_Scr_GetFlagsFromGSCArray(array);
+	uint32_t flags = Plugin_Scr_GetArrayFlags(array);
 
 	if (HasFlag(flags, FLAG_STRING) || HasFlag(flags, FLAG_ISTRING))
 		Scr_StringSum(array);

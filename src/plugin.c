@@ -1,4 +1,5 @@
- #include "data/regex.h"
+#include "data/regex.h"
+#include "data/zip.h"
 
 #include "linq/enumerables.h"
 #include "linq/predicates.h"
@@ -27,6 +28,13 @@ PCL int OnInit()
 	FUNCTION("regexmatch", 				&GScr_RegexMatch);
 	FUNCTION("regexsplit", 				&GScr_RegexSplit);
 	FUNCTION("regexreplace", 			&GScr_RegexReplace);
+
+	// data/zip
+	FUNCTION("zip_add",					&GScr_ZIP_Add);
+	FUNCTION("zip_rename",				&GScr_ZIP_Rename);
+	FUNCTION("zip_delete",				&GScr_ZIP_Delete);
+	FUNCTION("zip_open",				&GScr_ZIP_Open);
+	FUNCTION("zip_close",				&GScr_ZIP_Close);
 
 	// linq/delegates
 	FUNCTION("select", 					&GScr_LINQ_Select);

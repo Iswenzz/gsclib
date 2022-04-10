@@ -1,2 +1,3 @@
 target_sources(gsclib.Tests PRIVATE
-	regex.test.c)
+	regex.test.c
+	zip.test.c)

@@ -1,6 +1,6 @@
 gsclib.so
 gsclib.dll
-.ignore
+*.ignore
 compile.bat
 build/
 build_linux/

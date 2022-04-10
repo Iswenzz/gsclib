@@ -3,15 +3,16 @@
 [![CodeFactor](https://www.codefactor.io/repository/github/iswenzz/gsclib/badge)](https://www.codefactor.io/repository/github/iswenzz/gsclib)
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 
-``gsclib`` acts as a standard library extension for the Call of Duty 4 scripting language. The features this library provides consists of an FTP/FTPS/SFTP client, an HTTP/HTTPS client, Regular Expression (RegEx) support, Language Integrated Query (Linq) support, a MySQL connector for databases, casting/type conversion and other type utilities, and much more. More detailed information on each feature can be found in the documentation section.
+``gsclib`` acts as a standard library extension for the Call of Duty 4 scripting language. The features this library provides consists of an FTP/FTPS/SFTP client, an HTTP/HTTPS client, Regular Expression (PCRE2) support, Language Integrated Query (Linq) support, a MySQL connector for databases, casting/type conversion/fmt and other type utilities, ZIP files, and much more. More detailed information on each feature can be found in the documentation section.
 
 ## Features & Documentation
 * [HTTP/HTTPS client](https://github.com/Iswenzz/gsclib/blob/master/docs/https.md)
 * [FTP/FTPS/SFTP client](https://github.com/Iswenzz/gsclib/blob/master/docs/ftp.md)
-* [Regular expression](https://github.com/Iswenzz/gsclib/blob/master/docs/regex.md)
+* [Regular expression (PCRE2)](https://github.com/Iswenzz/gsclib/blob/master/docs/regex.md)
 * [Language Integrated Query (Linq)](https://github.com/Iswenzz/gsclib/blob/master/docs/linq.md)
 * [MySQL](https://github.com/Iswenzz/gsclib/blob/master/docs/mysql.md)
 * [Utilities](https://github.com/Iswenzz/gsclib/blob/master/docs/utility.md)
+* [Zip](https://github.com/Iswenzz/gsclib/blob/master/docs/zip.md)
 
 ## Instructions
 In order to use this library, just download the archived file down below, and extract it to the Call of Duty 4X ``plugins/gsclib`` directory.

@@ -80,7 +80,7 @@ qboolean PCRE2_HasMatches(int rc, pcre2_code* re, pcre2_match_data* matchData)
         case PCRE2_ERROR_NOMATCH:
             break;
         default:
-            printf("Matching error %d\n", rc);
+            Plugin_Scr_Error(fmt("Matching error %d\n", rc));
             break;
         }
         pcre2_match_data_free(matchData);
@@ -98,7 +98,7 @@ qboolean PCRE2_CompileSuccess(pcre2_code* re, int* errorCode, PCRE2_SIZE* errorO
     PCRE2_UCHAR buffer[256];
     pcre2_get_error_message(*errorCode, buffer, sizeof(buffer));
 
-    Plugin_Printf("PCRE2 compilation failed at offset %d: %s\n", *(int*)errorOffset, buffer);
+    Plugin_Scr_Error(fmt("PCRE2 compilation failed at offset %d: %s\n", *(int*)errorOffset, buffer));
     pcre2_code_free(re);
     return qfalse;
 }

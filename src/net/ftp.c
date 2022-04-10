@@ -1,7 +1,7 @@
 #include "ftp.h"
+#include "data/file.h"
 
 #include <string.h>
-#include <sys/stat.h>
 #include <errno.h>
 
 size_t FTP_Write(void *buffer, size_t size, size_t nmemb, void *stream)
@@ -25,7 +25,7 @@ void GScr_SFTP_Connect()
 {
 	CHECK_PARAMS(4, "Usage: SFTP_Connect(<hostname>, <username>, <password>, <port>)");
 
-	qboolean connect = CURL_FTP_Connect("sftp", 
+	qboolean connect = CURL_FTP_Connect("sftp",
 		Plugin_Scr_GetString(0), Plugin_Scr_GetString(1),
 		Plugin_Scr_GetString(2), Plugin_Scr_GetInt(3));
 	Plugin_Scr_AddBool(connect);
