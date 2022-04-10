@@ -19,7 +19,7 @@ In order to use this library, just download the archived file down below, and ex
 
 ## Building (Linux)
 _Pre-Requisites:_
-1. Recompile your server with:
+1. Edit plugin_handle.h and recompile your server:
 ```c
 #define MAX_SCRIPTFUNCTIONS 256
 ```
@@ -33,7 +33,7 @@ _Build Command:_
 
 ## Building (Windows)
 _Pre-Requisites:_
-1. Recompile your server with:
+1. Edit plugin_handle.h and recompile your server:
 ```c
 #define MAX_SCRIPTFUNCTIONS 256
 ```

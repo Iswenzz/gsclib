@@ -6,7 +6,7 @@ void GScr_LINQ_All()
 	CHECK_PARAMS(2, "Usage: All(<array>, <::predicate>)");
 
 	VariableValueArray *array = Plugin_Scr_GetArray(0);
-	const int threadId = Plugin_Scr_GetFunc(1);
+	const int threadId = Plugin_Scr_GetFunction(1);
 	qboolean result = qtrue;
 
 	for (int i = 0; i < array->length; i++)
@@ -32,7 +32,7 @@ void GScr_LINQ_Any()
 	CHECK_PARAMS(2, "Usage: Any(<array>, <::predicate>)");
 
 	VariableValueArray *array = Plugin_Scr_GetArray(0);
-	const int threadId = Plugin_Scr_GetFunc(1);
+	const int threadId = Plugin_Scr_GetFunction(1);
 	qboolean result = qfalse;
 
 	for (int i = 0; i < array->length; i++)
@@ -58,7 +58,7 @@ void GScr_LINQ_Where()
 	CHECK_PARAMS(2, "Usage: Where(<array>, <::predicate>)");
 
 	VariableValueArray *array = Plugin_Scr_GetArray(0);
-	const int threadId = Plugin_Scr_GetFunc(1);
+	const int threadId = Plugin_Scr_GetFunction(1);
 
 	Plugin_Scr_MakeArray();
 	for (int i = 0; i < array->length; i++)
@@ -82,7 +82,7 @@ void GScr_LINQ_Last()
 	CHECK_PARAMS(2, "Usage: Last(<array>, <::predicate>)");
 
 	VariableValueArray *array = Plugin_Scr_GetArray(0);
-	const int threadId = Plugin_Scr_GetFunc(1);
+	const int threadId = Plugin_Scr_GetFunction(1);
 	VariableValue *last = NULL;
 
 	for (int i = 0; i < array->length; i++)
@@ -105,7 +105,7 @@ void GScr_LINQ_First()
 	CHECK_PARAMS(2, "Usage: First(<array>, <::predicate>)");
 
 	VariableValueArray *array = Plugin_Scr_GetArray(0);
-	const int threadId = Plugin_Scr_GetFunc(1);
+	const int threadId = Plugin_Scr_GetFunction(1);
 
 	for (int i = 0; i < array->length; i++)
 	{
@@ -129,7 +129,7 @@ void GScr_LINQ_Count()
 	CHECK_PARAMS(2, "Usage: Count(<array>, <::predicate>)");
 
 	VariableValueArray *array = Plugin_Scr_GetArray(0);
-	const int threadId = Plugin_Scr_GetFunc(1);
+	const int threadId = Plugin_Scr_GetFunction(1);
 	int result = 0;
 
 	for (int i = 0; i < array->length; i++)

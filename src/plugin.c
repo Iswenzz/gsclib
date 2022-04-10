@@ -22,7 +22,7 @@
 PCL int OnInit()
 {
 	CURLinitCode = curl_global_init(CURL_GLOBAL_ALL); 	// initialize curl library
-	MySQLcode = mysql_library_init(0, NULL, NULL); 		// initialize handle library
+	MySQLcode = mysql_library_init(0, NULL, NULL); 		// initialize mysql library
 
 	// data/regex
 	FUNCTION("regexmatch", 				&GScr_RegexMatch);
@@ -134,7 +134,7 @@ PCL int OnInit()
 PCL void OnTerminate()
 {
 	curl_global_cleanup(); 	// free curl library
-	mysql_library_end(); 	// free handle library
+	mysql_library_end(); 	// free mysql library
 }
 
 /**
