@@ -153,7 +153,7 @@ test_CURL_AddOpt()
 test_HTTPS_GetFile()
 {
 	url = "https://iswenzz.com:1337/speedrun_app/version.txt";
-	EXPECT_TRUE(HTTPS_GetFile("curl/version.txt", url));
+	EXPECT_TRUE(HTTPS_GetFile("temp/version.txt", url));
 }
 
 test_HTTPS_GetString()
@@ -165,7 +165,7 @@ test_HTTPS_GetString()
 test_HTTPS_PostFile()
 {
 	url = "http://httpbin.org/post";
-	EXPECT_CONTAIN(HTTPS_PostFile("curl/version.txt", url), "1.2");
+	EXPECT_CONTAIN(HTTPS_PostFile("temp/version.txt", url), "1.2");
 }
 
 test_HTTPS_PostString()
@@ -179,7 +179,7 @@ test_HTTPS_PostString()
 
 test_SFTP_Shell()
 {
-	EXPECT_TRUE(FTP_PostFile("curl/test.txt", "test.txt"));
+	EXPECT_TRUE(FTP_PostFile("temp/test.txt", "test.txt"));
 
 	CURL_AddHeader("rename test.txt new.txt");
 	EXPECT_TRUE(FTP_Shell());
@@ -190,8 +190,8 @@ test_SFTP_Shell()
 
 test_SFTP_PostGetFile()
 {
-	EXPECT_TRUE(FTP_PostFile("curl/test.txt", "get.txt"));
-	EXPECT_TRUE(FTP_GetFile("curl/test.txt", "get.txt"));
+	EXPECT_TRUE(FTP_PostFile("temp/test.txt", "get.txt"));
+	EXPECT_TRUE(FTP_GetFile("temp/test.txt", "get.txt"));
 
 	CURL_AddHeader("rm get.txt");
 	EXPECT_TRUE(FTP_Shell());
@@ -199,7 +199,7 @@ test_SFTP_PostGetFile()
 
 test_FTP_Shell()
 {
-	EXPECT_TRUE(FTP_PostFile("curl/test.txt", "test.txt"));
+	EXPECT_TRUE(FTP_PostFile("temp/test.txt", "test.txt"));
 
 	CURL_AddHeader("RNFR test.txt");
 	CURL_AddHeader("RNTO new.txt");
@@ -211,8 +211,8 @@ test_FTP_Shell()
 
 test_FTP_PostGetFile()
 {
-	EXPECT_TRUE(FTP_PostFile("curl/test.txt", "get.txt"));
-	EXPECT_TRUE(FTP_GetFile("curl/test.txt", "get.txt"));
+	EXPECT_TRUE(FTP_PostFile("temp/test.txt", "get.txt"));
+	EXPECT_TRUE(FTP_GetFile("temp/test.txt", "get.txt"));
 
 	CURL_AddHeader("DELE get.txt");
 	EXPECT_TRUE(FTP_Shell());

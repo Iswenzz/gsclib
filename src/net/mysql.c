@@ -591,7 +591,6 @@ void GScr_MySQL_Close()
 	CHECK_PARAMS(0, "Usage: SQL_Close()");
 
 	MySQL_Free();
-	Plugin_Printf("SQL_Close(): Successfully closed MySQL connection.\n");
 	Plugin_Scr_AddBool(qtrue);
 }
 

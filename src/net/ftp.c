@@ -96,7 +96,7 @@ void GScr_FTP_PostFile()
 		return;
 	}
 	fsize = (curl_off_t)file_info.st_size;
-	Plugin_Printf("Local file size: %" CURL_FORMAT_CURL_OFF_T " bytes.\n", fsize);
+
 	hd_src = fopen(filepath, "rb");
 	if (!hd_src)
 	{

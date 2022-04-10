@@ -1,7 +1,6 @@
 #include "data/zip.h"
 
 #include <greatest.h>
-#include <cwalk.h>
 #include <stdlib.h>
 
 static zip_t* zipFile;

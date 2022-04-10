@@ -227,9 +227,9 @@ test_Count()
 test_Sum()
 {
 	EXPECT_EQ(sum(level.tests.ints), 45);
-	EXPECT_EQ(sum(level.tests.floats), 47.25);
+	EXPECT_EQ(toInt(sum(level.tests.floats)), 47);
 	EXPECT_EQ(sum(level.tests.strings), "EllinAlexaCelizaIswenzz10");
-	EXPECT_EQ(sum(level.tests.vectors), (47.25, 47.25, 47.25));
+	EXPECT_EQ(toInt(sum(level.tests.vectors)) / 3, 47);
 }
 
 test_Select()
