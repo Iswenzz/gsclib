@@ -28,8 +28,11 @@ _Pre-Requisites:_
 
 _Build Command:_
 
-   	cd scripts
-	./build_linux.sh
+   	conan remote add iswenzz-conan https://iswenzz.jfrog.io/artifactory/api/conan/iswenzz-conan
+	mkdir build && cd build
+	conan install .. --build missing --profile ../.conan/linux.conf
+	cmake ..
+	cmake --build .
 
 ## Building (Windows)
 _Pre-Requisites:_
@@ -44,8 +47,12 @@ _Pre-Requisites:_
 **Using the Developer Command Prompt for Visual Studio**
 _Build Command:_
 
-    cd scripts
-	build_windows.bat
+    scripts/build_libcom.bat
+	conan remote add iswenzz-conan https://iswenzz.jfrog.io/artifactory/api/conan/iswenzz-conan
+	mkdir build && cd build
+	conan install .. --build missing --profile ../.conan/windows.conf
+	cmake .. -A Win32 -T ClangCL
+	cmake --build .
 
 ***Note:***
 VCPKG integration need to be disabled ``vcpkg integration remove``.
