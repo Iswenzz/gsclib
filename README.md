@@ -30,7 +30,7 @@ _Build Command:_
 
    	conan remote add iswenzz-conan https://iswenzz.jfrog.io/artifactory/api/conan/iswenzz-conan
 	mkdir build && cd build
-	conan install .. --build missing --profile ../.conan/linux.conf
+	conan install .. --build missing --profile:host ../.conan/linux_host.conf --profile:build ../.conan/linux_build.conf
 	cmake ..
 	cmake --build .
 
