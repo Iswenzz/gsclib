@@ -5,6 +5,8 @@ set(CMAKE_C_STANDARD 11)
 set(CMAKE_C_STANDARD_REQUIRED ON)
 set(CMAKE_C_FLAGS "-m32 -Wall -O1 -s -mtune=core2")
 set(CMAKE_SHARED_LINKER_FLAGS "-m32 -s -shared -static-libgcc -static-libstdc++")
+set(CMAKE_SHARED_LIBRARY_PREFIX "")
+set(CMAKE_STATIC_LIBRARY_PREFIX "")
 add_definitions(-D_CRT_SECURE_NO_WARNINGS)
 
 # CPack
