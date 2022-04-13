@@ -1,6 +1,11 @@
 #pragma once
 #include <cgsc.h>
 
+#ifdef _MSC_VER 
+	#define strncasecmp _strnicmp
+	#define strcasecmp _stricmp
+#endif
+
 /// <summary>
 /// Check if a string is undefined or empty.
 /// </summary>

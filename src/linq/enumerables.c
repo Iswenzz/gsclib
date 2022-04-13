@@ -1,4 +1,5 @@
 #include "enumerables.h"
+#include "utils/stringutils.h"
 #include "utils/polycmp.h"
 #include "utils/utils.h"
 
@@ -201,11 +202,11 @@ void GScr_LINQ_Cast()
 	const char *typename = Plugin_Scr_GetString(1);
 
 	Plugin_Scr_MakeArray();
-	if (stricmp(typename, "string") == 0)
+	if (strcasecmp(typename, "string") == 0)
 		Scr_StringCast(array);
-	else if (stricmp(typename, "int") == 0)
+	else if (strcasecmp(typename, "int") == 0)
 		Scr_IntCast(array);
-	else if (stricmp(typename, "float") == 0)
+	else if (strcasecmp(typename, "float") == 0)
 		Scr_FloatCast(array);
 	Plugin_Scr_FreeArray(array);
 }
@@ -325,21 +326,21 @@ void GScr_LINQ_OfType()
 	const char *typename = Plugin_Scr_GetString(1);
 
 	int ofType = VAR_UNDEFINED;
-	if (stricmp(typename, "int") == 0) 
+	if (strcasecmp(typename, "int") == 0) 
 		ofType = VAR_INTEGER;
-	else if (stricmp(typename, "float") == 0) 
+	else if (strcasecmp(typename, "float") == 0) 
 		ofType = VAR_FLOAT;
-	else if (stricmp(typename, "vector") == 0) 
+	else if (strcasecmp(typename, "vector") == 0) 
 		ofType = VAR_VECTOR;
-	else if (stricmp(typename, "array") == 0) 
+	else if (strcasecmp(typename, "array") == 0) 
 		ofType = VAR_ARRAY;
-	else if (stricmp(typename, "struct") == 0) 
+	else if (strcasecmp(typename, "struct") == 0) 
 		ofType = VAR_OBJECT;
-	else if (stricmp(typename, "string") == 0) 
+	else if (strcasecmp(typename, "string") == 0) 
 		ofType = VAR_STRING;
-	else if (stricmp(typename, "istring") == 0) 
+	else if (strcasecmp(typename, "istring") == 0) 
 		ofType = VAR_ISTRING;
-	else if (stricmp(typename, "ent") == 0) 
+	else if (strcasecmp(typename, "ent") == 0) 
 		ofType = VAR_ENTITY;
 
 	Plugin_Scr_MakeArray();
