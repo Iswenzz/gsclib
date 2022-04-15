@@ -1,5 +1,6 @@
 [requires]
 CGSC/1.1.0
+cwalk/1.2.5
 greatest/1.5.0
 libmysqlclient/8.0.17
 libcurl/7.80.0
