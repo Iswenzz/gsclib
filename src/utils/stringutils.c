@@ -2,8 +2,9 @@
 #include "vsnprintf.h"
 
 #include <cgsc.h>
-#include <stdlib.h>
+#include <cwalk.h>
 #include <ctype.h>
+#include <stdlib.h>
 
 void GScr_IsStringAlpha()
 {
@@ -144,4 +145,71 @@ void GScr_Trim()
 		ptr--; 
 	}
 	Plugin_Scr_AddString(string);
+}
+
+void GScr_StartsWith()
+{
+	CHECK_PARAMS(2, "Usage: StartsWith(<string>, <value>)");
+
+	const char* string = Plugin_Scr_GetString(0);
+	const char* value = Plugin_Scr_GetString(1);
+
+	size_t stringLen = strlen(string);
+	size_t valueLen = strlen(value);
+
+	Plugin_Scr_AddBool(stringLen < valueLen ? qfalse : memcmp(value, string, valueLen) == 0);
+}
+
+void GScr_EndsWith()
+{
+	CHECK_PARAMS(2, "Usage: EndsWith(<string>, <value>)");
+
+	const char* string = Plugin_Scr_GetString(0);
+	const char* value = Plugin_Scr_GetString(1);
+
+	size_t stringLen = strlen(string);
+	size_t valueLen = strlen(value);
+
+	Plugin_Scr_AddBool(stringLen >= valueLen && memcmp(string + stringLen - valueLen, value, valueLen) == 0);
+}
+
+void GScr_StrJoin()
+{
+	CHECK_PARAMS(2, "Usage: StrJoin(<array>, <separator>)");
+
+	VariableValueArray* array = Plugin_Scr_GetArray(0);
+	const char* separator = Plugin_Scr_GetString(1);
+
+	char result[MAX_STRING_CHARS] = { 0 };
+	uint32_t flags = Plugin_Scr_GetArrayFlags(array);
+
+	if (IsFlag(flags, FLAG_STRING) || IsFlag(flags, FLAG_ISTRING))
+	{
+		for (int i = 0; i < array->length; i++)
+		{
+			const char* toJoin = Plugin_SL_ConvertToString(array->items[i]->u.stringValue);
+			strcat(result, fmt("%s%s", toJoin, i == array->length - 1 ? "" : separator));
+		}
+	}
+	Plugin_Scr_AddString(result);
+}
+
+void GScr_PathJoin()
+{
+	const int argCount = Plugin_Scr_GetNumParam();
+	if (argCount < 2)
+	{
+		Plugin_Scr_Error("Usage: PathJoin(<paths...>)");
+		return;
+	}
+	char buffer[MAX_STRING_CHARS] = { 0 };
+	strcpy(buffer, Plugin_SL_ConvertToString(Plugin_Scr_SelectParam(0)->u.stringValue));
+
+	for (int i = 1; i < argCount; i++)
+	{
+		int stringIndex = Plugin_Scr_SelectParam(i)->u.stringValue;
+		const char* path = Plugin_SL_ConvertToString(stringIndex);
+		cwk_path_join(buffer, path, buffer, sizeof(buffer));
+	}
+	Plugin_Scr_AddString(buffer);
 }

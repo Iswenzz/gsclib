@@ -50,3 +50,23 @@ void GScr_Fmt();
 /// Trim a string.
 /// </summary>
 void GScr_Trim();
+
+/// <summary>
+/// Check if a string starts with a specific value.
+/// </summary>
+void GScr_StartsWith();
+
+/// <summary>
+/// Check if a string ends with a specific value.
+/// </summary>
+void GScr_EndsWith();
+
+/// <summary>
+/// Join string array with a separator.
+/// </summary>
+void GScr_StrJoin();
+
+/// <summary>
+/// Join filepath strings.
+/// </summary>
+void GScr_PathJoin();

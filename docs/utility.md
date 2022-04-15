@@ -154,3 +154,36 @@ rgb = HexToRGB("#AABBCC");
 rgb = HexToRGB("AABBCC");
 ```
 <hr>
+
+#### ``StartsWith(<string>, <value>)``
+Check if a string starts with a specific value.
+
+```c
+StartsWith("hello world", "hello");
+```
+<hr>
+
+#### ``EndsWith(<string>, <value>)``
+Check if a string ends with a specific value.
+
+```c
+EndsWith("hello world", "world");
+```
+<hr>
+
+#### ``StrJoin(<array>, <separator>)``
+Join string array with a separator.
+
+```c
+str = StrJoin(array, "-");
+```
+<hr>
+
+#### ``PathJoin(<paths...>)``
+Join filepath strings.
+
+```c
+path = StrJoin("C:\\home", "cod4", "speedrun");
+path = StrJoin("/home", "cod4", "speedrun");
+```
+<hr>

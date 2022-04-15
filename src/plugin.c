@@ -127,6 +127,10 @@ PCL int OnInit()
 	FUNCTION("hextorgb", 				&GScr_HexToRGB);
 	FUNCTION("fmt", 					&GScr_Fmt);
 	FUNCTION("trim", 					&GScr_Trim);
+	FUNCTION("startswith", 				&GScr_StartsWith);
+	FUNCTION("endswith", 				&GScr_EndsWith);
+	FUNCTION("strjoin", 				&GScr_StrJoin);
+	FUNCTION("pathjoin", 				&GScr_PathJoin);
 
 	return 0;
 }
