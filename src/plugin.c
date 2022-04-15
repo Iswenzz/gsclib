@@ -39,6 +39,7 @@ PCL int OnInit()
 	// linq/delegates
 	FUNCTION("select", 					&GScr_LINQ_Select);
 	FUNCTION("foreach", 				&GScr_LINQ_Foreach);
+	FUNCTION("aggregate", 				&GScr_LINQ_Aggregate);
 
 	// linq/predicates
 	FUNCTION("all", 					&GScr_LINQ_All);
@@ -59,6 +60,7 @@ PCL int OnInit()
 	FUNCTION("range",					&GScr_LINQ_Range);
 	FUNCTION("repeat",					&GScr_LINQ_Repeat);
 	FUNCTION("reverse", 				&GScr_LINQ_Reverse);
+	FUNCTION("concat", 					&GScr_LINQ_Concat);
 
 	// net/curl
 	FUNCTION("curl_version", 			&GScr_CURL_Version);

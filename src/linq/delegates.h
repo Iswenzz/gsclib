@@ -10,3 +10,8 @@ void GScr_LINQ_Select();
 /// Executes a provided function for each array element.
 /// </summary>
 void GScr_LINQ_Foreach();
+
+/// <summary>
+/// Aggregate the result of multiple delegate.
+/// </summary>
+void GScr_LINQ_Aggregate();

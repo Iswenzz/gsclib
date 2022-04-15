@@ -16,6 +16,14 @@ Foreach(players, ::heal);
 ```
 <hr>
 
+#### ``Aggregate(<initialValue>, <array>, <delegate>)``
+Aggregate the result of multiple delegate.
+
+```c
+result = Aggregate(initialValue, array, ::delegate);
+```
+<hr>
+
 #### ``All(<array>, <predicate>)``
 Check if all items match the predicate.
 
@@ -145,5 +153,13 @@ Reverse the array.
 
 ```c
 new_array = Reverse(array);
+```
+<hr>
+
+#### ``Concat(<arraySource>, <array>)``
+Concat an array with another array.
+
+```c
+new_array = Concat(arraySource, array);
 ```
 <hr>

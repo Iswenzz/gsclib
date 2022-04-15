@@ -12,8 +12,9 @@ void GScr_LINQ_All()
 	for (int i = 0; i < array->length; i++)
 	{
 		// Call predicate(item)
+		Plugin_Scr_AddInt(i);
 		Plugin_Scr_AddVariable(array->items[i]);
-		const short tid = Plugin_Scr_ExecThread(threadId, 1);
+		const short tid = Plugin_Scr_ExecThread(threadId, 2);
 
 		if (!Plugin_Scr_GetThreadReturn())
 		{
@@ -38,8 +39,9 @@ void GScr_LINQ_Any()
 	for (int i = 0; i < array->length; i++)
 	{
 		// Call predicate(item)
+		Plugin_Scr_AddInt(i);
 		Plugin_Scr_AddVariable(array->items[i]);
-		const short tid = Plugin_Scr_ExecThread(threadId, 1);
+		const short tid = Plugin_Scr_ExecThread(threadId, 2);
 
 		if (Plugin_Scr_GetThreadReturn())
 		{
@@ -64,8 +66,9 @@ void GScr_LINQ_Where()
 	for (int i = 0; i < array->length; i++)
 	{
 		// Call predicate(item)
+		Plugin_Scr_AddInt(i);
 		Plugin_Scr_AddVariable(array->items[i]);
-		const short tid = Plugin_Scr_ExecThread(threadId, 1);
+		const short tid = Plugin_Scr_ExecThread(threadId, 2);
 
 		if (Plugin_Scr_GetThreadReturn())
 		{
@@ -88,8 +91,9 @@ void GScr_LINQ_Last()
 	for (int i = 0; i < array->length; i++)
 	{
 		// Call predicate(item)
+		Plugin_Scr_AddInt(i);
 		Plugin_Scr_AddVariable(array->items[i]);
-		const short tid = Plugin_Scr_ExecThread(threadId, 1);
+		const short tid = Plugin_Scr_ExecThread(threadId, 2);
 
 		if (Plugin_Scr_GetThreadReturn())
 			last = array->items[i];
@@ -110,8 +114,9 @@ void GScr_LINQ_First()
 	for (int i = 0; i < array->length; i++)
 	{
 		// Call predicate(item)
+		Plugin_Scr_AddInt(i);
 		Plugin_Scr_AddVariable(array->items[i]);
-		const short tid = Plugin_Scr_ExecThread(threadId, 1);
+		const short tid = Plugin_Scr_ExecThread(threadId, 2);
 
 		if (Plugin_Scr_GetThreadReturn())
 		{
@@ -135,8 +140,9 @@ void GScr_LINQ_Count()
 	for (int i = 0; i < array->length; i++)
 	{
 		// Call predicate(item)
+		Plugin_Scr_AddInt(i);
 		Plugin_Scr_AddVariable(array->items[i]);
-		const short tid = Plugin_Scr_ExecThread(threadId, 1);
+		const short tid = Plugin_Scr_ExecThread(threadId, 2);
 
 		if (Plugin_Scr_GetThreadReturn())
 			result++;

@@ -54,6 +54,11 @@ void GScr_LINQ_Repeat();
 void GScr_LINQ_Reverse();
 
 /// <summary>
+/// Concat an array with another array.
+/// </summary>
+void GScr_LINQ_Concat();
+
+/// <summary>
 /// Get the min string in a GSC array.
 /// </summary>
 /// <param name="array">The variable array.</param>

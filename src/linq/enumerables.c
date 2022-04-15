@@ -546,3 +546,24 @@ void GScr_LINQ_Repeat()
 	}
 	Plugin_Scr_FreeArray(array);
 }
+
+void GScr_LINQ_Concat()
+{
+	CHECK_PARAMS(2, "Usage: Repeat(<arraySource>, <array>)");
+
+	VariableValueArray* arraySource = Plugin_Scr_GetArray(0);
+	VariableValueArray* array = Plugin_Scr_GetArray(1);
+
+	Plugin_Scr_MakeArray();
+	for (int i = 0; i < arraySource->length; i++)
+	{
+		Plugin_Scr_AddVariable(arraySource->items[i]);
+		Plugin_Scr_AddArray();
+	}
+	for (int i = 0; i < array->length; i++)
+	{
+		Plugin_Scr_AddVariable(array->items[i]);
+		Plugin_Scr_AddArray();
+	}
+	Plugin_Scr_FreeArray(array);
+}
