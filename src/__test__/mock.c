@@ -15,7 +15,7 @@ void Plugin_Printf(const char* fmt, ...)
 
 void Plugin_Scr_Error(const char* msg)
 {
-    assert(msg);
+    printf("%s\n", msg);
 }
 
 int Plugin_Scr_GetNumParam()
