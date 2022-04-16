@@ -79,7 +79,7 @@ beforeAll()
 {
 	if (hasMySQL())
 	{
-		SQL_Connect("127.0.0.1", 3306, "root", "rootpassword");
+		SQL_Connect("192.168.1.86", 3306, "root", "rootpassword");
 		SQL_SelectDB("sr");
 	}
 }
@@ -152,8 +152,8 @@ test_CURL_AddOpt()
 
 test_HTTPS_GetFile()
 {
-	url = "https://iswenzz.com:1337/speedrun_app/version.txt";
-	EXPECT_TRUE(HTTPS_GetFile("temp/version.txt", url));
+	url = "https://iswenzz.com/";
+	EXPECT_TRUE(HTTPS_GetFile("temp/iswenzz.html", url));
 }
 
 test_HTTPS_GetString()
@@ -165,7 +165,7 @@ test_HTTPS_GetString()
 test_HTTPS_PostFile()
 {
 	url = "http://httpbin.org/post";
-	EXPECT_CONTAIN(HTTPS_PostFile("temp/version.txt", url), "1.2");
+	EXPECT_CONTAIN(HTTPS_PostFile("temp/iswenzz.html", url), "Iswenzz");
 }
 
 test_HTTPS_PostString()
@@ -179,6 +179,7 @@ test_HTTPS_PostString()
 
 test_SFTP_Shell()
 {
+	FILE_Create("temp/test.txt");
 	EXPECT_TRUE(FTP_PostFile("temp/test.txt", "test.txt"));
 
 	CURL_AddHeader("rename test.txt new.txt");
@@ -199,6 +200,7 @@ test_SFTP_PostGetFile()
 
 test_FTP_Shell()
 {
+	FILE_Create("temp/test.txt");
 	EXPECT_TRUE(FTP_PostFile("temp/test.txt", "test.txt"));
 
 	CURL_AddHeader("RNFR test.txt");
@@ -395,5 +397,5 @@ test_SQL_ListTables()
 
 test_SQL_Version()
 {
-	EXPECT_EQ(SQL_Version(), "8.0.25");
+	EXPECT_EQ(SQL_Version(), "8.0.17");
 }

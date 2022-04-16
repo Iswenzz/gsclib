@@ -24,6 +24,18 @@ PCL int OnInit()
 	CURLinitCode = curl_global_init(CURL_GLOBAL_ALL); 	// initialize curl library
 	MySQLcode = mysql_library_init(0, NULL, NULL); 		// initialize mysql library
 
+	// data/file
+	FUNCTION("file_create",				&GScr_FILE_Create);
+	FUNCTION("file_open",				&GScr_FILE_Open);
+	FUNCTION("file_close",				&GScr_FILE_Close);
+	FUNCTION("file_exists",				&GScr_FILE_Exists);
+	FUNCTION("file_readline",			&GScr_FILE_ReadLine);
+	FUNCTION("file_writeline",			&GScr_FILE_WriteLine);
+	FUNCTION("file_read",				&GScr_FILE_Read);
+	FUNCTION("file_write",				&GScr_FILE_Write);
+	FUNCTION("file_seek",				&GScr_FILE_Seek);
+	FUNCTION("file_delete",				&GScr_FILE_Delete);
+
 	// data/regex
 	FUNCTION("regexmatch", 				&GScr_RegexMatch);
 	FUNCTION("regexsplit", 				&GScr_RegexSplit);

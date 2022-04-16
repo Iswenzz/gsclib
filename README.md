@@ -12,6 +12,7 @@
 * [Language Integrated Query (Linq)](https://github.com/Iswenzz/gsclib/blob/master/docs/linq.md)
 * [MySQL](https://github.com/Iswenzz/gsclib/blob/master/docs/mysql.md)
 * [Utilities](https://github.com/Iswenzz/gsclib/blob/master/docs/utility.md)
+* [File](https://github.com/Iswenzz/gsclib/blob/master/docs/file.md)
 * [Zip](https://github.com/Iswenzz/gsclib/blob/master/docs/zip.md)
 
 ## Instructions

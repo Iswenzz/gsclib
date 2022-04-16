@@ -15,6 +15,10 @@ main()
 	it(::test_HexToRGB, "HexToRGB");
 	it(::test_Fmt, "Fmt");
 	it(::test_Trim, "Trim");
+	it(::test_StartsWith, "StartsWith");
+	it(::test_EndsWith, "EndsWith");
+	it(::test_StrJoin, "StrJoin");
+	it(::test_PathJoin, "PathJoin");
 
 	// utils/utils
 	it(::test_GetType, "GetType");
@@ -24,6 +28,29 @@ main()
 	it(::test_ToFloat, "ToFloat");
 	it(::test_ToString, "ToString");
 	it(::test_GetSysTime, "GetSysTime");
+}
+
+test_StrJoin()
+{
+	EXPECT_EQ(StrJoin(level.tests.strings, "-"), "Ellin-Alexa-Celiza-Iswenzz-10");
+}
+
+test_PathJoin()
+{
+	EXPECT_GT(PathJoin("/home", "cod4", "speedrun").size, 10);
+	EXPECT_GT(PathJoin("C:\\home", "cod4", "speedrun").size, 10);
+}
+
+test_StartsWith()
+{
+	EXPECT_TRUE(StartsWith("hello world", "hello"));
+	EXPECT_FALSE(StartsWith("hello world", "world"));
+}
+
+test_EndsWith()
+{
+	EXPECT_FALSE(EndsWith("hello world", "hello"));
+	EXPECT_TRUE(EndsWith("hello world", "world"));
 }
 
 test_Trim()
