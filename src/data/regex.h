@@ -117,4 +117,4 @@ PCRE2_VALUES* PCRE2_Split(PCRE2_SPTR subject, PCRE2_SPTR regex);
 /// <param name="regex">The regex pattern.</param>
 /// <param name="replace">The string to replace all matches.</param>
 /// <returns></returns>
-char* PCRE2_Replace(PCRE2_SPTR subject, PCRE2_SPTR regex, char* replace);
+char* PCRE2_Replace(PCRE2_SPTR subject, PCRE2_SPTR regex, const char* replace);

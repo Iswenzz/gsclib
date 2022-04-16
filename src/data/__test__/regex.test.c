@@ -31,7 +31,7 @@ TEST test_regexMatch()
     PCRE2_VALUES* matches = NULL;
     for (int i = 0; i < 3; i++)
     {
-        matches = PCRE2_Match(expects[i].subject, expects[i].regex);
+        matches = PCRE2_Match((PCRE2_SPTR)expects[i].subject, (PCRE2_SPTR)expects[i].regex);
         for (int j = 0; matches != NULL && j < matches->count; j++)
             ASSERT_STR_EQ(matches->results[j].string, expects[i].values[j]);
         PCRE2_FreeValues(matches);
@@ -62,7 +62,7 @@ TEST test_regexSplit()
     PCRE2_VALUES* splits = NULL;
     for (int i = 0; i < 3; i++)
     {
-        splits = PCRE2_Split(expects[i].subject, expects[i].regex);
+        splits = PCRE2_Split((PCRE2_SPTR)expects[i].subject, (PCRE2_SPTR)expects[i].regex);
         for (int j = 0; splits != NULL && j < splits->count; j++)
             ASSERT_STR_EQ(splits->results[j].string, expects[i].values[j]);
         PCRE2_FreeValues(splits);
@@ -94,7 +94,7 @@ TEST test_regexReplace()
 
     for (int i = 0; i < 3; i++)
     {
-        string = PCRE2_Replace(expects[i].subject, expects[i].regex, replace);
+        string = PCRE2_Replace((PCRE2_SPTR)expects[i].subject, (PCRE2_SPTR)expects[i].regex, replace);
         ASSERT_STR_EQ(string, expects[i].values[0]);
         free(string);
     }

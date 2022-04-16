@@ -11,14 +11,6 @@ int Scr_vsnprintf(char* str, size_t size, const char* format, VariableValue* arg
 	INTMAX_T value;
 	unsigned char cvalue;
 	const char* strvalue;
-	INTMAX_T* intmaxptr;
-	PTRDIFF_T* ptrdiffptr;
-	SSIZE_T* sizeptr;
-	LLONG* llongptr;
-	long int* longptr;
-	int* intptr;
-	short int* shortptr;
-	signed char* charptr;
 	size_t len = 0;
 	int overflow = 0;
 	int base = 0;
@@ -310,7 +302,7 @@ int Scr_vsnprintf(char* str, size_t size, const char* format, VariableValue* arg
 				 * characters, in an implementation-defined
 				 * manner." (C99: 7.19.6.1, 8)
 				 */
-				if ((strvalue = (*(args++)).u.pointerValue) == NULL)
+				if ((strvalue = (const char *)(*(args++)).u.pointerValue) == NULL)
 				{
 					/**
 					 * We use the glibc format.  BSD prints
@@ -357,7 +349,7 @@ out:
 	return (int)len;
 }
 
-static void fmtstr(char* str, size_t* len, size_t size, const char* value, 
+void fmtstr(char* str, size_t* len, size_t size, const char* value, 
 	int width, int precision, int flags)
 {
 	int padlen, strln;
@@ -393,7 +385,7 @@ static void fmtstr(char* str, size_t* len, size_t size, const char* value,
 	}
 }
 
-static void fmtint(char* str, size_t* len, size_t size, INTMAX_T value, int base, 
+void fmtint(char* str, size_t* len, size_t size, INTMAX_T value, int base, 
 	int width, int precision, int flags)
 {
 	UINTMAX_T uvalue;
@@ -499,7 +491,7 @@ static void fmtint(char* str, size_t* len, size_t size, INTMAX_T value, int base
 	}
 }
 
-static void fmtflt(char* str, size_t* len, size_t size, LDOUBLE fvalue, int width,
+void fmtflt(char* str, size_t* len, size_t size, LDOUBLE fvalue, int width,
 	int precision, int flags, int* overflow)
 {
 	LDOUBLE ufvalue;
@@ -810,7 +802,7 @@ again:
 	}
 }
 
-static void printsep(char* str, size_t* len, size_t size)
+void printsep(char* str, size_t* len, size_t size)
 {
 #if HAVE_LOCALECONV && HAVE_LCONV_THOUSANDS_SEP
 	struct lconv* lc = localeconv();
@@ -826,7 +818,7 @@ static void printsep(char* str, size_t* len, size_t size)
 		OUTCHAR(str, *len, size, ',');
 }
 
-static int getnumsep(int digits)
+int getnumsep(int digits)
 {
 	int separators = (digits - ((digits % 3 == 0) ? 1 : 0)) / 3;
 #if HAVE_LOCALECONV && HAVE_LCONV_THOUSANDS_SEP
@@ -844,7 +836,7 @@ static int getnumsep(int digits)
 	return separators;
 }
 
-static int getexponent(LDOUBLE value)
+int getexponent(LDOUBLE value)
 {
 	LDOUBLE tmp = (value >= 0.0) ? value : -value;
 	int exponent = 0;
@@ -863,7 +855,7 @@ static int getexponent(LDOUBLE value)
 	return exponent;
 }
 
-static int convert(UINTMAX_T value, char* buf, size_t size, int base, int caps)
+int convert(UINTMAX_T value, char* buf, size_t size, int base, int caps)
 {
 	const char* digits = caps ? "0123456789ABCDEF" : "0123456789abcdef";
 	size_t pos = 0;
@@ -879,7 +871,7 @@ static int convert(UINTMAX_T value, char* buf, size_t size, int base, int caps)
 	return (int)pos;
 }
 
-static UINTMAX_T cast(LDOUBLE value)
+UINTMAX_T cast(LDOUBLE value)
 {
 	UINTMAX_T result;
 
@@ -902,13 +894,13 @@ static UINTMAX_T cast(LDOUBLE value)
 	return (result <= value) ? result : result - 1;
 }
 
-static UINTMAX_T myround(LDOUBLE value)
+UINTMAX_T myround(LDOUBLE value)
 {
 	UINTMAX_T intpart = cast(value);
 	return ((value -= intpart) < 0.5) ? intpart : intpart + 1;
 }
 
-static LDOUBLE mypow10(int exponent)
+LDOUBLE mypow10(int exponent)
 {
 	LDOUBLE result = 1;
 

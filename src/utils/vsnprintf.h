@@ -177,7 +177,7 @@ int Scr_vsnprintf(char* str, size_t size, const char* format, VariableValue *arg
 /// <param name="width">The string width.</param>
 /// <param name="precision">The string precision.</param>
 /// <param name="flags">The string flags.</param>
-static void fmtstr(char* str, size_t * len, size_t size, const char* value, 
+void fmtstr(char* str, size_t * len, size_t size, const char* value, 
 	int width, int precision, int flags);
 
 /// <summary>
@@ -191,7 +191,7 @@ static void fmtstr(char* str, size_t * len, size_t size, const char* value,
 /// <param name="width">The int width.</param>
 /// <param name="precision">The int precision.</param>
 /// <param name="flags">The int flags.</param>
-static void fmtint(char* str, size_t * len, size_t size, INTMAX_T value, int base, 
+void fmtint(char* str, size_t * len, size_t size, INTMAX_T value, int base, 
 	int width, int precision, int flags);
 
 /// <summary>
@@ -205,7 +205,7 @@ static void fmtint(char* str, size_t * len, size_t size, INTMAX_T value, int bas
 /// <param name="precision">The float precision.</param>
 /// <param name="flags">The float flags.</param>
 /// <param name="overflow">The overflow out value.</param>
-static void fmtflt(char* str, size_t * len, size_t size, LDOUBLE fvalue, int width,
+void fmtflt(char* str, size_t * len, size_t size, LDOUBLE fvalue, int width,
 	int precision, int flags, int* overflow);
 
 /// <summary>
@@ -214,21 +214,21 @@ static void fmtflt(char* str, size_t * len, size_t size, LDOUBLE fvalue, int wid
 /// <param name="str">The string buffer.</param>
 /// <param name="len">The string position.</param>
 /// <param name="size">The string size.</param>
-static void printsep(char* str, size_t * len, size_t size);
+void printsep(char* str, size_t * len, size_t size);
 
 /// <summary>
 /// Get number of separators.
 /// </summary>
 /// <param name="digits">The digit to get.</param>
 /// <returns></returns>
-static int getnumsep(int digits);
+int getnumsep(int digits);
 
 /// <summary>
 /// Get the exponent.
 /// </summary>
 /// <param name="value">The value.</param>
 /// <returns></returns>
-static int getexponent(LDOUBLE value);
+int getexponent(LDOUBLE value);
 
 /// <summary>
 /// Converts an integer to a specific base.
@@ -239,25 +239,25 @@ static int getexponent(LDOUBLE value);
 /// <param name="base">The base to use.</param>
 /// <param name="caps">Check caps letters.</param>
 /// <returns></returns>
-static int convert(UINTMAX_T value, char* buf, size_t size, int base, int caps);
+int convert(UINTMAX_T value, char* buf, size_t size, int base, int caps);
 
 /// <summary>
 /// Cast a long double to integer.
 /// </summary>
 /// <param name="value">The value to cast.</param>
 /// <returns></returns>
-static UINTMAX_T cast(LDOUBLE value);
+UINTMAX_T cast(LDOUBLE value);
 
 /// <summary>
 /// Round x to the nearest integer.
 /// </summary>
 /// <param name="value">The value to round.</param>
 /// <returns></returns>
-static UINTMAX_T myround(LDOUBLE value);
+UINTMAX_T myround(LDOUBLE value);
 
 /// <summary>
 /// The value of 10 raised to the power x. 
 /// </summary>
 /// <param name="exponent">The exponent power.</param>
 /// <returns></returns>
-static LDOUBLE mypow10(int exponent);
+LDOUBLE mypow10(int exponent);

@@ -11,7 +11,7 @@ void GScr_RegexSplit()
     const char* subject = Plugin_Scr_GetString(0);
     const char* regex = Plugin_Scr_GetString(1);
 
-    PCRE2_VALUES* splits = PCRE2_Split(subject, regex);
+    PCRE2_VALUES* splits = PCRE2_Split((PCRE2_SPTR)subject, (PCRE2_SPTR)regex);
     if (splits == NULL) return;
 
     Plugin_Scr_MakeArray();
@@ -30,7 +30,7 @@ void GScr_RegexMatch()
     const char* subject = Plugin_Scr_GetString(0);
     const char* regex = Plugin_Scr_GetString(1);
 
-    PCRE2_VALUES* matches = PCRE2_Match(subject, regex);
+    PCRE2_VALUES* matches = PCRE2_Match((PCRE2_SPTR)subject, (PCRE2_SPTR)regex);
     if (matches == NULL) return;
 
     Plugin_Scr_MakeArray();
@@ -50,7 +50,7 @@ void GScr_RegexReplace()
     const char* replace = Plugin_Scr_GetString(1);
     const char* regex = Plugin_Scr_GetString(2);
 
-    char* string = PCRE2_Replace(subject, regex, replace);
+    char* string = PCRE2_Replace((PCRE2_SPTR)subject, (PCRE2_SPTR)regex, replace);
     if (string == NULL) return;
 
     Plugin_Scr_AddString(string);
@@ -113,14 +113,14 @@ void PCRE2_AddValue(PCRE2_VALUE* value, char* string, int length, PCRE2_VALUES* 
         if (temp != NULL) values->results = temp;
     }
     values->results[values->count] = *value;
-    strncpy(&values->results[values->count].string, string, length);
+    strncpy(values->results[values->count].string, string, length);
     values->results[values->count].string[length] = '\0';
     values->count++;
 }
 
 PCRE2_VALUES* PCRE2_Compile(PCRE2_SPTR subject, PCRE2_SPTR regex)
 {
-    PCRE2_SIZE subjectLength = strlen(subject);
+    PCRE2_SIZE subjectLength = strlen((char *)subject);
     PCRE2_SIZE errorOffset;
     const int groupIndex = 0; // Capturing groups won't be part of the result values.
     int errorCode;
@@ -213,7 +213,7 @@ PCRE2_VALUES* PCRE2_Compile(PCRE2_SPTR subject, PCRE2_SPTR regex)
             {
                 int length = current.position;
                 value.matched = qfalse;
-                PCRE2_AddValue(&value, subject, length, values);
+                PCRE2_AddValue(&value, (char *)subject, length, values);
             }
             else if (i > 0)
             {
@@ -222,14 +222,14 @@ PCRE2_VALUES* PCRE2_Compile(PCRE2_SPTR subject, PCRE2_SPTR regex)
                 {
                     int length = current.position - pos;
                     value.matched = qfalse;
-                    PCRE2_AddValue(&value, subject + pos, length, values);
+                    PCRE2_AddValue(&value, (char*)subject + pos, length, values);
                 }
             }
         }
 
         // Matched string
         value.matched = qtrue;
-        PCRE2_AddValue(&value, subject + current.position, current.length, values);
+        PCRE2_AddValue(&value, (char*)subject + current.position, current.length, values);
     }
     pcre2_match_data_free(matchData);
     pcre2_code_free(re);
@@ -282,7 +282,7 @@ PCRE2_VALUES* PCRE2_Split(PCRE2_SPTR subject, PCRE2_SPTR regex)
     return splits;
 }
 
-char* PCRE2_Replace(PCRE2_SPTR subject, PCRE2_SPTR regex, char* replace)
+char* PCRE2_Replace(PCRE2_SPTR subject, PCRE2_SPTR regex, const char* replace)
 {
     char* string = (char*)calloc(MAX_STRING_CHARS, sizeof(char));
     PCRE2_VALUES* values = PCRE2_Compile(subject, regex);

@@ -46,12 +46,12 @@ void GScr_LINQ_Min()
 
 void Scr_StringMin(VariableValueArray* array)
 {
-	char* result = Plugin_SL_ConvertToString(array->items[0]->u.stringValue);;
+	char* result = (char *)Plugin_SL_ConvertToString(array->items[0]->u.stringValue);
 	int currentLength = strlen(result);
 
 	for (int i = 1; i < array->length; i++)
 	{
-		char* value = Plugin_SL_ConvertToString(array->items[i]->u.stringValue);
+		char* value = (char*)Plugin_SL_ConvertToString(array->items[i]->u.stringValue);
 		int length = strlen(value);
 
 		if (length < currentLength)
@@ -132,12 +132,12 @@ void GScr_LINQ_Max()
 
 void Scr_StringMax(VariableValueArray* array)
 {
-	char* result = Plugin_SL_ConvertToString(array->items[0]->u.stringValue);
+	char* result = (char *)Plugin_SL_ConvertToString(array->items[0]->u.stringValue);
 	int currentLength = strlen(result);
 
 	for (int i = 1; i < array->length; i++)
 	{
-		char* value = Plugin_SL_ConvertToString(array->items[i]->u.stringValue);
+		char* value = (char*)Plugin_SL_ConvertToString(array->items[i]->u.stringValue);
 		int length = strlen(value);
 
 		if (length > currentLength)

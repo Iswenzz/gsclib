@@ -37,7 +37,7 @@ void GScr_ZIP_Open()
 	CHECK_PARAMS(1, "Usage: ZIP_Open(<filepath>)");
 
 	const char* filepath = Plugin_Scr_GetString(0);
-	Plugin_Scr_AddInt(ZIP_Open(filepath));
+	Plugin_Scr_AddInt((int)ZIP_Open(filepath));
 }
 
 void GScr_ZIP_Close()

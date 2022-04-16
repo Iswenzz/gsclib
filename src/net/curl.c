@@ -2,8 +2,8 @@
 #include <stdlib.h>
 
 CURLcode CURLinitCode;
-CURLinstance curl = { NULL, 0, { 0 } };
-FTPinstance ftp = { NULL, { 0 }, { 0 }, 0};
+CURLinstance curl = { 0 };
+FTPinstance ftp = { 0 };
 
 CURLstring CURL_StringInit() 
 {

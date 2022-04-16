@@ -27,7 +27,7 @@ void GScr_FILE_Open()
 		Plugin_Scr_Error(fmt("Error: Couldn't open file %s", path));
 		return;
 	}
-	Plugin_Scr_AddInt(file);
+	Plugin_Scr_AddInt((int)file);
 }
 
 void GScr_FILE_Exists()
