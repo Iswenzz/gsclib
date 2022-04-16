@@ -4,6 +4,7 @@ gscunit()
 {
 	level.gscunit = spawnStruct();
 	level.gscunit.debug = false;
+	level.gscunit.clock = undefined;
 	level.gscunit.fail = false;
 	level.gscunit.count_pass = 0;
 	level.gscunit.count_fail = 0;
@@ -24,6 +25,10 @@ it(callback, name, beforeCallback, afterCallback)
 	clock = startClock();
     [[callback]]();
 	time = stopClock(clock);
+
+	// Global clock
+	if (!isDefined(level.gscunit.clock))
+		level.gscunit.clock = startClock();
 
 	// Result
 	result = Ternary(level.gscunit.fail, "FAIL", "PASS");
@@ -59,7 +64,8 @@ stopClock(clock)
 
 summarize()
 {
-	comPrintLn("\nPassed: %d Failed: %d\n", level.gscunit.count_pass, level.gscunit.count_fail);
+	time = stopClock(level.gscunit.clock);
+	comPrintLn("\nPassed: %d Failed: %d (%dms)\n", level.gscunit.count_pass, level.gscunit.count_fail, time);
 
 	level.gscunit.fail = false;
 	level.gscunit.count_pass = 0;
