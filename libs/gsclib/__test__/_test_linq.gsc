@@ -164,7 +164,7 @@ test_Sort()
 	EXPECT_EQ(Sort(level.tests.ints)[0], 0);
 	EXPECT_EQ(Sort(level.tests.floats)[0], 0);
 	EXPECT_EQ(Sort(level.tests.strings)[0], "10");
-	EXPECT_EQ(Sort(level.tests.vectors)[0], (1.05, 1.05, 1.05));
+	EXPECT_EQ(Sort(level.tests.vectors)[0], (0, 0, 0));
 }
 
 test_Average()

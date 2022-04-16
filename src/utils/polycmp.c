@@ -14,7 +14,7 @@ float VectorDistance(vec3_t a, vec3_t b)
 
 int VectorCmp(const void *a, const void *b)
 {
-	vec3_t zero;
+	vec3_t zero = { 0, 0, 0 };
 	vec3_t *vecA = (vec3_t *)a;
 	vec3_t *vecB = (vec3_t *)b;
 
@@ -50,22 +50,12 @@ int StringCmp(const void *a, const void *b)
 
 int Scr_VectorCmp(const void *a, const void *b)
 {
-	vec3_t zero;
+	vec3_t zero = { 0, 0, 0 };
 	VariableValue *ia = *(VariableValue **)a;
 	VariableValue *ib = *(VariableValue **)b;
 
-	vec3_t vecA;
-	vecA[0] = ia->u.vectorValue[0];
-	vecA[1] = ia->u.vectorValue[1];
-	vecA[2] = ia->u.vectorValue[2];
-
-	vec3_t vecB;
-	vecB[0] = ib->u.vectorValue[0];
-	vecB[1] = ib->u.vectorValue[1];
-	vecB[2] = ib->u.vectorValue[2];
-
-	float distanceA = VectorDistance(vecA, zero);
-	float distanceB = VectorDistance(vecB, zero);
+	float distanceA = VectorDistance((vec_t*)ia->u.vectorValue, zero);
+	float distanceB = VectorDistance((vec_t*)ib->u.vectorValue, zero);
 
 	return distanceA - distanceB;
 }
