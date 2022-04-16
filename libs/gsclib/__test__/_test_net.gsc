@@ -166,6 +166,7 @@ test_HTTPS_PostFile()
 {
 	url = "http://httpbin.org/post";
 	EXPECT_CONTAIN(HTTPS_PostFile("temp/iswenzz.html", url), "Iswenzz");
+	FILE_Delete("temp/iswenzz.html");
 }
 
 test_HTTPS_PostString()
@@ -196,6 +197,7 @@ test_SFTP_PostGetFile()
 
 	CURL_AddHeader("rm get.txt");
 	EXPECT_TRUE(FTP_Shell());
+	FILE_Delete("temp/test.txt");
 }
 
 test_FTP_Shell()
@@ -218,6 +220,7 @@ test_FTP_PostGetFile()
 
 	CURL_AddHeader("DELE get.txt");
 	EXPECT_TRUE(FTP_Shell());
+	FILE_Delete("temp/test.txt");
 }
 
 test_SQL_PrepareStatement()

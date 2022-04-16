@@ -83,7 +83,6 @@ delegateForeachIncrement(item, index)
 
 delagateAggregateInt(previous, current, index)
 {
-	comPrintLn("%d %d", previous, current);
 	return previous + current;
 }
 
