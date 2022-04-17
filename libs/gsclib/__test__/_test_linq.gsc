@@ -22,6 +22,7 @@ main()
 	it(::test_Repeat, "Repeat");
 	it(::test_Reverse, "Reverse");
 	it(::test_Concat, "Concat");
+	it(::test_IndexOf, "IndexOf");
 
 	// linq/predicates
 	it(::test_All, "All");
@@ -30,6 +31,15 @@ main()
 	it(::test_Last, "Last");
 	it(::test_First, "First");
 	it(::test_Count, "Count");
+}
+
+test_IndexOf()
+{
+	EXPECT_EQ(IndexOf(level.tests.ints, 3), 3);
+	EXPECT_EQ(IndexOf(level.tests.strings, "Iswenzz"), 3);
+	EXPECT_EQ(IndexOf(level.tests.floats, 1.05), 1);
+	EXPECT_EQ(IndexOf(level.tests.vectors, (1.05, 1.05, 1.05)), 1);
+	EXPECT_EQ(IndexOf(level.tests.strings, "WrongValue"), -1);
 }
 
 test_Aggregate()

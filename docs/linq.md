@@ -163,3 +163,11 @@ Concat an array with another array.
 new_array = Concat(arraySource, array);
 ```
 <hr>
+
+#### ``IndexOf(<array>, <element>)``
+Get the index of an element.
+
+```c
+index = IndexOf(array, 10);
+```
+<hr>

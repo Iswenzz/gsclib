@@ -59,6 +59,11 @@ void GScr_LINQ_Reverse();
 void GScr_LINQ_Concat();
 
 /// <summary>
+/// Get the index of an element.
+/// </summary>
+void GScr_LINQ_IndexOf();
+
+/// <summary>
 /// Get the min string in a GSC array.
 /// </summary>
 /// <param name="array">The variable array.</param>
