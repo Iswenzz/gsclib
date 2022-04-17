@@ -16,6 +16,9 @@ main()
 	it(::test_FILE_ReadLine, "FILE_ReadLine");
 	it(::test_FILE_Close, "FILE_Close");
 	it(::test_FILE_Delete, "FILE_Delete");
+	it(::test_FILE_MkDir, "FILE_MkDir");
+	it(::test_FILE_ReadDir, "FILE_ReadDir");
+	it(::test_FILE_RmDir, "FILE_RmDir");
 
 	// data/regex
 	it(::test_RegexMatch, "RegexMatch");
@@ -28,6 +31,28 @@ main()
 	it(::test_ZIP_Rename, "ZIP_Rename");
 	it(::test_ZIP_Delete, "ZIP_Delete");
 	it(::test_ZIP_Close, "ZIP_Close");
+}
+
+test_FILE_MkDir()
+{
+	EXPECT_TRUE(FILE_MkDir("mkdir"));
+}
+
+test_FILE_RmDir()
+{
+	EXPECT_TRUE(FILE_RmDir("mkdir"));
+}
+
+test_FILE_ReadDir()
+{
+	FILE_Create("mkdir/a.txt");
+	FILE_Create("mkdir/b.txt");
+
+	dir = FILE_ReadDir("mkdir");
+
+	EXPECT_EQ(dir.size, 2);
+	EXPECT_CONTAIN(dir, "a.txt");
+	EXPECT_CONTAIN(dir, "b.txt");
 }
 
 test_FILE_Create()

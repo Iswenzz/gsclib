@@ -4,6 +4,10 @@
 #include <cgsc.h>
 #include <stdlib.h>
 
+#ifdef _WIN32
+	#include <shellapi.h>
+#endif
+
 void GScr_FILE_Create()
 {
 	CHECK_PARAMS(1, "Usage: FILE_Create(<path>)");
@@ -11,7 +15,7 @@ void GScr_FILE_Create()
 	const char* path = Plugin_Scr_GetString(0);
 
 	FILE* file = fopen(path, "w");
-	Plugin_Scr_AddBool(fclose(file) == 0);
+	Plugin_Scr_AddBool(file ? fclose(file) == 0 : qfalse);
 }
 
 void GScr_FILE_Open()
@@ -169,5 +173,72 @@ void GScr_FILE_Close()
 	CHECK_PARAMS(1, "Usage: FILE_Close(<file>)");
 
 	FILE* file = (FILE*)Plugin_Scr_GetInt(0);
-	Plugin_Scr_AddBool(fclose(file) == 0);
+	Plugin_Scr_AddBool(file ? fclose(file) == 0 : qfalse);
 }
+
+void GScr_FILE_MkDir()
+{
+	CHECK_PARAMS(1, "Usage: FILE_MkDir(<path>)");
+	const char* path = Plugin_Scr_GetString(0);
+	
+#ifdef _WIN32
+	Plugin_Scr_AddBool(CreateDirectory(path, NULL));
+#else
+	Plugin_Scr_AddBool(mkdir(path, S_IRWXU | S_IRWXG | S_IRWXO) == 0);
+#endif
+}
+
+void GScr_FILE_RmDir()
+{
+	CHECK_PARAMS(1, "Usage: FILE_RmDir(<path>)");
+	const char* path = Plugin_Scr_GetString(0);
+
+#ifdef _WIN32
+	Plugin_Scr_AddBool(WIN_RemoveDirectory(path) == 0);
+#else
+	Plugin_Scr_AddBool(rmdir(path) == 0);
+#endif
+}
+
+void GScr_FILE_ReadDir()
+{
+	CHECK_PARAMS(1, "Usage: FILE_ReadDir(<path>)");
+
+	const char* path = Plugin_Scr_GetString(0);
+	DIR* dir = opendir(path);
+	struct dirent* entry;
+
+	if (!dir)
+	{
+		Plugin_Scr_Error(fmt("Error: Couldn't open dir %s", path));
+		return;
+	}
+
+	Plugin_Scr_MakeArray();
+	while ((entry = readdir(dir)) != NULL)
+	{
+		if (strcmp(entry->d_name, ".") == 0 || strcmp(entry->d_name, "..") == 0)
+			continue;
+		Plugin_Scr_AddString(entry->d_name);
+		Plugin_Scr_AddArray();
+	}
+	closedir(dir);
+}
+
+#ifdef _WIN32
+BOOL WIN_RemoveDirectory(const char* path)
+{
+	// Required to set 2 nulls at end of argument to SHFileOperation.
+	int len = strlen(path) + 2;
+	char* tempdir = (char*)malloc(len);
+	memset(tempdir, 0, len);
+	strcpy(tempdir, path);
+
+	SHFILEOPSTRUCT file_op = { NULL, FO_DELETE, tempdir, NULL,
+		FOF_NOCONFIRMATION | FOF_NOERRORUI | FOF_SILENT, false, 0, "" };
+	int ret = SHFileOperation(&file_op);
+	free(tempdir);
+
+	return ret;
+}
+#endif

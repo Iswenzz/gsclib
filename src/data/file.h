@@ -3,6 +3,7 @@
 #define _CRT_INTERNAL_NONSTDC_NAMES 1
 #define _FILE_OFFSET_BITS 64
 #include <sys/stat.h>
+#include <dirent.h>
 
 #if !defined(S_ISREG) && defined(S_IFMT) && defined(S_IFREG)
 	#define S_ISREG(m) (((m) & S_IFMT) == S_IFREG)
@@ -60,3 +61,27 @@ void GScr_FILE_Delete();
 /// Close a file.
 /// </summary>
 void GScr_FILE_Close();
+
+/// <summary>
+/// Create a directory.
+/// </summary>
+void GScr_FILE_MkDir();
+
+/// <summary>
+/// Delete a directory.
+/// </summary>
+void GScr_FILE_RmDir();
+
+/// <summary>
+/// Read directory files.
+/// </summary>
+void GScr_FILE_ReadDir();
+
+#ifdef _WIN32
+/// <summary>
+/// Remove a directory.
+/// </summary>
+/// <param name="path">The directory path.</param>
+/// <returns></returns>
+BOOL WIN_RemoveDirectory(const char* path);
+#endif

@@ -35,6 +35,9 @@ PCL int OnInit()
 	FUNCTION("file_write",				&GScr_FILE_Write);
 	FUNCTION("file_seek",				&GScr_FILE_Seek);
 	FUNCTION("file_delete",				&GScr_FILE_Delete);
+	FUNCTION("file_mkdir",				&GScr_FILE_MkDir);
+	FUNCTION("file_rmdir",				&GScr_FILE_RmDir);
+	FUNCTION("file_readdir",			&GScr_FILE_ReadDir);
 
 	// data/regex
 	FUNCTION("regexmatch", 				&GScr_RegexMatch);
@@ -73,6 +76,7 @@ PCL int OnInit()
 	FUNCTION("repeat",					&GScr_LINQ_Repeat);
 	FUNCTION("reverse", 				&GScr_LINQ_Reverse);
 	FUNCTION("concat", 					&GScr_LINQ_Concat);
+	FUNCTION("indexof",					&GScr_LINQ_IndexOf);
 
 	// net/curl
 	FUNCTION("curl_version", 			&GScr_CURL_Version);
@@ -125,6 +129,7 @@ PCL int OnInit()
 	FUNCTION("gettype", 				&GScr_GetType);
 	FUNCTION("ternary", 				&GScr_Ternary);
 	FUNCTION("ifundef", 				&GScr_IfUndef);
+	FUNCTION("system", 					&GScr_System);
 
 	// utils/convert
 	FUNCTION("tostring", 				&GScr_ToString);

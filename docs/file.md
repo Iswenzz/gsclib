@@ -81,3 +81,27 @@ Delete a file.
 FILE_Delete("test.txt");
 ```
 <hr>
+
+#### ``FILE_MkDir(<path>)``
+Create a directory.
+
+```c
+FILE_MkDir("name");
+```
+<hr>
+
+#### ``FILE_RmDir(<path>)``
+Delete a directory.
+
+```c
+FILE_RmDir("name");
+```
+<hr>
+
+#### ``FILE_ReadDir(<path>)``
+Retrieve all file names from a directory.
+
+```c
+files = FILE_ReadDir("name");
+```
+<hr>
