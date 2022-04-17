@@ -28,6 +28,13 @@ main()
 	it(::test_ToFloat, "ToFloat");
 	it(::test_ToString, "ToString");
 	it(::test_GetSysTime, "GetSysTime");
+	it(::test_System, "System");
+}
+
+test_System()
+{
+	EXPECT_EQ(System("ls"), 0);
+	EXPECT_NE(System("error"), 0);
 }
 
 test_StrJoin()

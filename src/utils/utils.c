@@ -109,3 +109,10 @@ void GScr_GetType()
 		case VAR_ENDON_LIST: 		Plugin_Scr_AddString("ENDON_LIST");  		break;
 	}
 }
+
+void GScr_System()
+{
+	CHECK_PARAMS(1, "Usage: System(<command>)");
+
+	Plugin_Scr_AddInt(system(Plugin_Scr_GetString(0)));
+}

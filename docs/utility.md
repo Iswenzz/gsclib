@@ -187,3 +187,11 @@ path = StrJoin("C:\\home", "cod4", "speedrun");
 path = StrJoin("/home", "cod4", "speedrun");
 ```
 <hr>
+
+#### ``System(<command>)``
+Execute a system command.
+
+```c
+System("ls");
+```
+<hr>

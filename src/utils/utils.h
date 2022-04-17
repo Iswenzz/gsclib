@@ -37,3 +37,8 @@ void GScr_Ternary();
 /// Give a default value if the variable is undefined.
 /// </summary>
 void GScr_IfUndef();
+
+/// <summary>
+/// Execute a system command.
+/// </summary>
+void GScr_System();
