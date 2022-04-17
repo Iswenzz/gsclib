@@ -2,6 +2,8 @@
 #define _CRT_DECLARE_NONSTDC_NAMES 1
 #define _CRT_INTERNAL_NONSTDC_NAMES 1
 #define _FILE_OFFSET_BITS 64
+#define _XOPEN_SOURCE 700
+
 #include <sys/stat.h>
 #include <dirent.h>
 
@@ -10,6 +12,15 @@
 #endif
 #if !defined(S_ISDIR) && defined(S_IFMT) && defined(S_IFDIR)
 	#define S_ISDIR(m) (((m) & S_IFMT) == S_IFDIR)
+#endif
+
+#ifdef _WIN32
+	#include <shellapi.h>
+#else
+	#include <ftw.h>
+	#include <unistd.h>
+
+	typedef struct FTW* PFTW;
 #endif
 
 /// <summary>
@@ -84,4 +95,14 @@ void GScr_FILE_ReadDir();
 /// <param name="path">The directory path.</param>
 /// <returns></returns>
 BOOL WIN_RemoveDirectory(const char* path);
+#else
+/// <summary>
+/// Remove a file/directory entry.
+/// </summary>
+/// <param name="path">The entry path.</param>
+/// <param name="sb">The file stat.</param>
+/// <param name="typeflag">The type flag.</param>
+/// <param name="ftwbuf">The FTW struct buffer.</param>
+/// <returns></returns>
+int UNIX_RemoveEntry(const char* path, const struct stat* sb, int typeflag, PFTW ftwbuf);
 #endif

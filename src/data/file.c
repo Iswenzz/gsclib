@@ -4,10 +4,6 @@
 #include <cgsc.h>
 #include <stdlib.h>
 
-#ifdef _WIN32
-	#include <shellapi.h>
-#endif
-
 void GScr_FILE_Create()
 {
 	CHECK_PARAMS(1, "Usage: FILE_Create(<path>)");
@@ -196,7 +192,7 @@ void GScr_FILE_RmDir()
 #ifdef _WIN32
 	Plugin_Scr_AddBool(WIN_RemoveDirectory(path) == 0);
 #else
-	Plugin_Scr_AddBool(rmdir(path) == 0);
+	Plugin_Scr_AddBool(nftw(path, UNIX_RemoveEntry, 64, FTW_DEPTH | FTW_PHYS) == 0);
 #endif
 }
 
@@ -239,6 +235,13 @@ BOOL WIN_RemoveDirectory(const char* path)
 	int ret = SHFileOperation(&file_op);
 	free(tempdir);
 
+	return ret;
+}
+#else
+int UNIX_RemoveEntry(const char* path, const struct stat* sb, int typeflag, PFTW ftwbuf)
+{
+	int ret = remove(path);
+	if (ret) perror(path);
 	return ret;
 }
 #endif
