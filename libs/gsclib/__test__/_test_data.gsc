@@ -4,6 +4,7 @@
 main()
 {
 	suite("GSCLIB - Data");
+	beforeAll();
 
 	// data/file
 	it(::test_FILE_Create, "FILE_Create");
@@ -31,6 +32,12 @@ main()
 	it(::test_ZIP_Rename, "ZIP_Rename");
 	it(::test_ZIP_Delete, "ZIP_Delete");
 	it(::test_ZIP_Close, "ZIP_Close");
+}
+
+beforeAll()
+{
+	if (!FILE_Exists("temp"))
+		FILE_MkDir("temp");
 }
 
 test_FILE_MkDir()
