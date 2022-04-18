@@ -21,6 +21,7 @@ class gsclib(ConanFile):
 	build_requires = "greatest/1.5.0"
 	settings = "os", "arch", "compiler", "build_type"
 	generators = "cmake"
+	default_options = "libcurl:with_libssh2=True"
 
 	def configure(self):
 		if self.settings.os == "Windows":
