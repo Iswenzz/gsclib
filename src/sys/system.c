@@ -47,7 +47,7 @@ void Sys_PrintF(const char* format, ...)
 {
 	va_list argptr;
 	va_start(argptr, format);
-	fprintf(stderr, format);
+	fprintf(stderr, format, argptr);
 	va_end(argptr);
 }
 
