@@ -1,8 +1,4 @@
 #include "utils.h"
-#include "vsnprintf.h"
-
-#include <stdlib.h>
-#include <stdarg.h>
 
 void GScr_Ternary()
 {
@@ -21,50 +17,6 @@ void GScr_IfUndef()
 	VariableValue *a = Plugin_Scr_SelectParam(0);
 	VariableValue *b = Plugin_Scr_SelectParam(1);
 	Plugin_Scr_AddVariable(a->type == VAR_UNDEFINED ? b : a);
-}
-
-void GScr_ComPrint()
-{
-	Scr_PrintF(qfalse, &Plugin_Printf);
-}
-
-void GScr_ComPrintLn()
-{
-	Scr_PrintF(qtrue, &Plugin_Printf);
-}
-
-void Scr_PrintF(qboolean newLine, void (*print)(const char*, ...))
-{
-	const int argCount = Plugin_Scr_GetNumParam();
-	if (argCount == 0)
-	{
-		print(newLine ? "\n" : "");
-		return;
-	}
-	char buffer[MAX_STRING_CHARS] = { 0 };
-	char* format = Plugin_Scr_GetString(0);
-
-	if (argCount == 1)
-	{
-		print(fmt("%s%s", format, newLine ? "\n" : ""));
-		return;
-	}
-	VariableValue* args = (VariableValue*)malloc((argCount - 1) * sizeof(VariableValue));
-
-	for (int i = 1; i < argCount; i++)
-		args[i - 1] = *Plugin_Scr_SelectParam(i);
-
-	Scr_vsnprintf(buffer, sizeof(buffer), format, args);
-	if (newLine) strcat(buffer, "\n");
-
-	print(buffer);
-	free(args);
-}
-
-void GScr_GetSysTime()
-{
-	CHECK_PARAMS(0, "Usage: GetSysTime()");
-	Plugin_Scr_AddInt(Plugin_Milliseconds());
 }
 
 void GScr_GetType()
@@ -108,11 +60,4 @@ void GScr_GetType()
 		case VAR_THREAD_LIST: 		Plugin_Scr_AddString("THREAD_LIST"); 		break;
 		case VAR_ENDON_LIST: 		Plugin_Scr_AddString("ENDON_LIST");  		break;
 	}
-}
-
-void GScr_System()
-{
-	CHECK_PARAMS(1, "Usage: System(<command>)");
-
-	Plugin_Scr_AddInt(system(Plugin_Scr_GetString(0)));
 }

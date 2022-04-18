@@ -10,6 +10,8 @@
 #include "net/ftp.h"
 #include "net/mysql.h"
 
+#include "sys/system.h"
+
 #include "utils/utils.h"
 #include "utils/stringutils.h"
 #include "utils/convert.h"
@@ -122,14 +124,19 @@ PCL int OnInit()
 	FUNCTION("sql_connect", 			&GScr_MySQL_Connect);
 	FUNCTION("sql_close", 				&GScr_MySQL_Close);
 
-	// utils/utils
+	// sys/system
+	FUNCTION("system", 					&GScr_System);
+	FUNCTION("sysprint", 				&GScr_SysPrint);
+	FUNCTION("sysprintln", 				&GScr_SysPrintLn);
 	FUNCTION("comprint", 				&GScr_ComPrint);
 	FUNCTION("comprintln", 				&GScr_ComPrintLn);
 	FUNCTION("getsystime", 				&GScr_GetSysTime);
+	FUNCTION("exit",					&GScr_Exit);
+
+	// utils/utils
 	FUNCTION("gettype", 				&GScr_GetType);
 	FUNCTION("ternary", 				&GScr_Ternary);
 	FUNCTION("ifundef", 				&GScr_IfUndef);
-	FUNCTION("system", 					&GScr_System);
 
 	// utils/convert
 	FUNCTION("tostring", 				&GScr_ToString);

@@ -19,37 +19,6 @@ string = trim("    hello world    ");
 ```
 <hr>
 
-#### ``ComPrint(<fmt>, <?arguments...>)``
-Print a formatted message to the console output.
-
-```c
-a = "Iswenzz";
-
-ComPrint("Hello World!");
-ComPrint("Hello %s!", a);
-```
-<hr>
-
-#### ``ComPrintLn(<fmt>, <?arguments...>)``
-Print a formatted message on a new line to the console output.
-
-```c
-a = "Iswenzz";
-
-ComPrintLn("Hello World!");
-ComPrintLn("Hello %s!", a);
-ComPrintLn();
-```
-<hr>
-
-#### ``GetSysTime()``
-Get the system time in milliseconds.
-
-```c
-time = GetSysTime();
-```
-<hr>
-
 #### ``Ternary(<condition>, <true>, <false>)``
 Check the condition and return the 1st value if true or the second value if false.
 
@@ -185,13 +154,5 @@ Join filepath strings.
 ```c
 path = StrJoin("C:\\home", "cod4", "speedrun");
 path = StrJoin("/home", "cod4", "speedrun");
-```
-<hr>
-
-#### ``System(<command>)``
-Execute a system command.
-
-```c
-System("ls");
 ```
 <hr>

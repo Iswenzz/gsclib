@@ -13,6 +13,7 @@
 * [MySQL](https://github.com/Iswenzz/gsclib/blob/master/docs/mysql.md)
 * [Utilities](https://github.com/Iswenzz/gsclib/blob/master/docs/utility.md)
 * [File](https://github.com/Iswenzz/gsclib/blob/master/docs/file.md)
+* [System](https://github.com/Iswenzz/gsclib/blob/master/docs/system.md)
 * [Zip](https://github.com/Iswenzz/gsclib/blob/master/docs/zip.md)
 
 ## Instructions
