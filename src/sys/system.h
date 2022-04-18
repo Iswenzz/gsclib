@@ -1,6 +1,8 @@
 #pragma once
 #include <cgsc.h>
 
+#define MAXPRINTMSG 1024
+
 /// <summary>
 /// Execute a system command.
 /// </summary>
@@ -49,3 +51,10 @@ void Sys_PrintF(const char* format, ...);
 /// <param name="newLine">Should add a new line at the end.</param>
 /// <param name="print">The function used for printing.</param>
 void Scr_PrintF(qboolean newLine, void (*print)(const char*, ...));
+
+/// <summary>
+/// Transform Q3 colour codes to ANSI escape sequences.
+/// </summary>
+/// <param name="msg">The message to transform.</param>
+/// <param name="print">The function used for printing.</param>
+void Sys_AnsiColorPrint(const char* msg, void (*print)(const char*, ...));

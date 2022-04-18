@@ -1,5 +1,16 @@
 #include "utils.h"
 
+int q3ToAnsi[8] = {
+	30, // COLOR_BLACK
+	31, // COLOR_RED
+	32, // COLOR_GREEN
+	33, // COLOR_YELLOW
+	34, // COLOR_BLUE
+	36, // COLOR_CYAN
+	35, // COLOR_MAGENTA
+	0   // COLOR_WHITE
+};
+
 void GScr_Ternary()
 {
 	CHECK_PARAMS(3, "Usage: Ternary(<condition>, <var if true>, <var if false>)");

@@ -1,4 +1,5 @@
 #include "system.h"
+#include "utils/utils.h"
 #include "utils/vsnprintf.h"
 
 #include <stdio.h>
@@ -64,7 +65,7 @@ void Scr_PrintF(qboolean newLine, void (*print)(const char*, ...))
 
 	if (argCount == 1)
 	{
-		print(fmt("%s%s", format, newLine ? "\n" : ""));
+		Sys_AnsiColorPrint(fmt("%s%s", format, newLine ? "\n" : ""), print);
 		return;
 	}
 	VariableValue* args = (VariableValue*)malloc((argCount - 1) * sizeof(VariableValue));
@@ -74,7 +75,50 @@ void Scr_PrintF(qboolean newLine, void (*print)(const char*, ...))
 
 	Scr_vsnprintf(buffer, sizeof(buffer), format, args);
 	if (newLine) strcat(buffer, "\n");
+	Sys_AnsiColorPrint(buffer, print);
 
-	print(buffer);
 	free(args);
+}
+
+void Sys_AnsiColorPrint(const char* msg, void (*print)(const char*, ...))
+{
+	int length = 0;
+	static char buffer[MAXPRINTMSG] = { 0 };
+
+	while (*msg)
+	{
+		if (Q_IsColorString(msg) || *msg == '\n')
+		{
+			if (length > 0)
+			{
+				buffer[length] = '\0';
+				fputs(buffer, stderr);
+				length = 0;
+			}
+			if (*msg == '\n')
+			{
+				print("\033[0m\n");
+				msg++;
+			}
+			else
+			{
+				snprintf(buffer, sizeof(buffer), "\033[1;%dm", q3ToAnsi[ColorIndex(*(msg + 1))]);
+				print(buffer);
+				msg += 2;
+			}
+		}
+		else
+		{
+			if (length >= MAXPRINTMSG - 1)
+				break;
+			buffer[length] = *msg;
+			length++;
+			msg++;
+		}
+	}
+	if (length > 0)
+	{
+		buffer[length] = '\0';
+		print(buffer);
+	}
 }
