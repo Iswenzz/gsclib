@@ -3,7 +3,7 @@
 
 main()
 {
-	suite("GSCLIB - Net");
+	suite("GSCLIB Net");
 	setup();
 
 	beforeAll();

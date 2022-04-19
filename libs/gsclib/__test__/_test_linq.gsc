@@ -3,7 +3,7 @@
 
 main()
 {
-	suite("GSCLIB - Linq");
+	suite("GSCLIB Linq");
 
 	// linq/delegates
 	it(::test_Select, "Select");

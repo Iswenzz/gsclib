@@ -3,7 +3,7 @@
 
 main()
 {
-	suite("GSCLIB - Utils");
+	suite("GSCLIB Utils");
 
 	// utils/stringutils
 	it(::test_ToUpper, "ToUpper");
@@ -27,14 +27,6 @@ main()
 	it(::test_ToInt, "ToInt");
 	it(::test_ToFloat, "ToFloat");
 	it(::test_ToString, "ToString");
-	it(::test_GetSysTime, "GetSysTime");
-	it(::test_System, "System");
-}
-
-test_System()
-{
-	EXPECT_EQ(System("ls"), 0);
-	EXPECT_NE(System("error"), 0);
 }
 
 test_StrJoin()
@@ -70,11 +62,6 @@ test_Fmt()
 	EXPECT_EQ(fmt("%d %d", 1, 2), "1 2");
 	EXPECT_EQ(fmt("%f %s", 1.4, "test"), "1.400000 test");
 	EXPECT_EQ(fmt("%s %s", "hello", "world"), "hello world");
-}
-
-test_GetSysTime()
-{
-	EXPECT_GT(GetSysTime(), 0);
 }
 
 test_GetType()

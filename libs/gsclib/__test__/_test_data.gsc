@@ -3,7 +3,7 @@
 
 main()
 {
-	suite("GSCLIB - Data");
+	suite("GSCLIB Data");
 	beforeAll();
 
 	// data/file
