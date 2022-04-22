@@ -30,7 +30,7 @@ jobs:
       with:
         version: 9
         platform: x86
-    
+
     - name: Plugin Interface
       run: |
         cd ..
@@ -74,7 +74,8 @@ jobs:
         path: build
 
     - name: Plugin
-      run: cp build/bin/gsclib.so game/plugins/gsclib.so
+      run: |
+        cp build/lib/gsclib.so game/plugins/gsclib.so
 
     - name: Tests
       working-directory: build
