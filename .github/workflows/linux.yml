@@ -1,0 +1,74 @@
+name: Linux
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+
+jobs:
+  build:
+    runs-on: ubuntu-18.04
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    - name: Conan
+      uses: turtlebrowser/get-conan@main
+
+    - name: Dependencies
+      run: |
+        sudo apt-get install g++-multilib gcc-multilib
+        sudo dpkg --add-architecture i386
+        sudo apt-get install nasm:i386 paxctl:i386 libtommath-dev:i386
+
+    - name: Plugin Interface
+      run: |
+        cd ..
+        curl -o plugin.zip https://iswenzz.com/github/gsclib/plugin.zip
+        7z x plugin.zip
+
+    - name: CoD4x
+      run: |
+        mkdir game && cd game
+        curl -o linux_runtime.zip https://iswenzz.com/github/gsclib/linux_runtime.zip
+        7z x linux_runtime.zip
+
+    - name: Build
+      run: |
+        conan remote add iswenzz-conan https://iswenzz.jfrog.io/artifactory/api/conan/iswenzz-conan
+        mkdir build && cd build
+        conan install .. --build missing --profile:host ../.conan/linux_host.conf --profile:build ../.conan/linux_build.conf
+        cmake .. -DCONAN_DISABLE_CHECK_COMPILER=True -DGSCUNIT_PROFILE=../game/gscunit_linux.profile
+        cmake --build .
+
+    - name: Artifact
+      uses: actions/upload-artifact@v2
+      with:
+        name: build-artifact
+        path: build
+
+  tests:
+    runs-on: ubuntu-18.04
+    needs: [build]
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    - name: gscunit
+      run: npm i -g gscunit
+
+    - name: Artifact
+      uses: actions/download-artifact@v2
+      with:
+        name: build-artifact
+        path: build
+
+    - name: Plugin
+      run: cp build/bin/gsclib.so game/plugins/gsclib.so
+
+    - name: Tests
+      working-directory: build
+      run: |
+        chmod +x bin/gsclib.Tests
+        ctest -C Release
