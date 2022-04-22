@@ -19,12 +19,12 @@ jobs:
     - name: NASM
       uses: ilammy/setup-nasm@v1
 
-    - name: Dependencies
-      run: |
-        sudo apt-get install g++-multilib gcc-multilib
-        sudo dpkg --add-architecture i386
-        sudo apt-get install nasm:i386 paxctl:i386 libtommath-dev:i386
-
+    - name: GCC
+      uses: egor-tensin/setup-gcc@v1
+      with:
+        version: 9
+        platform: x86        
+    
     - name: Plugin Interface
       run: |
         cd ..
