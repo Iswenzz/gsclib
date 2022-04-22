@@ -37,12 +37,6 @@ jobs:
         curl -o plugin.zip https://iswenzz.com/github/gsclib/plugin.zip
         7z x plugin.zip
 
-    - name: CoD4x
-      run: |
-        mkdir game && cd game
-        curl -o linux_runtime.zip https://iswenzz.com/github/gsclib/linux_runtime.zip
-        7z x linux_runtime.zip
-
     - name: Build
       run: |
         conan remote add iswenzz-conan https://iswenzz.jfrog.io/artifactory/api/conan/iswenzz-conan
@@ -73,8 +67,15 @@ jobs:
         name: build-artifact
         path: build
 
+    - name: CoD4x
+      run: |
+        mkdir game && cd game
+        curl -o linux_runtime.zip https://iswenzz.com/github/gsclib/linux_runtime.zip
+        7z x linux_runtime.zip
+
     - name: Plugin
       run: |
+        mkdir -p game/plugins
         cp build/lib/gsclib.so game/plugins/gsclib.so
 
     - name: Tests
