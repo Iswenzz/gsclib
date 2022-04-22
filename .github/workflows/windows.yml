@@ -10,11 +10,14 @@ jobs:
   build:
     runs-on: windows-latest
     steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+
     - name: Conan
       uses: turtlebrowser/get-conan@main
 
-    - name: Checkout
-      uses: actions/checkout@v2
+    - name: NASM
+      uses: ilammy/setup-nasm@v1
 
     - name: Plugin Interface
       run: |
@@ -33,7 +36,7 @@ jobs:
         conan remote add iswenzz-conan https://iswenzz.jfrog.io/artifactory/api/conan/iswenzz-conan
         mkdir build && cd build
         conan install .. --build missing --profile ../.conan/windows.conf
-        cmake .. -A Win32 -T ClangCL -DCONAN_DISABLE_CHECK_COMPILER=True -DGSCUNIT_PROFILE=../game/gscunit_windows.profile
+        cmake .. -A Win32 -T ClangCL -DCONAN_DISABLE_CHECK_COMPILER=1 -DGSCUNIT_PROFILE=../game/gscunit_windows.profile
         cmake --build .
 
     - name: Artifact

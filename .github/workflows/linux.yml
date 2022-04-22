@@ -16,6 +16,9 @@ jobs:
     - name: Conan
       uses: turtlebrowser/get-conan@main
 
+    - name: NASM
+      uses: ilammy/setup-nasm@v1
+
     - name: Dependencies
       run: |
         sudo apt-get install g++-multilib gcc-multilib
@@ -39,7 +42,7 @@ jobs:
         conan remote add iswenzz-conan https://iswenzz.jfrog.io/artifactory/api/conan/iswenzz-conan
         mkdir build && cd build
         conan install .. --build missing --profile:host ../.conan/linux_host.conf --profile:build ../.conan/linux_build.conf
-        cmake .. -DCONAN_DISABLE_CHECK_COMPILER=True -DGSCUNIT_PROFILE=../game/gscunit_linux.profile
+        cmake .. -DCONAN_DISABLE_CHECK_COMPILER=1 -DGSCUNIT_PROFILE=../game/gscunit_linux.profile
         cmake --build .
 
     - name: Artifact
