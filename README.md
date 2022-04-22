@@ -1,56 +1,65 @@
 # gsclib
-[![Build status](https://ci.appveyor.com/api/projects/status/wb0m9puc58f5d74w?svg=true)](https://ci.appveyor.com/project/Iswenzz/gsclib)
-[![CodeFactor](https://www.codefactor.io/repository/github/iswenzz/gsclib/badge)](https://www.codefactor.io/repository/github/iswenzz/gsclib)
-[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 
-``gsclib`` acts as a standard library extension for the Call of Duty 4 scripting language. The features this library provides consists of an FTP/FTPS/SFTP client, an HTTP/HTTPS client, Regular Expression (RegEx) support, Language Integrated Query (Linq) support, a MySQL connector for databases, casting/type conversion and other type utilities, and much more. More detailed information on each feature can be found in the documentation section.
+[![Checks](https://img.shields.io/github/checks-status/Iswenzz/gsclib/master?logo=github)](https://github.com/Iswenzz/gsclib/actions)
+[![CodeFactor](https://img.shields.io/codefactor/grade/github/Iswenzz/gsclib?label=codefactor&logo=codefactor)](https://www.codefactor.io/repository/github/iswenzz/gsclib)
+[![CodeCov](https://img.shields.io/codecov/c/github/Iswenzz/gsclib?label=codecov&logo=codecov)](https://codecov.io/gh/Iswenzz/gsclib)
+[![License](https://img.shields.io/github/license/Iswenzz/gsclib?color=blue&logo=gitbook&logoColor=white)](https://github.com/Iswenzz/gsclib/blob/master/LICENSE)
+
+``gsclib`` acts as a standard library extension for the Call of Duty 4 scripting language. The features this library provides consists of an FTP/FTPS/SFTP client, an HTTP/HTTPS client, Regular Expression (PCRE2) support, Language Integrated Query (Linq) support, a MySQL connector for databases, casting/type conversion/fmt and other type utilities, ZIP files, and much more. More detailed information on each feature can be found in the documentation section.
 
 ## Features & Documentation
 * [HTTP/HTTPS client](https://github.com/Iswenzz/gsclib/blob/master/docs/https.md)
 * [FTP/FTPS/SFTP client](https://github.com/Iswenzz/gsclib/blob/master/docs/ftp.md)
-* [Regular expression](https://github.com/Iswenzz/gsclib/blob/master/docs/regex.md)
+* [Regular expression (PCRE2)](https://github.com/Iswenzz/gsclib/blob/master/docs/regex.md)
 * [Language Integrated Query (Linq)](https://github.com/Iswenzz/gsclib/blob/master/docs/linq.md)
 * [MySQL](https://github.com/Iswenzz/gsclib/blob/master/docs/mysql.md)
-* [Type utilities](https://github.com/Iswenzz/gsclib/blob/master/docs/utility.md)
+* [Utilities](https://github.com/Iswenzz/gsclib/blob/master/docs/utility.md)
+* [File](https://github.com/Iswenzz/gsclib/blob/master/docs/file.md)
+* [System](https://github.com/Iswenzz/gsclib/blob/master/docs/system.md)
+* [Zip](https://github.com/Iswenzz/gsclib/blob/master/docs/zip.md)
 
 ## Instructions
-In order to use this library, just download the archived file down below, and extract it to the Call of Duty 4X ``/plugins/gsclib`` directory.
+In order to use this library, just download the archived file down below, and extract it to the Call of Duty 4X ``plugins/gsclib`` directory.
 
 ## Building (Linux)
 _Pre-Requisites:_
-1. Recompile your server with:
+1. Edit plugin_handle.h and recompile your server:
 ```c
 #define MAX_SCRIPTFUNCTIONS 256
 ```
 2. [CGSC](https://github.com/Iswenzz/CGSC) and it's pre-requisites.
-```
-sudo apt install libcurl3:i386
-```
-    
-_Build Command (Linux):_
+3. [CMake](https://cmake.org/) and [Conan](https://conan.io/).
 
-    make
-    make install
-    
-***Note:***
-``gsclib`` can be compiled without CGSC features with ``make nocgsc`` target.
+_Build Command:_
+
+   	conan remote add iswenzz-conan https://iswenzz.jfrog.io/artifactory/api/conan/iswenzz-conan
+	mkdir build && cd build
+	conan install .. --build missing --profile:host ../.conan/linux_host.conf --profile:build ../.conan/linux_build.conf
+	cmake ..
+	cmake --build .
 
 ## Building (Windows)
 _Pre-Requisites:_
-1. Recompile your server with:
+1. Edit plugin_handle.h and recompile your server:
 ```c
 #define MAX_SCRIPTFUNCTIONS 256
 ```
 2. [CGSC](https://github.com/Iswenzz/CGSC) and it's pre-requisites.
-3. Windows [Cygwin](https://www.cygwin.com/) or [Git for Windows](https://gitforwindows.org/)
+3. [CMake](https://cmake.org/) and [Conan](https://conan.io/).
+4. [Visual Studio](https://visualstudio.microsoft.com/) with [Clang](https://docs.microsoft.com/en-us/cpp/build/clang-support-msbuild?view=msvc-170) toolset.
 
-_Build Command (Windows):_
+**Using the Developer Command Prompt for Visual Studio**
+_Build Command:_
 
-    mingw32-make
-    mingw32-make install
-    
+    scripts/build_libcom.bat
+	conan remote add iswenzz-conan https://iswenzz.jfrog.io/artifactory/api/conan/iswenzz-conan
+	mkdir build && cd build
+	conan install .. --build missing --profile ../.conan/windows.conf
+	cmake .. -A Win32 -T ClangCL
+	cmake --build .
+
 ***Note:***
-``gsclib`` can be compiled without CGSC features with ``mingw32-make nocgsc`` target.
+VCPKG integration need to be disabled ``vcpkg integration remove``.
 
 ## [Download](https://github.com/Iswenzz/gsclib/releases)
 

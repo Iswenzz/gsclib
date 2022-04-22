@@ -40,7 +40,6 @@ level.MYSQL_TYPE_GEOMETRY     = 255;
 #### ``SQL_Version()``
 Print information about the MySQL client.
 
-Usage Example:
 ```c
 SQL_Version();
 ```
@@ -49,7 +48,6 @@ SQL_Version();
 #### ``SQL_Connect(<host>, <port>, <user>, <password>)``
 Connect to a MySQL server.
 
-Usage Example:
 ```c
 SQL_Connect("127.0.0.1", 3306, "root", "rootpassword");
 ```
@@ -58,7 +56,6 @@ SQL_Connect("127.0.0.1", 3306, "root", "rootpassword");
 #### ``SQL_Close()``
 Close the MySQL connection.
 
-Usage Example:
 ```c
 SQL_Close();
 ```
@@ -67,7 +64,6 @@ SQL_Close();
 #### ``SQL_EscapeString(<string>)``
 Prepends backslashes to the following characters: \x00 , \n , \r , \ , ' , " and \x1a . This function must always (with few exceptions) be used to make data safe before sending a query to MySQL.
 
-Usage Example:
 ```c
 SQL_EscapeString("\\");
 ```
@@ -76,7 +72,6 @@ SQL_EscapeString("\\");
 #### ``SQL_HexString(<string>)``
 Return a hex representation of the string.
 
-Usage Example:
 ```c
 hex = SQL_HexString("Iswenzz");
 ```
@@ -85,7 +80,6 @@ hex = SQL_HexString("Iswenzz");
 #### ``SQL_SelectDB(<db name>)``
 Select a MySQL database.
 
-Usage Example:
 ```c
 SQL_SelectDB("testdb");
 ```
@@ -94,7 +88,6 @@ SQL_SelectDB("testdb");
 #### ``SQL_Query(<query string>)``
 Command for performing a query on the database server.
 
-Usage Example:
 ```c
 SQL_Query("SELECT * FROM players");
 ```
@@ -103,9 +96,8 @@ SQL_Query("SELECT * FROM players");
 #### ``SQL_Prepare(<query string>)``
 Command for performing a statement on the database server, binds must be set in order.
 
-Usage Example:
 ```c
-printVariable(SQL_Prepare("SELECT name, guid, rank FROM speedrun_ranks WHERE name = ?"));
+SQL_Prepare("SELECT name, guid, rank FROM speedrun_ranks WHERE name = ?");
 SQL_BindParam("Iswenzz", level.MYSQL_TYPE_VAR_STRING);
 SQL_BindResult(level.MYSQL_TYPE_VAR_STRING, 60);
 SQL_BindResult(level.MYSQL_TYPE_VAR_STRING, 60);
@@ -114,7 +106,7 @@ SQL_BindResult(level.MYSQL_TYPE_LONG);
 SQL_BindResult(level.MYSQL_TYPE_LONG);
 ```
 ```c
-printVariable(SQL_Prepare("INSERT INTO speedrun_ranks (name, guid, rank) VALUES (?, ?, ?)"));
+SQL_Prepare("INSERT INTO speedrun_ranks (name, guid, rank) VALUES (?, ?, ?)");
 SQL_BindParam("Iswenzz", level.MYSQL_TYPE_VAR_STRING);
 SQL_BindParam("313354b4", level.MYSQL_TYPE_VAR_STRING);
 SQL_BindParam("80", level.MYSQL_TYPE_LONG);
@@ -125,7 +117,6 @@ SQL_Execute();
 #### ``SQL_BindParam(<value>, <type>)``
 Bind a value in the prepared statement.
 
-Usage Example:
 ```c
 SQL_BindParam("Iswenzz", level.MYSQL_TYPE_VAR_STRING);
 ```
@@ -135,7 +126,6 @@ SQL_BindParam("Iswenzz", level.MYSQL_TYPE_VAR_STRING);
 Bind a result in the prepared statement, if you want to retrieve the col when fetching rows.
 The <?string length> is optional for all types except strings where you have to specify the string length.
 
-Usage Example:
 ```c
 SQL_BindResult(level.MYSQL_TYPE_VAR_STRING, 60);
 SQL_BindResult(level.MYSQL_TYPE_LONG);
@@ -145,7 +135,6 @@ SQL_BindResult(level.MYSQL_TYPE_LONG);
 #### ``SQL_Execute()``
 Executes the prepared statement.
 
-Usage Example:
 ```c
 SQL_Execute();
 ```
@@ -154,7 +143,6 @@ SQL_Execute();
 #### ``SQL_NumRows()``
 Return the number of rows after a query or statement.
 
-Usage Example:
 ```c
 count = SQL_NumRows();
 ```
@@ -163,7 +151,6 @@ count = SQL_NumRows();
 #### ``SQL_NumFields()``
 Return the number of fields after a query or statement.
 
-Usage Example:
 ```c
 count = SQL_NumFields();
 ```
@@ -172,7 +159,6 @@ count = SQL_NumFields();
 #### ``SQL_AffectedRows()``
 Return the number of affected rows after a query or statement.
 
-Usage Example:
 ```c
 count = SQL_AffectedRows();
 ```
@@ -181,7 +167,6 @@ count = SQL_AffectedRows();
 #### ``SQL_FetchRows()``
 Retrieve rows data in a two dimensional GSC array after a query.
 
-Usage Example:
 ```c
 rows = SQL_FetchRows();
 if (isDefined(rows) && isDefined(rows.size))
@@ -191,7 +176,7 @@ if (isDefined(rows) && isDefined(rows.size))
         if (isDefined(rows[i]) && isDefined(rows[i].size))
         {
             for (j = 0; j < rows[i].size; j++)
-                comPrintF(rows[i][j]);
+                comPrint(rows[i][j]);
         }
     }
 }
@@ -201,7 +186,6 @@ if (isDefined(rows) && isDefined(rows.size))
 #### ``SQL_FetchRowsDict()``
 Retrieve rows data in a two dimensional GSC string indexed array after a query.
 
-Usage Example:
 ```c
 rows = SQL_FetchRowsDict();
 if (isDefined(rows) && isDefined(rows.size))
@@ -211,7 +195,7 @@ if (isDefined(rows) && isDefined(rows.size))
         if (isDefined(rows[i]) && isDefined(rows[i].size))
         {
             for (j = 0; j < rows[i].size; j++)
-                comPrintF(rows[i][j]);
+                comPrint(rows[i][j]);
         }
     }
 }
@@ -221,29 +205,26 @@ if (isDefined(rows) && isDefined(rows.size))
 #### ``SQL_FetchRow()``
 Retrieve a single row data in a GSC array after a query.
 
-Usage Example:
 ```c
 row = SQL_FetchRow();
 for (i = 0; i < row.size; i++)
-    comPrintF(row[i]);
+    comPrint(row[i]);
 ```
 <hr>
 
 #### ``SQL_FetchRowDict()``
 Retrieve a single row data in a GSC string indexed array after a query.
 
-Usage Example:
 ```c
 row = SQL_FetchRowDict();
 for (i = 0; i < row.size; i++)
-    comPrintF(row[i]);
+    comPrint(row[i]);
 ```
 <hr>
 
 #### ``SQL_FetchFields()``
 Retrieve all fields in a GSC array after a query.
 
-Usage Example:
 ```c
 array = SQL_FetchFields();
 ```
@@ -252,7 +233,6 @@ array = SQL_FetchFields();
 #### ``SQL_ListDB()``
 Get all database names.
 
-Usage Example:
 ```c
 array = SQL_ListDB();
 ```
@@ -261,7 +241,6 @@ array = SQL_ListDB();
 #### ``SQL_ListTables()``
 Get all table names.
 
-Usage Example:
 ```c
 array = SQL_ListTables();
 ```

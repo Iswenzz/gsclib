@@ -1,40 +1,34 @@
-# Regular Expression (RegEx)
+# Regular Expression (PCRE2 RegEx)
 
 #### ``RegexMatch(<input>, <regex>)``
 Get all matches in an array from the specified input string and regex.
 
-Usage Example:
 ```c
-RegexMatch("zzzz123affff12345ffffb", "\\d+");
-/* output:
-123
-12345
-*/
+RegexMatch("hello123world456", "\\d+");
+```
+```c
+["123", "456"]
 ```
 <hr>
 
 #### ``RegexSplit(<input>, <regex>)``
 Get all splited string in an array from the specified input string and regex.
 
-Usage Example:
 ```c
-RegexSplit("zzzz123affff12345ffffb", "\\d+");
-/* output:
-zzzz
-affff
-ffffb
-*/
+RegexSplit("hello123world456", "\\d+");
+```
+```c
+["hello", "world"]
 ```
 <hr>
 
 #### ``RegexReplace(<input>, <replace>, <regex>)``
 Replace all matches with a specific string.
 
-Usage Example:
 ```c
-RegexReplace("zzzz123affff12345ffffb", "", "\\d+");
-/* output:
-zzzzaffffffffb
-*/
+RegexReplace("123hello456world789", "_", "\\d+");
+```
+```c
+_hello_world_
 ```
 <hr>

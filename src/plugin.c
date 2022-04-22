@@ -1,120 +1,162 @@
-#include <curl/curl.h>
-
-#include "linq/enumerable.h"
-#include "linq/predicate.h"
-#include "linq/delegate.h"
-
-#include "data/mysql.h"
 #include "data/regex.h"
+#include "data/zip.h"
 
-#include "utility/util.h"
-#include "utility/stringutil.h"
-#include "utility/convert.h"
+#include "linq/enumerables.h"
+#include "linq/predicates.h"
+#include "linq/delegates.h"
 
 #include "net/curl.h"
 #include "net/https.h"
 #include "net/ftp.h"
+#include "net/mysql.h"
 
-#ifndef PLUGIN_INCLUDES
-#include "../../pinc.h"
-#endif
+#include "sys/system.h"
+
+#include "utils/utils.h"
+#include "utils/stringutils.h"
+#include "utils/convert.h"
+
+#include <curl/curl.h>
+
+#define FUNCTION(name, function) Plugin_ScrReplaceFunction(name, function)
+#define METHOD(name, function) Plugin_ScrReplaceMethod(name, function)
 
 PCL int OnInit()
 {
-	curl_library_init_code = curl_global_init(CURL_GLOBAL_ALL); 	// initialize curl library
-	mysql_library_init_code = mysql_library_init(0, NULL, NULL); 	// initialize mysql library
+	CURLinitCode = curl_global_init(CURL_GLOBAL_ALL); 	// initialize curl library
+	MySQLcode = mysql_library_init(0, NULL, NULL); 		// initialize mysql library
 
-	// net/curl.h
-	Plugin_ScrAddFunction("curl_version", 		&GScr_CURL_Version);
-	Plugin_ScrAddFunction("curl_setheader", 	&GScr_CURL_SetHeader);
-	Plugin_ScrAddFunction("curl_headercleanup", &GScr_CURL_HeaderCleanup);
-	Plugin_ScrAddFunction("curl_optcleanup", 	&GScr_CURL_OptCleanup);
-	Plugin_ScrAddFunction("curl_addopt", 		&GScr_CURL_AddOpt);
+	// data/file
+	FUNCTION("file_create",				&GScr_FILE_Create);
+	FUNCTION("file_open",				&GScr_FILE_Open);
+	FUNCTION("file_close",				&GScr_FILE_Close);
+	FUNCTION("file_exists",				&GScr_FILE_Exists);
+	FUNCTION("file_readline",			&GScr_FILE_ReadLine);
+	FUNCTION("file_writeline",			&GScr_FILE_WriteLine);
+	FUNCTION("file_read",				&GScr_FILE_Read);
+	FUNCTION("file_write",				&GScr_FILE_Write);
+	FUNCTION("file_seek",				&GScr_FILE_Seek);
+	FUNCTION("file_delete",				&GScr_FILE_Delete);
+	FUNCTION("file_mkdir",				&GScr_FILE_MkDir);
+	FUNCTION("file_rmdir",				&GScr_FILE_RmDir);
+	FUNCTION("file_readdir",			&GScr_FILE_ReadDir);
 
-	// net/https.h
-	Plugin_ScrAddFunction("https_postfile", 	&GScr_HTTPS_PostFile);
-	Plugin_ScrAddFunction("https_poststring", 	&GScr_HTTPS_PostString);
-	Plugin_ScrAddFunction("https_getfile", 		&GScr_HTTPS_GetFile);
-	Plugin_ScrAddFunction("https_getstring", 	&GScr_HTTPS_GetString);
+	// data/regex
+	FUNCTION("regexmatch", 				&GScr_RegexMatch);
+	FUNCTION("regexsplit", 				&GScr_RegexSplit);
+	FUNCTION("regexreplace", 			&GScr_RegexReplace);
 
-	// net/ftp.h
-	Plugin_ScrAddFunction("sftp_connect", 		&GScr_SFTP_Connect);
-	Plugin_ScrAddFunction("ftp_connect", 		&GScr_FTP_Connect);
-	Plugin_ScrAddFunction("ftp_close", 			&GScr_FTP_Close);
-	Plugin_ScrAddFunction("ftp_shell", 			&GScr_FTP_Shell);
-	Plugin_ScrAddFunction("ftp_postfile", 		&GScr_FTP_PostFile);
-	Plugin_ScrAddFunction("ftp_getfile", 		&GScr_FTP_GetFile);
+	// data/zip
+	FUNCTION("zip_add",					&GScr_ZIP_Add);
+	FUNCTION("zip_rename",				&GScr_ZIP_Rename);
+	FUNCTION("zip_delete",				&GScr_ZIP_Delete);
+	FUNCTION("zip_open",				&GScr_ZIP_Open);
+	FUNCTION("zip_close",				&GScr_ZIP_Close);
 
-	// data/mysql.h
-	Plugin_ScrAddFunction("sql_prepare", 		&GScr_MySQL_Prepare);
-	Plugin_ScrAddFunction("sql_bindparam", 		&GScr_MySQL_BindParam);
-	Plugin_ScrAddFunction("sql_bindresult", 	&GScr_MySQL_BindResult);
-	Plugin_ScrAddFunction("sql_execute", 		&GScr_MySQL_Execute);
-	Plugin_ScrAddFunction("sql_escapestring", 	&GScr_MySQL_EscapeString);
-	Plugin_ScrAddFunction("sql_hexstring", 		&GScr_MySQL_HexString);
-	Plugin_ScrAddFunction("sql_selectdb", 		&GScr_MySQL_SelectDB);
-	Plugin_ScrAddFunction("sql_query", 			&GScr_MySQL_Query);
-	Plugin_ScrAddFunction("sql_numrows", 		&GScr_MySQL_NumRows);
-	Plugin_ScrAddFunction("sql_numfields", 		&GScr_MySQL_NumFields);
-	Plugin_ScrAddFunction("sql_affectedrows",	&GScr_MySQL_AffectedRows);
-	Plugin_ScrAddFunction("sql_fetchrowsdict", 	&GScr_MySQL_FetchRowsDict);
-	Plugin_ScrAddFunction("sql_fetchrows", 		&GScr_MySQL_FetchRows);
-	Plugin_ScrAddFunction("sql_fetchrowdict", 	&GScr_MySQL_FetchRowDict);
-	Plugin_ScrAddFunction("sql_fetchrow", 		&GScr_MySQL_FetchRow);
-	Plugin_ScrAddFunction("sql_fetchfields", 	&GScr_MySQL_FetchFields);
-	Plugin_ScrAddFunction("sql_listdb", 		&GScr_MySQL_ListDB);
-	Plugin_ScrAddFunction("sql_listtables", 	&GScr_MySQL_ListTables);
-	Plugin_ScrAddFunction("sql_version", 		&GScr_MySQL_Version);
-	Plugin_ScrAddFunction("sql_connect", 		&GScr_MySQL_Connect);
-	Plugin_ScrAddFunction("sql_close", 			&GScr_MySQL_Close);
+	// linq/delegates
+	FUNCTION("select", 					&GScr_LINQ_Select);
+	FUNCTION("foreach", 				&GScr_LINQ_Foreach);
+	FUNCTION("aggregate", 				&GScr_LINQ_Aggregate);
 
-	// data/regex.h
-	Plugin_ScrAddFunction("regexmatch", 		&GScr_RegexMatch);
-	Plugin_ScrAddFunction("regexsplit", 		&GScr_RegexSplit);
-	Plugin_ScrAddFunction("regexreplace", 		&GScr_RegexReplace);
+	// linq/predicates
+	FUNCTION("all", 					&GScr_LINQ_All);
+	FUNCTION("where", 					&GScr_LINQ_Where);
+	FUNCTION("any", 					&GScr_LINQ_Any);
+	FUNCTION("last",					&GScr_LINQ_Last);
+	FUNCTION("first", 					&GScr_LINQ_First);
+	FUNCTION("count", 					&GScr_LINQ_Count);
 
-	// utility/util.h
-	Plugin_ScrAddFunction("comprintf", 			&GScr_ComPrintf);
-	Plugin_ScrAddFunction("gettype", 			&GScr_GetType);
-	Plugin_ScrAddFunction("ternary", 			&GScr_Ternary);
-	Plugin_ScrAddFunction("ifundef", 			&GScr_IfUndef);
+	// linq/enumerables
+	FUNCTION("getmin", 					&GScr_LINQ_Min);
+	FUNCTION("getmax", 					&GScr_LINQ_Max);
+	FUNCTION("cast", 					&GScr_LINQ_Cast);
+	FUNCTION("oftype", 					&GScr_LINQ_OfType);
+	FUNCTION("sort", 					&GScr_LINQ_Sort);
+	FUNCTION("average",					&GScr_LINQ_Average);
+	FUNCTION("sum", 					&GScr_LINQ_Sum);
+	FUNCTION("range",					&GScr_LINQ_Range);
+	FUNCTION("repeat",					&GScr_LINQ_Repeat);
+	FUNCTION("reverse", 				&GScr_LINQ_Reverse);
+	FUNCTION("concat", 					&GScr_LINQ_Concat);
+	FUNCTION("indexof",					&GScr_LINQ_IndexOf);
 
-	// utitlity/convert.h
-	Plugin_ScrAddFunction("tostring", 			&GScr_ToString);
-	Plugin_ScrAddFunction("toint", 				&GScr_ToInt);
-	Plugin_ScrAddFunction("tofloat", 			&GScr_ToFloat);
+	// net/curl
+	FUNCTION("curl_version", 			&GScr_CURL_Version);
+	FUNCTION("curl_addheader", 			&GScr_CURL_AddHeader);
+	FUNCTION("curl_headercleanup",		&GScr_CURL_HeaderCleanup);
+	FUNCTION("curl_optcleanup", 		&GScr_CURL_OptCleanup);
+	FUNCTION("curl_addopt", 			&GScr_CURL_AddOpt);
 
-	// utitlity/stringutil.h
-	Plugin_ScrAddFunction("isnullorempty",		&GScr_IsNullOrEmpty);
-	Plugin_ScrAddFunction("isstringalpha", 		&GScr_IsStringAlpha);
-	Plugin_ScrAddFunction("isstringfloat", 		&GScr_IsStringFloat);
-	Plugin_ScrAddFunction("isstringint", 		&GScr_IsStringInt);
-	Plugin_ScrAddFunction("toupper", 			&GScr_ToUpper);
-	Plugin_ScrAddFunction("torgb", 				&GScr_ToRGB);
-	Plugin_ScrAddFunction("hextorgb", 			&GScr_HexToRGB);
+	// net/https
+	FUNCTION("https_postfile", 			&GScr_HTTPS_PostFile);
+	FUNCTION("https_poststring", 		&GScr_HTTPS_PostString);
+	FUNCTION("https_getfile", 			&GScr_HTTPS_GetFile);
+	FUNCTION("https_getstring", 		&GScr_HTTPS_GetString);
 
-	// linq/delegate
-	Plugin_ScrAddFunction("select", 			&GScr_LINQ_Select);
+	// net/ftp
+	FUNCTION("sftp_connect", 			&GScr_SFTP_Connect);
+	FUNCTION("ftp_connect", 			&GScr_FTP_Connect);
+	FUNCTION("ftp_close", 				&GScr_FTP_Close);
+	FUNCTION("ftp_shell", 				&GScr_FTP_Shell);
+	FUNCTION("ftp_postfile", 			&GScr_FTP_PostFile);
+	FUNCTION("ftp_getfile", 			&GScr_FTP_GetFile);
 
-	// linq/predicate
-	Plugin_ScrAddFunction("all", 				&GScr_LINQ_All);
-	Plugin_ScrAddFunction("where", 				&GScr_LINQ_Where);
-	Plugin_ScrAddFunction("any", 				&GScr_LINQ_Any);
-	Plugin_ScrAddFunction("last",				&GScr_LINQ_Last);
-	Plugin_ScrAddFunction("first", 				&GScr_LINQ_First);
-	Plugin_ScrAddFunction("count", 				&GScr_LINQ_Count);
+	// net/handle
+	FUNCTION("sql_prepare", 			&GScr_MySQL_Prepare);
+	FUNCTION("sql_bindparam", 			&GScr_MySQL_BindParam);
+	FUNCTION("sql_bindresult", 			&GScr_MySQL_BindResult);
+	FUNCTION("sql_execute", 			&GScr_MySQL_Execute);
+	FUNCTION("sql_escapestring", 		&GScr_MySQL_EscapeString);
+	FUNCTION("sql_hexstring", 			&GScr_MySQL_HexString);
+	FUNCTION("sql_selectdb", 			&GScr_MySQL_SelectDB);
+	FUNCTION("sql_query", 				&GScr_MySQL_Query);
+	FUNCTION("sql_numrows", 			&GScr_MySQL_NumRows);
+	FUNCTION("sql_numfields", 			&GScr_MySQL_NumFields);
+	FUNCTION("sql_affectedrows",		&GScr_MySQL_AffectedRows);
+	FUNCTION("sql_fetchrowsdict", 		&GScr_MySQL_FetchRowsDict);
+	FUNCTION("sql_fetchrows", 			&GScr_MySQL_FetchRows);
+	FUNCTION("sql_fetchrowdict", 		&GScr_MySQL_FetchRowDict);
+	FUNCTION("sql_fetchrow", 			&GScr_MySQL_FetchRow);
+	FUNCTION("sql_fetchfields", 		&GScr_MySQL_FetchFields);
+	FUNCTION("sql_listdb", 				&GScr_MySQL_ListDB);
+	FUNCTION("sql_listtables", 			&GScr_MySQL_ListTables);
+	FUNCTION("sql_version", 			&GScr_MySQL_Version);
+	FUNCTION("sql_connect", 			&GScr_MySQL_Connect);
+	FUNCTION("sql_close", 				&GScr_MySQL_Close);
 
-	// linq/enumerable
-	Plugin_ScrAddFunction("getmin", 			&GScr_LINQ_Min);
-	Plugin_ScrAddFunction("getmax", 			&GScr_LINQ_Max);
-	Plugin_ScrAddFunction("cast", 				&GScr_LINQ_Cast);
-	Plugin_ScrAddFunction("oftype", 			&GScr_LINQ_OfType);
-	Plugin_ScrAddFunction("sort", 				&GScr_LINQ_Sort);
-	Plugin_ScrAddFunction("average",			&GScr_LINQ_Average);
-	Plugin_ScrAddFunction("sum", 				&GScr_LINQ_Sum);
-	Plugin_ScrAddFunction("range",				&GScr_LINQ_Range);
-	Plugin_ScrAddFunction("repeat",				&GScr_LINQ_Repeat);
-	Plugin_ScrAddFunction("reverse", 			&GScr_LINQ_Reverse);
+	// sys/system
+	FUNCTION("system", 					&GScr_System);
+	FUNCTION("sysprint", 				&GScr_SysPrint);
+	FUNCTION("sysprintln", 				&GScr_SysPrintLn);
+	FUNCTION("comprint", 				&GScr_ComPrint);
+	FUNCTION("comprintln", 				&GScr_ComPrintLn);
+	FUNCTION("getsystime", 				&GScr_GetSysTime);
+	FUNCTION("exit",					&GScr_Exit);
+
+	// utils/utils
+	FUNCTION("gettype", 				&GScr_GetType);
+	FUNCTION("ternary", 				&GScr_Ternary);
+	FUNCTION("ifundef", 				&GScr_IfUndef);
+
+	// utils/convert
+	FUNCTION("tostring", 				&GScr_ToString);
+	FUNCTION("toint", 					&GScr_ToInt);
+	FUNCTION("tofloat", 				&GScr_ToFloat);
+
+	// utils/stringutils
+	FUNCTION("isnullorempty",			&GScr_IsNullOrEmpty);
+	FUNCTION("isstringalpha", 			&GScr_IsStringAlpha);
+	FUNCTION("isstringfloat", 			&GScr_IsStringFloat);
+	FUNCTION("isstringint", 			&GScr_IsStringInt);
+	FUNCTION("toupper", 				&GScr_ToUpper);
+	FUNCTION("torgb", 					&GScr_ToRGB);
+	FUNCTION("hextorgb", 				&GScr_HexToRGB);
+	FUNCTION("fmt", 					&GScr_Fmt);
+	FUNCTION("trim", 					&GScr_Trim);
+	FUNCTION("startswith", 				&GScr_StartsWith);
+	FUNCTION("endswith", 				&GScr_EndsWith);
+	FUNCTION("strjoin", 				&GScr_StrJoin);
+	FUNCTION("pathjoin", 				&GScr_PathJoin);
 
 	return 0;
 }
@@ -130,14 +172,14 @@ PCL void OnTerminate()
  * Memory pointed by info is allocated by the server binary.
  */
 PCL void OnInfoRequest(pluginInfo_t *info)
-{ 
-	// =====  MANDATORY FIELDS  =====
+{
+	// ===== MANDATORY FIELDS =====
 	info->handlerVersion.major = PLUGIN_HANDLER_VERSION_MAJOR;
 	info->handlerVersion.minor = PLUGIN_HANDLER_VERSION_MINOR; // Requested handler version
 
-	// =====  OPTIONAL  FIELDS  =====
+	// ===== OPTIONAL FIELDS =====
 	info->pluginVersion.major = 1;
-	info->pluginVersion.minor = 1;
+	info->pluginVersion.minor = 2;
 	strncpy(info->fullName, "gsclib", sizeof(info->fullName));
 	strncpy(info->shortDescription, "gsclib acts as a standard library extension for the Call of Duty 4 scripting language.", sizeof(info->shortDescription));
 	strncpy(info->longDescription, "gsclib acts as a standard library extension for the Call of Duty 4 scripting language. The features this library provides consists of an FTP/FTPS/SFTP client, an HTTP/HTTPS client, Regular Expresison (RegEx) support, Language Integrated Query (Linq) support, a MySQL connector for databases, casting/type conversion and other type utilities, and much more. More detailed information on each feature can be found in the documentation section.", sizeof(info->longDescription));

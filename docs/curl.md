@@ -3,27 +3,24 @@
 #### ``CURL_Version()``
 Print info about curl library.
 
-Usage Example:
 ```c
 CURL_Version();
 ```
 <hr>
 
-#### ``CURL_SetHeader(<commands>)``
+#### ``CURL_AddHeader(<commands>)``
 Set CURL Header for the next requests, commands should be separated with a ",".
 
-Usage Example:
 ```c
-CURL_SetHeader("Accept: application/json,Content-Type: application/json");
-CURL_SetHeader("RNFR libcurl.dll,RNTO test.dll");
-CURL_SetHeader("rename libcurl.dll test.dll");
+CURL_AddHeader("Accept: application/json,Content-Type: application/json");
+CURL_AddHeader("RNFR libcurl.dll,RNTO test.dll");
+CURL_AddHeader("rename libcurl.dll test.dll");
 ```
 <hr>
 
 #### ``CURL_HeaderCleanup()``
-Clean header set by CURL_SetHeader.
+Clean header set by CURL_AddHeader.
 
-Usage Example:
 ```c
 CURL_HeaderCleanup();
 ```
@@ -32,7 +29,6 @@ CURL_HeaderCleanup();
 #### ``CURL_AddOpt(<option>, <value>)``
 Add a CURL Option for the next request.
 
-Usage Example:
 ```c
 CURL_AddOpt(47, 1);
 ```
@@ -41,7 +37,6 @@ CURL_AddOpt(47, 1);
 #### ``CURL_OptCleanup()``
 Clean all CURL Option added by CURL_AddOpt.
 
-Usage Example:
 ```c
 CURL_OptCleanup();
 ```
