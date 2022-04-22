@@ -21,9 +21,11 @@ conan_basic_setup()
 
 # Tests
 include(CTest)
+include(gscunit.cmake)
 add_executable(gsclib.Tests)
 target_link_libraries(gsclib.Tests PUBLIC ${CONAN_LIBS} gsclib.Static)
 add_test(NAME Tests COMMAND gsclib.Tests)
+add_test_gscunit(NAME gscunit PROFILE ${GSCUNIT_PROFILE})
 
 # Build
 add_subdirectory(src)
