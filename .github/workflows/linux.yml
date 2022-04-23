@@ -42,7 +42,7 @@ jobs:
         conan remote add iswenzz-conan https://iswenzz.jfrog.io/artifactory/api/conan/iswenzz-conan
         mkdir build && cd build
         conan install .. --build missing --profile:host ../.conan/linux_host.conf --profile:build ../.conan/linux_build.conf
-        cmake .. -DCONAN_DISABLE_CHECK_COMPILER=1 -DGSCUNIT_PROFILE=../game/gscunit_linux.profile
+        cmake .. -DCONAN_DISABLE_CHECK_COMPILER=True
         cmake --build .
 
     - name: Artifact
@@ -58,25 +58,11 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v2
 
-    - name: gscunit
-      run: npm i -g gscunit
-
     - name: Artifact
       uses: actions/download-artifact@v2
       with:
         name: build-artifact
         path: build
-
-    - name: CoD4x
-      run: |
-        mkdir game && cd game
-        curl -o linux_runtime.zip https://iswenzz.com/github/gsclib/linux_runtime.zip
-        7z x linux_runtime.zip
-
-    - name: Plugin
-      run: |
-        mkdir -p game/plugins
-        cp build/lib/gsclib.so game/plugins/gsclib.so
 
     - name: Tests
       working-directory: build

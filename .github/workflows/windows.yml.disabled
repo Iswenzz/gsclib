@@ -25,18 +25,12 @@ jobs:
         curl -o plugin.zip https://iswenzz.com/github/gsclib/plugin.zip
         7z x plugin.zip
 
-    - name: CoD4x
-      run: |
-        mkdir game && cd game
-        curl -o windows_runtime.zip https://iswenzz.com/github/gsclib/windows_runtime.zip
-        7z x windows_runtime.zip
-
     - name: Build
       run: |
         conan remote add iswenzz-conan https://iswenzz.jfrog.io/artifactory/api/conan/iswenzz-conan
         mkdir build && cd build
         conan install .. --build missing --profile ../.conan/windows.conf
-        cmake .. -A Win32 -T ClangCL -DCONAN_DISABLE_CHECK_COMPILER=1 -DGSCUNIT_PROFILE=../game/gscunit_windows.profile
+        cmake .. -A Win32 -T ClangCL -DCONAN_DISABLE_CHECK_COMPILER=True
         cmake --build .
 
     - name: Artifact
@@ -52,9 +46,6 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v2
 
-    - name: gscunit
-      run: npm i -g gscunit
-
     - name: OpenCppCoverage
       shell: bash
       run: |
@@ -66,9 +57,6 @@ jobs:
       with:
         name: build-artifact
         path: build
-
-    - name: Plugin
-      run: cp build/bin/gsclib.dll game/plugins/gsclib.dll
 
     - name: Tests
       run: |
