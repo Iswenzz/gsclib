@@ -14,5 +14,5 @@ get_target_property(SOURCES gsclib SOURCES)
 source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR} FILES ${SOURCES})
 
 add_library(gsclib.Static STATIC ${SOURCES})
-set_target_properties(gsclib.Static PROPERTIES OUTPUT_NAME gsclib.static)
+set_target_properties(gsclib.Static PROPERTIES OUTPUT_NAME gsclib)
 target_include_directories(gsclib.Static PUBLIC .)
