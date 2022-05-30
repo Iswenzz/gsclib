@@ -164,6 +164,14 @@ new_array = Concat(arraySource, array);
 ```
 <hr>
 
+#### ``Chunk(<array>, <count>)``
+Split an array into multiple chunks.
+
+```c
+chunks = Chunk(array, 5);
+```
+<hr>
+
 #### ``IndexOf(<array>, <element>)``
 Get the index of an element.
 

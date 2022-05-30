@@ -78,6 +78,7 @@ PCL int OnInit()
 	FUNCTION("repeat",					&GScr_LINQ_Repeat);
 	FUNCTION("reverse", 				&GScr_LINQ_Reverse);
 	FUNCTION("concat", 					&GScr_LINQ_Concat);
+	FUNCTION("chunk",					&GScr_LINQ_Chunk);
 	FUNCTION("indexof",					&GScr_LINQ_IndexOf);
 
 	// net/curl

@@ -568,6 +568,28 @@ void GScr_LINQ_Concat()
 	Plugin_Scr_FreeArray(array);
 }
 
+void GScr_LINQ_Chunk()
+{
+	CHECK_PARAMS(2, "Usage: Chunk(<array>, <count>)");
+
+	VariableValueArray* array = Plugin_Scr_GetArray(0);
+	const int count = Plugin_Scr_GetInt(1);
+
+	Plugin_Scr_MakeArray();
+	for (int i = 0; i < array->length && count; i++)
+	{
+		if (!(i % count))
+			Plugin_Scr_MakeArray();
+
+		Plugin_Scr_AddVariable(array->items[i]);
+		Plugin_Scr_AddArray();
+
+		if (!((i + 1) % count) || i + 1 == array->length)
+			Plugin_Scr_AddArray();
+	}
+	Plugin_Scr_FreeArray(array);
+}
+
 void GScr_LINQ_IndexOf()
 {
 	CHECK_PARAMS(2, "Usage: IndexOf(<array>, <element>)");

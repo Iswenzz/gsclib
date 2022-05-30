@@ -22,6 +22,7 @@ main()
 	it(::test_Repeat, "Repeat");
 	it(::test_Reverse, "Reverse");
 	it(::test_Concat, "Concat");
+	it(::test_Chunk, "Chunk");
 	it(::test_IndexOf, "IndexOf");
 
 	// linq/predicates
@@ -50,6 +51,14 @@ test_Aggregate()
 test_Concat()
 {
 	EXPECT_EQ(Concat(level.tests.ints, level.tests.ints).size, 20);
+}
+
+test_Chunk()
+{
+	chunks = Chunk(level.tests.ints, 2);
+
+	EXPECT_EQ(chunks.size, 5);
+	EXPECT_EQ(chunks[0].size, 2);
 }
 
 test_Foreach()

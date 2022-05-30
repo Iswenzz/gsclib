@@ -59,6 +59,11 @@ void GScr_LINQ_Reverse();
 void GScr_LINQ_Concat();
 
 /// <summary>
+/// Split an array into multiple chunks.
+/// </summary>
+void GScr_LINQ_Chunk();
+
+/// <summary>
 /// Get the index of an element.
 /// </summary>
 void GScr_LINQ_IndexOf();
