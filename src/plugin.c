@@ -23,8 +23,8 @@
 
 PCL int OnInit()
 {
-	CURLinitCode = curl_global_init(CURL_GLOBAL_ALL); 	// initialize curl library
-	MySQLcode = mysql_library_init(0, NULL, NULL); 		// initialize mysql library
+	CURLinitCode = curl_global_init(CURL_GLOBAL_ALL); 	// Initialize curl library
+	MySQLcode = mysql_library_init(0, NULL, NULL); 		// Initialize mysql library
 
 	// data/file
 	FUNCTION("file_create",				&GScr_FILE_Create);
@@ -133,6 +133,7 @@ PCL int OnInit()
 	FUNCTION("comprintln", 				&GScr_ComPrintLn);
 	FUNCTION("getsystime", 				&GScr_GetSysTime);
 	FUNCTION("exit",					&GScr_Exit);
+	METHOD("getip",						&GScr_GetIP);
 
 	// utils/utils
 	FUNCTION("gettype", 				&GScr_GetType);
@@ -157,6 +158,7 @@ PCL int OnInit()
 	FUNCTION("startswith", 				&GScr_StartsWith);
 	FUNCTION("endswith", 				&GScr_EndsWith);
 	FUNCTION("strjoin", 				&GScr_StrJoin);
+	FUNCTION("strreplace",				&GScr_StrReplace);
 	FUNCTION("pathjoin", 				&GScr_PathJoin);
 
 	return 0;
@@ -164,14 +166,15 @@ PCL int OnInit()
 
 PCL void OnTerminate()
 {
-	curl_global_cleanup(); 	// free curl library
-	mysql_library_end(); 	// free mysql library
+	curl_global_cleanup(); 	// Free curl library
+	mysql_library_end(); 	// Free mysql library
 }
 
-/**
- * @brief Callback used to obtain information about the plugin
- * Memory pointed by info is allocated by the server binary.
- */
+/// <summary>
+/// Callback used to obtain information about the plugin.
+/// </summary>
+/// <param name="info">Memory pointed by info is allocated by the server binary.</param>
+/// <returns></returns>
 PCL void OnInfoRequest(pluginInfo_t *info)
 {
 	// ===== MANDATORY FIELDS =====

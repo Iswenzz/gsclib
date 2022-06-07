@@ -67,6 +67,11 @@ void GScr_EndsWith();
 void GScr_StrJoin();
 
 /// <summary>
+/// Replace a string.
+/// </summary>
+void GScr_StrReplace();
+
+/// <summary>
 /// Join filepath strings.
 /// </summary>
 void GScr_PathJoin();

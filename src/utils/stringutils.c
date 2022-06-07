@@ -6,6 +6,8 @@
 #include <ctype.h>
 #include <stdlib.h>
 
+#include "sys/system.h"
+
 void GScr_IsStringAlpha()
 {
 	CHECK_PARAMS(1, "Usage: IsStringAlpha(<string>)");
@@ -192,6 +194,32 @@ void GScr_StrJoin()
 		}
 	}
 	Plugin_Scr_AddString(result);
+}
+
+void GScr_StrReplace()
+{
+	CHECK_PARAMS(3, "Usage: StrReplace(<source>, <search>, <replace>)");
+
+	char source[MAX_STRING_CHARS] = { 0 };
+
+	strcpy(source, Plugin_Scr_GetString(0));
+	const char* search = Plugin_Scr_GetString(1);
+	const char* replace = Plugin_Scr_GetString(2);
+
+	char* p = NULL;
+	if ((p = strstr(source, search)) == NULL)
+	{
+		Plugin_Scr_AddString(source);
+		return;
+	}
+	int searchLen = strlen(search);
+	int replaceLen = strlen(replace);
+	int tailLen = strlen(p + searchLen);
+
+	memmove(p + replaceLen, p + searchLen, tailLen + 1);
+	memcpy(p, replace, replaceLen);
+
+	Plugin_Scr_AddString(source);
 }
 
 void GScr_PathJoin()

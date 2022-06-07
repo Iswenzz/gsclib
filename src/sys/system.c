@@ -24,6 +24,18 @@ void GScr_Exit()
 	exit(Plugin_Scr_GetInt(0));
 }
 
+void GScr_GetIP(scr_entref_t num)
+{
+	client_t* cl = Plugin_GetClientForClientNum(num);
+
+	if (!cl)
+		Plugin_Scr_ObjectError("not a client\n");
+
+	char ip[128];
+	Plugin_NET_AdrToStringShortMT(&cl->netchan.remoteAddress, ip, sizeof(ip));
+	Plugin_Scr_AddString(ip);
+}
+
 void GScr_ComPrint()
 {
 	Scr_PrintF(qfalse, &Plugin_Printf);

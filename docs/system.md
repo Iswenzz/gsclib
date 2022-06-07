@@ -16,6 +16,14 @@ time = GetSysTime();
 ```
 <hr>
 
+#### ``<client> GetIP()``
+Get the client IP.
+
+```c
+ip = player GetIP();
+```
+<hr>
+
 #### ``Exit(<code>)``
 Exit the program.
 

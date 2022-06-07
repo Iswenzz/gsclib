@@ -39,6 +39,12 @@ void GScr_ComPrintLn();
 void GScr_Exit();
 
 /// <summary>
+/// Get a client IP.
+/// </summary>
+/// <param name="ent">The client number.</param>
+void GScr_GetIP(scr_entref_t num);
+
+/// <summary>
 /// Print to stderr.
 /// </summary>
 /// <param name="format">The string format.</param>

@@ -11,7 +11,7 @@ string = fmt("%s %d", a, b);
 ```
 <hr>
 
-#### ``trim(<string>)``
+#### ``Trim(<string>)``
 Trim a string.
 
 ```c
@@ -145,6 +145,14 @@ Join string array with a separator.
 
 ```c
 str = StrJoin(array, "-");
+```
+<hr>
+
+#### ``StrReplace(<source>, <search>, <replace>)``
+Replace a string.
+
+```c
+str = StrReplace("SR Speedrun", "Speedrun", "Deathrun");
 ```
 <hr>
 

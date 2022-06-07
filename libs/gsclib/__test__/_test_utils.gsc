@@ -18,6 +18,7 @@ main()
 	it(::test_StartsWith, "StartsWith");
 	it(::test_EndsWith, "EndsWith");
 	it(::test_StrJoin, "StrJoin");
+	it(::test_StrReplace, "StrReplace");
 	it(::test_PathJoin, "PathJoin");
 
 	// utils/utils
@@ -27,6 +28,11 @@ main()
 	it(::test_ToInt, "ToInt");
 	it(::test_ToFloat, "ToFloat");
 	it(::test_ToString, "ToString");
+}
+
+test_StrReplace()
+{
+	EXPECT_EQ(StrReplace("SR Speedrun", "Speedrun", "Deathrun"), "SR Deathrun");
 }
 
 test_StrJoin()
