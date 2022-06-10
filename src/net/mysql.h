@@ -14,20 +14,14 @@ if (x == NULL)				\
 
 extern int MySQLcode;
 
-typedef struct
-{
-	MYSQL_BIND bind;
-	void *buffer;
-} MYSQL_BIND_BUFFER;
-
 typedef struct 
 {
 	MYSQL *handle;
 	MYSQL_RES *result;
 	MYSQL_RES *resultStmt;
 	MYSQL_STMT *stmt;
-	MYSQL_BIND_BUFFER *binds;
-	MYSQL_BIND_BUFFER *bindsResult;
+	MYSQL_BIND *binds;
+	MYSQL_BIND *bindsResult;
 	int bindsLength;
 	int bindsResultLength;
 } MYSQL_INSTANCE;
@@ -61,7 +55,7 @@ int MySQL_TypeToGSC(enum_field_types type);
 /// <param name="value">The param bind value or NULL for a result bind.</param>
 /// <param name="valueLength">The length of the string to allocate (0 for other types).</param>
 /// <param name="type">The MySQL type to bind.</param>
-void MySQL_PrepareBindBuffer(MYSQL_BIND_BUFFER *b, const char *value, int valueLength, enum_field_types type);
+void MySQL_PrepareBindBuffer(MYSQL_BIND* b, void *value, int valueLength, enum_field_types type);
 
 /// <summary>
 /// Prepare a MySQL statement.
@@ -188,7 +182,7 @@ void Scr_MySQL_FetchQueryRows(qboolean stringIndexed);
 /// </summary>
 /// <param name="stringIndexed">Return as a string indexed array.</param>
 /// <returns></returns>
-void Scr_MySQL_FetchStatementRow(qboolean stringIndexed);
+qboolean Scr_MySQL_FetchStatementRow(qboolean stringIndexed);
 
 /// <summary>
 /// Fetch rows for statement.

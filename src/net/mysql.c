@@ -36,16 +36,30 @@ void GScr_MySQL_BindParam()
 	CHECK_MYSQL_INSTANCE();
 	CHECK_MYSQL_STMT();
 
-	const char *value = Plugin_Scr_GetString(0);
+	VariableValue *variable = Plugin_Scr_SelectParam(0);
 	enum_field_types type = (enum_field_types)Plugin_Scr_GetInt(1);
 
-	if (!mysql.binds)
-		mysql.binds = (MYSQL_BIND_BUFFER *)malloc(sizeof(MYSQL_BIND_BUFFER));
-	else
-		mysql.binds = (MYSQL_BIND_BUFFER *)realloc(mysql.binds, 
-			sizeof(MYSQL_BIND_BUFFER) * (mysql.bindsLength + 1));
+	mysql.binds = !mysql.binds
+		? (MYSQL_BIND*)malloc(sizeof(MYSQL_BIND))
+		: (MYSQL_BIND*)realloc(mysql.binds, sizeof(MYSQL_BIND) * (mysql.bindsLength + 1));
 
-	MySQL_PrepareBindBuffer(&mysql.binds[mysql.bindsLength], value, strlen(value), type);
+	void* value = NULL;
+	int valueSize = 0;
+
+	switch (variable->type)
+	{
+	case VAR_STRING:
+		value = (void *)Plugin_SL_ConvertToString(variable->u.stringValue);
+		valueSize = strlen((const char *)value);
+		break;
+	case VAR_INTEGER:
+		value = (void *)&variable->u.intValue;
+		break;
+	case VAR_FLOAT:
+		value = (void *)&variable->u.floatValue;
+		break;
+	}
+	MySQL_PrepareBindBuffer(&mysql.binds[mysql.bindsLength], value, valueSize, type);
 	mysql.bindsLength++;
 }
 
@@ -60,26 +74,22 @@ void GScr_MySQL_BindResult()
 	CHECK_MYSQL_STMT();
 
 	enum_field_types type = Plugin_Scr_GetInt(0);
+	int stringLength = Plugin_Scr_GetNumParam() == 2 ? Plugin_Scr_GetInt(1) + 1 : 0;
 
-	if (!mysql.bindsResult)
-		mysql.bindsResult = (MYSQL_BIND_BUFFER *)malloc(sizeof(MYSQL_BIND_BUFFER));
-	else
-		mysql.bindsResult = (MYSQL_BIND_BUFFER *)realloc(mysql.bindsResult, 
-			sizeof(MYSQL_BIND_BUFFER) * (mysql.bindsResultLength + 1));
+	mysql.bindsResult = !mysql.bindsResult
+		? (MYSQL_BIND*)malloc(sizeof(MYSQL_BIND))
+		: (MYSQL_BIND*)realloc(mysql.bindsResult, sizeof(MYSQL_BIND) * (mysql.bindsResultLength + 1));
 
-	if (Plugin_Scr_GetNumParam() == 2) // Alloc a string buffer
-		MySQL_PrepareBindBuffer(&mysql.bindsResult[mysql.bindsResultLength], NULL, Plugin_Scr_GetInt(1) + 1, type);
-	else
-		MySQL_PrepareBindBuffer(&mysql.bindsResult[mysql.bindsResultLength], NULL, 0, type);
+	MySQL_PrepareBindBuffer(&mysql.bindsResult[mysql.bindsResultLength], NULL, stringLength, type);
 	mysql.bindsResultLength++;
 }
 
-void MySQL_PrepareBindBuffer(MYSQL_BIND_BUFFER *b, const char *value, int valueLength, enum_field_types type)
+void MySQL_PrepareBindBuffer(MYSQL_BIND *b, void *value, int valueLength, enum_field_types type)
 {
-	memset(&b->bind, 0, sizeof(b->bind));
-	b->bind.buffer_type = type;
+	memset(b, 0, sizeof(MYSQL_BIND));
+	b->buffer_type = type;
 	
-	switch (MySQL_TypeToGSC(b->bind.buffer_type))
+	switch (MySQL_TypeToGSC(b->buffer_type))
 	{
 		case VAR_STRING:
 		{
@@ -89,7 +99,7 @@ void MySQL_PrepareBindBuffer(MYSQL_BIND_BUFFER *b, const char *value, int valueL
 			if (value)
 				strcpy(str, value);
 			b->buffer = str;
-			b->bind.buffer_length = valueLength;
+			b->buffer_length = valueLength;
 		}
 		break;
 		case VAR_INTEGER:
@@ -98,7 +108,7 @@ void MySQL_PrepareBindBuffer(MYSQL_BIND_BUFFER *b, const char *value, int valueL
 			*number = 0;
 
 			if (value)
-				*number = strtoll(value, NULL, 10);
+				*number = *(int *)value;
 			b->buffer = number;
 		}
 		break;
@@ -108,12 +118,11 @@ void MySQL_PrepareBindBuffer(MYSQL_BIND_BUFFER *b, const char *value, int valueL
 			*number = 0;
 
 			if (value)
-				*number = strtof(value, NULL);
+				*number = *(float *)value;
 			b->buffer = number;
 		}
 		break;
 	}
-	b->bind.buffer = (char *)b->buffer;
 }
 
 int MySQL_TypeToGSC(enum_field_types type)
@@ -167,18 +176,9 @@ void GScr_MySQL_Execute()
 	CHECK_PARAMS(0, "Usage: SQL_Execute()");
 	CHECK_MYSQL_INSTANCE();
 	CHECK_MYSQL_STMT();
-
-	// Remap the binds
-	MYSQL_BIND binds[mysql.bindsLength];
-	MYSQL_BIND bindsResult[mysql.bindsResultLength];
-
-	for (int i = 0; i < mysql.bindsLength; i++)
-		binds[i] = mysql.binds[i].bind;
-	for (int i = 0; i < mysql.bindsResultLength; i++)
-		bindsResult[i] = mysql.bindsResult[i].bind;
 	
 	// Bind params
-	if (mysql.bindsLength && mysql_stmt_bind_param(mysql.stmt, binds))
+	if (mysql.bindsLength && mysql_stmt_bind_param(mysql.stmt, mysql.binds))
 	{
 		Plugin_Scr_Error(fmt("SQL_Execute(): Bind statement failed: %s", mysql_stmt_error(mysql.stmt)));
 		Plugin_Scr_AddBool(qfalse);
@@ -186,7 +186,7 @@ void GScr_MySQL_Execute()
 	}
 
 	// Bind results
-	if (mysql.bindsResultLength && mysql_stmt_bind_result(mysql.stmt, bindsResult))
+	if (mysql.bindsResultLength && mysql_stmt_bind_result(mysql.stmt, mysql.bindsResult))
 	{
 		Plugin_Scr_Error(fmt("SQL_Execute(): Bind statement failed: %s", mysql_stmt_error(mysql.stmt)));
 		Plugin_Scr_AddBool(qfalse);
@@ -389,17 +389,14 @@ void Scr_MySQL_FetchStatementRows(qboolean stringIndexed)
 	Plugin_Scr_MakeArray();
 	mysql_stmt_data_seek(mysql.stmt, 0);
 
-	while (!mysql_stmt_fetch(mysql.stmt))
-	{
-		Scr_MySQL_FetchStatementRow(stringIndexed);
+	while (Scr_MySQL_FetchStatementRow(stringIndexed))
 		Plugin_Scr_AddArray();
-	}
 }
 
-void Scr_MySQL_FetchStatementRow(qboolean stringIndexed)
+qboolean Scr_MySQL_FetchStatementRow(qboolean stringIndexed)
 {
-	CHECK_MYSQL_INSTANCE();
-	CHECK_MYSQL_STMT();
+	if (mysql.stmt == NULL || mysql_stmt_fetch(mysql.stmt))
+		return qfalse;
 
 	mysql_field_seek(mysql.resultStmt, 0);
 	Plugin_Scr_MakeArray();
@@ -413,24 +410,24 @@ void Scr_MySQL_FetchStatementRow(qboolean stringIndexed)
 			Plugin_Scr_AddUndefined();
 			Plugin_Scr_AddArray();
 			Plugin_Scr_Error("SQL_FetchRowsDict(): Error while fetching fields.");
-			return;
+			return qfalse;
 		}
 
 		// Add the row value
-		if (mysql.bindsResult[i].bind.is_null_value)
+		if (mysql.bindsResult[i].is_null_value)
 			Plugin_Scr_AddUndefined();
 		else
 		{
-			switch (MySQL_TypeToGSC(mysql.bindsResult[i].bind.buffer_type))
+			switch (MySQL_TypeToGSC(mysql.bindsResult[i].buffer_type))
 			{
 			case VAR_STRING:
-				Plugin_Scr_AddString((const char*)mysql.bindsResult[i].bind.buffer);
+				Plugin_Scr_AddString((const char*)mysql.bindsResult[i].buffer);
 				break;
 			case VAR_INTEGER:
-				Plugin_Scr_AddInt(*(int*)mysql.bindsResult[i].bind.buffer);
+				Plugin_Scr_AddInt(*(int*)mysql.bindsResult[i].buffer);
 				break;
 			case VAR_FLOAT:
-				Plugin_Scr_AddFloat(*(float*)mysql.bindsResult[i].bind.buffer);
+				Plugin_Scr_AddFloat(*(float*)mysql.bindsResult[i].buffer);
 				break;
 			}
 		}
@@ -441,6 +438,7 @@ void Scr_MySQL_FetchStatementRow(qboolean stringIndexed)
 		else
 			Plugin_Scr_AddArray();
 	}
+	return qtrue;
 }
 
 void Scr_MySQL_FetchQueryRows(qboolean stringIndexed)
