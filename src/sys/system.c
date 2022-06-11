@@ -104,7 +104,7 @@ void Sys_AnsiColorPrint(const char* msg, void (*print)(const char*, ...))
 			if (length > 0)
 			{
 				buffer[length] = '\0';
-				fputs(buffer, stderr);
+				print(buffer);
 				length = 0;
 			}
 			if (*msg == '\n')
