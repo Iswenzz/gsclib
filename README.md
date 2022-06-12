@@ -44,7 +44,7 @@ Navigate inside `CoD4x_Server/plugins/` and follow the build instructions below:
 
 If you see an error like the next screenshot, you will need to specify your compiler version in the above command using `-s compiler.version=(whatever number it shows for your cmake)`.
 
-
+![image](https://user-images.githubusercontent.com/52291201/173213913-8ab89d7a-f82a-4124-ab44-f1a5649927fd.png)
 
 For example, for the above screenshot, the comipler version would be 8.4, so the argument would be `-s compiler.version=8.4`, and the final command will be `conan install .. --build missing --profile:host ../.conan/linux_host.conf --profile:build ../.conan/linux_build.conf -s compiler.version=8.4`
 
