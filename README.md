@@ -18,34 +18,57 @@
 * [Zip](https://github.com/Iswenzz/gsclib/blob/master/docs/zip.md)
 
 ## Instructions
-In order to use this library, just download the archived file down below, and extract it to the Call of Duty 4X ``plugins/gsclib`` directory.
+In order to use this library, you need to compile CoD4X server for whichever platform you're using.
+Navigate inside `CoD4x_Server/plugins/` and follow the build instructions below:
+
+</br>
+</br>
+</br>
 
 ## Building (Linux)
-_Pre-Requisites:_
-1. Edit plugin_handle.h and recompile your server:
-```c
-#define MAX_SCRIPTFUNCTIONS 256
-```
-2. [CGSC](https://github.com/Iswenzz/CGSC) and it's pre-requisites.
-3. [CMake](https://cmake.org/) and [Conan](https://conan.io/).
+### _Pre-Requisites:_
+1. Edit `src/plugin_handler.h` and recompile your server:
+	```c
+	#define MAX_SCRIPTFUNCTIONS 256
+	```
+1. [CGSC](https://github.com/Iswenzz/CGSC) and it's pre-requisites
+1. [CMake](https://cmake.org/) and [Conan](https://conan.io/). (Install both using pip3 instead of pip2, else errors [(fix)](https://stackoverflow.com/a/69103664/15573604) later on)
+1. Make sure your gcc is atleast version 7.5, check using `gcc --version` ( previous versions untested ).
 
-_Build Command:_
+### **_Build Guide:_**
 
+	git clone https://github.com/Iswenzz/gsclib.git && cd gsclib
    	conan remote add iswenzz-conan https://iswenzz.jfrog.io/artifactory/api/conan/iswenzz-conan
 	mkdir build && cd build
 	conan install .. --build missing --profile:host ../.conan/linux_host.conf --profile:build ../.conan/linux_build.conf
+
+If you see an error like the next screenshot, you will need to specify your compiler version in the above command using `-s compiler.version=(whatever number it shows for your cmake)`.
+
+
+
+For example, for the above screenshot, the comipler version would be 8.4, so the argument would be `-s compiler.version=8.4`, and the final command will be `conan install .. --build missing --profile:host ../.conan/linux_host.conf --profile:build ../.conan/linux_build.conf -s compiler.version=8.4`
+
+Now finalize the build:
+
 	cmake ..
 	cmake --build .
 
+> The compiled `gsclib.so` will be inside `build/lib/`
+
+
+</br>
+</br>
+</br>
+
 ## Building (Windows)
 _Pre-Requisites:_
-1. Edit plugin_handle.h and recompile your server:
+1. Edit plugin_handler.h and recompile your server:
 ```c
 #define MAX_SCRIPTFUNCTIONS 256
 ```
-2. [CGSC](https://github.com/Iswenzz/CGSC) and it's pre-requisites.
-3. [CMake](https://cmake.org/) and [Conan](https://conan.io/).
-4. [Visual Studio](https://visualstudio.microsoft.com/) with [Clang](https://docs.microsoft.com/en-us/cpp/build/clang-support-msbuild?view=msvc-170) toolset.
+1. [CGSC](https://github.com/Iswenzz/gsclib) and it's pre-requisites.
+1. [CMake](https://cmake.org/) and [Conan](https://conan.io/).
+1. [Visual Studio](https://visualstudio.microsoft.com/) with [Clang](https://docs.microsoft.com/en-us/cpp/build/clang-support-msbuild?view=msvc-170) toolset.
 
 **Using the Developer Command Prompt for Visual Studio**
 _Build Command:_
