@@ -145,7 +145,7 @@ void GScr_CURL_HeaderCleanup()
 
 void GScr_CURL_AddHeader()
 {
-	CHECK_PARAMS(1, "Usage: CURL_AddHeader(<header parse>)");
+	CHECK_PARAMS(1, "Usage: CURL_AddHeader(<header>)");
 	curl.header = curl_slist_append(curl.header, Plugin_Scr_GetString(0));
 }
 

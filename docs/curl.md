@@ -9,10 +9,11 @@ CURL_Version();
 <hr>
 
 #### ``CURL_AddHeader(<commands>)``
-Set CURL Header for the next requests, commands should be separated with a ",".
+Set CURL Header for the next requests.
 
 ```c
-CURL_AddHeader("Accept: application/json,Content-Type: application/json");
+CURL_AddHeader("Accept: application/json");
+CURL_AddHeader("Content-Type: application/json");
 CURL_AddHeader("RNFR libcurl.dll,RNTO test.dll");
 CURL_AddHeader("rename libcurl.dll test.dll");
 ```
