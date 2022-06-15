@@ -18,7 +18,7 @@ void GScr_Ternary()
 	qboolean condition = Plugin_Scr_GetInt(0);
 	VariableValue *a = Plugin_Scr_SelectParam(1);
 	VariableValue *b = Plugin_Scr_SelectParam(2);
-	Plugin_Scr_AddVariable(condition ? a : b);
+	Plugin_Scr_AddVariable(condition ? *a : *b);
 }
 
 void GScr_IfUndef()
@@ -27,7 +27,7 @@ void GScr_IfUndef()
 
 	VariableValue *a = Plugin_Scr_SelectParam(0);
 	VariableValue *b = Plugin_Scr_SelectParam(1);
-	Plugin_Scr_AddVariable(a->type == VAR_UNDEFINED ? b : a);
+	Plugin_Scr_AddVariable(a->type == VAR_UNDEFINED ? *b : *a);
 }
 
 void GScr_GetType()

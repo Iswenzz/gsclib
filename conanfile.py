@@ -8,7 +8,7 @@ class gsclib(ConanFile):
 	description = "gsclib acts as a standard library extension for the Call of Duty 4 scripting language."
 
 	requires = (
-		"CGSC/1.1.0",
+		"CGSC/1.1.1",
 		"cwalk/1.2.5",
 		"greatest/1.5.0",
 		"libmysqlclient/8.0.17",

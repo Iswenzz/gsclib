@@ -40,22 +40,19 @@ void CURL_SetOpts(CURL* handle)
 	{
 		for (int i = 0; i < curl.optsCount; i++)
 		{
-			if (curl.opts[i].param != NULL)
+			switch (curl.opts[i].param.type)
 			{
-				switch (curl.opts[i].param->type)
-				{
-				case VAR_INTEGER:
-					curl_easy_setopt(handle, curl.opts[i].opt, curl.opts[i].param->u.intValue);
-					break;
-				case VAR_FLOAT:
-					curl_easy_setopt(handle, curl.opts[i].opt, curl.opts[i].param->u.floatValue);
-					break;
-				case VAR_ISTRING:
-				case VAR_STRING:
-					curl_easy_setopt(handle, curl.opts[i].opt,
-						Plugin_SL_ConvertToString(curl.opts[i].param->u.stringValue));
-					break;
-				}
+			case VAR_INTEGER:
+				curl_easy_setopt(handle, curl.opts[i].opt, curl.opts[i].param.u.intValue);
+				break;
+			case VAR_FLOAT:
+				curl_easy_setopt(handle, curl.opts[i].opt, curl.opts[i].param.u.floatValue);
+				break;
+			case VAR_ISTRING:
+			case VAR_STRING:
+				curl_easy_setopt(handle, curl.opts[i].opt,
+					Plugin_SL_ConvertToString(curl.opts[i].param.u.stringValue));
+				break;
 			}
 		}
 	}
@@ -154,6 +151,6 @@ void GScr_CURL_AddOpt()
 	CHECK_PARAMS(2, "Usage: CURL_AddOpt(<opt int>, <param generic>)");
 
 	curl.opts[curl.optsCount].opt = Plugin_Scr_GetInt(0);
-	curl.opts[curl.optsCount].param = Plugin_Scr_AllocVariable(Plugin_Scr_SelectParam(1));
+	curl.opts[curl.optsCount].param = *Plugin_Scr_SelectParam(1);
 	curl.optsCount++;
 }

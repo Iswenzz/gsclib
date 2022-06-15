@@ -179,7 +179,7 @@ void GScr_StrJoin()
 {
 	CHECK_PARAMS(2, "Usage: StrJoin(<array>, <separator>)");
 
-	VariableValueArray* array = Plugin_Scr_GetArray(0);
+	VariableValueArray array = Plugin_Scr_GetArray(0);
 	const char* separator = Plugin_Scr_GetString(1);
 
 	char result[MAX_STRING_CHARS] = { 0 };
@@ -187,10 +187,10 @@ void GScr_StrJoin()
 
 	if (IsFlag(flags, FLAG_STRING) || IsFlag(flags, FLAG_ISTRING))
 	{
-		for (int i = 0; i < array->length; i++)
+		for (int i = 0; i < array.length; i++)
 		{
-			const char* toJoin = Plugin_SL_ConvertToString(array->items[i]->u.stringValue);
-			strcat(result, fmt("%s%s", toJoin, i == array->length - 1 ? "" : separator));
+			const char* toJoin = Plugin_SL_ConvertToString(array.items[i].u.stringValue);
+			strcat(result, fmt("%s%s", toJoin, i == array.length - 1 ? "" : separator));
 		}
 	}
 	Plugin_Scr_AddString(result);

@@ -29,7 +29,7 @@ typedef struct
 typedef struct
 {
 	long opt;
-	VariableValue *param;
+	VariableValue param;
 } CURLopt;
 
 /// <summary>

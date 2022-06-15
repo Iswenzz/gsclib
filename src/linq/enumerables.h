@@ -72,86 +72,86 @@ void GScr_LINQ_IndexOf();
 /// Get the min string in a GSC array.
 /// </summary>
 /// <param name="array">The variable array.</param>
-void Scr_StringMin(VariableValueArray* array);
+void Scr_StringMin(VariableValueArray array);
 
 /// <summary>
 /// Get the min vector in a GSC array.
 /// </summary>
 /// <param name="array">The variable array.</param>
-void Scr_VectorMin(VariableValueArray* array);
+void Scr_VectorMin(VariableValueArray array);
 
 /// <summary>
 /// Get the min number in a GSC array.
 /// </summary>
 /// <param name="array">The variable array.</param>
 /// <param name="flags">The array type flags.</param>
-void Scr_NumberMin(VariableValueArray* array, int flags);
+void Scr_NumberMin(VariableValueArray array, int flags);
 
 /// <summary>
 /// Get the max string in a GSC array.
 /// </summary>
 /// <param name="array">The variable array.</param>
-void Scr_StringMax(VariableValueArray* array);
+void Scr_StringMax(VariableValueArray array);
 
 /// <summary>
 /// Get the max vector in a GSC array.
 /// </summary>
 /// <param name="array">The variable array.</param>
-void Scr_VectorMax(VariableValueArray* array);
+void Scr_VectorMax(VariableValueArray array);
 
 /// <summary>
 /// Get the max number in a GSC array.
 /// </summary>
 /// <param name="array">The variable array.</param>
 /// <param name="flags">The array type flags.</param>
-void Scr_NumberMax(VariableValueArray* array, int flags);
+void Scr_NumberMax(VariableValueArray array, int flags);
 
 /// <summary>
 /// Cast all variables to string.
 /// </summary>
 /// <param name="array">The variable array.</param>
-void Scr_StringCast(VariableValueArray* array);
+void Scr_StringCast(VariableValueArray array);
 
 /// <summary>
 /// Cast all variables to int.
 /// </summary>
 /// <param name="array">The variable array.</param>
-void Scr_IntCast(VariableValueArray* array);
+void Scr_IntCast(VariableValueArray array);
 
 /// <summary>
 /// Cast all variables to float.
 /// </summary>
 /// <param name="array">The variable array.</param>
-void Scr_FloatCast(VariableValueArray* array);
+void Scr_FloatCast(VariableValueArray array);
 
 /// <summary>
 /// Get the average vector in a GSC array.
 /// </summary>
 /// <param name="array">The variable array.</param>
-void Scr_VectorAverage(VariableValueArray* array);
+void Scr_VectorAverage(VariableValueArray array);
 
 /// <summary>
 /// Get the average number in a GSC array.
 /// </summary>
 /// <param name="array">The variable array.</param>
 /// <param name="flags">The array type flags.</param>
-void Scr_NumberAverage(VariableValueArray* array, int flags);
+void Scr_NumberAverage(VariableValueArray array, int flags);
 
 /// <summary>
 /// Sum all strings.
 /// </summary>
 /// <param name="array">The variable array.</param>
-void Scr_StringSum(VariableValueArray* array);
+void Scr_StringSum(VariableValueArray array);
 
 /// <summary>
 /// Sum all vectors.
 /// </summary>
 /// <param name="array">The variable array.</param>
-void Scr_VectorSum(VariableValueArray* array);
+void Scr_VectorSum(VariableValueArray array);
 
 /// <summary>
 /// Sum all numbers.
 /// </summary>
 /// <param name="array">The variable array.</param>
 /// <param name="flags">The array type flags.</param>
-void Scr_NumberSum(VariableValueArray* array, int flags);
+void Scr_NumberSum(VariableValueArray array, int flags);
