@@ -1,15 +1,15 @@
-#include libs\gscunit\_main;
+#include sr\libs\gscunit\_main;
 
 gsclib()
 {
 	env();
 	suite("GSCLIB");
 
-	libs\gsclib\__test__\_test_data::main();
-	libs\gsclib\__test__\_test_linq::main();
-	libs\gsclib\__test__\_test_net::main();
-	libs\gsclib\__test__\_test_sys::main();
-	libs\gsclib\__test__\_test_utils::main();
+	sr\libs\gsclib\__test__\_test_data::main();
+	sr\libs\gsclib\__test__\_test_linq::main();
+	sr\libs\gsclib\__test__\_test_net::main();
+	sr\libs\gsclib\__test__\_test_sys::main();
+	sr\libs\gsclib\__test__\_test_utils::main();
 }
 
 hasFTP()

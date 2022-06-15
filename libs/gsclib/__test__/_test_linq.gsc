@@ -1,5 +1,5 @@
-#include libs\gscunit\_main;
-#include libs\gsclib\__test__\_suite;
+#include sr\libs\gscunit\_main;
+#include sr\libs\gsclib\__test__\_suite;
 
 main()
 {
@@ -24,6 +24,8 @@ main()
 	it(::test_Concat, "Concat");
 	it(::test_Chunk, "Chunk");
 	it(::test_IndexOf, "IndexOf");
+	it(::test_Remove, "Remove");
+	it(::test_RemoveAt, "RemoveAt");
 
 	// linq/predicates
 	it(::test_All, "All");
@@ -235,4 +237,14 @@ test_Reverse()
 	EXPECT_EQ(Reverse(level.tests.ints)[0], 9);
 	EXPECT_EQ(Reverse(level.tests.strings)[0], "10");
 	EXPECT_EQ(Reverse(level.tests.vectors)[0], (9.45, 9.45, 9.45));
+}
+
+test_Remove()
+{
+	EXPECT_EQ(Remove(level.tests.ints, 0).size, 9);
+}
+
+test_RemoveAt()
+{
+	EXPECT_EQ(RemoveAt(level.tests.ints, 0).size, 9);
 }
