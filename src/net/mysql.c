@@ -2,7 +2,7 @@
 #include <mysql.h>
 
 int MySQLcode;
-static MYSQL_INSTANCE mysql;
+static MYSQL_INSTANCE mysql = { 0 };
 
 void GScr_MySQL_Version()
 {
@@ -15,8 +15,8 @@ void GScr_MySQL_Prepare()
 	CHECK_PARAMS(1, "Usage: SQL_Prepare(<query>)");
 	CHECK_MYSQL_INSTANCE();
 
-	MySQL_Free_Statement();
 	MySQL_Free_Result();
+	MySQL_Free_Statement();
 	
 	const char *query = Plugin_Scr_GetString(0);
 	mysql.stmt = mysql_stmt_init(mysql.handle);
@@ -104,7 +104,7 @@ void MySQL_PrepareBindBuffer(MYSQL_BIND *b, void *value, int valueLength, enum_f
 		break;
 		case VAR_INTEGER:
 		{
-			long long *number = (long long *)malloc(sizeof(long long));
+			int *number = (int*)malloc(sizeof(int));
 			*number = 0;
 
 			if (value)
@@ -176,7 +176,7 @@ void GScr_MySQL_Execute()
 	CHECK_PARAMS(0, "Usage: SQL_Execute()");
 	CHECK_MYSQL_INSTANCE();
 	CHECK_MYSQL_STMT();
-	
+
 	// Bind params
 	if (mysql.bindsLength && mysql_stmt_bind_param(mysql.stmt, mysql.binds))
 	{
@@ -188,7 +188,7 @@ void GScr_MySQL_Execute()
 	// Bind results
 	if (mysql.bindsResultLength && mysql_stmt_bind_result(mysql.stmt, mysql.bindsResult))
 	{
-		Plugin_Scr_Error(fmt("SQL_Execute(): Bind statement failed: %s", mysql_stmt_error(mysql.stmt)));
+		Plugin_Scr_Error(fmt("SQL_Execute(): Bind result statement failed: %s", mysql_stmt_error(mysql.stmt)));
 		Plugin_Scr_AddBool(qfalse);
 		return;
 	}
@@ -198,25 +198,18 @@ void GScr_MySQL_Execute()
 	{
 		Plugin_Scr_Error(fmt("SQL_Execute(): Execute statement failed: %s", mysql_stmt_error(mysql.stmt)));
 		Plugin_Scr_AddBool(qfalse);
-		MySQL_Free_Statement();
-	}
-	else
-	{
-		mysql_stmt_store_result(mysql.stmt);
-		mysql.resultStmt = mysql_stmt_result_metadata(mysql.stmt);
-		Plugin_Scr_AddBool(qtrue);
+		return;
 	}
 
-	// Free binds
-	if (mysql.binds)
+	// Result
+	if (mysql_stmt_store_result(mysql.stmt))
 	{
-		for (int i = 0; i < mysql.bindsLength; i++)
-			free(mysql.binds[i].buffer);
-
-		free(mysql.binds);
-		mysql.binds = NULL;
-		mysql.bindsLength = 0;
+		Plugin_Scr_Error(fmt("SQL_Execute(): Store result failed: %s", mysql_stmt_error(mysql.stmt)));
+		Plugin_Scr_AddBool(qfalse);
+		return;
 	}
+	mysql.resultStmt = mysql_stmt_result_metadata(mysql.stmt);
+	Plugin_Scr_AddBool(qtrue);
 }
 
 void GScr_MySQL_ListDB()
@@ -609,6 +602,17 @@ void MySQL_Free_Result()
 		mysql_free_result(mysql.resultStmt);
 		mysql.resultStmt = NULL;
 
+		// Free binds
+		if (mysql.binds)
+		{
+			for (int i = 0; i < mysql.bindsLength; i++)
+				free(mysql.binds[i].buffer);
+
+			free(mysql.binds);
+			mysql.binds = NULL;
+			mysql.bindsLength = 0;
+		}
+
 		// Free results binds
 		if (mysql.bindsResult)
 		{
@@ -629,8 +633,8 @@ void MySQL_Free_Result()
 
 void MySQL_Free()
 {
-	MySQL_Free_Statement();
 	MySQL_Free_Result();
+	MySQL_Free_Statement();
 
 	if (mysql.handle)
 	{
