@@ -32,6 +32,23 @@ int Scr_vsnprintf(char* str, size_t size, const char* format, VariableValueArray
 	if (str == NULL && size != 0)
 		size = 0;
 
+	// GSC variables validation
+	for (int i = 0; i < args.length && size; i++)
+	{
+		switch (args.items[i].type)
+		{
+		case VAR_INTEGER:
+		case VAR_FLOAT:
+		case VAR_ISTRING:
+		case VAR_STRING:
+			break;
+
+		default:
+			strcpy(str, "<error>");
+			return 0;
+		}
+	}
+
 	while (ch != '\0')
 	{
 		switch (state)

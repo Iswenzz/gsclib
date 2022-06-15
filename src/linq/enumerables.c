@@ -637,3 +637,68 @@ void GScr_LINQ_IndexOf()
 	Plugin_Scr_FreeArray(&array);
 	Plugin_Scr_AddInt(found);
 }
+
+void GScr_LINQ_Remove()
+{
+	CHECK_PARAMS(2, "Usage: Remove(<array>, <element>)");
+
+	VariableValueArray array = Plugin_Scr_GetArray(0);
+	VariableValue element = *Plugin_Scr_SelectParam(1);
+
+	Plugin_Scr_MakeArray();
+	for (int i = 0; i < array.length; i++)
+	{
+		VariableValue current = array.items[i];
+
+		if (current.type == element.type)
+		{
+			switch (array.items[i].type)
+			{
+			case VAR_VECTOR:
+				if (current.u.vectorValue[0] == element.u.vectorValue[0] &&
+					current.u.vectorValue[1] == element.u.vectorValue[1] &&
+					current.u.vectorValue[2] == element.u.vectorValue[2])
+					continue;
+				break;
+			case VAR_INTEGER:
+				if (current.u.intValue == element.u.intValue)
+					continue;
+				break;
+			case VAR_FLOAT:
+				if (current.u.floatValue == element.u.floatValue)
+					continue;
+				break;
+			case VAR_ISTRING:
+			case VAR_STRING:
+				if (strcmp(Plugin_SL_ConvertToString(current.u.stringValue),
+					Plugin_SL_ConvertToString(element.u.stringValue)) == 0)
+					continue;
+				break;
+			}
+		}
+		Plugin_Scr_AddVariable(current);
+		Plugin_Scr_AddArray();
+	}
+	Plugin_Scr_FreeArray(&array);
+}
+
+void GScr_LINQ_RemoveAt()
+{
+	CHECK_PARAMS(2, "Usage: RemoveAt(<array>, <inddex>)");
+
+	VariableValueArray array = Plugin_Scr_GetArray(0);
+	int index = Plugin_Scr_GetInt(1);
+
+	Plugin_Scr_MakeArray();
+	for (int i = 0; i < array.length; i++)
+	{
+		VariableValue current = array.items[i];
+
+		if (i == index)
+			continue;
+
+		Plugin_Scr_AddVariable(current);
+		Plugin_Scr_AddArray();
+	}
+	Plugin_Scr_FreeArray(&array);
+}

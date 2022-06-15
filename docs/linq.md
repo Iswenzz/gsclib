@@ -179,3 +179,19 @@ Get the index of an element.
 index = IndexOf(array, 10);
 ```
 <hr>
+
+#### ``Remove(<array>, <element>)``
+Remove an element from the array.
+
+```c
+newArray = Remove(array, 10);
+```
+<hr>
+
+#### ``RemoveAt(<array>, <element>)``
+Remove an element from the array at a specific index.
+
+```c
+newArray = RemoveAt(array, 1);
+```
+<hr>

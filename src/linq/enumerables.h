@@ -69,6 +69,16 @@ void GScr_LINQ_Chunk();
 void GScr_LINQ_IndexOf();
 
 /// <summary>
+/// Remove an element from the array.
+/// </summary>
+void GScr_LINQ_Remove();
+
+/// <summary>
+/// Remove and element at a specific index in the array.
+/// </summary>
+void GScr_LINQ_RemoveAt();
+
+/// <summary>
 /// Get the min string in a GSC array.
 /// </summary>
 /// <param name="array">The variable array.</param>
