@@ -1,6 +1,7 @@
 #include "mock.h"
 
 #include <cgsc.h>
+#include <stdlib.h>
 #include <stdio.h>
 #include <stdarg.h>
 #include <assert.h>
@@ -61,4 +62,17 @@ void Plugin_Scr_MakeArray()
 const char* Plugin_SL_ConvertToString(int index)
 {
     return "string";
+}
+
+VariableValueArray Plugin_Scr_CreateArray(int length)
+{
+    VariableValueArray array;
+    array.length = length;
+    array.items = (VariableValue*)malloc(array.length * sizeof(VariableValue));
+    return array;
+}
+
+void Plugin_Scr_FreeArray(VariableValueArray* array)
+{
+    free(array->items);
 }

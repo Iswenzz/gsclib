@@ -76,12 +76,12 @@ void GScr_FILE_WriteLine()
 	}
 	if (argCount > 2)
 	{
-		VariableValue* args = (VariableValue*)malloc((argCount - 2) * sizeof(VariableValue));
+		VariableValueArray args = Plugin_Scr_CreateArray(argCount - 2);
 
 		for (int i = 2; i < argCount; i++)
-			args[i - 2] = *Plugin_Scr_SelectParam(i);
+			args.items[i - 2] = *Plugin_Scr_SelectParam(i);
 		Scr_vsnprintf(buffer, sizeof(buffer), format, args);
-		free(args);
+		Plugin_Scr_FreeArray(&args);
 	}
 	else
 		strcpy(buffer, format);
@@ -141,12 +141,14 @@ void GScr_FILE_Write()
 	}
 	if (argCount > 2)
 	{
-		VariableValue* args = (VariableValue*)malloc((argCount - 2) * sizeof(VariableValue));
+		VariableValueArray args;
+		args.length = argCount - 2;
+		args.items = (VariableValue*)malloc(args.length * sizeof(VariableValue));
 
 		for (int i = 2; i < argCount; i++)
-			args[i - 2] = *Plugin_Scr_SelectParam(i);
+			args.items[i - 2] = *Plugin_Scr_SelectParam(i);
 		Scr_vsnprintf(buffer, sizeof(buffer), format, args);
-		free(args);
+		Plugin_Scr_FreeArray(&args);
 	}
 	else
 		strcpy(buffer, format);

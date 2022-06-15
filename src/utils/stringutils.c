@@ -120,14 +120,14 @@ void GScr_Fmt()
 		Plugin_Scr_AddString(format);
 		return;
 	}
-	VariableValue* args = (VariableValue*)malloc((argCount - 1) * sizeof(VariableValue));
+	VariableValueArray args = Plugin_Scr_CreateArray(argCount - 1);
 
 	for (int i = 1; i < argCount; i++)
-		args[i - 1] = *Plugin_Scr_SelectParam(i);
+		args.items[i - 1] = *Plugin_Scr_SelectParam(i);
 	Scr_vsnprintf(buffer, sizeof(buffer), format, args);
 
 	Plugin_Scr_AddString(buffer);
-	free(args);
+	Plugin_Scr_FreeArray(&args);
 }
 
 void GScr_Trim()

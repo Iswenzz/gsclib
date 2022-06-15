@@ -165,7 +165,7 @@ extern int errno;
 /// <param name="format">The format string.</param>
 /// <param name="args">The GSC variables array.</param>
 /// <returns></returns>
-int Scr_vsnprintf(char* str, size_t size, const char* format, VariableValue *args);
+int Scr_vsnprintf(char* str, size_t size, const char* format, VariableValueArray args);
 
 /// <summary>
 /// Format strings.
