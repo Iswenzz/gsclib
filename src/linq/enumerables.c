@@ -674,8 +674,8 @@ void GScr_LINQ_Remove()
 					Plugin_SL_ConvertToString(element.u.stringValue)) == 0)
 					continue;
 				break;
-			case VAR_ENTITY:
-				if (current.u.entityOffset == element.u.entityOffset)
+			case VAR_POINTER:
+				if (current.u.pointerValue == element.u.pointerValue)
 					continue;
 				break;
 			}
