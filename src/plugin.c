@@ -79,6 +79,7 @@ PCL int OnInit()
 	FUNCTION("reverse", 				&GScr_LINQ_Reverse);
 	FUNCTION("concat", 					&GScr_LINQ_Concat);
 	FUNCTION("chunk",					&GScr_LINQ_Chunk);
+	FUNCTION("contains",				&GScr_LINQ_Contains);
 	FUNCTION("indexof",					&GScr_LINQ_IndexOf);
 	FUNCTION("remove",					&GScr_LINQ_Remove);
 	FUNCTION("removeat",				&GScr_LINQ_RemoveAt);

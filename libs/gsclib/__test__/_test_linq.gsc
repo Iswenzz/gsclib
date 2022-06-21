@@ -23,6 +23,7 @@ main()
 	it(::test_Reverse, "Reverse");
 	it(::test_Concat, "Concat");
 	it(::test_Chunk, "Chunk");
+	it(::test_Contains, "Contains");
 	it(::test_IndexOf, "IndexOf");
 	it(::test_Remove, "Remove");
 	it(::test_RemoveAt, "RemoveAt");
@@ -61,6 +62,12 @@ test_Chunk()
 
 	EXPECT_EQ(chunks.size, 5);
 	EXPECT_EQ(chunks[0].size, 2);
+}
+
+test_Contains()
+{
+	EXPECT_TRUE(Contains(level.tests.ints, 1));
+	EXPECT_FALSE(Contains(level.tests.ints, 100));
 }
 
 test_Foreach()

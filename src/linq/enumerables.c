@@ -591,6 +591,56 @@ void GScr_LINQ_Chunk()
 	Plugin_Scr_FreeArray(&array);
 }
 
+void GScr_LINQ_Contains()
+{
+	CHECK_PARAMS(2, "Usage: Contains(<array>, <element>)");
+
+	VariableValueArray array = Plugin_Scr_GetArray(0);
+	VariableValue element = *Plugin_Scr_SelectParam(1);
+	qboolean found = qfalse;
+
+	for (int i = 0; i < array.length; i++)
+	{
+		VariableValue current = array.items[i];
+
+		if (current.type == element.type)
+		{
+			switch (array.items[i].type)
+			{
+			case VAR_VECTOR:
+				if (current.u.vectorValue[0] == element.u.vectorValue[0] &&
+					current.u.vectorValue[1] == element.u.vectorValue[1] &&
+					current.u.vectorValue[2] == element.u.vectorValue[2])
+					break;
+				continue;
+			case VAR_INTEGER:
+				if (current.u.intValue == element.u.intValue) 
+					break;
+				continue;
+			case VAR_FLOAT:
+				if (current.u.floatValue == element.u.floatValue) 
+					break;
+				continue;
+			case VAR_ISTRING:
+			case VAR_STRING:
+				if (strcmp(Plugin_SL_ConvertToString(current.u.stringValue), 
+					Plugin_SL_ConvertToString(element.u.stringValue)) == 0)
+					break;
+				continue;
+			case VAR_POINTER:
+				if (current.u.pointerValue == element.u.pointerValue) 
+					break;
+				continue;
+			default:
+				continue;
+			}
+			found = qtrue;
+			break;
+		}
+	}
+	Plugin_Scr_AddBool(found);
+}
+
 void GScr_LINQ_IndexOf()
 {
 	CHECK_PARAMS(2, "Usage: IndexOf(<array>, <element>)");
@@ -625,6 +675,10 @@ void GScr_LINQ_IndexOf()
 			case VAR_STRING:
 				if (strcmp(Plugin_SL_ConvertToString(current.u.stringValue), 
 					Plugin_SL_ConvertToString(element.u.stringValue)) == 0)
+					break;
+				continue;
+			case VAR_POINTER:
+				if (current.u.pointerValue == element.u.pointerValue) 
 					break;
 				continue;
 			default:

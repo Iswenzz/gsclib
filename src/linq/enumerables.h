@@ -64,6 +64,11 @@ void GScr_LINQ_Concat();
 void GScr_LINQ_Chunk();
 
 /// <summary>
+/// Check and array contains an element.
+/// </summary>
+void GScr_LINQ_Contains();
+
+/// <summary>
 /// Get the index of an element.
 /// </summary>
 void GScr_LINQ_IndexOf();
