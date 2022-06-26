@@ -161,7 +161,7 @@ PCL int OnInit()
 	FUNCTION("startswith", 				&GScr_StartsWith);
 	FUNCTION("endswith", 				&GScr_EndsWith);
 	FUNCTION("strjoin", 				&GScr_StrJoin);
-	FUNCTION("strreplace",				&GScr_StrReplace);
+	FUNCTION("replace",					&GScr_Replace);
 	FUNCTION("pathjoin", 				&GScr_PathJoin);
 
 	return 0;

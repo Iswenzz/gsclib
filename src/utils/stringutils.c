@@ -196,9 +196,9 @@ void GScr_StrJoin()
 	Plugin_Scr_AddString(result);
 }
 
-void GScr_StrReplace()
+void GScr_Replace()
 {
-	CHECK_PARAMS(3, "Usage: StrReplace(<source>, <search>, <replace>)");
+	CHECK_PARAMS(3, "Usage: Replace(<source>, <search>, <replace>)");
 
 	char source[MAX_STRING_CHARS] = { 0 };
 

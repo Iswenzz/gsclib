@@ -1,6 +1,7 @@
 # Utilities
 
-#### ``fmt(<string>, <?arguments...>)``
+#### `fmt(<string>, <?arguments...>)`
+
 Get a formatted string.
 
 ```c
@@ -9,158 +10,197 @@ b = 10;
 
 string = fmt("%s %d", a, b);
 ```
+
 <hr>
 
-#### ``Trim(<string>)``
+#### `Trim(<string>)`
+
 Trim a string.
 
 ```c
 string = trim("    hello world    ");
 ```
+
 <hr>
 
-#### ``Ternary(<condition>, <true>, <false>)``
+#### `Ternary(<condition>, <true>, <false>)`
+
 Check the condition and return the 1st value if true or the second value if false.
 
 ```c
 a = Ternary(player.name == "Iswenzz", 1000, 0);
 ```
+
 <hr>
 
-#### ``IfUndef(<var>, <default>)``
+#### `IfUndef(<var>, <default>)`
+
 Give a default value if the variable is undefined.
 
 ```c
 name = IfUndef(player.name, "Unknown player");
 ```
+
 <hr>
 
-#### ``GetType(<var>)``
+#### `GetType(<var>)`
+
 Get the type name of a GSC variable.
 
 ```c
 type = GetType(player.name);
 ```
+
 <hr>
 
-#### ``ToString(<var>)``
+#### `ToString(<var>)`
+
 Convert int, float, vector to string.
 
 ```c
 str = ToString(player.velocity);
 ```
+
 <hr>
 
-#### ``ToInt(<var>)``
+#### `ToInt(<var>)`
+
 Convert string, float, vector to integer.
 
 ```c
 i = ToInt("123");
 ```
+
 <hr>
 
-#### ``ToFloat(<var>)``
+#### `ToFloat(<var>)`
+
 Convert string, int, vector to float.
 
 ```c
 f = ToFloat("1.23");
 ```
+
 <hr>
 
-#### ``IsNullOrEmpty(<str>)``
+#### `IsNullOrEmpty(<str>)`
+
 Check if a string is undefined or empty.
 
 ```c
 IsNullOrEmpty(player.name);
 ```
+
 <hr>
 
-#### ``IsStringAlpha(<str>)``
+#### `IsStringAlpha(<str>)`
+
 Check if a string is alphanumeric.
 
 ```c
 IsStringAlpha("abc123_&");
 ```
+
 <hr>
 
-#### ``IsStringFloat(<str>)``
+#### `IsStringFloat(<str>)`
+
 Check if a string contains a float.
 
 ```c
 IsStringFloat("123.123");
 ```
+
 <hr>
 
-#### ``IsStringInt(<str>)``
+#### `IsStringInt(<str>)`
+
 Check if a string contains an integer.
 
 ```c
 IsStringInt("123");
 ```
+
 <hr>
 
-#### ``ToUpper(<str>)``
+#### `ToUpper(<str>)`
+
 Convert a string to upper case.
 
 ```c
 up = ToUpper("abc");
 ```
+
 <hr>
 
-#### ``ToRGB(<r>, <g>, <b>)``
+#### `ToRGB(<r>, <g>, <b>)`
+
 Normalize RGB vector.
 
 ```c
 rgb = ToRGB(125, 255, 255);
 ```
+
 <hr>
 
-#### ``HexToRGB(<hex>)``
+#### `HexToRGB(<hex>)`
+
 Convert a HEX color string to a normalized RGB vector.
 
 ```c
 rgb = HexToRGB("#AABBCC");
 rgb = HexToRGB("AABBCC");
 ```
+
 <hr>
 
-#### ``StartsWith(<string>, <value>)``
+#### `StartsWith(<string>, <value>)`
+
 Check if a string starts with a specific value.
 
 ```c
 StartsWith("hello world", "hello");
 ```
+
 <hr>
 
-#### ``EndsWith(<string>, <value>)``
+#### `EndsWith(<string>, <value>)`
+
 Check if a string ends with a specific value.
 
 ```c
 EndsWith("hello world", "world");
 ```
+
 <hr>
 
-#### ``StrJoin(<array>, <separator>)``
+#### `StrJoin(<array>, <separator>)`
+
 Join string array with a separator.
 
 ```c
 str = StrJoin(array, "-");
 ```
+
 <hr>
 
-#### ``StrReplace(<source>, <search>, <replace>)``
+#### `Replace(<source>, <search>, <replace>)`
+
 Replace a string.
 
 ```c
-str = StrReplace("SR Speedrun", "Speedrun", "Deathrun");
+str = Replace("SR Speedrun", "Speedrun", "Deathrun");
 ```
+
 <hr>
 
-#### ``PathJoin(<paths...>)``
+#### `PathJoin(<paths...>)`
+
 Join filepath strings.
 
 ```c
 path = StrJoin("C:\\home", "cod4", "speedrun");
 path = StrJoin("/home", "cod4", "speedrun");
 ```
+
 <hr>
