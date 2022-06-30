@@ -15,8 +15,8 @@
 #include "utils/utils.h"
 #include "utils/stringutils.h"
 #include "utils/convert.h"
-
-#include <curl/curl.h>
+#include "utils/math.h"
+#include "utils/player.h"
 
 #define FUNCTION(name, function) Plugin_ScrReplaceFunction(name, function)
 #define METHOD(name, function) Plugin_ScrReplaceMethod(name, function)
@@ -136,7 +136,6 @@ PCL int OnInit()
 	FUNCTION("comprintln", 				&GScr_ComPrintLn);
 	FUNCTION("getsystime", 				&GScr_GetSysTime);
 	FUNCTION("exit",					&GScr_Exit);
-	METHOD("getip",						&GScr_GetIP);
 
 	// utils/utils
 	FUNCTION("gettype", 				&GScr_GetType);
@@ -163,6 +162,16 @@ PCL int OnInit()
 	FUNCTION("strjoin", 				&GScr_StrJoin);
 	FUNCTION("replace",					&GScr_Replace);
 	FUNCTION("pathjoin", 				&GScr_PathJoin);
+
+	// utils/math
+	FUNCTION("fmod", 					&GScr_fmod);
+	FUNCTION("atan2", 					&GScr_atan2);
+	FUNCTION("acos1", 					&GScr_acos1);
+
+	// utils/player
+	METHOD("getip",						&GScr_GetIP);
+	METHOD("getforwardmove",			&GScr_GetForwardMove);
+	METHOD("getrightmove",				&GScr_GetRightMove);
 
 	return 0;
 }

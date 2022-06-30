@@ -28,6 +28,49 @@ main()
 	it(::test_ToInt, "ToInt");
 	it(::test_ToFloat, "ToFloat");
 	it(::test_ToString, "ToString");
+
+	// utils/math
+	it(::test_fmod, "fmod");
+	it(::test_atan2, "atan2");
+	it(::test_acos1, "acos1");
+
+	// utils/player
+	it(::test_GetIP, "GetIP");
+	it(::test_GetForwardMove, "GetForwardMove");
+	it(::test_GetRightMove, "GetRightMove");
+}
+
+test_acos1()
+{
+	EXPECT_EQ(acos1(0.9), 0.451027);
+	EXPECT_EQ(acos1(0.4), 1.159279);
+}
+
+test_atan2()
+{
+	EXPECT_EQ(atan2(9, 2), 1.352127);
+	EXPECT_EQ(atan2(4, 2), 1.107149);
+}
+
+test_fmod()
+{
+	EXPECT_EQ(fmod(9, 2), 1);
+	EXPECT_EQ(fmod(4, 2), 0);
+}
+
+test_GetRightMove()
+{
+	EXPECT_EQ(level.gscunit.bots[0] GetRightMove(), 0);
+}
+
+test_GetForwardMove()
+{
+	EXPECT_EQ(level.gscunit.bots[0] GetForwardMove(), 0);
+}
+
+test_GetIP()
+{
+	EXPECT_EQ(level.gscunit.bots[0] GetIP(), "bot");
 }
 
 test_Replace()

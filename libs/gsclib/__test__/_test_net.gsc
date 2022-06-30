@@ -234,7 +234,7 @@ test_SQL_PrepareStatement()
 
 	expectedRow = [];
 	expectedRow[0] = "Iswenzz";
-	expectedRow[1] = "313354b4";
+	expectedRow[1] = "05a84e1d";
 	expectedRow[2] = 1296000;
 	expectedRow[3] = 80;
 	expectedRow[4] = 10;
@@ -242,7 +242,7 @@ test_SQL_PrepareStatement()
 	// Insert Into
 	EXPECT_TRUE(SQL_Prepare("INSERT INTO ranks (name, player, xp, rank, prestige) VALUES (?, ?, ?, ?, ?)"));
 	SQL_BindParam("Iswenzz", level.MYSQL_TYPE_STRING);
-	SQL_BindParam("313354b4", level.MYSQL_TYPE_STRING);
+	SQL_BindParam("05a84e1d", level.MYSQL_TYPE_STRING);
 	SQL_BindParam(1296000, level.MYSQL_TYPE_LONG);
 	SQL_BindParam(80, level.MYSQL_TYPE_LONG);
 	SQL_BindParam(10, level.MYSQL_TYPE_LONG);
@@ -286,7 +286,7 @@ test_SQL_PrepareStatementDict()
 
 	expectedRow = [];
 	expectedRow[0] = "Iswenzz";
-	expectedRow[1] = "313354b4";
+	expectedRow[1] = "05a84e1d";
 	expectedRow[2] = 1296000;
 	expectedRow[3] = 80;
 	expectedRow[4] = 10;
@@ -294,7 +294,7 @@ test_SQL_PrepareStatementDict()
 	// Insert Into
 	EXPECT_TRUE(SQL_Prepare("INSERT INTO ranks (name, player, xp, rank, prestige) VALUES (?, ?, ?, ?, ?)"));
 	SQL_BindParam("Iswenzz", level.MYSQL_TYPE_STRING);
-	SQL_BindParam("313354b4", level.MYSQL_TYPE_STRING);
+	SQL_BindParam("05a84e1d", level.MYSQL_TYPE_STRING);
 	SQL_BindParam(1296000, level.MYSQL_TYPE_LONG);
 	SQL_BindParam(80, level.MYSQL_TYPE_LONG);
 	SQL_BindParam(10, level.MYSQL_TYPE_LONG);
@@ -340,14 +340,14 @@ test_SQL_Query()
 
 	expectedRow = [];
 	expectedRow[0] = "Iswenzz";
-	expectedRow[1] = "313354b4";
+	expectedRow[1] = "05a84e1d";
 	expectedRow[2] = "1296000";
 	expectedRow[3] = "80";
 	expectedRow[4] = "10";
 
 	// Insert Into
 	queryInsert = "INSERT INTO ranks (name, player, xp, rank, prestige) " +
-		"VALUES ('Iswenzz', '313354b4', 1296000, 80, 10)";
+		"VALUES ('Iswenzz', '05a84e1d', 1296000, 80, 10)";
 	EXPECT_TRUE(SQL_Query(queryInsert));
 	EXPECT_EQ(SQL_AffectedRows(), 1);
 
