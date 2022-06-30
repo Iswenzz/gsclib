@@ -23,3 +23,27 @@ Get the player's right move state.
 rightMove = player GetRightMove();
 ```
 <hr>
+
+#### ``<client> PmFlags()``
+Get the player's movement flags.
+
+```c
+flags = player PmFlags();
+```
+<hr>
+
+#### ``<client> PmTime()``
+Get the player's movement time.
+
+```c
+time = player PmTime();
+```
+<hr>
+
+#### ``<client> WeaponFlags()``
+Get the player's weapon flags.
+
+```c
+flags = player WeaponFlags();
+```
+<hr>

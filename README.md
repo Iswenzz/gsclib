@@ -16,6 +16,8 @@
 * [File](https://github.com/Iswenzz/gsclib/blob/master/docs/file.md)
 * [System](https://github.com/Iswenzz/gsclib/blob/master/docs/system.md)
 * [Zip](https://github.com/Iswenzz/gsclib/blob/master/docs/zip.md)
+* [Player](https://github.com/Iswenzz/gsclib/blob/master/docs/player.md)
+* [Math](https://github.com/Iswenzz/gsclib/blob/master/docs/math.md)
 
 ## Instructions
 In order to use this library, just download the archived file down below, and extract it to the Call of Duty 4X ``plugins/gsclib`` directory.

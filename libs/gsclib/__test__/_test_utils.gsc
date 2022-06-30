@@ -38,6 +38,24 @@ main()
 	it(::test_GetIP, "GetIP");
 	it(::test_GetForwardMove, "GetForwardMove");
 	it(::test_GetRightMove, "GetRightMove");
+	it(::test_PmFlags, "PmFlags");
+	it(::test_PmTime, "PmTime");
+	it(::test_WeaponFlags, "WeaponFlags");
+}
+
+test_PmFlags()
+{
+	EXPECT_EQ(level.gscunit.bots[0] PmFlags(), 0);
+}
+
+test_PmTime()
+{
+	EXPECT_EQ(level.gscunit.bots[0] PmTime(), 0);
+}
+
+test_WeaponFlags()
+{
+	EXPECT_EQ(level.gscunit.bots[0] WeaponFlags(), 0);
 }
 
 test_acos1()
