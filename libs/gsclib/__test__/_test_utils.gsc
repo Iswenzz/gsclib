@@ -31,8 +31,13 @@ main()
 
 	// utils/math
 	it(::test_fmod, "fmod");
+	it(::test_tan1, "tan1");
+	it(::test_atan1, "atan1");
 	it(::test_atan2, "atan2");
+	it(::test_cos1, "cos1");
 	it(::test_acos1, "acos1");
+	it(::test_sin1, "sin1");
+	it(::test_asin1, "asin1");
 
 	// utils/player
 	it(::test_GetIP, "GetIP");
@@ -58,10 +63,22 @@ test_WeaponFlags()
 	EXPECT_EQ(level.gscunit.bots[0] WeaponFlags(), 0);
 }
 
-test_acos1()
+test_fmod()
 {
-	EXPECT_EQ(acos1(0.9), 0.451027);
-	EXPECT_EQ(acos1(0.4), 1.159279);
+	EXPECT_EQ(fmod(9, 2), 1);
+	EXPECT_EQ(fmod(4, 2), 0);
+}
+
+test_tan1()
+{
+	EXPECT_EQ(tan1(0.9), 1.260158);
+	EXPECT_EQ(tan1(0.4), 0.422793);
+}
+
+test_atan1()
+{
+	EXPECT_EQ(atan1(0.9), 0.732815);
+	EXPECT_EQ(atan1(0.4), 0.380506);
 }
 
 test_atan2()
@@ -70,10 +87,28 @@ test_atan2()
 	EXPECT_EQ(atan2(4, 2), 1.107149);
 }
 
-test_fmod()
+test_cos1()
 {
-	EXPECT_EQ(fmod(9, 2), 1);
-	EXPECT_EQ(fmod(4, 2), 0);
+	EXPECT_EQ(cos1(0.9), 0.621610);
+	EXPECT_EQ(cos1(0.4), 0.921061);
+}
+
+test_acos1()
+{
+	EXPECT_EQ(acos1(0.9), 0.451027);
+	EXPECT_EQ(acos1(0.4), 1.159279);
+}
+
+test_sin1()
+{
+	EXPECT_EQ(sin1(0.9), 0.783327);
+	EXPECT_EQ(sin1(0.4), 0.389418);
+}
+
+test_asin1()
+{
+	EXPECT_EQ(asin1(0.9), 1.119769);
+	EXPECT_EQ(asin1(0.4), 0.411517);
 }
 
 test_GetRightMove()

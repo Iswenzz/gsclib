@@ -165,8 +165,13 @@ PCL int OnInit()
 
 	// utils/math
 	FUNCTION("fmod", 					&GScr_fmod);
+	FUNCTION("tan1", 					&GScr_tan1);
+	FUNCTION("atan1", 					&GScr_atan1);
 	FUNCTION("atan2", 					&GScr_atan2);
+	FUNCTION("cos1", 					&GScr_cos1);
 	FUNCTION("acos1", 					&GScr_acos1);
+	FUNCTION("sin1", 					&GScr_sin1);
+	FUNCTION("asin1", 					&GScr_asin1);
 
 	// utils/player
 	METHOD("getip",						&GScr_GetIP);
