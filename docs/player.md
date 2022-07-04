@@ -40,6 +40,14 @@ time = player PmTime();
 ```
 <hr>
 
+#### ``<client> PmType()``
+Get the player's movement type.
+
+```c
+type = player PmType();
+```
+<hr>
+
 #### ``<client> WeaponFlags()``
 Get the player's weapon flags.
 

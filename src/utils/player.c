@@ -67,6 +67,19 @@ void GScr_PmTime(scr_entref_t num)
 	Plugin_Scr_AddInt(ent->client->ps.pm_time);
 }
 
+void GScr_PmType(scr_entref_t num)
+{
+	gentity_t* ent = Plugin_GetGentityForEntityNum(num);
+
+	if (!ent || !ent->client)
+	{
+		Plugin_Scr_ObjectError("not a client\n");
+		return;
+	}
+
+	Plugin_Scr_AddInt(ent->client->ps.pm_type);
+}
+
 void GScr_WeaponFlags(scr_entref_t num)
 {
 	gentity_t *ent = Plugin_GetGentityForEntityNum(num);

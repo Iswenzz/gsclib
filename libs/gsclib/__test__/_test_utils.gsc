@@ -45,12 +45,18 @@ main()
 	it(::test_GetRightMove, "GetRightMove");
 	it(::test_PmFlags, "PmFlags");
 	it(::test_PmTime, "PmTime");
+	it(::test_PmType, "PmType");
 	it(::test_WeaponFlags, "WeaponFlags");
 }
 
 test_PmFlags()
 {
 	EXPECT_EQ(level.gscunit.bots[0] PmFlags(), 0);
+}
+
+test_PmTime()
+{
+	EXPECT_EQ(level.gscunit.bots[0] PmTime(), 0);
 }
 
 test_PmTime()

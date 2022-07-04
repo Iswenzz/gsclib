@@ -28,6 +28,11 @@ void GScr_PmFlags(scr_entref_t num);
 void GScr_PmTime(scr_entref_t num);
 
 /// <summary>
+/// Get the player's movement type.
+/// </summary>
+void GScr_PmType(scr_entref_t num);
+
+/// <summary>
 /// Get the player's weapon flags.
 /// </summary>
 void GScr_WeaponFlags(scr_entref_t num);
