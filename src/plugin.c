@@ -33,6 +33,8 @@ PCL int OnInit()
 	FUNCTION("file_exists",				&GScr_FILE_Exists);
 	FUNCTION("file_readline",			&GScr_FILE_ReadLine);
 	FUNCTION("file_writeline",			&GScr_FILE_WriteLine);
+	FUNCTION("file_readlines",			&GScr_FILE_ReadLines);
+	FUNCTION("file_writelines",			&GScr_FILE_WriteLines);
 	FUNCTION("file_read",				&GScr_FILE_Read);
 	FUNCTION("file_write",				&GScr_FILE_Write);
 	FUNCTION("file_seek",				&GScr_FILE_Seek);

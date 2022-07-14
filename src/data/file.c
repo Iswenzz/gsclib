@@ -91,6 +91,48 @@ void GScr_FILE_WriteLine()
 	Plugin_Scr_AddBool(code != EOF);
 }
 
+void GScr_FILE_ReadLines()
+{
+	CHECK_PARAMS(1, "Usage: FILE_ReadLines(<file>)");
+
+	char buffer[MAX_STRING_CHARS] = { 0 };
+	FILE* file = (FILE*)Plugin_Scr_GetInt(0);
+
+	if (!file)
+	{
+		Plugin_Scr_Error("Error: File handle is NULL");
+		return;
+	}
+
+	Plugin_Scr_MakeArray();
+	while (fgets(buffer, sizeof(buffer), file))
+	{
+		buffer[strcspn(buffer, "\n")] = 0;
+		Plugin_Scr_AddString(buffer);
+		Plugin_Scr_AddArray();
+	}
+}
+
+void GScr_FILE_WriteLines()
+{
+	CHECK_PARAMS(2, "Usage: FILE_WriteLines(<file>, <lines>)");
+
+	FILE* file = (FILE*)Plugin_Scr_GetInt(0);
+	VariableValueArray array = Plugin_Scr_GetArray(1);
+	int lines = 0;
+
+	for (int i = 0; i < array.length; i++)
+	{
+		if (array.items[i].type == VAR_STRING)
+		{
+			fprintf(file, "%s\n", Plugin_SL_ConvertToString(array.items[i].u.stringValue));
+			lines++;
+		}
+	}
+	Plugin_Scr_AddInt(lines);
+	Plugin_Scr_FreeArray(&array);
+}
+
 void GScr_FILE_Seek()
 {
 	CHECK_PARAMS(2, "Usage: FILE_Seek(<file>, <offset>)");
@@ -194,7 +236,7 @@ void GScr_FILE_RmDir()
 #ifdef _WIN32
 	Plugin_Scr_AddBool(WIN_RemoveDirectory(path) == 0);
 #else
-	Plugin_Scr_AddBool(nftw(path, UNIX_RemoveEntry, 64, FTW_DEPTH | FTW_PHYS) == 0);
+	Plugin_Scr_AddBool(nftw(path, UNIX_RemoveDirectory, 64, FTW_DEPTH | FTW_PHYS) == 0);
 #endif
 }
 
@@ -240,7 +282,7 @@ BOOL WIN_RemoveDirectory(const char* path)
 	return ret;
 }
 #else
-int UNIX_RemoveEntry(const char* path, const struct stat* sb, int typeflag, PFTW ftwbuf)
+int UNIX_RemoveDirectory(const char* path, const struct stat* sb, int typeflag, PFTW ftwbuf)
 {
 	int ret = remove(path);
 	if (ret) perror(path);

@@ -57,12 +57,28 @@ line = FILE_ReadLine(file);
 ```
 <hr>
 
+#### ``FILE_ReadLines(<file>)``
+Read lines from a file.
+
+```c
+lines = FILE_ReadLines(file);
+```
+<hr>
+
 #### ``FILE_WriteLine(<file>, <string>, <?arguments...>)``
 Write a new line to a file.
 
 ```c
 FILE_WriteLine(file, "test");
 FILE_WriteLine(file, "%d %s", 10, "Iswenzz");
+```
+<hr>
+
+#### ``FILE_WriteLines(<file>, <lines>)``
+Write lines to a file.
+
+```c
+FILE_WriteLine(file, lines);
 ```
 <hr>
 

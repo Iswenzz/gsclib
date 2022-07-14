@@ -14,7 +14,9 @@ main()
 	it(::test_FILE_Write, "FILE_Write");
 	it(::test_FILE_Read, "FILE_Read");
 	it(::test_FILE_WriteLine, "FILE_WriteLine");
+	it(::test_FILE_WriteLines, "FILE_WriteLines");
 	it(::test_FILE_ReadLine, "FILE_ReadLine");
+	it(::test_FILE_ReadLines, "FILE_ReadLines");
 	it(::test_FILE_Close, "FILE_Close");
 	it(::test_FILE_Delete, "FILE_Delete");
 	it(::test_FILE_MkDir, "FILE_MkDir");
@@ -95,9 +97,20 @@ test_FILE_ReadLine()
 	EXPECT_EQ(FILE_ReadLine(level.tests.file), "test");
 }
 
+test_FILE_ReadLines()
+{
+	FILE_Seek(level.tests.file, 0);
+	EXPECT_TRUE(FILE_ReadLines(level.tests.file).size);
+}
+
 test_FILE_WriteLine()
 {
 	EXPECT_TRUE(FILE_WriteLine(level.tests.file, "%s", "newline"));
+}
+
+test_FILE_WriteLines()
+{
+	EXPECT_TRUE(FILE_WriteLines(level.tests.file, level.tests.strings));
 }
 
 test_FILE_Read()

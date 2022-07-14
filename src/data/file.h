@@ -54,6 +54,16 @@ void GScr_FILE_ReadLine();
 void GScr_FILE_WriteLine();
 
 /// <summary>
+/// Read lines.
+/// </summary>
+void GScr_FILE_ReadLines();
+
+/// <summary>
+/// Write lines.
+/// </summary>
+void GScr_FILE_WriteLines();
+
+/// <summary>
 /// Read the file.
 /// </summary>
 void GScr_FILE_Read();
@@ -104,5 +114,5 @@ BOOL WIN_RemoveDirectory(const char* path);
 /// <param name="typeflag">The type flag.</param>
 /// <param name="ftwbuf">The FTW struct buffer.</param>
 /// <returns></returns>
-int UNIX_RemoveEntry(const char* path, const struct stat* sb, int typeflag, PFTW ftwbuf);
+int UNIX_RemoveDirectory(const char* path, const struct stat* sb, int typeflag, PFTW ftwbuf);
 #endif
