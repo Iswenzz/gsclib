@@ -176,7 +176,7 @@ void GScr_MySQL_Execute()
 	CHECK_PARAMS(0, "Usage: SQL_Execute()");
 	CHECK_MYSQL_INSTANCE();
 	CHECK_MYSQL_STMT();
-
+	
 	// Bind params
 	if (mysql.bindsLength && mysql_stmt_bind_param(mysql.stmt, mysql.binds))
 	{
@@ -601,33 +601,29 @@ void MySQL_Free_Result()
 	{
 		mysql_free_result(mysql.resultStmt);
 		mysql.resultStmt = NULL;
-
-		// Free binds
-		if (mysql.binds)
-		{
-			for (int i = 0; i < mysql.bindsLength; i++)
-				free(mysql.binds[i].buffer);
-
-			free(mysql.binds);
-			mysql.binds = NULL;
-			mysql.bindsLength = 0;
-		}
-
-		// Free results binds
-		if (mysql.bindsResult)
-		{
-			for (int i = 0; i < mysql.bindsResultLength; i++)
-				free(mysql.bindsResult[i].buffer);
-
-			free(mysql.bindsResult);
-			mysql.bindsResult = NULL;
-			mysql.bindsResultLength = 0;
-		}
 	}
-	else if (mysql.result)
+	if (mysql.result)
 	{
 		mysql_free_result(mysql.result);
 		mysql.result = NULL;
+	}
+	if (mysql.binds)
+	{
+		for (int i = 0; i < mysql.bindsLength; i++)
+			free(mysql.binds[i].buffer);
+
+		free(mysql.binds);
+		mysql.binds = NULL;
+		mysql.bindsLength = 0;
+	}
+	if (mysql.bindsResult)
+	{
+		for (int i = 0; i < mysql.bindsResultLength; i++)
+			free(mysql.bindsResult[i].buffer);
+
+		free(mysql.bindsResult);
+		mysql.bindsResult = NULL;
+		mysql.bindsResultLength = 0;
 	}
 }
 
