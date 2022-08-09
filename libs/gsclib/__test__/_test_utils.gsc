@@ -6,7 +6,6 @@ main()
 	suite("GSCLIB Utils");
 
 	// utils/stringutils
-	it(::test_ToUpper, "ToUpper");
 	it(::test_IsNullOrEmpty, "IsNullOrEmpty");
 	it(::test_IsStringInt, "IsStringInt");
 	it(::test_IsStringAlpha, "IsStringAlpha");
@@ -198,13 +197,6 @@ test_IsNullOrEmpty()
 	EXPECT_EQ(IsNullOrEmpty(undefined), true);
 	EXPECT_EQ(IsNullOrEmpty(""), true);
 	EXPECT_EQ(IsNullOrEmpty("test"), false);
-}
-
-test_ToUpper()
-{
-	EXPECT_EQ(ToUpper("test"), "TEST");
-	EXPECT_EQ(ToUpper("test2"), "TEST2");
-	EXPECT_EQ(ToUpper("test__test"), "TEST__TEST");
 }
 
 test_ToInt()

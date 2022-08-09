@@ -27,11 +27,6 @@ void GScr_IsStringInt();
 void GScr_IsStringFloat();
 
 /// <summary>
-/// Convert a string to upper case.
-/// </summary>
-void GScr_ToUpper();
-
-/// <summary>
 /// Convert a HEX color string to a normalized RGB vector.
 /// </summary>
 void GScr_HexToRGB();

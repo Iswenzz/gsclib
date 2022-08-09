@@ -154,7 +154,6 @@ PCL int OnInit()
 	FUNCTION("isstringalpha", 			&GScr_IsStringAlpha);
 	FUNCTION("isstringfloat", 			&GScr_IsStringFloat);
 	FUNCTION("isstringint", 			&GScr_IsStringInt);
-	FUNCTION("toupper", 				&GScr_ToUpper);
 	FUNCTION("torgb", 					&GScr_ToRGB);
 	FUNCTION("hextorgb", 				&GScr_HexToRGB);
 	FUNCTION("fmt", 					&GScr_Fmt);

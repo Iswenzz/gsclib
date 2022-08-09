@@ -44,19 +44,6 @@ void GScr_IsStringInt()
 	Plugin_Scr_AddBool(*endptr == '\0');
 }
 
-void GScr_ToUpper()
-{
-	CHECK_PARAMS(1, "Usage: ToUpper(<string>)");
-
-	char *str = Plugin_Scr_GetString(0);
-	char buffer[strlen(str) + 1];
-	
-	for (int i = 0; i < strlen(str); i++)
-		buffer[i] = toupper(str[i]);
-	buffer[sizeof(buffer) - 1] = '\0';
-	Plugin_Scr_AddString(buffer);
-}
-
 void GScr_IsNullOrEmpty()
 {
 	CHECK_PARAMS(1, "Usage: IsNullOrEmpty(<string>)");

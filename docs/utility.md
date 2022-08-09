@@ -123,16 +123,6 @@ IsStringInt("123");
 
 <hr>
 
-#### `ToUpper(<str>)`
-
-Convert a string to upper case.
-
-```c
-up = ToUpper("abc");
-```
-
-<hr>
-
 #### `ToRGB(<r>, <g>, <b>)`
 
 Normalize RGB vector.
