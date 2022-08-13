@@ -179,7 +179,9 @@ PCL int OnInit()
 	METHOD("getforwardmove",			&GScr_GetForwardMove);
 	METHOD("getrightmove",				&GScr_GetRightMove);
 	METHOD("pmflags",					&GScr_PmFlags);
+	METHOD("setpmflags",				&GScr_SetPmFlags);
 	METHOD("pmtime",					&GScr_PmTime);
+	METHOD("setpmtime",					&GScr_SetPmTime);
 	METHOD("pmtype",					&GScr_PmType);
 	METHOD("weaponflags",				&GScr_WeaponFlags);
 

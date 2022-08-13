@@ -23,9 +23,19 @@ void GScr_GetForwardMove(scr_entref_t num);
 void GScr_PmFlags(scr_entref_t num);
 
 /// <summary>
+/// Set the player's movement flags.
+/// </summary>
+void GScr_SetPmFlags(scr_entref_t num);
+
+/// <summary>
 /// Get the player's movement time.
 /// </summary>
 void GScr_PmTime(scr_entref_t num);
+
+/// <summary>
+/// Set the player's movement time.
+/// </summary>
+void GScr_SetPmTime(scr_entref_t num);
 
 /// <summary>
 /// Get the player's movement type.

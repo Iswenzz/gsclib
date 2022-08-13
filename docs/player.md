@@ -32,11 +32,27 @@ flags = player PmFlags();
 ```
 <hr>
 
+#### ``<client> SetPmFlags()``
+Set the player's movement flags.
+
+```c
+player SetPmFlags(flags);
+```
+<hr>
+
 #### ``<client> PmTime()``
 Get the player's movement time.
 
 ```c
 time = player PmTime();
+```
+<hr>
+
+#### ``<client> SetPmTime()``
+Set the player's movement time.
+
+```c
+player PmTime(time);
 ```
 <hr>
 

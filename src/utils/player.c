@@ -54,6 +54,21 @@ void GScr_PmFlags(scr_entref_t num)
 	Plugin_Scr_AddInt(ent->client->ps.pm_flags);
 }
 
+void GScr_SetPmFlags(scr_entref_t num)
+{
+	CHECK_PARAMS(1, "Usage: SetPmFlags(<flags>)");
+
+	gentity_t* ent = Plugin_GetGentityForEntityNum(num);
+	int flags = Plugin_Scr_GetInt(0);
+
+	if (!ent || !ent->client)
+	{
+		Plugin_Scr_ObjectError("not a client\n");
+		return;
+	}
+	ent->client->ps.pm_flags = flags;
+}
+
 void GScr_PmTime(scr_entref_t num)
 {
 	gentity_t *ent = Plugin_GetGentityForEntityNum(num);
@@ -65,6 +80,21 @@ void GScr_PmTime(scr_entref_t num)
     }
 
 	Plugin_Scr_AddInt(ent->client->ps.pm_time);
+}
+
+void GScr_SetPmTime(scr_entref_t num)
+{
+	CHECK_PARAMS(1, "Usage: SetPmTime(<time>)");
+
+	gentity_t* ent = Plugin_GetGentityForEntityNum(num);
+	int time = Plugin_Scr_GetInt(0);
+
+	if (!ent || !ent->client)
+	{
+		Plugin_Scr_ObjectError("not a client\n");
+		return;
+	}
+	ent->client->ps.pm_time = time;
 }
 
 void GScr_PmType(scr_entref_t num)
