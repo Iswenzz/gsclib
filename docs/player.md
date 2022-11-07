@@ -24,6 +24,14 @@ rightMove = player GetRightMove();
 ```
 <hr>
 
+#### ``<client> GetJumpOrigin()``
+Get the player's jump origin Z.
+
+```c
+jumpOrigin = player GetJumpOrigin();
+```
+<hr>
+
 #### ``<client> PmFlags()``
 Get the player's movement flags.
 

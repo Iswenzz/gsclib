@@ -41,6 +41,19 @@ void GScr_GetRightMove(scr_entref_t num)
 	Plugin_Scr_AddInt((int)cl->lastUsercmd.rightmove);
 }
 
+void GScr_GetJumpOrigin(scr_entref_t num)
+{
+	gentity_t* ent = Plugin_GetGentityForEntityNum(num);
+
+	if (!ent || !ent->client)
+	{
+		Plugin_Scr_ObjectError("not a client\n");
+		return;
+	}
+
+	Plugin_Scr_AddInt(ent->client->ps.jumpOriginZ);
+}
+
 void GScr_PmFlags(scr_entref_t num)
 {
 	gentity_t *ent = Plugin_GetGentityForEntityNum(num);

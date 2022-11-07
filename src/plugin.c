@@ -178,6 +178,7 @@ PCL int OnInit()
 	METHOD("getip",						&GScr_GetIP);
 	METHOD("getforwardmove",			&GScr_GetForwardMove);
 	METHOD("getrightmove",				&GScr_GetRightMove);
+	METHOD("getjumporigin",				&GScr_GetJumpOrigin);
 	METHOD("pmflags",					&GScr_PmFlags);
 	METHOD("setpmflags",				&GScr_SetPmFlags);
 	METHOD("pmtime",					&GScr_PmTime);
