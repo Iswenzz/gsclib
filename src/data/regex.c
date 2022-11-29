@@ -1,6 +1,6 @@
 #include "regex.h"
 
-#include <cgsc.h>
+#include <CGSC/cgsc.h>
 #include <stdlib.h>
 #include <string.h>
 

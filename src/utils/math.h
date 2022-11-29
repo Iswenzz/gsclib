@@ -1,5 +1,5 @@
 #pragma once
-#include <cgsc.h>
+#include <CGSC/cgsc.h>
 
 /// <summary>
 /// Returns the remainder of x divided by y.

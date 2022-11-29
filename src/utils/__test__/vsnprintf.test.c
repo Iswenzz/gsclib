@@ -1,7 +1,7 @@
 #include "utils/vsnprintf.h"
 
 #include <greatest.h>
-#include <cgsc.h>
+#include <CGSC/cgsc.h>
 
 TEST test_vsnprintf()
 {

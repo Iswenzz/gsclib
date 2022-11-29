@@ -1,6 +1,6 @@
 #pragma once
 #include "curl.h"
-#include <cgsc.h>
+#include <CGSC/cgsc.h>
 
 /// <summary>
 /// File write function to use with ftp CURL write callback.

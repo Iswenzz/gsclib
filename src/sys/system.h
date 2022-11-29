@@ -1,5 +1,5 @@
 #pragma once
-#include <cgsc.h>
+#include <CGSC/cgsc.h>
 
 #define MAXPRINTMSG 1024
 

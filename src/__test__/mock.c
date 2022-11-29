@@ -1,6 +1,6 @@
 #include "mock.h"
 
-#include <cgsc.h>
+#include <CGSC/cgsc.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdarg.h>
@@ -57,6 +57,21 @@ void Plugin_Scr_AddArray()
 void Plugin_Scr_MakeArray()
 {
 
+}
+
+VariableValue* Plugin_Scr_SelectParam(unsigned int paramnum)
+{
+    return NULL;
+}
+
+void Plugin_Scr_AddVariable(VariableValue var)
+{
+
+}
+
+unsigned int Plugin_Scr_GetObjectType(unsigned int id)
+{
+    return 0;
 }
 
 const char* Plugin_SL_ConvertToString(int index)

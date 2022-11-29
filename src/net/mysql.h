@@ -1,6 +1,6 @@
 #pragma once
 #include <mysql.h>
-#include <cgsc.h>
+#include <CGSC/cgsc.h>
 
 #define MYSQL_ERROR(x, msg)	\
 if (x == NULL)				\

@@ -1,5 +1,5 @@
 #pragma once
-#include <cgsc.h>
+#include <CGSC/cgsc.h>
 
 /// <summary>
 /// Get the distance between 2 3D vectors.

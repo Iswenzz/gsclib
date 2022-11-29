@@ -1,7 +1,7 @@
 #pragma once
 #define PCRE2_CODE_UNIT_WIDTH 8
 
-#include <cgsc.h>
+#include <CGSC/cgsc.h>
 #include <pcre2.h>
 
 typedef struct

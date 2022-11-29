@@ -1,5 +1,5 @@
 #include "predicates.h"
-#include <cgsc.h>
+#include <CGSC/cgsc.h>
 
 void GScr_LINQ_All()
 {

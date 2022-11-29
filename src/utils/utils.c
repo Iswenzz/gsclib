@@ -1,4 +1,5 @@
 #include "utils.h"
+#include <stdarg.h>
 
 int q3ToAnsi[8] = {
 	30, // COLOR_BLACK
@@ -71,4 +72,31 @@ void GScr_GetType()
 		case VAR_THREAD_LIST: 		Plugin_Scr_AddString("THREAD_LIST"); 		break;
 		case VAR_ENDON_LIST: 		Plugin_Scr_AddString("ENDON_LIST");  		break;
 	}
+}
+
+char* fmt(char* format, ...)
+{
+	va_list	argptr;
+	static char string[2][32000]; // In case va is called by nested functions
+	static int index = 0;
+	char* buf;
+
+	buf = string[index & 1];
+	index++;
+
+	va_start(argptr, format);
+	vsnprintf(buf, sizeof(*string), format, argptr);
+	va_end(argptr);
+
+	return buf;
+}
+
+qboolean HasFlag(int var, int flag)
+{
+	return (var & flag) == flag;
+}
+
+qboolean IsFlag(int var, int flag)
+{
+	return var == flag;
 }

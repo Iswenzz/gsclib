@@ -1,7 +1,7 @@
 #include "stringutils.h"
 #include "vsnprintf.h"
 
-#include <cgsc.h>
+#include <CGSC/cgsc.h>
 #include <cwalk.h>
 #include <ctype.h>
 #include <stdlib.h>

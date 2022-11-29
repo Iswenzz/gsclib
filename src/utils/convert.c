@@ -1,6 +1,6 @@
 #include "convert.h"
 
-#include <cgsc.h>
+#include <CGSC/cgsc.h>
 #include <stdlib.h>
 #include <stdio.h>
 
