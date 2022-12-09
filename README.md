@@ -24,7 +24,7 @@ In order to use this library, just download the archived file down below, and ex
 
 ## Building (Linux)
 _Pre-Requisites:_
-1. Edit plugin_handle.h and recompile your server:
+1. Edit plugin_handle.h then recompile the server with an empty obj directory:
 ```c
 #define MAX_SCRIPTFUNCTIONS 256
 ```
