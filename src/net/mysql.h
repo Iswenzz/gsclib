@@ -2,23 +2,39 @@
 #include <mysql.h>
 #include <CGSC/cgsc.h>
 
-#define MYSQL_ERROR(x, msg)	\
-if (x == NULL)				\
-{							\
-	Plugin_Scr_Error(msg);	\
-	return;					\
+#define MYSQL_CHECK_ERROR(x, msg)	\
+if (!x)								\
+{									\
+	Plugin_Scr_Error(msg);			\
+	return;							\
 }
 
-#define CHECK_MYSQL_REQUEST(mysql)		MYSQL_ERROR(mysql, "MySQL request not found.");
-#define CHECK_MYSQL_INSTANCE(handle)	MYSQL_ERROR(handle, "MySQL connection not found.");
-#define CHECK_MYSQL_STMT(stmt)			MYSQL_ERROR(stmt, "MySQL statement not found.");
+#define CHECK_MYSQL_REQUEST(mysql)						\
+MYSQL_CHECK_ERROR(mysql, "MySQL request not found.");	\
+if (mysql->status == ASYNC_PENDING)						\
+{														\
+	Plugin_Scr_Error("MySQL request is pending.");		\
+	return;												\
+}
 
-extern int MySQLCode;
-extern MYSQL *MySQLHandle;
+#define CHECK_MYSQL_WORKING() \
+MYSQL_CHECK_ERROR(!mysql_handler.working, "MySQL is processing another request.");
+
+#define CHECK_MYSQL_INSTANCE(handle) \
+MYSQL_CHECK_ERROR(handle, "MySQL connection not found.");
+
+#define CHECK_MYSQL_STMT(stmt) \
+MYSQL_CHECK_ERROR(stmt, "MySQL statement not found.");
+
+typedef struct
+{
+	int code;
+	MYSQL* handle;
+	qboolean working;
+} MYSQL_HANDLER;
 
 typedef struct 
 {
-	uv_work_t *request;
 	MYSQL *handle;
 	MYSQL_RES *result;
 	MYSQL_RES *resultStmt;
@@ -27,7 +43,10 @@ typedef struct
 	MYSQL_BIND *bindsResult;
 	int bindsLength;
 	int bindsResultLength;
+	async_status status;
 } MYSQL_REQUEST;
+
+extern MYSQL_HANDLER mysql_handler;
 
 /// <summary>
 /// Free all MySQL resources.
@@ -67,6 +86,18 @@ int MySQL_TypeToGSC(enum_field_types type);
 /// <param name="valueLength">The length of the string to allocate (0 for other types).</param>
 /// <param name="type">The MySQL type to bind.</param>
 void MySQL_PrepareBindBuffer(MYSQL_BIND* b, void *value, int valueLength, enum_field_types type);
+
+/// <summary>
+/// Async MySQL query.
+/// </summary>
+/// <param name="req">The worker request.</param>
+void MySQL_Query(uv_work_t* req);
+
+/// <summary>
+/// Async MySQL execute statement.
+/// </summary>
+/// <param name="req">The worker request.</param>
+void MySQL_Execute(uv_work_t* req);
 
 /// <summary>
 /// Prepare a MySQL statement.
@@ -173,6 +204,11 @@ void GScr_MySQL_EscapeString();
 /// Return a hex representation of the string.
 /// </summary>
 void GScr_MySQL_HexString();
+
+/// <summary>
+/// Get the MySQL request status.
+/// </summary>
+void GScr_MySQL_Status();
 
 /// <summary>
 /// Free a MySQL request.

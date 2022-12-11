@@ -1,8 +1,7 @@
 #include "mysql.h"
-#include <mysql.h>
+#include "sys/system.h"
 
-int MySQLCode = 0;
-MYSQL *MySQLHandle = NULL;
+MYSQL_HANDLER mysql_handler = { 0 };
 
 void GScr_MySQL_Version()
 {
@@ -15,9 +14,12 @@ void GScr_MySQL_Prepare()
 	CHECK_PARAMS(1, "Usage: SQL_Prepare(<query>)");
 
 	MYSQL_REQUEST* mysql = (MYSQL_REQUEST*)calloc(1, sizeof(MYSQL_REQUEST));
-	mysql->handle = MySQLHandle;
+	mysql->handle = mysql_handler.handle;
 
+	CHECK_MYSQL_WORKING();
 	CHECK_MYSQL_INSTANCE(mysql->handle);
+
+	mysql_handler.working = qtrue;
 
 	MySQL_Free_Result(mysql);
 	MySQL_Free_Statement(mysql);
@@ -209,36 +211,23 @@ void GScr_MySQL_Execute()
 		return;
 	}
 
-	// Execute statement
-	if (mysql_stmt_execute(mysql->stmt))
-	{
-		Plugin_Scr_Error(fmt("SQL_Execute(): Execute statement failed: %s", mysql_stmt_error(mysql->stmt)));
-		Plugin_Scr_AddBool(qfalse);
-		return;
-	}
-
-	// Result
-	if (mysql_stmt_store_result(mysql->stmt))
-	{
-		Plugin_Scr_Error(fmt("SQL_Execute(): Store result failed: %s", mysql_stmt_error(mysql->stmt)));
-		Plugin_Scr_AddBool(qfalse);
-		return;
-	}
-	mysql->resultStmt = mysql_stmt_result_metadata(mysql->stmt);
+	mysql->status = ASYNC_PENDING;
+	Plugin_AsyncCall(mysql, &MySQL_Execute, &Plugin_AsyncNull);
+	
 	Plugin_Scr_AddBool(qtrue);
 }
 
 void GScr_MySQL_ListDB()
 {
 	CHECK_PARAMS(0, "Usage: SQL_ListDB()");
-	CHECK_MYSQL_INSTANCE(MySQLHandle);
+	CHECK_MYSQL_INSTANCE(mysql_handler.handle);
 
-	MYSQL_RES *result = mysql_list_dbs(MySQLHandle, "%");
+	MYSQL_RES *result = mysql_list_dbs(mysql_handler.handle, "%");
 	MYSQL_ROW row;
 
 	if (!result)
 	{
-		Plugin_Scr_Error(fmt("SQL_ListDB(): Couldn't get db list: %s", mysql_error(MySQLHandle)));
+		Plugin_Scr_Error(fmt("SQL_ListDB(): Couldn't get db list: %s", mysql_error(mysql_handler.handle)));
 		return;
 	}
 
@@ -254,14 +243,14 @@ void GScr_MySQL_ListDB()
 void GScr_MySQL_ListTables()
 {
 	CHECK_PARAMS(0, "Usage: SQL_ListTables()");
-	CHECK_MYSQL_INSTANCE(MySQLHandle);
+	CHECK_MYSQL_INSTANCE(mysql_handler.handle);
 
-	MYSQL_RES *result = mysql_list_tables(MySQLHandle, "%");
+	MYSQL_RES *result = mysql_list_tables(mysql_handler.handle, "%");
 	MYSQL_ROW row;
 
 	if (!result)
 	{
-		Plugin_Scr_Error(fmt("SQL_ListTables(): Couldn't get table list: %s", mysql_error(MySQLHandle)));
+		Plugin_Scr_Error(fmt("SQL_ListTables(): Couldn't get table list: %s", mysql_error(mysql_handler.handle)));
 		return;
 	}
 
@@ -277,11 +266,11 @@ void GScr_MySQL_ListTables()
 void GScr_MySQL_EscapeString()
 {
 	CHECK_PARAMS(1, "Usage: SQL_EscapeString(<string>)");
-	CHECK_MYSQL_INSTANCE(MySQLHandle);
+	CHECK_MYSQL_INSTANCE(mysql_handler.handle);
 
 	const char *from = Plugin_Scr_GetString(0);
     char to[strlen(from) + 1];
-    unsigned long len = mysql_real_escape_string(MySQLHandle, to, from, strlen(from));
+    unsigned long len = mysql_real_escape_string(mysql_handler.handle, to, from, strlen(from));
     to[len] = '\0';
 
 	Plugin_Scr_AddString(to);
@@ -302,13 +291,13 @@ void GScr_MySQL_HexString()
 void GScr_MySQL_SelectDB()
 {
 	CHECK_PARAMS(1, "Usage: SQL_SelectDB(<name>)");
-	CHECK_MYSQL_INSTANCE(MySQLHandle);
+	CHECK_MYSQL_INSTANCE(mysql_handler.handle);
 
-	if (mysql_select_db(MySQLHandle, Plugin_Scr_GetString(0)) == 0)
+	if (mysql_select_db(mysql_handler.handle, Plugin_Scr_GetString(0)) == 0)
 		Plugin_Scr_AddBool(qtrue);
 	else
 	{
-		Plugin_Scr_Error(fmt("SQL_SelectDB(): Changing DBs failed: '%s'", mysql_error(MySQLHandle)));
+		Plugin_Scr_Error(fmt("SQL_SelectDB(): Changing DBs failed: '%s'", mysql_error(mysql_handler.handle)));
 		Plugin_Scr_AddBool(qfalse);
 	}
 }
@@ -570,36 +559,46 @@ void GScr_MySQL_Query()
 	CHECK_PARAMS(1, "Usage: SQL_Query(<query string>)");
 
 	MYSQL_REQUEST* mysql = (MYSQL_REQUEST*)calloc(1, sizeof(MYSQL_REQUEST));
-	mysql->handle = MySQLHandle;
+	mysql->handle = mysql_handler.handle;
 
+	CHECK_MYSQL_WORKING();
 	CHECK_MYSQL_REQUEST(mysql);
 	CHECK_MYSQL_INSTANCE(mysql->handle);
 
 	MySQL_Free_Result(mysql);
-	if (mysql_query(mysql->handle, Plugin_Scr_GetString(0)))
+
+	mysql->status = ASYNC_PENDING;
+	mysql_handler.working = qtrue;
+	Plugin_AsyncCall(mysql, &MySQL_Query, &Plugin_AsyncNull);
+
+	Plugin_Scr_AddInt((int)mysql);
+}
+
+void GScr_MySQL_Status()
+{
+	CHECK_PARAMS(1, "Usage: SQL_Status(<request>)");
+
+	MYSQL_REQUEST* mysql = (MYSQL_REQUEST*)Plugin_Scr_GetInt(0);
+	if (!mysql)
 	{
-		Plugin_Scr_Error(fmt("SQL_Query(): Query failed: %s\n", mysql_error(mysql->handle)));
-		Plugin_Scr_AddBool(qfalse);
+		Plugin_Scr_AddInt(0);
+		return;
 	}
-	else
-	{
-		mysql->result = mysql_store_result(mysql->handle);
-		Plugin_Scr_AddInt((int)mysql);
-	}
+	Plugin_Scr_AddInt((int)mysql->status);
 }
 
 void GScr_MySQL_Connect()
 {
 	CHECK_PARAMS(4, "Usage: SQL_Connect(<host>, <port>, <user>, <password>)");
 
-	if (MySQLHandle)
+	if (mysql_handler.handle)
 	{
-		mysql_close(MySQLHandle);
-		MySQLHandle = NULL;
+		mysql_close(mysql_handler.handle);
+		mysql_handler.handle = NULL;
 	}
 
-	MySQLHandle = mysql_init(MySQLHandle);
-	if (!MySQLHandle)
+	mysql_handler.handle = mysql_init(mysql_handler.handle);
+	if (!mysql_handler.handle)
 	{
 		Plugin_Scr_Error("SQL_Connect(): MySQL failed to initialize");
 		Plugin_Scr_AddBool(qfalse);
@@ -608,9 +607,9 @@ void GScr_MySQL_Connect()
 
 	// Auto reconnection
 	qboolean reconnect = qtrue;
-	mysql_options(MySQLHandle, MYSQL_OPT_RECONNECT, &reconnect);
+	mysql_options(mysql_handler.handle, MYSQL_OPT_RECONNECT, &reconnect);
 
-	if (!mysql_real_connect(MySQLHandle,	/* MYSQL structure to use */
+	if (!mysql_real_connect(mysql_handler.handle,	/* MYSQL structure to use */
 		Plugin_Scr_GetString(0),  			/* server hostname or IP address */
 		Plugin_Scr_GetString(2),  			/* handle user */
 		Plugin_Scr_GetString(3),  			/* password */
@@ -627,7 +626,7 @@ void GScr_MySQL_Connect()
 	}
 	else
 	{
-		Plugin_Printf("SQL_Connect(): Connected MySQL Server: %s\n", mysql_get_server_info(MySQLHandle));
+		Plugin_Printf("SQL_Connect(): Connected MySQL Server: %s\n", mysql_get_server_info(mysql_handler.handle));
 		Plugin_Scr_AddBool(qtrue);
 	}
 }
@@ -638,6 +637,44 @@ void GScr_MySQL_Close()
 
 	MySQL_Free();
 	Plugin_Scr_AddBool(qtrue);
+}
+
+void MySQL_Query(uv_work_t* req)
+{
+	MYSQL_REQUEST* mysql = (MYSQL_REQUEST*)req->data;
+
+	if (mysql_query(mysql->handle, Plugin_Scr_GetString(0)))
+	{
+		Sys_PrintF("SQL_Query(): Query failed: %s\n", mysql_error(mysql->handle));
+		mysql->status = ASYNC_FAILURE;
+		return;
+	}
+	
+	mysql->result = mysql_store_result(mysql->handle);
+	mysql->status = ASYNC_SUCCESSFUL;
+}
+
+void MySQL_Execute(uv_work_t* req)
+{
+	MYSQL_REQUEST* mysql = (MYSQL_REQUEST*)req->data;
+
+	// Execute statement
+	if (mysql_stmt_execute(mysql->stmt))
+	{
+		Sys_PrintF("SQL_Execute(): Execute statement failed: %s", mysql_stmt_error(mysql->stmt));
+		mysql->status = ASYNC_FAILURE;
+		return;
+	}
+
+	// Result
+	if (mysql_stmt_store_result(mysql->stmt))
+	{
+		Sys_PrintF("SQL_Execute(): Store result failed: %s", mysql_stmt_error(mysql->stmt));
+		mysql->status = ASYNC_FAILURE;
+		return;
+	}
+	mysql->resultStmt = mysql_stmt_result_metadata(mysql->stmt);
+	mysql->status = ASYNC_SUCCESSFUL;
 }
 
 void MySQL_Free_Statement(MYSQL_REQUEST *mysql)
@@ -694,16 +731,19 @@ void GScr_MySQL_Free()
 
 void MySQL_FreeRequest(MYSQL_REQUEST* mysql)
 {
-	if (mysql->request)
-		free(mysql->request);
+	CHECK_MYSQL_REQUEST(mysql);
+
 	free(mysql);
+	mysql = NULL;
+
+	mysql_handler.working = qfalse;
 }
 
 void MySQL_Free()
 {
-	if (MySQLHandle)
+	if (mysql_handler.handle)
 	{
-		mysql_close(MySQLHandle);
-		MySQLHandle = NULL;
+		mysql_close(mysql_handler.handle);
+		mysql_handler.handle = NULL;
 	}
 }

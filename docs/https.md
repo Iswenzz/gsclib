@@ -1,6 +1,6 @@
 # HTTP/HTTPS
 
-### :warning: **Requests are not thread safe, you'll need your own scripts in GSC !**
+### WARNING: **Requests are not thread safe, you'll need your own scripts in GSC to handle one request at a time !**
 
 #### ``HTTPS_GetFile(<filepath>, <url>)``
 Save a file from HTTP/HTTPS url.

@@ -23,8 +23,8 @@
 
 PCL int OnInit()
 {
-	CURLinitCode = curl_global_init(CURL_GLOBAL_ALL); 	// Initialize curl library
-	MySQLCode = mysql_library_init(0, NULL, NULL); 		// Initialize mysql library
+	CURLinitCode = curl_global_init(CURL_GLOBAL_ALL); 				// Initialize curl library
+	mysql_handler.code = mysql_library_init(0, NULL, NULL); 		// Initialize mysql library
 
 	// data/file
 	FUNCTION("file_create",				&GScr_FILE_Create);
@@ -112,6 +112,7 @@ PCL int OnInit()
 	FUNCTION("sql_bindparam", 			&GScr_MySQL_BindParam);
 	FUNCTION("sql_bindresult", 			&GScr_MySQL_BindResult);
 	FUNCTION("sql_execute", 			&GScr_MySQL_Execute);
+	FUNCTION("sql_status", 				&GScr_MySQL_Status);
 	FUNCTION("sql_escapestring", 		&GScr_MySQL_EscapeString);
 	FUNCTION("sql_hexstring", 			&GScr_MySQL_HexString);
 	FUNCTION("sql_selectdb", 			&GScr_MySQL_SelectDB);

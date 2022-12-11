@@ -1,6 +1,31 @@
 # MySQL
 
-### :warning: **Requests are not thread safe, you'll need your own scripts in GSC !**
+### WARNING: **Requests are not thread safe, you'll need your own scripts in GSC to handle one request at a time !**
+
+## Example
+```c
+request = SQL_Prepare("SELECT name, guid, rank FROM speedrun_ranks WHERE name = ?");
+SQL_BindParam(request, "Iswenzz", level.MYSQL_TYPE_VAR_STRING);
+SQL_BindResult(request, level.MYSQL_TYPE_VAR_STRING, 60);
+SQL_BindResult(request, level.MYSQL_TYPE_VAR_STRING, 60);
+SQL_BindResult(request, level.MYSQL_TYPE_LONG);
+SQL_BindResult(request, level.MYSQL_TYPE_LONG);
+SQL_BindResult(request, level.MYSQL_TYPE_LONG);
+SQL_Execute(request);
+
+while (SQL_Status(request) <= 1)
+	wait 0.05;
+
+rows = SQL_FetchRowsDict(request);
+for (i = 0; i < rows.size; i++)
+{
+	row = rows[i];
+
+	player = row["guid"];
+	rank = row["rank"];
+}
+SQL_Free(request);
+```
 
 ### MySQL types for prepared statement:
 ```c
@@ -146,6 +171,19 @@ Executes the prepared statement.
 
 ```c
 SQL_Execute(request);
+```
+<hr>
+
+#### ``SQL_Status(<request>)``
+Get the status of an async request.
+
+0 = uninitialized
+1 = pending
+2 = successful
+3 = failure
+
+```c
+status = SQL_Status(request);
 ```
 <hr>
 

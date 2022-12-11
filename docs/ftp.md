@@ -1,6 +1,6 @@
 # FTP/FTPS/SFTP
 
-### :warning: **Requests are not thread safe, you'll need your own scripts in GSC !**
+### WARNING: **Requests are not thread safe, you'll need your own scripts in GSC to handle one request at a time !**
 
 #### ``SFTP_Connect(<host>, <user>, <password>, <port>)``
 Connect to an SFTP server, the connection can be closed with FTP_Close.
