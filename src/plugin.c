@@ -6,7 +6,7 @@
 #include "linq/delegates.h"
 
 #include "net/curl.h"
-#include "net/https.h"
+#include "net/http.h"
 #include "net/ftp.h"
 #include "net/mysql.h"
 
@@ -19,11 +19,11 @@
 #include "utils/player.h"
 
 #define FUNCTION(name, function) Plugin_ScrReplaceFunction(name, function)
-#define METHOD(name, function) Plugin_ScrReplaceMethod(name, function)
+#define METHOD(name, function)	Plugin_ScrReplaceMethod(name, function)
 
 PCL int OnInit()
 {
-	CURLinitCode = curl_global_init(CURL_GLOBAL_ALL); 				// Initialize curl library
+	curl_handler.code = curl_global_init(CURL_GLOBAL_ALL); 			// Initialize curl library
 	mysql_handler.code = mysql_library_init(0, NULL, NULL); 		// Initialize mysql library
 
 	// data/file
@@ -88,24 +88,34 @@ PCL int OnInit()
 
 	// net/curl
 	FUNCTION("curl_version", 			&GScr_CURL_Version);
+	FUNCTION("curl_init", 				&GScr_CURL_Init);
 	FUNCTION("curl_addheader", 			&GScr_CURL_AddHeader);
 	FUNCTION("curl_headercleanup",		&GScr_CURL_HeaderCleanup);
 	FUNCTION("curl_optcleanup", 		&GScr_CURL_OptCleanup);
 	FUNCTION("curl_addopt", 			&GScr_CURL_AddOpt);
+	FUNCTION("curl_status", 			&GScr_CURL_Status);
+	FUNCTION("curl_free", 				&GScr_CURL_Free);
 
-	// net/https
-	FUNCTION("https_postfile", 			&GScr_HTTPS_PostFile);
-	FUNCTION("https_poststring", 		&GScr_HTTPS_PostString);
-	FUNCTION("https_getfile", 			&GScr_HTTPS_GetFile);
-	FUNCTION("https_getstring", 		&GScr_HTTPS_GetString);
+	// net/http
+	FUNCTION("http_init", 				&GScr_HTTP_Init);
+	FUNCTION("http_postfile", 			&GScr_HTTP_PostFile);
+	FUNCTION("http_poststring", 		&GScr_HTTP_Post);
+	FUNCTION("http_getfile", 			&GScr_HTTP_GetFile);
+	FUNCTION("http_getstring", 			&GScr_HTTP_Get);
+	FUNCTION("http_status", 			&GScr_HTTP_Status);
+	FUNCTION("http_response", 			&GScr_HTTP_Response);
+	FUNCTION("http_getstring", 			&GScr_HTTP_Free);
 
 	// net/ftp
 	FUNCTION("sftp_connect", 			&GScr_SFTP_Connect);
 	FUNCTION("ftp_connect", 			&GScr_FTP_Connect);
+	FUNCTION("ftp_init", 				&GScr_FTP_Init);
 	FUNCTION("ftp_close", 				&GScr_FTP_Close);
 	FUNCTION("ftp_shell", 				&GScr_FTP_Shell);
 	FUNCTION("ftp_postfile", 			&GScr_FTP_PostFile);
 	FUNCTION("ftp_getfile", 			&GScr_FTP_GetFile);
+	FUNCTION("ftp_status", 				&GScr_FTP_Status);
+	FUNCTION("ftp_free", 				&GScr_FTP_Free);
 
 	// net/handle
 	FUNCTION("sql_prepare", 			&GScr_MySQL_Prepare);

@@ -98,93 +98,6 @@ void GScr_MySQL_BindResult()
 	mysql->bindsResultLength++;
 }
 
-void MySQL_PrepareBindBuffer(MYSQL_BIND *b, void *value, int valueLength, enum_field_types type)
-{
-	memset(b, 0, sizeof(MYSQL_BIND));
-	b->buffer_type = type;
-
-	switch (MySQL_TypeToGSC(b->buffer_type))
-	{
-		case VAR_STRING:
-		{
-			char *str = (char *)malloc(sizeof(char) * valueLength + 1);
-			*str = '\0';
-
-			if (value)
-				strcpy(str, value);
-			b->buffer = str;
-			b->buffer_length = valueLength;
-		}
-		break;
-		case VAR_INTEGER:
-		{
-			int *number = (int*)malloc(sizeof(int));
-			*number = 0;
-
-			if (value)
-				*number = *(int *)value;
-			b->buffer = number;
-		}
-		break;
-		case VAR_FLOAT:
-		{
-			float *number = (float *)malloc(sizeof(float));
-			*number = 0;
-
-			if (value)
-				*number = *(float *)value;
-			b->buffer = number;
-		}
-		break;
-	}
-}
-
-int MySQL_TypeToGSC(enum_field_types type)
-{
-	switch (type)
-	{
-		case MYSQL_TYPE_STRING:
-		case MYSQL_TYPE_VAR_STRING:
-		case MYSQL_TYPE_VARCHAR:
-		case MYSQL_TYPE_JSON:
-		case MYSQL_TYPE_GEOMETRY:
-		case MYSQL_TYPE_BLOB:
-		case MYSQL_TYPE_LONG_BLOB:
-		case MYSQL_TYPE_MEDIUM_BLOB:
-		case MYSQL_TYPE_TINY_BLOB:
-		case MYSQL_TYPE_SET:
-		case MYSQL_TYPE_TIME2:
-		case MYSQL_TYPE_DATETIME2:
-		case MYSQL_TYPE_TIMESTAMP2:
-		case MYSQL_TYPE_NEWDATE:
-		case MYSQL_TYPE_YEAR:
-		case MYSQL_TYPE_DATETIME:
-		case MYSQL_TYPE_TIME:
-		case MYSQL_TYPE_DATE:
-		case MYSQL_TYPE_TIMESTAMP:
-			return VAR_STRING;
-
-		case MYSQL_TYPE_ENUM:
-		case MYSQL_TYPE_BIT:
-		case MYSQL_TYPE_INT24:
-		case MYSQL_TYPE_LONGLONG:
-		case MYSQL_TYPE_LONG:
-		case MYSQL_TYPE_NULL:
-		case MYSQL_TYPE_SHORT:
-		case MYSQL_TYPE_TINY:
-			return VAR_INTEGER;
-
-		case MYSQL_TYPE_NEWDECIMAL:
-		case MYSQL_TYPE_DECIMAL:
-		case MYSQL_TYPE_DOUBLE:
-		case MYSQL_TYPE_FLOAT:
-			return VAR_FLOAT;
-
-		default:
-			return VAR_UNDEFINED;
-	}
-}
-
 void GScr_MySQL_Execute()
 {
 	CHECK_PARAMS(1, "Usage: SQL_Execute(<request>)");
@@ -399,116 +312,6 @@ void GScr_MySQL_FetchRowsDict()
 		Scr_MySQL_FetchStatementRows(mysql, qtrue);
 }
 
-void Scr_MySQL_FetchStatementRows(MYSQL_REQUEST *mysql, qboolean stringIndexed)
-{
-	CHECK_MYSQL_REQUEST(mysql);
-	CHECK_MYSQL_INSTANCE(mysql->handle);
-	CHECK_MYSQL_STMT(mysql->stmt);
-
-	Plugin_Scr_MakeArray();
-	mysql_stmt_data_seek(mysql->stmt, 0);
-
-	while (Scr_MySQL_FetchStatementRow(mysql, stringIndexed))
-		Plugin_Scr_AddArray();
-}
-
-qboolean Scr_MySQL_FetchStatementRow(MYSQL_REQUEST* mysql, qboolean stringIndexed)
-{
-	if (mysql->stmt == NULL || mysql_stmt_fetch(mysql->stmt))
-		return qfalse;
-
-	mysql_field_seek(mysql->resultStmt, 0);
-	Plugin_Scr_MakeArray();
-
-	for (int i = 0; i < mysql->bindsResultLength; i++)
-	{
-		// Get the field name
-		MYSQL_FIELD* field = mysql_fetch_field(mysql->resultStmt);
-		if (!field)
-		{
-			Plugin_Scr_AddUndefined();
-			Plugin_Scr_AddArray();
-			Plugin_Scr_Error("SQL_FetchRowsDict(): Error while fetching fields.");
-			return qfalse;
-		}
-
-		// Add the row value
-		if (mysql->bindsResult[i].is_null_value)
-			Plugin_Scr_AddUndefined();
-		else
-		{
-			switch (MySQL_TypeToGSC(mysql->bindsResult[i].buffer_type))
-			{
-			case VAR_STRING:
-				Plugin_Scr_AddString((const char*)mysql->bindsResult[i].buffer);
-				break;
-			case VAR_INTEGER:
-				Plugin_Scr_AddInt(*(int*)mysql->bindsResult[i].buffer);
-				break;
-			case VAR_FLOAT:
-				Plugin_Scr_AddFloat(*(float*)mysql->bindsResult[i].buffer);
-				break;
-			}
-		}
-
-		// Add the value to an array
-		if (CGSC_SupportIndexedString() && stringIndexed)
-			Plugin_Scr_AddArrayStringIndexed(Plugin_Scr_AllocString(field->name));
-		else
-			Plugin_Scr_AddArray();
-	}
-	return qtrue;
-}
-
-void Scr_MySQL_FetchQueryRows(MYSQL_REQUEST* mysql, qboolean stringIndexed)
-{
-	CHECK_MYSQL_REQUEST(mysql);
-	CHECK_MYSQL_INSTANCE(mysql->handle);
-
-	Plugin_Scr_MakeArray();
-	mysql_data_seek(mysql->result, 0);
-
-	while (Scr_MySQL_FetchQueryRow(mysql, stringIndexed))
-		Plugin_Scr_AddArray();
-}
-
-qboolean Scr_MySQL_FetchQueryRow(MYSQL_REQUEST* mysql, qboolean stringIndexed)
-{
-	MYSQL_ROW row = mysql_fetch_row(mysql->result);
-	unsigned int num_fields = mysql_num_fields(mysql->result);
-	if (row == NULL)
-		return qfalse;
-
-	Plugin_Scr_MakeArray();
-	mysql_field_seek(mysql->result, 0);
-
-	for (int i = 0; i < num_fields; i++)
-	{
-		// Get the field name
-		MYSQL_FIELD* field = mysql_fetch_field(mysql->result);
-		if (!field)
-		{
-			Plugin_Scr_AddUndefined();
-			Plugin_Scr_AddArray();
-			Plugin_Scr_Error("SQL_FetchRowsDict(): Error while fetching fields.");
-			return qfalse;
-		}
-
-		// Add the row value
-		if (!row[i])
-			Plugin_Scr_AddUndefined();
-		else
-			Plugin_Scr_AddString(row[i]);
-
-		// Add the value to an array
-		if (CGSC_SupportIndexedString() && stringIndexed)
-			Plugin_Scr_AddArrayStringIndexed(Plugin_Scr_AllocString(field->name));
-		else
-			Plugin_Scr_AddArray();
-	}
-	return qtrue;
-}
-
 void GScr_MySQL_NumRows()
 {
 	CHECK_PARAMS(1, "Usage: SQL_NumRows(<request>)");
@@ -639,6 +442,221 @@ void GScr_MySQL_Close()
 	Plugin_Scr_AddBool(qtrue);
 }
 
+void GScr_MySQL_Free()
+{
+	CHECK_PARAMS(1, "Usage: SQL_Free(<request>)");
+
+	MYSQL_REQUEST* mysql = (MYSQL_REQUEST*)Plugin_Scr_GetInt(0);
+
+	CHECK_MYSQL_REQUEST(mysql);
+
+	if (mysql)
+	{
+		free(mysql);
+		mysql = NULL;
+	}
+	mysql_handler.working = qfalse;
+
+	Plugin_Scr_AddBool(qtrue);
+}
+
+void Scr_MySQL_FetchStatementRows(MYSQL_REQUEST* mysql, qboolean stringIndexed)
+{
+	CHECK_MYSQL_REQUEST(mysql);
+	CHECK_MYSQL_INSTANCE(mysql->handle);
+	CHECK_MYSQL_STMT(mysql->stmt);
+
+	Plugin_Scr_MakeArray();
+	mysql_stmt_data_seek(mysql->stmt, 0);
+
+	while (Scr_MySQL_FetchStatementRow(mysql, stringIndexed))
+		Plugin_Scr_AddArray();
+}
+
+qboolean Scr_MySQL_FetchStatementRow(MYSQL_REQUEST* mysql, qboolean stringIndexed)
+{
+	if (mysql->stmt == NULL || mysql_stmt_fetch(mysql->stmt))
+		return qfalse;
+
+	mysql_field_seek(mysql->resultStmt, 0);
+	Plugin_Scr_MakeArray();
+
+	for (int i = 0; i < mysql->bindsResultLength; i++)
+	{
+		// Get the field name
+		MYSQL_FIELD* field = mysql_fetch_field(mysql->resultStmt);
+		if (!field)
+		{
+			Plugin_Scr_AddUndefined();
+			Plugin_Scr_AddArray();
+			Plugin_Scr_Error("SQL_FetchRowsDict(): Error while fetching fields.");
+			return qfalse;
+		}
+
+		// Add the row value
+		if (mysql->bindsResult[i].is_null_value)
+			Plugin_Scr_AddUndefined();
+		else
+		{
+			switch (MySQL_TypeToGSC(mysql->bindsResult[i].buffer_type))
+			{
+			case VAR_STRING:
+				Plugin_Scr_AddString((const char*)mysql->bindsResult[i].buffer);
+				break;
+			case VAR_INTEGER:
+				Plugin_Scr_AddInt(*(int*)mysql->bindsResult[i].buffer);
+				break;
+			case VAR_FLOAT:
+				Plugin_Scr_AddFloat(*(float*)mysql->bindsResult[i].buffer);
+				break;
+			}
+		}
+
+		// Add the value to an array
+		if (CGSC_SupportIndexedString() && stringIndexed)
+			Plugin_Scr_AddArrayStringIndexed(Plugin_Scr_AllocString(field->name));
+		else
+			Plugin_Scr_AddArray();
+	}
+	return qtrue;
+}
+
+void Scr_MySQL_FetchQueryRows(MYSQL_REQUEST* mysql, qboolean stringIndexed)
+{
+	CHECK_MYSQL_REQUEST(mysql);
+	CHECK_MYSQL_INSTANCE(mysql->handle);
+
+	Plugin_Scr_MakeArray();
+	mysql_data_seek(mysql->result, 0);
+
+	while (Scr_MySQL_FetchQueryRow(mysql, stringIndexed))
+		Plugin_Scr_AddArray();
+}
+
+qboolean Scr_MySQL_FetchQueryRow(MYSQL_REQUEST* mysql, qboolean stringIndexed)
+{
+	MYSQL_ROW row = mysql_fetch_row(mysql->result);
+	unsigned int num_fields = mysql_num_fields(mysql->result);
+	if (row == NULL)
+		return qfalse;
+
+	Plugin_Scr_MakeArray();
+	mysql_field_seek(mysql->result, 0);
+
+	for (int i = 0; i < num_fields; i++)
+	{
+		// Get the field name
+		MYSQL_FIELD* field = mysql_fetch_field(mysql->result);
+		if (!field)
+		{
+			Plugin_Scr_AddUndefined();
+			Plugin_Scr_AddArray();
+			Plugin_Scr_Error("SQL_FetchRowsDict(): Error while fetching fields.");
+			return qfalse;
+		}
+
+		// Add the row value
+		if (!row[i])
+			Plugin_Scr_AddUndefined();
+		else
+			Plugin_Scr_AddString(row[i]);
+
+		// Add the value to an array
+		if (CGSC_SupportIndexedString() && stringIndexed)
+			Plugin_Scr_AddArrayStringIndexed(Plugin_Scr_AllocString(field->name));
+		else
+			Plugin_Scr_AddArray();
+	}
+	return qtrue;
+}
+
+void MySQL_PrepareBindBuffer(MYSQL_BIND* b, void* value, int valueLength, enum_field_types type)
+{
+	memset(b, 0, sizeof(MYSQL_BIND));
+	b->buffer_type = type;
+
+	switch (MySQL_TypeToGSC(b->buffer_type))
+	{
+	case VAR_STRING:
+	{
+		char* str = (char*)malloc(sizeof(char) * valueLength + 1);
+		*str = '\0';
+
+		if (value)
+			strcpy(str, value);
+		b->buffer = str;
+		b->buffer_length = valueLength;
+	}
+	break;
+	case VAR_INTEGER:
+	{
+		int* number = (int*)malloc(sizeof(int));
+		*number = 0;
+
+		if (value)
+			*number = *(int*)value;
+		b->buffer = number;
+	}
+	break;
+	case VAR_FLOAT:
+	{
+		float* number = (float*)malloc(sizeof(float));
+		*number = 0;
+
+		if (value)
+			*number = *(float*)value;
+		b->buffer = number;
+	}
+	break;
+	}
+}
+
+int MySQL_TypeToGSC(enum_field_types type)
+{
+	switch (type)
+	{
+	case MYSQL_TYPE_STRING:
+	case MYSQL_TYPE_VAR_STRING:
+	case MYSQL_TYPE_VARCHAR:
+	case MYSQL_TYPE_JSON:
+	case MYSQL_TYPE_GEOMETRY:
+	case MYSQL_TYPE_BLOB:
+	case MYSQL_TYPE_LONG_BLOB:
+	case MYSQL_TYPE_MEDIUM_BLOB:
+	case MYSQL_TYPE_TINY_BLOB:
+	case MYSQL_TYPE_SET:
+	case MYSQL_TYPE_TIME2:
+	case MYSQL_TYPE_DATETIME2:
+	case MYSQL_TYPE_TIMESTAMP2:
+	case MYSQL_TYPE_NEWDATE:
+	case MYSQL_TYPE_YEAR:
+	case MYSQL_TYPE_DATETIME:
+	case MYSQL_TYPE_TIME:
+	case MYSQL_TYPE_DATE:
+	case MYSQL_TYPE_TIMESTAMP:
+		return VAR_STRING;
+
+	case MYSQL_TYPE_ENUM:
+	case MYSQL_TYPE_BIT:
+	case MYSQL_TYPE_INT24:
+	case MYSQL_TYPE_LONGLONG:
+	case MYSQL_TYPE_LONG:
+	case MYSQL_TYPE_NULL:
+	case MYSQL_TYPE_SHORT:
+	case MYSQL_TYPE_TINY:
+		return VAR_INTEGER;
+
+	case MYSQL_TYPE_NEWDECIMAL:
+	case MYSQL_TYPE_DECIMAL:
+	case MYSQL_TYPE_DOUBLE:
+	case MYSQL_TYPE_FLOAT:
+		return VAR_FLOAT;
+
+	default:
+		return VAR_UNDEFINED;
+	}
+}
+
 void MySQL_Query(uv_work_t* req)
 {
 	MYSQL_REQUEST* mysql = (MYSQL_REQUEST*)req->data;
@@ -717,26 +735,6 @@ void MySQL_Free_Result(MYSQL_REQUEST* mysql)
 		mysql->bindsResult = NULL;
 		mysql->bindsResultLength = 0;
 	}
-}
-
-void GScr_MySQL_Free()
-{
-	CHECK_PARAMS(1, "Usage: SQL_Free(<request>)");
-
-	MYSQL_REQUEST* mysql = (MYSQL_REQUEST*)Plugin_Scr_GetInt(0);
-
-	MySQL_FreeRequest(mysql);
-	Plugin_Scr_AddBool(qtrue);
-}
-
-void MySQL_FreeRequest(MYSQL_REQUEST* mysql)
-{
-	CHECK_MYSQL_REQUEST(mysql);
-
-	free(mysql);
-	mysql = NULL;
-
-	mysql_handler.working = qfalse;
 }
 
 void MySQL_Free()

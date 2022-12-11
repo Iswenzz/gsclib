@@ -20,11 +20,11 @@ main()
 	it(::test_FTP_Shell, "FTP_Shell", ::beforeFTP, ::afterFTP);
 	it(::test_FTP_PostGetFile, "FTP_PostGetFile", ::beforeFTP, ::afterFTP);
 
-	// net/https
-	it(::test_HTTPS_GetFile, "HTTPS_GetFile");
-	it(::test_HTTPS_GetString, "HTTPS_GetString");
-	it(::test_HTTPS_PostFile, "HTTPS_PostFile");
-	it(::test_HTTPS_PostString, "HTTPS_PostString");
+	// net/http
+	it(::test_HTTP_GetFile, "HTTP_GetFile");
+	it(::test_HTTP_GetString, "HTTP_GetString");
+	it(::test_HTTP_PostFile, "HTTP_PostFile");
+	it(::test_HTTP_PostString, "HTTP_PostString");
 
 	// net/mysql
 	it(::test_SQL_Version, "SQL_Version", ::beforeMySQL);
@@ -150,32 +150,32 @@ test_CURL_AddOpt()
 	EXPECT_UNDEFINED(CURL_AddOpt(41, 1));
 }
 
-test_HTTPS_GetFile()
+test_HTTP_GetFile()
 {
 	url = "https://iswenzz.com/";
-	EXPECT_TRUE(HTTPS_GetFile("temp/iswenzz.html", url));
+	EXPECT_TRUE(HTTP_GetFile("temp/iswenzz.html", url));
 }
 
-test_HTTPS_GetString()
+test_HTTP_GetString()
 {
 	url = "http://httpbin.org/get";
-	EXPECT_CONTAIN(HTTPS_GetString(url), "httpbin.org");
+	EXPECT_CONTAIN(HTTP_GetString(url), "httpbin.org");
 }
 
-test_HTTPS_PostFile()
+test_HTTP_PostFile()
 {
 	url = "http://httpbin.org/post";
-	EXPECT_CONTAIN(HTTPS_PostFile("temp/iswenzz.html", url), "Iswenzz");
+	EXPECT_CONTAIN(HTTP_PostFile("temp/iswenzz.html", url), "Iswenzz");
 	FILE_Delete("temp/iswenzz.html");
 }
 
-test_HTTPS_PostString()
+test_HTTP_PostString()
 {
 	json = "{\"login\":\"login\",\"password\":\"password\"}";
 	url = "http://httpbin.org/post";
 
 	CURL_AddHeader("Accept: application/json,Content-Type: application/json");
-	EXPECT_CONTAIN(HTTPS_PostString(json, url), "password");
+	EXPECT_CONTAIN(HTTP_PostString(json, url), "password");
 }
 
 test_SFTP_Shell()

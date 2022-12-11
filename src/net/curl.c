@@ -1,85 +1,17 @@
 #include "curl.h"
 #include <stdlib.h>
 
-CURLcode CURLinitCode;
-CURLinstance curl = { 0 };
-FTPinstance ftp = { 0 };
+CURL_HANDLER curl_handler = { 0 };
 
-CURLstring CURL_StringInit() 
+void GScr_CURL_Init()
 {
-	CURLstring str;
-	memset(&str, 0, sizeof(CURLstring));
-	str.buffer = NULL;
-	return str;
-}
+	CHECK_PARAMS(0, "Usage: CURL_Init()");
 
-void CURL_SetHeader(CURL* handle, CURLoption headerType)
-{
-	if (curl.header != NULL)
-		curl_easy_setopt(handle, headerType, curl.header);
-}
+	CURL_REQUEST* curl = (CURL_REQUEST*)calloc(1, sizeof(CURL_REQUEST));
+	curl->handle = curl_handler.handle;
+	curl_handler.working = qtrue;
 
-void CURL_OptCleanup()
-{
-	curl.optsCount = 0;
-	memset(&curl.opts, 0, sizeof(curl.opts));
-}
-
-void CURL_HeaderCleanup()
-{
-	if (curl.header != NULL)
-	{
-		curl_slist_free_all(curl.header);
-		curl.header = NULL;
-	}
-}
-
-void CURL_SetOpts(CURL* handle)
-{
-	if (curl.optsCount > 0)
-	{
-		for (int i = 0; i < curl.optsCount; i++)
-		{
-			switch (curl.opts[i].param.type)
-			{
-			case VAR_INTEGER:
-				curl_easy_setopt(handle, curl.opts[i].opt, curl.opts[i].param.u.intValue);
-				break;
-			case VAR_FLOAT:
-				curl_easy_setopt(handle, curl.opts[i].opt, curl.opts[i].param.u.floatValue);
-				break;
-			case VAR_ISTRING:
-			case VAR_STRING:
-				curl_easy_setopt(handle, curl.opts[i].opt,
-					Plugin_SL_ConvertToString(curl.opts[i].param.u.stringValue));
-				break;
-			}
-		}
-	}
-}
-
-qboolean CURL_FTP_Close()
-{
-	if (ftp.handle != NULL)
-	{
-		curl_easy_cleanup(ftp.handle);
-		memset(&ftp, 0, sizeof(ftp));
-		ftp.handle = NULL;
-		return qtrue;
-	}
-	return qfalse;
-}
-
-qboolean CURL_FTP_Connect(const char* protocol, const char* hostname, const char* username,
-	const char* password, unsigned short port)
-{
-	CURL_FTP_Close();
-
-	snprintf(ftp.url, sizeof(ftp.url), "%s://%s@%s/", protocol, username, hostname);
-	strcpy(ftp.password, password);
-	ftp.port = port;
-	ftp.handle = curl_easy_init();
-	return ftp.handle != NULL;
+	Plugin_Scr_AddInt((int)curl);
 }
 
 void GScr_CURL_Version()
@@ -130,27 +62,118 @@ void GScr_CURL_Version()
 
 void GScr_CURL_OptCleanup()
 {
-	CHECK_PARAMS(0, "Usage: CURL_OptCleanup()");
-	CURL_OptCleanup();
+	CHECK_PARAMS(1, "Usage: CURL_OptCleanup(<request>)");
+
+	CURL_REQUEST* curl = (CURL_REQUEST*)Plugin_Scr_GetInt(0);
+	CHECK_CURL_REQUEST(curl);
+
+	CURL_OptCleanup(curl);
 }
 
 void GScr_CURL_HeaderCleanup()
 {
-	CHECK_PARAMS(0, "Usage: CURL_HeaderCleanup()");
-	CURL_HeaderCleanup();
+	CHECK_PARAMS(1, "Usage: CURL_HeaderCleanup(<request>)");
+
+	CURL_REQUEST* curl = (CURL_REQUEST*)Plugin_Scr_GetInt(0);
+	CHECK_CURL_REQUEST(curl);
+
+	CURL_HeaderCleanup(curl);
 }
 
 void GScr_CURL_AddHeader()
 {
-	CHECK_PARAMS(1, "Usage: CURL_AddHeader(<header>)");
-	curl.header = curl_slist_append(curl.header, Plugin_Scr_GetString(0));
+	CHECK_PARAMS(2, "Usage: CURL_AddHeader(<request>, <header>)");
+
+	CURL_REQUEST* curl = (CURL_REQUEST*)Plugin_Scr_GetInt(0);
+	CHECK_CURL_REQUEST(curl);
+
+	curl->header = curl_slist_append(curl->header, Plugin_Scr_GetString(1));
 }
 
 void GScr_CURL_AddOpt()
 {
-	CHECK_PARAMS(2, "Usage: CURL_AddOpt(<opt int>, <param generic>)");
+	CHECK_PARAMS(3, "Usage: CURL_AddOpt(<request>, <opt int>, <param generic>)");
 
-	curl.opts[curl.optsCount].opt = Plugin_Scr_GetInt(0);
-	curl.opts[curl.optsCount].param = *Plugin_Scr_SelectParam(1);
-	curl.optsCount++;
+	CURL_REQUEST* curl = (CURL_REQUEST*)Plugin_Scr_GetInt(0);
+	CHECK_CURL_REQUEST(curl);
+
+	curl->opts[curl->optsCount].opt = Plugin_Scr_GetInt(1);
+	curl->opts[curl->optsCount].param = *Plugin_Scr_SelectParam(2);
+	curl->optsCount++;
+}
+
+void GScr_CURL_Status()
+{
+	CHECK_PARAMS(1, "Usage: CURL_Status(<request>)");
+
+	CURL_REQUEST* curl = (CURL_REQUEST*)Plugin_Scr_GetInt(0);
+	if (!curl)
+	{
+		Plugin_Scr_AddInt(0);
+		return;
+	}
+	Plugin_Scr_AddInt((int)curl->status);
+}
+
+void GScr_CURL_Free()
+{
+	CHECK_PARAMS(1, "Usage: CURL_Free(<request>)");
+
+	CURL_REQUEST* curl = (CURL_REQUEST*)Plugin_Scr_GetInt(0);
+
+	CHECK_CURL_REQUEST(curl);
+
+	if (curl)
+	{
+		free(curl);
+		curl = NULL;
+	}
+	curl_handler.working = qfalse;
+
+	Plugin_Scr_AddBool(qtrue);
+}
+
+void CURL_SetHeader(CURL_REQUEST *curl, CURLoption headerType)
+{
+	if (curl->header != NULL)
+		curl_easy_setopt(curl->handle, headerType, curl->header);
+}
+
+void CURL_OptCleanup(CURL_REQUEST* curl)
+{
+	curl->optsCount = 0;
+	memset(&curl->opts, 0, sizeof(curl->opts));
+}
+
+void CURL_HeaderCleanup(CURL_REQUEST* curl)
+{
+	if (curl->header != NULL)
+	{
+		curl_slist_free_all(curl->header);
+		curl->header = NULL;
+	}
+}
+
+void CURL_SetOpts(CURL_REQUEST* curl)
+{
+	if (curl->optsCount > 0)
+	{
+		for (int i = 0; i < curl->optsCount; i++)
+		{
+			switch (curl->opts[i].param.type)
+			{
+			case VAR_INTEGER:
+				curl_easy_setopt(curl->handle, curl->opts[i].opt, curl->opts[i].param.u.intValue);
+				break;
+			case VAR_FLOAT:
+				curl_easy_setopt(curl->handle, curl->opts[i].opt, curl->opts[i].param.u.floatValue);
+				break;
+			case VAR_ISTRING:
+			case VAR_STRING:
+				curl_easy_setopt(curl->handle, curl->opts[i].opt,
+					Plugin_SL_ConvertToString(curl->opts[i].param.u.stringValue));
+				break;
+			}
+		}
+	}
 }
