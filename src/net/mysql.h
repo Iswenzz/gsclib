@@ -9,13 +9,16 @@ if (x == NULL)				\
 	return;					\
 }
 
-#define CHECK_MYSQL_INSTANCE()	MYSQL_ERROR(mysql.handle, "MySQL connection not found.");
-#define CHECK_MYSQL_STMT()		MYSQL_ERROR(mysql.stmt, "MySQL statement not found.");
+#define CHECK_MYSQL_REQUEST(mysql)		MYSQL_ERROR(mysql, "MySQL request not found.");
+#define CHECK_MYSQL_INSTANCE(handle)	MYSQL_ERROR(handle, "MySQL connection not found.");
+#define CHECK_MYSQL_STMT(stmt)			MYSQL_ERROR(stmt, "MySQL statement not found.");
 
-extern int MySQLcode;
+extern int MySQLCode;
+extern MYSQL *MySQLHandle;
 
 typedef struct 
 {
+	uv_work_t *request;
 	MYSQL *handle;
 	MYSQL_RES *result;
 	MYSQL_RES *resultStmt;
@@ -24,7 +27,7 @@ typedef struct
 	MYSQL_BIND *bindsResult;
 	int bindsLength;
 	int bindsResultLength;
-} MYSQL_INSTANCE;
+} MYSQL_REQUEST;
 
 /// <summary>
 /// Free all MySQL resources.
@@ -32,14 +35,22 @@ typedef struct
 void MySQL_Free();
 
 /// <summary>
+/// Free a MySQL request.
+/// </summary>
+/// <param name="mysql">The mysql request.</param>
+void MySQL_FreeRequest(MYSQL_REQUEST* mysql);
+
+/// <summary>
 /// Free the MySQL query & statement result.
 /// </summary>
-void MySQL_Free_Result();
+/// <param name="mysql">The mysql request.</param>
+void MySQL_Free_Result(MYSQL_REQUEST* mysql);
 
 /// <summary>
 /// Free the MySQL statement.
 /// </summary>
-void MySQL_Free_Statement();
+/// <param name="mysql">The mysql request.</param>
+void MySQL_Free_Statement(MYSQL_REQUEST* mysql);
 
 /// <summary>
 /// Converts a MySQL type to a GSC variable type.
@@ -164,29 +175,38 @@ void GScr_MySQL_EscapeString();
 void GScr_MySQL_HexString();
 
 /// <summary>
+/// Free a MySQL request.
+/// </summary>
+void GScr_MySQL_Free();
+
+/// <summary>
 /// Fetch row for queries.
 /// </summary>
+/// <param name="mysql">The mysql request.</param>
 /// <param name="stringIndexed">Return as a string indexed array.</param>
 /// <returns></returns>
-qboolean Scr_MySQL_FetchQueryRow(qboolean stringIndexed);
+qboolean Scr_MySQL_FetchQueryRow(MYSQL_REQUEST* mysql, qboolean stringIndexed);
 
 /// <summary>
 /// Fetch rows for queries.
 /// </summary>
+/// <param name="mysql">The mysql request.</param>
 /// <param name="stringIndexed">Return as a string indexed array.</param>
 /// <returns></returns>
-void Scr_MySQL_FetchQueryRows(qboolean stringIndexed);
+void Scr_MySQL_FetchQueryRows(MYSQL_REQUEST* mysql, qboolean stringIndexed);
 
 /// <summary>
 /// Fetch row for statement.
 /// </summary>
+/// <param name="mysql">The mysql request.</param>
 /// <param name="stringIndexed">Return as a string indexed array.</param>
 /// <returns></returns>
-qboolean Scr_MySQL_FetchStatementRow(qboolean stringIndexed);
+qboolean Scr_MySQL_FetchStatementRow(MYSQL_REQUEST* mysql, qboolean stringIndexed);
 
 /// <summary>
 /// Fetch rows for statement.
 /// </summary>
+/// <param name="mysql">The mysql request.</param>
 /// <param name="stringIndexed">Return as a string indexed array.</param>
 /// <returns></returns>
-void Scr_MySQL_FetchStatementRows(qboolean stringIndexed);
+void Scr_MySQL_FetchStatementRows(MYSQL_REQUEST* mysql, qboolean stringIndexed);

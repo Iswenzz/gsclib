@@ -61,6 +61,14 @@ SQL_Close();
 ```
 <hr>
 
+#### ``SQL_Free(<request>)``
+Free a MySQL Request, this must be called after being done with the query/prepare request.
+
+```c
+SQL_Close(request);
+```
+<hr>
+
 #### ``SQL_EscapeString(<string>)``
 Prepends backslashes to the following characters: \x00 , \n , \r , \ , ' , " and \x1a . This function must always (with few exceptions) be used to make data safe before sending a query to MySQL.
 
@@ -89,7 +97,7 @@ SQL_SelectDB("testdb");
 Command for performing a query on the database server.
 
 ```c
-SQL_Query("SELECT * FROM players");
+request = SQL_Query("SELECT * FROM players");
 ```
 <hr>
 
@@ -97,78 +105,79 @@ SQL_Query("SELECT * FROM players");
 Command for performing a statement on the database server, binds must be set in order.
 
 ```c
-SQL_Prepare("SELECT name, guid, rank FROM speedrun_ranks WHERE name = ?");
-SQL_BindParam("Iswenzz", level.MYSQL_TYPE_VAR_STRING);
-SQL_BindResult(level.MYSQL_TYPE_VAR_STRING, 60);
-SQL_BindResult(level.MYSQL_TYPE_VAR_STRING, 60);
-SQL_BindResult(level.MYSQL_TYPE_LONG);
-SQL_BindResult(level.MYSQL_TYPE_LONG);
-SQL_BindResult(level.MYSQL_TYPE_LONG);
+request = SQL_Prepare("SELECT name, guid, rank FROM speedrun_ranks WHERE name = ?");
+SQL_BindParam(request, "Iswenzz", level.MYSQL_TYPE_VAR_STRING);
+SQL_BindResult(request, level.MYSQL_TYPE_VAR_STRING, 60);
+SQL_BindResult(request, level.MYSQL_TYPE_VAR_STRING, 60);
+SQL_BindResult(request, level.MYSQL_TYPE_LONG);
+SQL_BindResult(request, level.MYSQL_TYPE_LONG);
+SQL_BindResult(request, level.MYSQL_TYPE_LONG);
+SQL_Execute(request);
 ```
 ```c
-SQL_Prepare("INSERT INTO speedrun_ranks (name, guid, rank) VALUES (?, ?, ?)");
-SQL_BindParam("Iswenzz", level.MYSQL_TYPE_VAR_STRING);
-SQL_BindParam("313354b4", level.MYSQL_TYPE_VAR_STRING);
-SQL_BindParam("80", level.MYSQL_TYPE_LONG);
-SQL_Execute();
+request = SQL_Prepare("INSERT INTO speedrun_ranks (name, guid, rank) VALUES (?, ?, ?)");
+SQL_BindParam(request, "Iswenzz", level.MYSQL_TYPE_VAR_STRING);
+SQL_BindParam(request, "313354b4", level.MYSQL_TYPE_VAR_STRING);
+SQL_BindParam(request, "80", level.MYSQL_TYPE_LONG);
+SQL_Execute(request);
 ```
 <hr>
 
-#### ``SQL_BindParam(<value>, <type>)``
+#### ``SQL_BindParam(<request>, <value>, <type>)``
 Bind a value in the prepared statement.
 
 ```c
-SQL_BindParam("Iswenzz", level.MYSQL_TYPE_VAR_STRING);
+SQL_BindParam(request, "Iswenzz", level.MYSQL_TYPE_VAR_STRING);
 ```
 <hr>
 
-#### ``SQL_BindResult(<type>, <?string length>)``
+#### ``SQL_BindResult(<request>, <type>, <?string length>)``
 Bind a result in the prepared statement, if you want to retrieve the col when fetching rows.
 The <?string length> is optional for all types except strings where you have to specify the string length.
 
 ```c
-SQL_BindResult(level.MYSQL_TYPE_VAR_STRING, 60);
-SQL_BindResult(level.MYSQL_TYPE_LONG);
+SQL_BindResult(request, level.MYSQL_TYPE_VAR_STRING, 60);
+SQL_BindResult(request, level.MYSQL_TYPE_LONG);
 ```
 <hr>
 
-#### ``SQL_Execute()``
+#### ``SQL_Execute(<request>)``
 Executes the prepared statement.
 
 ```c
-SQL_Execute();
+SQL_Execute(request);
 ```
 <hr>
 
-#### ``SQL_NumRows()``
+#### ``SQL_NumRows(<request>)``
 Return the number of rows after a query or statement.
 
 ```c
-count = SQL_NumRows();
+count = SQL_NumRows(request);
 ```
 <hr>
 
-#### ``SQL_NumFields()``
+#### ``SQL_NumFields(<request>)``
 Return the number of fields after a query or statement.
 
 ```c
-count = SQL_NumFields();
+count = SQL_NumFields(request);
 ```
 <hr>
 
-#### ``SQL_AffectedRows()``
+#### ``SQL_AffectedRows(<request>)``
 Return the number of affected rows after a query or statement.
 
 ```c
-count = SQL_AffectedRows();
+count = SQL_AffectedRows(request);
 ```
 <hr>
 
-#### ``SQL_FetchRows()``
+#### ``SQL_FetchRows(<request>)``
 Retrieve rows data in a two dimensional GSC array after a query.
 
 ```c
-rows = SQL_FetchRows();
+rows = SQL_FetchRows(request);
 if (isDefined(rows) && isDefined(rows.size))
 {
     for (i = 0; i < rows.size; i++)
@@ -183,11 +192,11 @@ if (isDefined(rows) && isDefined(rows.size))
 ```
 <hr>
 
-#### ``SQL_FetchRowsDict()``
+#### ``SQL_FetchRowsDict(<request>)``
 Retrieve rows data in a two dimensional GSC string indexed array after a query.
 
 ```c
-rows = SQL_FetchRowsDict();
+rows = SQL_FetchRowsDict(request);
 if (isDefined(rows) && isDefined(rows.size))
 {
     for (i = 0; i < rows.size; i++)
@@ -202,31 +211,31 @@ if (isDefined(rows) && isDefined(rows.size))
 ```
 <hr>
 
-#### ``SQL_FetchRow()``
+#### ``SQL_FetchRow(<request>)``
 Retrieve a single row data in a GSC array after a query.
 
 ```c
-row = SQL_FetchRow();
+row = SQL_FetchRow(request);
 for (i = 0; i < row.size; i++)
     comPrint(row[i]);
 ```
 <hr>
 
-#### ``SQL_FetchRowDict()``
+#### ``SQL_FetchRowDict(<request>)``
 Retrieve a single row data in a GSC string indexed array after a query.
 
 ```c
-row = SQL_FetchRowDict();
+row = SQL_FetchRowDict(request);
 for (i = 0; i < row.size; i++)
     comPrint(row[i]);
 ```
 <hr>
 
-#### ``SQL_FetchFields()``
+#### ``SQL_FetchFields(<request>)``
 Retrieve all fields in a GSC array after a query.
 
 ```c
-array = SQL_FetchFields();
+array = SQL_FetchFields(request);
 ```
 <hr>
 

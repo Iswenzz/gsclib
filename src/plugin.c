@@ -24,7 +24,7 @@
 PCL int OnInit()
 {
 	CURLinitCode = curl_global_init(CURL_GLOBAL_ALL); 	// Initialize curl library
-	MySQLcode = mysql_library_init(0, NULL, NULL); 		// Initialize mysql library
+	MySQLCode = mysql_library_init(0, NULL, NULL); 		// Initialize mysql library
 
 	// data/file
 	FUNCTION("file_create",				&GScr_FILE_Create);
@@ -129,6 +129,7 @@ PCL int OnInit()
 	FUNCTION("sql_version", 			&GScr_MySQL_Version);
 	FUNCTION("sql_connect", 			&GScr_MySQL_Connect);
 	FUNCTION("sql_close", 				&GScr_MySQL_Close);
+	FUNCTION("sql_free", 				&GScr_MySQL_Free);
 
 	// sys/system
 	FUNCTION("system", 					&GScr_System);
