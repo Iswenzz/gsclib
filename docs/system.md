@@ -8,6 +8,19 @@ System("ls");
 ```
 <hr>
 
+#### ``AsyncStatus(<request>)``
+Get the status of an async request (MySQL, CURL, FTP, HTTP).
+
+0 = uninitialized
+1 = pending
+2 = successful
+3 = failure
+
+```c
+status = AsyncStatus(request);
+```
+<hr>
+
 #### ``GetSysTime()``
 Get the system time in milliseconds.
 

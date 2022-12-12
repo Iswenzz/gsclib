@@ -13,7 +13,7 @@ SQL_BindResult(request, level.MYSQL_TYPE_LONG);
 SQL_BindResult(request, level.MYSQL_TYPE_LONG);
 SQL_Execute(request);
 
-while (SQL_Status(request) <= 1)
+while (AsyncStatus(request) <= 1)
 	wait 0.05;
 
 rows = SQL_FetchRowsDict(request);
@@ -173,19 +173,6 @@ Executes the prepared statement.
 
 ```c
 SQL_Execute(request);
-```
-<hr>
-
-#### ``SQL_Status(<request>)``
-Get the status of an async request.
-
-0 = uninitialized
-1 = pending
-2 = successful
-3 = failure
-
-```c
-status = SQL_Status(request);
 ```
 <hr>
 

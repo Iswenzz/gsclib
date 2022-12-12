@@ -5,9 +5,9 @@
 ## Example
 ```c
 request = FTP_Init();
-EXPECT_TRUE(FTP_PostFile(request, "temp/test.txt", "get.txt"));
+FTP_PostFile(request, "temp/test.txt", "get.txt");
 
-while (CURL_Status(request) <= 1)
+while (AsyncStatus(request) <= 1)
 	wait 0.05;
 
 FTP_Free(request);
@@ -39,7 +39,7 @@ FTP_Close();
 
 #### ``FTP_Init()``
 Initialize a FTP request.
-The request should be freed when done using SQL_Free.
+The request should be freed when done using FTP_Free.
 
 ```c
 request = FTP_Init();
@@ -48,7 +48,6 @@ request = FTP_Init();
 
 #### ``FTP_Free(<request>)``
 Initialize a FTP request.
-The request should be freed when done using SQL_Free.
 
 ```c
 FTP_Free(request);
