@@ -64,16 +64,16 @@ void GScr_FTP_Shell()
 	CHECK_FTP_REQUEST(ftp);
 	CHECK_FTP_INSTANCE(ftp->curl.handle);
 
-	if(ftp->curl.handle)
+	if (ftp->curl.handle)
 	{
 		curl_easy_reset(ftp->curl.handle);
 
-		CURL_SetHeader(ftp->curl.handle, CURLOPT_QUOTE);
+		CURL_SetHeader(&ftp->curl, CURLOPT_QUOTE);
 		curl_easy_setopt(ftp->curl.handle, CURLOPT_URL, ftp_handler.url);
 		curl_easy_setopt(ftp->curl.handle, CURLOPT_PASSWORD, ftp_handler.password);
 		curl_easy_setopt(ftp->curl.handle, CURLOPT_PORT, ftp_handler.port);
 		curl_easy_setopt(ftp->curl.handle, CURLOPT_SSH_AUTH_TYPES, CURLSSH_AUTH_PASSWORD);
-		CURL_SetOpts(ftp->curl.handle);
+		CURL_SetOpts(&ftp->curl);
 
 		ftp->curl.status = ASYNC_PENDING;
 		Plugin_AsyncCall(ftp, &FTP_Shell, &Plugin_AsyncNull);
@@ -95,10 +95,11 @@ void GScr_FTP_PostFile()
 	curl_off_t fsize;
 
 	// Check file
-	if(stat(filepath, &file_info))
+	if (stat(filepath, &file_info))
 	{
 		Plugin_Printf("Couldn't open '%s': %s\n", filepath, strerror(errno));
 		Plugin_Scr_AddBool(qfalse);
+		ftp->curl.status = ASYNC_FAILURE;
 		return;
 	}
 	fsize = (curl_off_t)file_info.st_size;
@@ -110,11 +111,12 @@ void GScr_FTP_PostFile()
 	{
 		Plugin_Printf("File not found.\n");
 		Plugin_Scr_AddBool(qfalse);
+		ftp->curl.status = ASYNC_FAILURE;
 		return;
 	}
 
 	// Post file
-	if(ftp->curl.handle)
+	if (ftp->curl.handle)
 	{
 		curl_easy_reset(ftp->curl.handle);
 
@@ -122,7 +124,7 @@ void GScr_FTP_PostFile()
 		strcpy(url, ftp_handler.url);
 		strcat(url, Plugin_Scr_GetString(2));
 
-		CURL_SetHeader(ftp->curl.handle, CURLOPT_POSTQUOTE);
+		CURL_SetHeader(&ftp->curl, CURLOPT_POSTQUOTE);
 		curl_easy_setopt(ftp->curl.handle, CURLOPT_URL, url);
 		curl_easy_setopt(ftp->curl.handle, CURLOPT_PASSWORD, ftp_handler.password);
 		curl_easy_setopt(ftp->curl.handle, CURLOPT_PORT, ftp_handler.port);
@@ -131,7 +133,7 @@ void GScr_FTP_PostFile()
 		curl_easy_setopt(ftp->curl.handle, CURLOPT_READDATA, ftp->file.stream);
 		curl_easy_setopt(ftp->curl.handle, CURLOPT_INFILESIZE_LARGE, (curl_off_t)fsize);
 		curl_easy_setopt(ftp->curl.handle, CURLOPT_SSH_AUTH_TYPES, CURLSSH_AUTH_PASSWORD);
-		CURL_SetOpts(ftp->curl.handle);
+		CURL_SetOpts(&ftp->curl);
 
 		ftp->curl.status = ASYNC_PENDING;
 		Plugin_AsyncCall(ftp, &FTP_PostFile, &Plugin_AsyncNull);
@@ -151,7 +153,7 @@ void GScr_FTP_GetFile()
 	const char *filepath = Plugin_Scr_GetString(1);
 	strcpy(ftp->file.filename, filepath);
 
-	if(ftp->curl.handle)
+	if (ftp->curl.handle)
 	{
 		curl_easy_reset(ftp->curl.handle);
 
@@ -159,14 +161,14 @@ void GScr_FTP_GetFile()
 		strcpy(url, ftp_handler.url);
 		strcat(url, Plugin_Scr_GetString(2));
 
-		CURL_SetHeader(ftp->curl.handle, CURLOPT_PREQUOTE);
+		CURL_SetHeader(&ftp->curl, CURLOPT_PREQUOTE);
 		curl_easy_setopt(ftp->curl.handle, CURLOPT_URL, url);
 		curl_easy_setopt(ftp->curl.handle, CURLOPT_PASSWORD, ftp_handler.password);
 		curl_easy_setopt(ftp->curl.handle, CURLOPT_PORT, ftp_handler.port);
 		curl_easy_setopt(ftp->curl.handle, CURLOPT_WRITEFUNCTION, FTP_Write);
 		curl_easy_setopt(ftp->curl.handle, CURLOPT_WRITEDATA, ftp->file.stream);
 		curl_easy_setopt(ftp->curl.handle, CURLOPT_SSH_AUTH_TYPES, CURLSSH_AUTH_PASSWORD);
-		CURL_SetOpts(ftp->curl.handle);
+		CURL_SetOpts(&ftp->curl);
 
 		ftp->curl.status = ASYNC_PENDING;
 		Plugin_AsyncCall(ftp, &FTP_GetFile, &Plugin_AsyncNull);

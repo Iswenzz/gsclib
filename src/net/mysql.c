@@ -108,22 +108,6 @@ void GScr_MySQL_Execute()
 	CHECK_MYSQL_INSTANCE(mysql->handle);
 	CHECK_MYSQL_STMT(mysql->stmt);
 
-	// Bind params
-	if (mysql->bindsLength && mysql_stmt_bind_param(mysql->stmt, mysql->binds))
-	{
-		Plugin_Scr_Error(fmt("SQL_Execute(): Bind statement failed: %s", mysql_stmt_error(mysql->stmt)));
-		Plugin_Scr_AddBool(qfalse);
-		return;
-	}
-
-	// Bind results
-	if (mysql->bindsResultLength && mysql_stmt_bind_result(mysql->stmt, mysql->bindsResult))
-	{
-		Plugin_Scr_Error(fmt("SQL_Execute(): Bind result statement failed: %s", mysql_stmt_error(mysql->stmt)));
-		Plugin_Scr_AddBool(qfalse);
-		return;
-	}
-
 	mysql->status = ASYNC_PENDING;
 	Plugin_AsyncCall(mysql, &MySQL_Execute, &Plugin_AsyncNull);
 	
@@ -351,10 +335,12 @@ void GScr_MySQL_AffectedRows()
 	CHECK_MYSQL_REQUEST(mysql);
 	CHECK_MYSQL_INSTANCE(mysql->handle);
 
-	if (mysql->result)
-		Plugin_Scr_AddInt(mysql_affected_rows(mysql->handle));
-	else if (mysql->stmt)
+	if (mysql->stmt)
+	{
 		Plugin_Scr_AddInt(mysql_stmt_affected_rows(mysql->stmt));
+		return;
+	}
+	Plugin_Scr_AddInt(mysql_affected_rows(mysql->handle));
 }
 
 void GScr_MySQL_Query()
@@ -363,6 +349,7 @@ void GScr_MySQL_Query()
 
 	MYSQL_REQUEST* mysql = (MYSQL_REQUEST*)calloc(1, sizeof(MYSQL_REQUEST));
 	mysql->handle = mysql_handler.handle;
+	strcpy(mysql->query, Plugin_Scr_GetString(0));
 
 	CHECK_MYSQL_WORKING();
 	CHECK_MYSQL_REQUEST(mysql);
@@ -661,7 +648,7 @@ void MySQL_Query(uv_work_t* req)
 {
 	MYSQL_REQUEST* mysql = (MYSQL_REQUEST*)req->data;
 
-	if (mysql_query(mysql->handle, Plugin_Scr_GetString(0)))
+	if (mysql_query(mysql->handle, mysql->query))
 	{
 		Sys_PrintF("SQL_Query(): Query failed: %s\n", mysql_error(mysql->handle));
 		mysql->status = ASYNC_FAILURE;
@@ -675,6 +662,22 @@ void MySQL_Query(uv_work_t* req)
 void MySQL_Execute(uv_work_t* req)
 {
 	MYSQL_REQUEST* mysql = (MYSQL_REQUEST*)req->data;
+
+	// Bind params
+	if (mysql->bindsLength && mysql_stmt_bind_param(mysql->stmt, mysql->binds))
+	{
+		Sys_PrintF("SQL_Execute(): Bind statement failed: %s", mysql_stmt_error(mysql->stmt));
+		mysql->status = ASYNC_FAILURE;
+		return;
+	}
+
+	// Bind results
+	if (mysql->bindsResultLength && mysql_stmt_bind_result(mysql->stmt, mysql->bindsResult))
+	{
+		Sys_PrintF("SQL_Execute(): Bind result statement failed: %s", mysql_stmt_error(mysql->stmt));
+		mysql->status = ASYNC_FAILURE;
+		return;
+	}
 
 	// Execute statement
 	if (mysql_stmt_execute(mysql->stmt))
@@ -714,8 +717,8 @@ void MySQL_Free_Result(MYSQL_REQUEST* mysql)
 	}
 	if (mysql->result)
 	{
-		mysql_free_result(mysql->result);
-		mysql->result = NULL;
+		/*mysql_free_result(mysql->result);
+		mysql->result = NULL;*/
 	}
 	if (mysql->binds)
 	{

@@ -98,13 +98,13 @@ PCL int OnInit()
 
 	// net/http
 	FUNCTION("http_init", 				&GScr_HTTP_Init);
+	FUNCTION("http_post", 				&GScr_HTTP_Post);
 	FUNCTION("http_postfile", 			&GScr_HTTP_PostFile);
-	FUNCTION("http_poststring", 		&GScr_HTTP_Post);
+	FUNCTION("http_get", 				&GScr_HTTP_Get);
 	FUNCTION("http_getfile", 			&GScr_HTTP_GetFile);
-	FUNCTION("http_getstring", 			&GScr_HTTP_Get);
 	FUNCTION("http_status", 			&GScr_HTTP_Status);
 	FUNCTION("http_response", 			&GScr_HTTP_Response);
-	FUNCTION("http_getstring", 			&GScr_HTTP_Free);
+	FUNCTION("http_free", 				&GScr_HTTP_Free);
 
 	// net/ftp
 	FUNCTION("sftp_connect", 			&GScr_SFTP_Connect);

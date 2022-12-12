@@ -37,6 +37,7 @@ typedef struct
 	MYSQL_STMT *stmt;
 	MYSQL_BIND *binds;
 	MYSQL_BIND *bindsResult;
+	char query[1024];
 	int bindsLength;
 	int bindsResultLength;
 	async_status status;

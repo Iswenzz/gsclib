@@ -64,13 +64,13 @@ void GScr_HTTP_Get()
 
 	if (http->curl.handle)
 	{
-		CURL_SetHeader(http->curl.handle, CURLOPT_HTTPHEADER);
+		CURL_SetHeader(&http->curl, CURLOPT_HTTPHEADER);
 		curl_easy_setopt(http->curl.handle, CURLOPT_URL, Plugin_Scr_GetString(1));
 		curl_easy_setopt(http->curl.handle, CURLOPT_SSL_VERIFYPEER, 0L);
 		curl_easy_setopt(http->curl.handle, CURLOPT_NOPROGRESS, 1L);
 		curl_easy_setopt(http->curl.handle, CURLOPT_WRITEFUNCTION, HTTP_WriteString);
-		curl_easy_setopt(http->curl.handle, CURLOPT_WRITEDATA, http->response);
-		CURL_SetOpts(http->curl.handle);
+		curl_easy_setopt(http->curl.handle, CURLOPT_WRITEDATA, &http->response);
+		CURL_SetOpts(&http->curl);
 
 		http->curl.status = ASYNC_PENDING;
 		Plugin_AsyncCall(http, &HTTP_Get, &Plugin_AsyncNull);
@@ -94,17 +94,18 @@ void GScr_HTTP_GetFile()
 	{
 		Plugin_Printf("File not found.\n");
 		Plugin_Scr_AddBool(qfalse);
+		http->curl.status = ASYNC_FAILURE;
 		return;
 	}
 	if (http->curl.handle)
 	{
-		CURL_SetHeader(http->curl.handle, CURLOPT_HTTPHEADER);
+		CURL_SetHeader(&http->curl, CURLOPT_HTTPHEADER);
 		curl_easy_setopt(http->curl.handle, CURLOPT_URL, Plugin_Scr_GetString(2));
 		curl_easy_setopt(http->curl.handle, CURLOPT_NOPROGRESS, 1L);
 		curl_easy_setopt(http->curl.handle, CURLOPT_WRITEFUNCTION, HTTP_WriteFile);
 		curl_easy_setopt(http->curl.handle, CURLOPT_SSL_VERIFYPEER, 0L);
 		curl_easy_setopt(http->curl.handle, CURLOPT_WRITEDATA, http->file.stream);
-		CURL_SetOpts(http->curl.handle);
+		CURL_SetOpts(&http->curl);
 
 		http->curl.status = ASYNC_PENDING;
 		Plugin_AsyncCall(http, &HTTP_GetFile, &Plugin_AsyncNull);
@@ -122,14 +123,14 @@ void GScr_HTTP_Post()
 
 	if (http->curl.handle)
 	{
-		CURL_SetHeader(http->curl.handle, CURLOPT_HTTPHEADER);
+		CURL_SetHeader(&http->curl, CURLOPT_HTTPHEADER);
 		curl_easy_setopt(http->curl.handle, CURLOPT_URL, Plugin_Scr_GetString(2));
 		curl_easy_setopt(http->curl.handle, CURLOPT_POSTFIELDS, Plugin_Scr_GetString(1));
 		curl_easy_setopt(http->curl.handle, CURLOPT_SSL_VERIFYPEER, 0L);
 		curl_easy_setopt(http->curl.handle, CURLOPT_NOPROGRESS, 1L);
 		curl_easy_setopt(http->curl.handle, CURLOPT_WRITEFUNCTION, HTTP_WriteString);
-		curl_easy_setopt(http->curl.handle, CURLOPT_WRITEDATA, http->response);
-		CURL_SetOpts(http->curl.handle);
+		curl_easy_setopt(http->curl.handle, CURLOPT_WRITEDATA, &http->response);
+		CURL_SetOpts(&http->curl);
 
 		http->curl.status = ASYNC_PENDING;
 		Plugin_AsyncCall(http, &HTTP_Post, &Plugin_AsyncNull);
@@ -165,21 +166,22 @@ void GScr_HTTP_PostFile()
 	{
 		Plugin_Printf("File not found.\n");
 		Plugin_Scr_AddBool(qfalse);
+		http->curl.status = ASYNC_FAILURE;
 		return;
 	}
 
 	// Post file
 	if (http->curl.handle)
 	{
-		CURL_SetHeader(http->curl.handle, CURLOPT_HTTPHEADER);
+		CURL_SetHeader(&http->curl, CURLOPT_HTTPHEADER);
 		curl_easy_setopt(http->curl.handle, CURLOPT_URL, Plugin_Scr_GetString(2));
 		curl_easy_setopt(http->curl.handle, CURLOPT_SSL_VERIFYPEER, 0L);
 		curl_easy_setopt(http->curl.handle, CURLOPT_POSTFIELDSIZE, http->response.len);
 		curl_easy_setopt(http->curl.handle, CURLOPT_POSTFIELDS, http->response.buffer);
 		curl_easy_setopt(http->curl.handle, CURLOPT_NOPROGRESS, 1L);
 		curl_easy_setopt(http->curl.handle, CURLOPT_WRITEFUNCTION, HTTP_WriteString);
-		curl_easy_setopt(http->curl.handle, CURLOPT_WRITEDATA, http->response.buffer);
-		CURL_SetOpts(http->curl.handle);
+		curl_easy_setopt(http->curl.handle, CURLOPT_WRITEDATA, &http->response);
+		CURL_SetOpts(&http->curl);
 
 		http->curl.status = ASYNC_PENDING;
 		Plugin_AsyncCall(http, &HTTP_PostFile, &Plugin_AsyncNull);
@@ -234,8 +236,8 @@ void HTTP_Get(uv_work_t* req)
 		http->curl.status = ASYNC_FAILURE;
 	}
 
-	CURL_OptCleanup(http->curl.handle);
-	CURL_HeaderCleanup(http->curl.handle);
+	CURL_OptCleanup(&http->curl);
+	CURL_HeaderCleanup(&http->curl);
 	http->curl.status = ASYNC_SUCCESSFUL;
 }
 
@@ -250,8 +252,8 @@ void HTTP_GetFile(uv_work_t* req)
 		http->curl.status = ASYNC_FAILURE;
 	}
 	
-	CURL_OptCleanup(http->curl.handle);
-	CURL_HeaderCleanup(http->curl.handle);
+	CURL_OptCleanup(&http->curl);
+	CURL_HeaderCleanup(&http->curl);
 	http->curl.status = ASYNC_SUCCESSFUL;
 }
 
@@ -266,8 +268,8 @@ void HTTP_Post(uv_work_t* req)
 		http->curl.status = ASYNC_FAILURE;
 	}
 
-	CURL_OptCleanup(http->curl.handle);
-	CURL_HeaderCleanup(http->curl.handle);
+	CURL_OptCleanup(&http->curl);
+	CURL_HeaderCleanup(&http->curl);
 	http->curl.status = ASYNC_SUCCESSFUL;
 }
 
@@ -282,7 +284,7 @@ void HTTP_PostFile(uv_work_t* req)
 		http->curl.status = ASYNC_FAILURE;
 	}
 
-	CURL_OptCleanup(http->curl.handle);
-	CURL_HeaderCleanup(http->curl.handle);
+	CURL_OptCleanup(&http->curl);
+	CURL_HeaderCleanup(&http->curl);
 	http->curl.status = ASYNC_SUCCESSFUL;
 }
