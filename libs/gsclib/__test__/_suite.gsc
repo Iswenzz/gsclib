@@ -136,5 +136,5 @@ env()
 	level.tests.arrays[level.tests.arrays.size] = level.tests.structs;
 
 	// Ent array
-	level.tests.ents = getEntArray("player", "classname");
+	level.tests.ents = level.gscunit.bots;
 }

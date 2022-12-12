@@ -58,9 +58,9 @@ test_PmTime()
 	EXPECT_EQ(level.gscunit.bots[0] PmTime(), 0);
 }
 
-test_PmTime()
+test_PmType()
 {
-	EXPECT_EQ(level.gscunit.bots[0] PmTime(), 0);
+	EXPECT_EQ(level.gscunit.bots[0] PmType(), 0);
 }
 
 test_WeaponFlags()
