@@ -93,7 +93,6 @@ PCL int OnInit()
 	FUNCTION("curl_headercleanup",		&GScr_CURL_HeaderCleanup);
 	FUNCTION("curl_optcleanup", 		&GScr_CURL_OptCleanup);
 	FUNCTION("curl_addopt", 			&GScr_CURL_AddOpt);
-	FUNCTION("curl_status", 			&GScr_CURL_Status);
 	FUNCTION("curl_free", 				&GScr_CURL_Free);
 
 	// net/http
@@ -102,7 +101,6 @@ PCL int OnInit()
 	FUNCTION("http_postfile", 			&GScr_HTTP_PostFile);
 	FUNCTION("http_get", 				&GScr_HTTP_Get);
 	FUNCTION("http_getfile", 			&GScr_HTTP_GetFile);
-	FUNCTION("http_status", 			&GScr_HTTP_Status);
 	FUNCTION("http_response", 			&GScr_HTTP_Response);
 	FUNCTION("http_free", 				&GScr_HTTP_Free);
 
@@ -114,7 +112,6 @@ PCL int OnInit()
 	FUNCTION("ftp_shell", 				&GScr_FTP_Shell);
 	FUNCTION("ftp_postfile", 			&GScr_FTP_PostFile);
 	FUNCTION("ftp_getfile", 			&GScr_FTP_GetFile);
-	FUNCTION("ftp_status", 				&GScr_FTP_Status);
 	FUNCTION("ftp_free", 				&GScr_FTP_Free);
 
 	// net/handle
@@ -122,7 +119,6 @@ PCL int OnInit()
 	FUNCTION("sql_bindparam", 			&GScr_MySQL_BindParam);
 	FUNCTION("sql_bindresult", 			&GScr_MySQL_BindResult);
 	FUNCTION("sql_execute", 			&GScr_MySQL_Execute);
-	FUNCTION("sql_status", 				&GScr_MySQL_Status);
 	FUNCTION("sql_escapestring", 		&GScr_MySQL_EscapeString);
 	FUNCTION("sql_hexstring", 			&GScr_MySQL_HexString);
 	FUNCTION("sql_selectdb", 			&GScr_MySQL_SelectDB);
@@ -149,6 +145,7 @@ PCL int OnInit()
 	FUNCTION("comprint", 				&GScr_ComPrint);
 	FUNCTION("comprintln", 				&GScr_ComPrintLn);
 	FUNCTION("getsystime", 				&GScr_GetSysTime);
+	FUNCTION("asyncstatus", 			&GScr_AsyncStatus);
 	FUNCTION("exit",					&GScr_Exit);
 
 	// utils/utils

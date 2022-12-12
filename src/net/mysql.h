@@ -31,6 +31,7 @@ typedef struct
 
 typedef struct 
 {
+	async_status status;
 	MYSQL *handle;
 	MYSQL_RES *result;
 	MYSQL_RES *resultStmt;
@@ -40,7 +41,6 @@ typedef struct
 	char query[1024];
 	int bindsLength;
 	int bindsResultLength;
-	async_status status;
 } MYSQL_REQUEST;
 
 extern MYSQL_HANDLER mysql_handler;
@@ -150,11 +150,6 @@ void GScr_MySQL_EscapeString();
 /// Return a hex representation of the string.
 /// </summary>
 void GScr_MySQL_HexString();
-
-/// <summary>
-/// Get the MySQL request status.
-/// </summary>
-void GScr_MySQL_Status();
 
 /// <summary>
 /// Free a MySQL request.

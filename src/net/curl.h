@@ -34,8 +34,8 @@ typedef struct
 
 typedef struct
 {
-	CURL* handle;
 	async_status status;
+	CURL* handle;
 	struct curl_slist* header;
 	int optsCount;
 	CURL_OPTS opts[512];
@@ -72,11 +72,6 @@ void GScr_CURL_OptCleanup();
 /// Add a CURL Option for the next request.
 /// </summary>
 void GScr_CURL_AddOpt();
-
-/// <summary>
-/// Get the CURL request status.
-/// </summary>
-void GScr_CURL_Status();
 
 /// <summary>
 /// Free a CURL request.

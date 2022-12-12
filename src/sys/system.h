@@ -39,6 +39,11 @@ void GScr_ComPrintLn();
 void GScr_Exit();
 
 /// <summary>
+/// Get the async request status.
+/// </summary>
+void GScr_AsyncStatus();
+
+/// <summary>
 /// Print to stderr.
 /// </summary>
 /// <param name="format">The string format.</param>

@@ -44,6 +44,19 @@ void GScr_SysPrintLn()
 	Scr_PrintF(qtrue, &Sys_PrintF);
 }
 
+void GScr_AsyncStatus()
+{
+	CHECK_PARAMS(1, "Usage: Async_Status(<request>)");
+
+	void *request = (void *)Plugin_Scr_GetInt(0);
+	if (!request)
+	{
+		Plugin_Scr_AddInt(0);
+		return;
+	}
+	Plugin_Scr_AddInt(*(async_status *)request);
+}
+
 void Sys_PrintF(const char* format, ...)
 {
 	va_list argptr;

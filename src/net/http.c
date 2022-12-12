@@ -16,19 +16,6 @@ void GScr_HTTP_Init()
 	Plugin_Scr_AddInt((int)http);
 }
 
-void GScr_HTTP_Status()
-{
-	CHECK_PARAMS(1, "Usage: HTTP_Status(<request>)");
-
-	HTTP_REQUEST* http = (HTTP_REQUEST*)Plugin_Scr_GetInt(0);
-	if (!http)
-	{
-		Plugin_Scr_AddInt(0);
-		return;
-	}
-	Plugin_Scr_AddInt((int)http->curl.status);
-}
-
 void GScr_HTTP_Free()
 {
 	CHECK_PARAMS(1, "Usage: HTTP_Free(<request>)");

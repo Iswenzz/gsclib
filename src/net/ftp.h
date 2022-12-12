@@ -38,11 +38,6 @@ extern FTP_HANDLER ftp_handler;
 void GScr_FTP_Init();
 
 /// <summary>
-/// Get the FTP request status.
-/// </summary>
-void GScr_FTP_Status();
-
-/// <summary>
 /// Connect to an SFTP server, the connection can be closed with FTP_Close.
 /// </summary>
 void GScr_SFTP_Connect();

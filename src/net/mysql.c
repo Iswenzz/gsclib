@@ -364,19 +364,6 @@ void GScr_MySQL_Query()
 	Plugin_Scr_AddInt((int)mysql);
 }
 
-void GScr_MySQL_Status()
-{
-	CHECK_PARAMS(1, "Usage: SQL_Status(<request>)");
-
-	MYSQL_REQUEST* mysql = (MYSQL_REQUEST*)Plugin_Scr_GetInt(0);
-	if (!mysql)
-	{
-		Plugin_Scr_AddInt(0);
-		return;
-	}
-	Plugin_Scr_AddInt((int)mysql->status);
-}
-
 void GScr_MySQL_Connect()
 {
 	CHECK_PARAMS(4, "Usage: SQL_Connect(<host>, <port>, <user>, <password>)");

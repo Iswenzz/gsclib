@@ -16,19 +16,6 @@ void GScr_FTP_Init()
 	Plugin_Scr_AddInt((int)ftp);
 }
 
-void GScr_FTP_Status()
-{
-	CHECK_PARAMS(1, "Usage: FTP_Status(<request>)");
-
-	FTP_REQUEST* ftp = (FTP_REQUEST*)Plugin_Scr_GetInt(0);
-	if (!ftp)
-	{
-		Plugin_Scr_AddInt(0);
-		return;
-	}
-	Plugin_Scr_AddInt((int)ftp->curl.status);
-}
-
 void GScr_SFTP_Connect()
 {
 	CHECK_PARAMS(4, "Usage: SFTP_Connect(<hostname>, <username>, <password>, <port>)");

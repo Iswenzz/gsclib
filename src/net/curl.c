@@ -102,19 +102,6 @@ void GScr_CURL_AddOpt()
 	curl->optsCount++;
 }
 
-void GScr_CURL_Status()
-{
-	CHECK_PARAMS(1, "Usage: CURL_Status(<request>)");
-
-	CURL_REQUEST* curl = (CURL_REQUEST*)Plugin_Scr_GetInt(0);
-	if (!curl)
-	{
-		Plugin_Scr_AddInt(0);
-		return;
-	}
-	Plugin_Scr_AddInt((int)curl->status);
-}
-
 void GScr_CURL_Free()
 {
 	CHECK_PARAMS(1, "Usage: CURL_Free(<request>)");

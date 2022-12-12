@@ -37,11 +37,6 @@ extern HTTP_HANDLER http_handler;
 void GScr_HTTP_Init();
 
 /// <summary>
-/// Get the HTTP request status.
-/// </summary>
-void GScr_HTTP_Status();
-
-/// <summary>
 /// Free an HTTP request.
 /// </summary>
 void GScr_HTTP_Free();

@@ -120,6 +120,7 @@ SQL_SelectDB("testdb");
 
 #### ``SQL_Query(<query string>)``
 Command for performing a query on the database server.
+The request should be freed when done using SQL_Free.
 
 ```c
 request = SQL_Query("SELECT * FROM players");
@@ -128,6 +129,7 @@ request = SQL_Query("SELECT * FROM players");
 
 #### ``SQL_Prepare(<query string>)``
 Command for performing a statement on the database server, binds must be set in order.
+The request should be freed when done using SQL_Free.
 
 ```c
 request = SQL_Prepare("SELECT name, guid, rank FROM speedrun_ranks WHERE name = ?");
