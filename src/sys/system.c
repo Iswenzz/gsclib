@@ -89,7 +89,7 @@ void GScr_GSCLIB_Version()
 
 void GScr_CGSC_Version()
 {
-	Plugin_Scr_AddFloat(CGSC_Version());
+	Plugin_Scr_AddFloat(Plugin_CGSC_Version());
 }
 
 void Sys_PrintF(const char* format, ...)

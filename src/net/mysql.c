@@ -110,7 +110,7 @@ void GScr_MySQL_Execute()
 
 	mysql->status = ASYNC_PENDING;
 	Plugin_AsyncCall(mysql, &MySQL_Execute, &Plugin_AsyncNull);
-	
+
 	Plugin_Scr_AddBool(qtrue);
 }
 
@@ -202,7 +202,7 @@ void GScr_MySQL_SelectDB()
 void GScr_MySQL_FetchFields()
 {
 	CHECK_PARAMS(1, "Usage: SQL_FetchFields(<request>)");
-	
+
 	MYSQL_REQUEST* mysql = (MYSQL_REQUEST*)Plugin_Scr_GetInt(0);
 
 	CHECK_MYSQL_REQUEST(mysql);
@@ -487,7 +487,7 @@ qboolean Scr_MySQL_FetchStatementRow(MYSQL_REQUEST* mysql, qboolean stringIndexe
 		}
 
 		// Add the value to an array
-		if (CGSC_SupportIndexedString() && stringIndexed)
+		if (Plugin_CGSC_SupportIndexedString() && stringIndexed)
 			Plugin_Scr_AddArrayStringIndexed(Plugin_Scr_AllocString(field->name));
 		else
 			Plugin_Scr_AddArray();
@@ -536,7 +536,7 @@ qboolean Scr_MySQL_FetchQueryRow(MYSQL_REQUEST* mysql, qboolean stringIndexed)
 			Plugin_Scr_AddString(row[i]);
 
 		// Add the value to an array
-		if (CGSC_SupportIndexedString() && stringIndexed)
+		if (Plugin_CGSC_SupportIndexedString() && stringIndexed)
 			Plugin_Scr_AddArrayStringIndexed(Plugin_Scr_AllocString(field->name));
 		else
 			Plugin_Scr_AddArray();
@@ -641,7 +641,7 @@ void MySQL_Query(uv_work_t* req)
 		mysql->status = ASYNC_FAILURE;
 		return;
 	}
-	
+
 	mysql->result = mysql_store_result(mysql->handle);
 	mysql->status = ASYNC_SUCCESSFUL;
 }
