@@ -91,7 +91,7 @@ void GScr_FTP_PostFile()
 	}
 	fsize = (curl_off_t)file_info.st_size;
 
-	strcpy(ftp->file.filename, filepath);
+	strcpy((char*)ftp->file.filename, filepath);
 	ftp->file.stream = fopen(filepath, "rb");
 
 	if (!ftp->file.stream)
@@ -138,7 +138,7 @@ void GScr_FTP_GetFile()
 	CHECK_FTP_INSTANCE(ftp->curl.handle);
 
 	const char *filepath = Plugin_Scr_GetString(1);
-	strcpy(ftp->file.filename, filepath);
+	strcpy((char*)ftp->file.filename, filepath);
 
 	if (ftp->curl.handle)
 	{
