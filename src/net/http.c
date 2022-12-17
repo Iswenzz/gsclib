@@ -74,7 +74,7 @@ void GScr_HTTP_GetFile()
 
 	CHECK_HTTP_REQUEST(http);
 
-	strcpy(http->file.filename, filepath);
+	strcpy((char*)http->file.filename, filepath);
 	http->file.stream = fopen(filepath, "wb");
 
 	if (!http->file.stream)
@@ -135,7 +135,7 @@ void GScr_HTTP_PostFile()
 	CHECK_HTTP_REQUEST(http);
 
 	// Check file
-	strcpy(http->file.filename, filepath);
+	strcpy((char*)http->file.filename, filepath);
 	http->file.stream = fopen(filepath, "rb");
 
 	if (http->file.stream)
