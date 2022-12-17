@@ -5,6 +5,8 @@
 #include "sys/system.h"
 #include "data/file.h"
 
+#include <stdlib.h>
+
 #define CURL_CHECK_ERROR(x, msg)	\
 if (!x)								\
 {									\
