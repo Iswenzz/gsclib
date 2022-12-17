@@ -57,6 +57,41 @@ void GScr_AsyncStatus()
 	Plugin_Scr_AddInt(*(async_status *)request);
 }
 
+void GScr_IsWindows()
+{
+#ifdef _WIN32
+	Plugin_Scr_AddBool(qtrue);
+#else
+	Plugin_Scr_AddBool(qfalse);
+#endif
+}
+
+void GScr_IsLinux()
+{
+#ifdef _WIN32
+	Plugin_Scr_AddBool(qfalse);
+#else
+	Plugin_Scr_AddBool(qtrue);
+#endif
+}
+
+void GScr_CoD4X_Version()
+{
+	Plugin_Scr_AddFloat(Plugin_Sys_GetCommonVersion());
+}
+
+void GScr_GSCLIB_Version()
+{
+	char version[20] = { 0 };
+	sprintf(version, "%d.%d", GSCLIB_VERSION_MAJOR, GSCLIB_VERSION_MINOR);
+	Plugin_Scr_AddFloat(atof(version));
+}
+
+void GScr_CGSC_Version()
+{
+	Plugin_Scr_AddFloat(CGSC_Version());
+}
+
 void Sys_PrintF(const char* format, ...)
 {
 	va_list argptr;

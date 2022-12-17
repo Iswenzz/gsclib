@@ -146,6 +146,11 @@ PCL int OnInit()
 	FUNCTION("comprintln", 				&GScr_ComPrintLn);
 	FUNCTION("getsystime", 				&GScr_GetSysTime);
 	FUNCTION("asyncstatus", 			&GScr_AsyncStatus);
+	FUNCTION("iswindows", 				&GScr_IsWindows);
+	FUNCTION("islinux", 				&GScr_IsLinux);
+	FUNCTION("cod4x_version", 			&GScr_CoD4X_Version);
+	FUNCTION("cgsc_version", 			&GScr_CGSC_Version);
+	FUNCTION("gsclib_version", 			&GScr_GSCLIB_Version);
 	FUNCTION("exit",					&GScr_Exit);
 
 	// utils/utils
@@ -216,8 +221,8 @@ PCL void OnInfoRequest(pluginInfo_t *info)
 	info->handlerVersion.minor = PLUGIN_HANDLER_VERSION_MINOR; // Requested handler version
 
 	// ===== OPTIONAL FIELDS =====
-	info->pluginVersion.major = 1;
-	info->pluginVersion.minor = 3;
+	info->pluginVersion.major = GSCLIB_VERSION_MAJOR;
+	info->pluginVersion.minor = GSCLIB_VERSION_MINOR;
 	strncpy(info->fullName, "gsclib", sizeof(info->fullName));
 	strncpy(info->shortDescription, "gsclib acts as a standard library extension for the Call of Duty 4 scripting language.", sizeof(info->shortDescription));
 	strncpy(info->longDescription, "gsclib acts as a standard library extension for the Call of Duty 4 scripting language. The features this library provides consists of an FTP/FTPS/SFTP client, an HTTP/HTTPS client, Regular Expresison (RegEx) support, Language Integrated Query (Linq) support, a MySQL connector for databases, casting/type conversion and other type utilities, and much more. More detailed information on each feature can be found in the documentation section.", sizeof(info->longDescription));
