@@ -21,7 +21,7 @@
  */
 #pragma once
 
-#include <cgsc.h>
+#include <CGSC/cgsc.h>
 #include <errno.h>
 #include <limits.h>
 #include <inttypes.h>

@@ -1,7 +1,10 @@
 #pragma once
-#include <cgsc.h>
+#include <CGSC/cgsc.h>
 
 #define MAXPRINTMSG 1024
+
+#define GSCLIB_VERSION_MAJOR 1
+#define GSCLIB_VERSION_MINOR 3
 
 /// <summary>
 /// Execute a system command.
@@ -37,6 +40,36 @@ void GScr_ComPrintLn();
 /// Exit the program.
 /// </summary>
 void GScr_Exit();
+
+/// <summary>
+/// Get the async request status.
+/// </summary>
+void GScr_AsyncStatus();
+
+/// <summary>
+/// Is windows.
+/// </summary>
+void GScr_IsWindows();
+
+/// <summary>
+/// Is linux.
+/// </summary>
+void GScr_IsLinux();
+
+/// <summary>
+/// Get the CoD4x version.
+/// </summary>
+void GScr_CoD4X_Version();
+
+/// <summary>
+/// Get the gsclib version.
+/// </summary>
+void GScr_GSCLIB_Version();
+
+/// <summary>
+/// Get the CGSC version.
+/// </summary>
+void GScr_CGSC_Version();
 
 /// <summary>
 /// Print to stderr.

@@ -23,6 +23,10 @@
 	typedef struct FTW* PFTW;
 #endif
 
+#ifndef MAX_PATH
+	#define MAX_PATH 255
+#endif
+
 /// <summary>
 /// Create a file.
 /// </summary>

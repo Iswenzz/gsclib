@@ -6,7 +6,7 @@
 #include "linq/delegates.h"
 
 #include "net/curl.h"
-#include "net/https.h"
+#include "net/http.h"
 #include "net/ftp.h"
 #include "net/mysql.h"
 
@@ -19,12 +19,12 @@
 #include "utils/player.h"
 
 #define FUNCTION(name, function) Plugin_ScrReplaceFunction(name, function)
-#define METHOD(name, function) Plugin_ScrReplaceMethod(name, function)
+#define METHOD(name, function)	Plugin_ScrReplaceMethod(name, function)
 
 PCL int OnInit()
 {
-	CURLinitCode = curl_global_init(CURL_GLOBAL_ALL); 	// Initialize curl library
-	MySQLcode = mysql_library_init(0, NULL, NULL); 		// Initialize mysql library
+	curl_handler.code = curl_global_init(CURL_GLOBAL_ALL); 			// Initialize curl library
+	mysql_handler.code = mysql_library_init(0, NULL, NULL); 		// Initialize mysql library
 
 	// data/file
 	FUNCTION("file_create",				&GScr_FILE_Create);
@@ -88,24 +88,31 @@ PCL int OnInit()
 
 	// net/curl
 	FUNCTION("curl_version", 			&GScr_CURL_Version);
+	FUNCTION("curl_init", 				&GScr_CURL_Init);
 	FUNCTION("curl_addheader", 			&GScr_CURL_AddHeader);
 	FUNCTION("curl_headercleanup",		&GScr_CURL_HeaderCleanup);
 	FUNCTION("curl_optcleanup", 		&GScr_CURL_OptCleanup);
 	FUNCTION("curl_addopt", 			&GScr_CURL_AddOpt);
+	FUNCTION("curl_free", 				&GScr_CURL_Free);
 
-	// net/https
-	FUNCTION("https_postfile", 			&GScr_HTTPS_PostFile);
-	FUNCTION("https_poststring", 		&GScr_HTTPS_PostString);
-	FUNCTION("https_getfile", 			&GScr_HTTPS_GetFile);
-	FUNCTION("https_getstring", 		&GScr_HTTPS_GetString);
+	// net/http
+	FUNCTION("http_init", 				&GScr_HTTP_Init);
+	FUNCTION("http_post", 				&GScr_HTTP_Post);
+	FUNCTION("http_postfile", 			&GScr_HTTP_PostFile);
+	FUNCTION("http_get", 				&GScr_HTTP_Get);
+	FUNCTION("http_getfile", 			&GScr_HTTP_GetFile);
+	FUNCTION("http_response", 			&GScr_HTTP_Response);
+	FUNCTION("http_free", 				&GScr_HTTP_Free);
 
 	// net/ftp
 	FUNCTION("sftp_connect", 			&GScr_SFTP_Connect);
 	FUNCTION("ftp_connect", 			&GScr_FTP_Connect);
+	FUNCTION("ftp_init", 				&GScr_FTP_Init);
 	FUNCTION("ftp_close", 				&GScr_FTP_Close);
 	FUNCTION("ftp_shell", 				&GScr_FTP_Shell);
 	FUNCTION("ftp_postfile", 			&GScr_FTP_PostFile);
 	FUNCTION("ftp_getfile", 			&GScr_FTP_GetFile);
+	FUNCTION("ftp_free", 				&GScr_FTP_Free);
 
 	// net/handle
 	FUNCTION("sql_prepare", 			&GScr_MySQL_Prepare);
@@ -129,6 +136,7 @@ PCL int OnInit()
 	FUNCTION("sql_version", 			&GScr_MySQL_Version);
 	FUNCTION("sql_connect", 			&GScr_MySQL_Connect);
 	FUNCTION("sql_close", 				&GScr_MySQL_Close);
+	FUNCTION("sql_free", 				&GScr_MySQL_Free);
 
 	// sys/system
 	FUNCTION("system", 					&GScr_System);
@@ -137,6 +145,12 @@ PCL int OnInit()
 	FUNCTION("comprint", 				&GScr_ComPrint);
 	FUNCTION("comprintln", 				&GScr_ComPrintLn);
 	FUNCTION("getsystime", 				&GScr_GetSysTime);
+	FUNCTION("asyncstatus", 			&GScr_AsyncStatus);
+	FUNCTION("iswindows", 				&GScr_IsWindows);
+	FUNCTION("islinux", 				&GScr_IsLinux);
+	FUNCTION("cod4x_version", 			&GScr_CoD4X_Version);
+	FUNCTION("cgsc_version", 			&GScr_CGSC_Version);
+	FUNCTION("gsclib_version", 			&GScr_GSCLIB_Version);
 	FUNCTION("exit",					&GScr_Exit);
 
 	// utils/utils
@@ -207,8 +221,8 @@ PCL void OnInfoRequest(pluginInfo_t *info)
 	info->handlerVersion.minor = PLUGIN_HANDLER_VERSION_MINOR; // Requested handler version
 
 	// ===== OPTIONAL FIELDS =====
-	info->pluginVersion.major = 1;
-	info->pluginVersion.minor = 25;
+	info->pluginVersion.major = GSCLIB_VERSION_MAJOR;
+	info->pluginVersion.minor = GSCLIB_VERSION_MINOR;
 	strncpy(info->fullName, "gsclib", sizeof(info->fullName));
 	strncpy(info->shortDescription, "gsclib acts as a standard library extension for the Call of Duty 4 scripting language.", sizeof(info->shortDescription));
 	strncpy(info->longDescription, "gsclib acts as a standard library extension for the Call of Duty 4 scripting language. The features this library provides consists of an FTP/FTPS/SFTP client, an HTTP/HTTPS client, Regular Expresison (RegEx) support, Language Integrated Query (Linq) support, a MySQL connector for databases, casting/type conversion and other type utilities, and much more. More detailed information on each feature can be found in the documentation section.", sizeof(info->longDescription));

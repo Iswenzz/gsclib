@@ -7,7 +7,7 @@ set(CMAKE_C_FLAGS "-m32 -Wall -O1 -s -mtune=core2 -Wno-unused-result")
 set(CMAKE_SHARED_LINKER_FLAGS "-m32 -s -shared -static-libgcc -static-libstdc++")
 set(CMAKE_SHARED_LIBRARY_PREFIX "")
 set(CMAKE_STATIC_LIBRARY_PREFIX "")
-add_definitions(-D_CRT_SECURE_NO_WARNINGS)
+add_definitions(-D_CRT_SECURE_NO_WARNINGS -DWIN32_LEAN_AND_MEAN)
 
 # CPack
 set(CPACK_PROJECT_NAME ${PROJECT_NAME})
@@ -22,6 +22,7 @@ conan_basic_setup()
 # Tests
 include(CTest)
 add_executable(gsclib.Tests)
+add_dependencies(gsclib.Tests gsclib.Static)
 target_link_libraries(gsclib.Tests PUBLIC ${CONAN_LIBS} gsclib.Static)
 add_test(NAME Tests COMMAND gsclib.Tests)
 

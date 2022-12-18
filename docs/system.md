@@ -8,6 +8,19 @@ System("ls");
 ```
 <hr>
 
+#### ``AsyncStatus(<request>)``
+Get the status of an async request (MySQL, CURL, FTP, HTTP).
+
+0 = uninitialized
+1 = pending
+2 = successful
+3 = failure
+
+```c
+status = AsyncStatus(request);
+```
+<hr>
+
 #### ``GetSysTime()``
 Get the system time in milliseconds.
 
@@ -69,3 +82,29 @@ SysPrintLn("Hello %s!", a);
 SysPrintLn();
 ```
 <hr>
+
+#### ``CoD4X_Version()``
+Get the CoD4X version.
+
+```c
+version = CoD4X_Version();
+```
+<hr>
+
+#### ``CGSC_Version()``
+Get the CGSC version.
+
+```c
+version = CGSC_Version();
+```
+<hr>
+
+
+#### ``GSCLIB_Version()``
+Get the gsclib version.
+
+```c
+version = GSCLIB_Version();
+```
+<hr>
+

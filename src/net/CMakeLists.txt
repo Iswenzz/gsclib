@@ -3,7 +3,7 @@ target_sources(gsclib PRIVATE
 	curl.h
 	ftp.c
 	ftp.h
-	https.c
-	https.h
+	http.c
+	http.h
 	mysql.c
 	mysql.h)

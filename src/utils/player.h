@@ -1,5 +1,5 @@
 #pragma once
-#include <cgsc.h>
+#include <CGSC/cgsc.h>
 
 /// <summary>
 /// Get a client IP.

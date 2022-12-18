@@ -1,5 +1,5 @@
 #pragma once
-#include <cgsc.h>
+#include <CGSC/cgsc.h>
 
 /// <summary>
 /// Get the smallest value from an array of int/float/string/vector.

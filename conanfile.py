@@ -2,13 +2,13 @@ from conans import ConanFile
 
 class gsclib(ConanFile):
 	name = "gsclib"
-	version = "1.2.0"
+	version = "1.3.0"
 	license = "LICENCE"
 	url = "https://github.com/Iswenzz/gsclib"
 	description = "gsclib acts as a standard library extension for the Call of Duty 4 scripting language."
 
 	requires = (
-		"CGSC/1.1.1",
+		"CGSC/1.2.0",
 		"cwalk/1.2.5",
 		"greatest/1.5.0",
 		"libmysqlclient/8.0.17",

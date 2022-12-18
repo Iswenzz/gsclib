@@ -1,7 +1,7 @@
 #include "file.h"
 #include "utils/vsnprintf.h"
 
-#include <cgsc.h>
+#include <CGSC/cgsc.h>
 #include <stdlib.h>
 
 void GScr_FILE_Create()

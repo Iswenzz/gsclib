@@ -1,5 +1,5 @@
 #pragma once
-#include <cgsc.h>
+#include <CGSC/cgsc.h>
 
 #ifdef _MSC_VER 
 	#define strncasecmp _strnicmp

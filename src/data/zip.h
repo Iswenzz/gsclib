@@ -2,7 +2,7 @@
 #include "file.h"
 
 #include <zip.h>
-#include <cgsc.h>
+#include <CGSC/cgsc.h>
 
 /// <summary>
 /// Add a file to the archive.

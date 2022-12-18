@@ -1,61 +1,49 @@
 #pragma once
 #include <mysql.h>
-#include <cgsc.h>
+#include <CGSC/cgsc.h>
 
-#define MYSQL_ERROR(x, msg)	\
-if (x == NULL)				\
-{							\
-	Plugin_Scr_Error(msg);	\
-	return;					\
+#define MYSQL_CHECK_ERROR(x, msg)	\
+if (!x)								\
+{									\
+	Plugin_Scr_Error(msg);			\
+	return;							\
 }
 
-#define CHECK_MYSQL_INSTANCE()	MYSQL_ERROR(mysql.handle, "MySQL connection not found.");
-#define CHECK_MYSQL_STMT()		MYSQL_ERROR(mysql.stmt, "MySQL statement not found.");
+#define CHECK_MYSQL_REQUEST(mysql)													\
+MYSQL_CHECK_ERROR(mysql, "MySQL request not found.");								\
+MYSQL_CHECK_ERROR((mysql->status != ASYNC_PENDING), "MySQL request is pending.");	\
 
-extern int MySQLcode;
+#define CHECK_MYSQL_WORKING() \
+MYSQL_CHECK_ERROR(!mysql_handler.working, "MySQL is processing another request.");
+
+#define CHECK_MYSQL_INSTANCE(handle) \
+MYSQL_CHECK_ERROR(handle, "MySQL connection not found.");
+
+#define CHECK_MYSQL_STMT(stmt) \
+MYSQL_CHECK_ERROR(stmt, "MySQL statement not found.");
+
+typedef struct
+{
+	int code;
+	MYSQL* handle;
+	qboolean working;
+} MYSQL_HANDLER;
 
 typedef struct 
 {
+	async_status status;
 	MYSQL *handle;
 	MYSQL_RES *result;
 	MYSQL_RES *resultStmt;
 	MYSQL_STMT *stmt;
 	MYSQL_BIND *binds;
 	MYSQL_BIND *bindsResult;
+	char query[1024];
 	int bindsLength;
 	int bindsResultLength;
-} MYSQL_INSTANCE;
+} MYSQL_REQUEST;
 
-/// <summary>
-/// Free all MySQL resources.
-/// </summary>
-void MySQL_Free();
-
-/// <summary>
-/// Free the MySQL query & statement result.
-/// </summary>
-void MySQL_Free_Result();
-
-/// <summary>
-/// Free the MySQL statement.
-/// </summary>
-void MySQL_Free_Statement();
-
-/// <summary>
-/// Converts a MySQL type to a GSC variable type.
-/// </summary>
-/// <param name="type">The MySQL type.</param>
-/// <returns>The GSC variable type.</returns>
-int MySQL_TypeToGSC(enum_field_types type);
-
-/// <summary>
-/// Generic bind for a prepare statement.
-/// </summary>
-/// <param name="b">The MySQL bind pointer.</param>
-/// <param name="value">The param bind value or NULL for a result bind.</param>
-/// <param name="valueLength">The length of the string to allocate (0 for other types).</param>
-/// <param name="type">The MySQL type to bind.</param>
-void MySQL_PrepareBindBuffer(MYSQL_BIND* b, void *value, int valueLength, enum_field_types type);
+extern MYSQL_HANDLER mysql_handler;
 
 /// <summary>
 /// Prepare a MySQL statement.
@@ -164,29 +152,83 @@ void GScr_MySQL_EscapeString();
 void GScr_MySQL_HexString();
 
 /// <summary>
+/// Free a MySQL request.
+/// </summary>
+void GScr_MySQL_Free();
+
+/// <summary>
 /// Fetch row for queries.
 /// </summary>
+/// <param name="mysql">The mysql request.</param>
 /// <param name="stringIndexed">Return as a string indexed array.</param>
 /// <returns></returns>
-qboolean Scr_MySQL_FetchQueryRow(qboolean stringIndexed);
+qboolean Scr_MySQL_FetchQueryRow(MYSQL_REQUEST* mysql, qboolean stringIndexed);
 
 /// <summary>
 /// Fetch rows for queries.
 /// </summary>
+/// <param name="mysql">The mysql request.</param>
 /// <param name="stringIndexed">Return as a string indexed array.</param>
 /// <returns></returns>
-void Scr_MySQL_FetchQueryRows(qboolean stringIndexed);
+void Scr_MySQL_FetchQueryRows(MYSQL_REQUEST* mysql, qboolean stringIndexed);
 
 /// <summary>
 /// Fetch row for statement.
 /// </summary>
+/// <param name="mysql">The mysql request.</param>
 /// <param name="stringIndexed">Return as a string indexed array.</param>
 /// <returns></returns>
-qboolean Scr_MySQL_FetchStatementRow(qboolean stringIndexed);
+qboolean Scr_MySQL_FetchStatementRow(MYSQL_REQUEST* mysql, qboolean stringIndexed);
 
 /// <summary>
 /// Fetch rows for statement.
 /// </summary>
+/// <param name="mysql">The mysql request.</param>
 /// <param name="stringIndexed">Return as a string indexed array.</param>
 /// <returns></returns>
-void Scr_MySQL_FetchStatementRows(qboolean stringIndexed);
+void Scr_MySQL_FetchStatementRows(MYSQL_REQUEST* mysql, qboolean stringIndexed);
+
+/// <summary>
+/// Free all MySQL resources.
+/// </summary>
+void MySQL_Free();
+
+/// <summary>
+/// Free the MySQL query & statement result.
+/// </summary>
+/// <param name="mysql">The mysql request.</param>
+void MySQL_Free_Result(MYSQL_REQUEST* mysql);
+
+/// <summary>
+/// Free the MySQL statement.
+/// </summary>
+/// <param name="mysql">The mysql request.</param>
+void MySQL_Free_Statement(MYSQL_REQUEST* mysql);
+
+/// <summary>
+/// Converts a MySQL type to a GSC variable type.
+/// </summary>
+/// <param name="type">The MySQL type.</param>
+/// <returns>The GSC variable type.</returns>
+int MySQL_TypeToGSC(enum_field_types type);
+
+/// <summary>
+/// Generic bind for a prepare statement.
+/// </summary>
+/// <param name="b">The MySQL bind pointer.</param>
+/// <param name="value">The param bind value or NULL for a result bind.</param>
+/// <param name="valueLength">The length of the string to allocate (0 for other types).</param>
+/// <param name="type">The MySQL type to bind.</param>
+void MySQL_PrepareBindBuffer(MYSQL_BIND* b, void* value, int valueLength, enum_field_types type);
+
+/// <summary>
+/// Async MySQL query.
+/// </summary>
+/// <param name="req">The worker request.</param>
+void MySQL_Query(uv_work_t* req);
+
+/// <summary>
+/// Async MySQL execute statement.
+/// </summary>
+/// <param name="req">The worker request.</param>
+void MySQL_Execute(uv_work_t* req);

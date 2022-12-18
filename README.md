@@ -4,10 +4,10 @@
 [![CodeFactor](https://img.shields.io/codefactor/grade/github/Iswenzz/gsclib?label=codefactor&logo=codefactor)](https://www.codefactor.io/repository/github/iswenzz/gsclib)
 [![License](https://img.shields.io/github/license/Iswenzz/gsclib?color=blue&logo=gitbook&logoColor=white)](https://github.com/Iswenzz/gsclib/blob/master/LICENSE)
 
-``gsclib`` acts as a standard library extension for the Call of Duty 4 scripting language. The features this library provides consists of an FTP/FTPS/SFTP client, an HTTP/HTTPS client, Regular Expression (PCRE2) support, Language Integrated Query (Linq) support, a MySQL connector for databases, casting/type conversion/fmt and other type utilities, ZIP files, and much more. More detailed information on each feature can be found in the documentation section.
+``gsclib`` acts as a standard library extension for the Call of Duty 4 scripting language. The features this library provides consists of an FTP/FTPS/SFTP client, an HTTP/HTTPS client, Regular Expression (PCRE2) support, Language Integrated Query (Linq) support, a MySQL connector for databases, casting/type conversion/fmt and other type utilities, ZIP files, async workers, and much more. More detailed information on each feature can be found in the documentation section.
 
 ## Features & Documentation
-* [HTTP/HTTPS client](https://github.com/Iswenzz/gsclib/blob/master/docs/https.md)
+* [HTTP/HTTPS client](https://github.com/Iswenzz/gsclib/blob/master/docs/http.md)
 * [FTP/FTPS/SFTP client](https://github.com/Iswenzz/gsclib/blob/master/docs/ftp.md)
 * [Regular expression (PCRE2)](https://github.com/Iswenzz/gsclib/blob/master/docs/regex.md)
 * [Language Integrated Query (Linq)](https://github.com/Iswenzz/gsclib/blob/master/docs/linq.md)
@@ -24,7 +24,7 @@ In order to use this library, just download the archived file down below, and ex
 
 ## Building (Linux)
 _Pre-Requisites:_
-1. Edit plugin_handle.h and recompile your server:
+1. Edit plugin_handle.h then recompile the server with an empty obj directory:
 ```c
 #define MAX_SCRIPTFUNCTIONS 256
 ```

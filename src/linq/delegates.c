@@ -1,6 +1,6 @@
 #include "delegates.h"
 
-#include <cgsc.h>
+#include <CGSC/cgsc.h>
 #include <stdlib.h>
 
 void GScr_LINQ_Select()
