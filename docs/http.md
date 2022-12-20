@@ -53,20 +53,20 @@ HTTP_PostFile(request, "test/version.txt", "http://httpbin.org/post");
 ```
 <hr>
 
-#### ``HTTP_GetString(<request>, <url>)``
+#### ``HTTP_Get(<request>, <url>)``
 Get a string from HTTP url.
 
 ```c
 request = HTTP_Init();
-HTTP_GetString(request, "http://httpbin.org/get");
+HTTP_Get(request, "http://httpbin.org/get");
 ```
 <hr>
 
-#### ``HTTP_PostString(<request>, <string>, <url>)``
+#### ``HTTP_Post(<request>, <string>, <url>)``
 Post a string to HTTP url.
 
 ```c
 request = HTTP_Init();
-HTTP_PostString(request, "{\"login\":\"login\",\"password\":\"password\"}", "http://httpbin.org/post");
+HTTP_Post(request, "{\"login\":\"login\",\"password\":\"password\"}", "http://httpbin.org/post");
 ```
 <hr>
