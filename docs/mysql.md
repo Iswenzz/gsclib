@@ -9,8 +9,6 @@ SQL_BindParam(request, "Iswenzz", level.MYSQL_TYPE_VAR_STRING);
 SQL_BindResult(request, level.MYSQL_TYPE_VAR_STRING, 60);
 SQL_BindResult(request, level.MYSQL_TYPE_VAR_STRING, 60);
 SQL_BindResult(request, level.MYSQL_TYPE_LONG);
-SQL_BindResult(request, level.MYSQL_TYPE_LONG);
-SQL_BindResult(request, level.MYSQL_TYPE_LONG);
 SQL_Execute(request);
 
 while (AsyncStatus(request) <= 1)
