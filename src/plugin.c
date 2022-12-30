@@ -21,10 +21,14 @@
 #define FUNCTION(name, function) Plugin_ScrReplaceFunction(name, function)
 #define METHOD(name, function)	Plugin_ScrReplaceMethod(name, function)
 
+/// <summary>
+/// Plugin initialization.
+/// </summary>
+/// <returns></returns>
 PCL int OnInit()
 {
-	curl_handler.code = curl_global_init(CURL_GLOBAL_ALL); 			// Initialize curl library
-	mysql_handler.code = mysql_library_init(0, NULL, NULL); 		// Initialize mysql library
+	curl_handler.code = curl_global_init(CURL_GLOBAL_ALL);
+	mysql_handler.code = mysql_library_init(0, NULL, NULL);
 
 	// data/file
 	FUNCTION("file_create",				&GScr_FILE_Create);
@@ -136,6 +140,7 @@ PCL int OnInit()
 	FUNCTION("sql_version", 			&GScr_MySQL_Version);
 	FUNCTION("sql_connect", 			&GScr_MySQL_Connect);
 	FUNCTION("sql_close", 				&GScr_MySQL_Close);
+	FUNCTION("sql_kill", 				&GScr_MySQL_Kill);
 	FUNCTION("sql_free", 				&GScr_MySQL_Free);
 
 	// sys/system
@@ -145,6 +150,9 @@ PCL int OnInit()
 	FUNCTION("comprint", 				&GScr_ComPrint);
 	FUNCTION("comprintln", 				&GScr_ComPrintLn);
 	FUNCTION("getsystime", 				&GScr_GetSysTime);
+	FUNCTION("criticalsection", 		&GScr_CriticalSection);
+	FUNCTION("entercriticalsection", 	&GScr_EnterCriticalSection);
+	FUNCTION("leavecriticalsection", 	&GScr_LeaveCriticalSection);
 	FUNCTION("asyncstatus", 			&GScr_AsyncStatus);
 	FUNCTION("iswindows", 				&GScr_IsWindows);
 	FUNCTION("islinux", 				&GScr_IsLinux);
@@ -203,10 +211,34 @@ PCL int OnInit()
 	return 0;
 }
 
+/// <summary>
+/// Pre fast restart callback.
+/// </summary>
+/// <returns></returns>
+PCL void OnPreFastRestart()
+{
+	ShutdownCriticalSections();
+}
+
+/// <summary>
+/// Pre exit level callback.
+/// </summary>
+/// <returns></returns>
+PCL void OnExitLevel()
+{
+	ShutdownCriticalSections();
+}
+
+/// <summary>
+/// Plugin shutdown.
+/// </summary>
+/// <returns></returns>
 PCL void OnTerminate()
 {
-	curl_global_cleanup(); 	// Free curl library
-	mysql_library_end(); 	// Free mysql library
+	Plugin_AsyncShutdown();
+	ShutdownCriticalSections();
+	curl_global_cleanup();
+	mysql_library_end();
 }
 
 /// <summary>

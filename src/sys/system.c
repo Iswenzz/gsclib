@@ -6,6 +6,8 @@
 #include <stdlib.h>
 #include <stdarg.h>
 
+critical_sections sections = { 0 };
+
 void GScr_System()
 {
 	CHECK_PARAMS(1, "Usage: System(<command>)");
@@ -42,6 +44,77 @@ void GScr_SysPrint()
 void GScr_SysPrintLn()
 {
 	Scr_PrintF(qtrue, &Sys_PrintF);
+}
+
+void GScr_CriticalSection()
+{
+	CHECK_PARAMS(1, "Usage: CriticalSection(<name>)");
+
+	const char* name = Plugin_Scr_GetString(0);
+	for (int i = 0; i < sections.length; i++)
+	{
+		if (!strcmp(name, sections.list[i].id))
+			return;
+	}
+	sections.list = !sections.list
+		? (critical_section*)malloc(sizeof(critical_section))
+		: (critical_section*)realloc(sections.list, (sections.length + 1) * sizeof(critical_section));
+	
+	critical_section* section = &sections.list[sections.length++];
+	strcpy(section->id, name);
+	section->locked = qfalse;
+}
+
+void GScr_EnterCriticalSection()
+{
+	CHECK_PARAMS(1, "Usage: EnterCriticalSection(<name>)");
+
+	critical_section* section = NULL;
+	const char* name = Plugin_Scr_GetString(0);
+
+	for (int i = 0; i < sections.length; i++)
+	{
+		if (!strcmp(name, sections.list[i].id))
+		{
+			section = &sections.list[i];
+			break;
+		}
+	}
+	if (!section)
+	{
+		Plugin_Scr_Error(fmt("MutexAcquire(): section %s not found.", name));
+		return;
+	}
+	if (!section->locked)
+	{
+		section->locked = qtrue;
+		Plugin_Scr_AddBool(qtrue);
+		return;
+	}
+	Plugin_Scr_AddBool(qfalse);
+}
+
+void GScr_LeaveCriticalSection()
+{
+	CHECK_PARAMS(1, "Usage: LeaveCriticalSection(<name>)");
+
+	critical_section* section = NULL;
+	const char* name = Plugin_Scr_GetString(0);
+
+	for (int i = 0; i < sections.length; i++)
+	{
+		if (!strcmp(name, sections.list[i].id))
+		{
+			section = &sections.list[i];
+			break;
+		}
+	}
+	if (!section)
+	{
+		Plugin_Scr_Error(fmt("LeaveCriticalSection(): section %s not found.", name));
+		return;
+	}
+	section->locked = qfalse;
 }
 
 void GScr_AsyncStatus()
@@ -168,5 +241,15 @@ void Sys_AnsiColorPrint(const char* msg, void (*print)(const char*, ...))
 	{
 		buffer[length] = '\0';
 		print(buffer);
+	}
+}
+
+void ShutdownCriticalSections()
+{
+	if (sections.list)
+	{
+		free(sections.list);
+		sections.list = NULL;
+		sections.length = 0;
 	}
 }

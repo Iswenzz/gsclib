@@ -6,6 +6,20 @@
 #define GSCLIB_VERSION_MAJOR 1
 #define GSCLIB_VERSION_MINOR 3
 
+typedef struct mutex
+{
+	char id[60];
+	qboolean locked;
+} critical_section;
+
+typedef struct
+{
+	critical_section* list;
+	int length;
+} critical_sections;
+
+extern critical_sections sections;
+
 /// <summary>
 /// Execute a system command.
 /// </summary>
@@ -40,6 +54,21 @@ void GScr_ComPrintLn();
 /// Exit the program.
 /// </summary>
 void GScr_Exit();
+
+/// <summary>
+/// Create a critical section.
+/// </summary>
+void GScr_CriticalSection();
+
+/// <summary>
+/// Enter the critical section.
+/// </summary>
+void GScr_EnterCriticalSection();
+
+/// <summary>
+/// Leave the critical section.
+/// </summary>
+void GScr_LeaveCriticalSection();
 
 /// <summary>
 /// Get the async request status.
@@ -91,3 +120,8 @@ void Scr_PrintF(qboolean newLine, void (*print)(const char*, ...));
 /// <param name="msg">The message to transform.</param>
 /// <param name="print">The function used for printing.</param>
 void Sys_AnsiColorPrint(const char* msg, void (*print)(const char*, ...));
+
+/// <summary>
+/// Shutdown the critical sections.
+/// </summary>
+void ShutdownCriticalSections();
