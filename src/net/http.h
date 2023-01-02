@@ -1,9 +1,9 @@
 #pragma once
 #include "curl.h"
 
-#define CHECK_HTTP_REQUEST(http)													\
-CURL_CHECK_ERROR(http, "HTTP request not found.");									\
-CURL_CHECK_ERROR((http->curl.status != ASYNC_PENDING), "HTTP request is pending.");	\
+#define CHECK_HTTP_REQUEST(http) \
+CURL_CHECK_ERROR(http, "HTTP request not found."); \
+CURL_CHECK_ERROR((http->curl.request.status != ASYNC_PENDING), "HTTP request is pending.");
 
 typedef struct
 {

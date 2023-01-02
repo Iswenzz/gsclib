@@ -57,7 +57,7 @@ void GScr_HTTP_Cancel()
 	CHECK_PARAMS(1, "Usage: HTTP_Cancel(<request>)");
 
 	HTTP_REQUEST* http = (HTTP_REQUEST*)Plugin_Scr_GetInt(0);
-	if (http) http->curl.canceled = qtrue;
+	if (http) http->curl.request.canceled = qtrue;
 }
 
 void GScr_HTTP_Get()
@@ -78,7 +78,7 @@ void GScr_HTTP_Get()
 		curl_easy_setopt(http->curl.handle, CURLOPT_WRITEDATA, &http->response);
 		CURL_SetOpts(&http->curl);
 
-		http->curl.status = ASYNC_PENDING;
+		http->curl.request.status = ASYNC_PENDING;
 		Plugin_AsyncCall(http, &HTTP_Get, &Plugin_AsyncNull);
 	}
 	Plugin_Scr_AddBool(qtrue);
@@ -100,7 +100,7 @@ void GScr_HTTP_GetFile()
 	{
 		Plugin_Printf("File not found.\n");
 		Plugin_Scr_AddBool(qfalse);
-		http->curl.status = ASYNC_FAILURE;
+		http->curl.request.status = ASYNC_FAILURE;
 		return;
 	}
 	if (http->curl.handle)
@@ -113,7 +113,7 @@ void GScr_HTTP_GetFile()
 		curl_easy_setopt(http->curl.handle, CURLOPT_WRITEDATA, http->file.stream);
 		CURL_SetOpts(&http->curl);
 
-		http->curl.status = ASYNC_PENDING;
+		http->curl.request.status = ASYNC_PENDING;
 		Plugin_AsyncCall(http, &HTTP_GetFile, &Plugin_AsyncNull);
 	}
 	Plugin_Scr_AddBool(qtrue);
@@ -138,7 +138,7 @@ void GScr_HTTP_Post()
 		curl_easy_setopt(http->curl.handle, CURLOPT_WRITEDATA, &http->response);
 		CURL_SetOpts(&http->curl);
 
-		http->curl.status = ASYNC_PENDING;
+		http->curl.request.status = ASYNC_PENDING;
 		Plugin_AsyncCall(http, &HTTP_Post, &Plugin_AsyncNull);
 	}
 	Plugin_Scr_AddBool(qtrue);
@@ -172,7 +172,7 @@ void GScr_HTTP_PostFile()
 	{
 		Plugin_Printf("File not found.\n");
 		Plugin_Scr_AddBool(qfalse);
-		http->curl.status = ASYNC_FAILURE;
+		http->curl.request.status = ASYNC_FAILURE;
 		return;
 	}
 
@@ -189,7 +189,7 @@ void GScr_HTTP_PostFile()
 		curl_easy_setopt(http->curl.handle, CURLOPT_WRITEDATA, &http->response);
 		CURL_SetOpts(&http->curl);
 
-		http->curl.status = ASYNC_PENDING;
+		http->curl.request.status = ASYNC_PENDING;
 		Plugin_AsyncCall(http, &HTTP_PostFile, &Plugin_AsyncNull);
 	}
 	Plugin_Scr_AddBool(qtrue);
@@ -243,16 +243,14 @@ void HTTP_Get(uv_work_t* req)
 		if (res != CURLE_OK)
 		{
 			Sys_PrintF("curl_easy_perform() failed: %s\n", curl_multi_strerror(res));
-			http->curl.status = ASYNC_FAILURE;
+			http->curl.request.status = ASYNC_FAILURE;
 		}
 	} 
-	while (running && !http->curl.canceled);
-
-	fprintf(stderr, "[DEBUG] Lmao canceled it works\n");
+	while (running && !http->curl.request.canceled);
 
 	CURL_OptCleanup(&http->curl);
 	CURL_HeaderCleanup(&http->curl);
-	http->curl.status = ASYNC_SUCCESSFUL;
+	http->curl.request.status = ASYNC_SUCCESSFUL;
 }
 
 void HTTP_GetFile(uv_work_t* req)
@@ -267,14 +265,14 @@ void HTTP_GetFile(uv_work_t* req)
 		if (res != CURLE_OK)
 		{
 			Sys_PrintF("curl_easy_perform() failed: %s\n", curl_multi_strerror(res));
-			http->curl.status = ASYNC_FAILURE;
+			http->curl.request.status = ASYNC_FAILURE;
 		}
 	} 
-	while (running && !http->curl.canceled);
+	while (running && !http->curl.request.canceled);
 	
 	CURL_OptCleanup(&http->curl);
 	CURL_HeaderCleanup(&http->curl);
-	http->curl.status = ASYNC_SUCCESSFUL;
+	http->curl.request.status = ASYNC_SUCCESSFUL;
 }
 
 void HTTP_Post(uv_work_t* req)
@@ -288,14 +286,14 @@ void HTTP_Post(uv_work_t* req)
 		if (curl_multi_perform(http->curl.multiHandle, &running) != CURLE_OK)
 		{
 			Sys_PrintF("curl_easy_perform() failed: %s\n", curl_multi_strerror(res));
-			http->curl.status = ASYNC_FAILURE;
+			http->curl.request.status = ASYNC_FAILURE;
 		}
 	} 
 	while (running);
 
 	CURL_OptCleanup(&http->curl);
 	CURL_HeaderCleanup(&http->curl);
-	http->curl.status = ASYNC_SUCCESSFUL;
+	http->curl.request.status = ASYNC_SUCCESSFUL;
 }
 
 void HTTP_PostFile(uv_work_t* req)
@@ -310,12 +308,12 @@ void HTTP_PostFile(uv_work_t* req)
 		if (res != CURLE_OK)
 		{
 			Sys_PrintF("curl_easy_perform() failed: %s\n", curl_multi_strerror(res));
-			http->curl.status = ASYNC_FAILURE;
+			http->curl.request.status = ASYNC_FAILURE;
 		}
 	} 
-	while (running && !http->curl.canceled);
+	while (running && !http->curl.request.canceled);
 
 	CURL_OptCleanup(&http->curl);
 	CURL_HeaderCleanup(&http->curl);
-	http->curl.status = ASYNC_SUCCESSFUL;
+	http->curl.request.status = ASYNC_SUCCESSFUL;
 }

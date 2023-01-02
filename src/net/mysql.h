@@ -1,4 +1,6 @@
 #pragma once
+#include "sys/system.h"
+
 #include <mysql.h>
 #include <CGSC/cgsc.h>
 
@@ -9,9 +11,9 @@ if (!x)								\
 	return;							\
 }
 
-#define CHECK_MYSQL_REQUEST(mysql)													\
-MYSQL_CHECK_ERROR(mysql, "MySQL request not found.");								\
-MYSQL_CHECK_ERROR((mysql->status != ASYNC_PENDING), "MySQL request is pending.");	\
+#define CHECK_MYSQL_REQUEST(mysql) \
+MYSQL_CHECK_ERROR(mysql, "MySQL request not found."); \
+MYSQL_CHECK_ERROR((mysql->request.status != ASYNC_PENDING), "MySQL request is pending.");
 
 #define CHECK_MYSQL_WORKING() \
 MYSQL_CHECK_ERROR(!mysql_handler.working, "MySQL is processing another request.");
@@ -31,7 +33,7 @@ typedef struct
 
 typedef struct 
 {
-	async_status status;
+	async_request request;
 	MYSQL *handle;
 	MYSQL_RES *result;
 	MYSQL_RES *resultStmt;
@@ -150,6 +152,11 @@ void GScr_MySQL_EscapeString();
 /// Return a hex representation of the string.
 /// </summary>
 void GScr_MySQL_HexString();
+
+/// <summary>
+/// Cancel a MySQL request.
+/// </summary>
+void GScr_MySQL_Cancel();
 
 /// <summary>
 /// Free a MySQL request.

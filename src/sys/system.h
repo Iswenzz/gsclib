@@ -6,19 +6,45 @@
 #define GSCLIB_VERSION_MAJOR 1
 #define GSCLIB_VERSION_MINOR 3
 
-typedef struct mutex
+/// <summary>
+/// Critical section/mutex struct.
+/// </summary>
+typedef struct
 {
 	char id[60];
 	qboolean locked;
 } critical_section;
 
+/// <summary>
+/// Critical sections pool.
+/// </summary>
 typedef struct
 {
 	critical_section* list;
 	int length;
 } critical_sections;
 
+/// <summary>
+/// Async request struct.
+/// </summary>
+/// <remarks>Async request is at the top of every struct passed to worker threads.</remarks>
+typedef struct
+{
+	async_status status;
+	qboolean canceled;
+} async_request;
+
+/// <summary>
+/// Async request pool.
+/// </summary>
+typedef struct
+{
+	async_request* pool;
+	int length;
+} async_requests;
+
 extern critical_sections sections;
+extern async_requests requests;
 
 /// <summary>
 /// Execute a system command.

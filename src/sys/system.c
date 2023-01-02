@@ -7,6 +7,7 @@
 #include <stdarg.h>
 
 critical_sections sections = { 0 };
+async_requests requests = { 0 };
 
 void GScr_System()
 {
@@ -121,13 +122,13 @@ void GScr_AsyncStatus()
 {
 	CHECK_PARAMS(1, "Usage: Async_Status(<request>)");
 
-	void *request = (void *)Plugin_Scr_GetInt(0);
+	async_request* request = (async_request*)Plugin_Scr_GetInt(0);
 	if (!request)
 	{
 		Plugin_Scr_AddInt(0);
 		return;
 	}
-	Plugin_Scr_AddInt(*(async_status *)request);
+	Plugin_Scr_AddInt((int)request->status);
 }
 
 void GScr_IsWindows()

@@ -49,7 +49,7 @@ void GScr_FTP_Cancel()
 	CHECK_PARAMS(1, "Usage: FTP_Cancel(<request>)");
 
 	FTP_REQUEST* ftp = (FTP_REQUEST*)Plugin_Scr_GetInt(0);
-	if (ftp) ftp->curl.canceled = qtrue;
+	if (ftp) ftp->curl.request.canceled = qtrue;
 }
 
 void GScr_FTP_Shell()
@@ -72,7 +72,7 @@ void GScr_FTP_Shell()
 		curl_easy_setopt(ftp->curl.handle, CURLOPT_SSH_AUTH_TYPES, CURLSSH_AUTH_PASSWORD);
 		CURL_SetOpts(&ftp->curl);
 
-		ftp->curl.status = ASYNC_PENDING;
+		ftp->curl.request.status = ASYNC_PENDING;
 		Plugin_AsyncCall(ftp, &FTP_Shell, &Plugin_AsyncNull);
 	}
 	Plugin_Scr_AddBool(qtrue);
@@ -96,7 +96,7 @@ void GScr_FTP_PostFile()
 	{
 		Plugin_Printf("Couldn't open '%s': %s\n", filepath, strerror(errno));
 		Plugin_Scr_AddBool(qfalse);
-		ftp->curl.status = ASYNC_FAILURE;
+		ftp->curl.request.status = ASYNC_FAILURE;
 		return;
 	}
 	fsize = (curl_off_t)file_info.st_size;
@@ -108,7 +108,7 @@ void GScr_FTP_PostFile()
 	{
 		Plugin_Printf("File not found.\n");
 		Plugin_Scr_AddBool(qfalse);
-		ftp->curl.status = ASYNC_FAILURE;
+		ftp->curl.request.status = ASYNC_FAILURE;
 		return;
 	}
 
@@ -132,7 +132,7 @@ void GScr_FTP_PostFile()
 		curl_easy_setopt(ftp->curl.handle, CURLOPT_SSH_AUTH_TYPES, CURLSSH_AUTH_PASSWORD);
 		CURL_SetOpts(&ftp->curl);
 
-		ftp->curl.status = ASYNC_PENDING;
+		ftp->curl.request.status = ASYNC_PENDING;
 		Plugin_AsyncCall(ftp, &FTP_PostFile, &Plugin_AsyncNull);
 	}
 	Plugin_Scr_AddBool(qtrue);
@@ -167,7 +167,7 @@ void GScr_FTP_GetFile()
 		curl_easy_setopt(ftp->curl.handle, CURLOPT_SSH_AUTH_TYPES, CURLSSH_AUTH_PASSWORD);
 		CURL_SetOpts(&ftp->curl);
 
-		ftp->curl.status = ASYNC_PENDING;
+		ftp->curl.request.status = ASYNC_PENDING;
 		Plugin_AsyncCall(ftp, &FTP_GetFile, &Plugin_AsyncNull);
 	}
 	Plugin_Scr_AddBool(qtrue);
@@ -249,14 +249,14 @@ void FTP_Shell(uv_work_t* req)
 		if (res != CURLE_OK)
 		{
 			Sys_PrintF("curl_easy_perform() failed: %s\n", curl_multi_strerror(res));
-			ftp->curl.status = ASYNC_FAILURE;
+			ftp->curl.request.status = ASYNC_FAILURE;
 		}
 	} 
-	while (running && !ftp->curl.canceled);
+	while (running && !ftp->curl.request.canceled);
 
 	CURL_OptCleanup(&ftp->curl);
 	CURL_HeaderCleanup(&ftp->curl);
-	ftp->curl.status = ASYNC_SUCCESSFUL;
+	ftp->curl.request.status = ASYNC_SUCCESSFUL;
 }
 
 void FTP_PostFile(uv_work_t* req)
@@ -271,14 +271,14 @@ void FTP_PostFile(uv_work_t* req)
 		if (res != CURLE_OK)
 		{
 			Sys_PrintF("curl_easy_perform() failed: %s\n", curl_multi_strerror(res));
-			ftp->curl.status = ASYNC_FAILURE;
+			ftp->curl.request.status = ASYNC_FAILURE;
 		}
 	} 
-	while (running && !ftp->curl.canceled);
+	while (running && !ftp->curl.request.canceled);
 
 	CURL_OptCleanup(&ftp->curl);
 	CURL_HeaderCleanup(&ftp->curl);
-	ftp->curl.status = ASYNC_SUCCESSFUL;
+	ftp->curl.request.status = ASYNC_SUCCESSFUL;
 }
 
 void FTP_GetFile(uv_work_t* req)
@@ -293,12 +293,12 @@ void FTP_GetFile(uv_work_t* req)
 		if (res != CURLE_OK)
 		{
 			Sys_PrintF("curl_easy_perform() failed: %s\n", curl_multi_strerror(res));
-			ftp->curl.status = ASYNC_FAILURE;
+			ftp->curl.request.status = ASYNC_FAILURE;
 		}
 	} 
-	while (running && !ftp->curl.canceled);
+	while (running && !ftp->curl.request.canceled);
 
 	CURL_OptCleanup(&ftp->curl);
 	CURL_HeaderCleanup(&ftp->curl);
-	ftp->curl.status = ASYNC_SUCCESSFUL;
+	ftp->curl.request.status = ASYNC_SUCCESSFUL;
 }

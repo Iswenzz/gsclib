@@ -2,9 +2,9 @@
 #include "curl.h"
 #include <CGSC/cgsc.h>
 
-#define CHECK_FTP_REQUEST(ftp)													\
-CURL_CHECK_ERROR(ftp, "FTP request not found.");								\
-CURL_CHECK_ERROR((ftp->curl.status != ASYNC_PENDING), "FTP request is pending.");	\
+#define CHECK_FTP_REQUEST(ftp) \
+CURL_CHECK_ERROR(ftp, "FTP request not found."); \
+CURL_CHECK_ERROR((ftp->curl.request.status != ASYNC_PENDING), "FTP request is pending.");
 
 #define CHECK_FTP_INSTANCE(handle) \
 CURL_CHECK_ERROR(handle, "FTP Connection not found.\n");
