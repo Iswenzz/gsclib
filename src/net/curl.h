@@ -37,7 +37,9 @@ typedef struct
 typedef struct
 {
 	async_status status;
+	qboolean canceled;
 	CURL* handle;
+	CURLM* multiHandle;
 	struct curl_slist* header;
 	int optsCount;
 	CURL_OPTS opts[512];

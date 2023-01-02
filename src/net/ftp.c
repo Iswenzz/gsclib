@@ -11,6 +11,8 @@ void GScr_FTP_Init()
 
 	FTP_REQUEST* ftp = (FTP_REQUEST*)calloc(1, sizeof(FTP_REQUEST));
 	ftp->curl.handle = ftp_handler.handle;
+	ftp->curl.multiHandle = ftp_handler.multiHandle;
+	curl_multi_add_handle(ftp->curl.multiHandle, ftp->curl.handle);
 	ftp_handler.working = qtrue;
 
 	Plugin_Scr_AddInt((int)ftp);
@@ -40,6 +42,14 @@ void GScr_FTP_Close()
 {
 	CHECK_PARAMS(0, "Usage: FTP_Close()");
 	Plugin_Scr_AddBool(FTP_Close());
+}
+
+void GScr_FTP_Cancel()
+{
+	CHECK_PARAMS(1, "Usage: FTP_Cancel(<request>)");
+
+	FTP_REQUEST* ftp = (FTP_REQUEST*)Plugin_Scr_GetInt(0);
+	if (ftp) ftp->curl.canceled = qtrue;
 }
 
 void GScr_FTP_Shell()
@@ -171,16 +181,13 @@ void GScr_FTP_Free()
 
 	CHECK_FTP_REQUEST(ftp);
 
-	if (ftp)
-	{
-		if (ftp->file.stream)
-			fclose(ftp->file.stream);
+	if (ftp->file.stream)
+		fclose(ftp->file.stream);
 
-		free(ftp);
-		ftp = NULL;
-	}
+	free(ftp);
+	ftp = NULL;
+
 	ftp_handler.working = qfalse;
-
 	Plugin_Scr_AddBool(qtrue);
 }
 
@@ -188,6 +195,11 @@ qboolean FTP_Close()
 {
 	if (ftp_handler.handle != NULL)
 	{
+		if (ftp_handler.multiHandle)
+		{
+			curl_multi_remove_handle(ftp_handler.multiHandle, ftp_handler.handle);
+			curl_multi_cleanup(ftp_handler.multiHandle);
+		}
 		curl_easy_cleanup(ftp_handler.handle);
 		memset(&ftp_handler, 0, sizeof(ftp_handler));
 		return qtrue;
@@ -204,6 +216,7 @@ qboolean FTP_Connect(const char* protocol, const char* hostname, const char* use
 	strcpy(ftp_handler.password, password);
 	ftp_handler.port = port;
 	ftp_handler.handle = curl_easy_init();
+	ftp_handler.multiHandle = curl_multi_init();
 	return ftp_handler.handle != NULL;
 }
 
@@ -227,13 +240,19 @@ size_t FTP_Read(void* ptr, size_t size, size_t nmemb, void* stream)
 void FTP_Shell(uv_work_t* req)
 {
 	FTP_REQUEST* ftp = (FTP_REQUEST*)req->data;
-	CURLcode res = curl_easy_perform(ftp->curl.handle);
+	CURLMcode res = 0;
+	int running = 0;
 
-	if (res != CURLE_OK)
+	do
 	{
-		Sys_PrintF("curl_easy_perform() failed %s\n", curl_easy_strerror(res));
-		ftp->curl.status = ASYNC_FAILURE;
-	}
+		res = curl_multi_perform(ftp->curl.multiHandle, &running);
+		if (res != CURLE_OK)
+		{
+			Sys_PrintF("curl_easy_perform() failed: %s\n", curl_multi_strerror(res));
+			ftp->curl.status = ASYNC_FAILURE;
+		}
+	} 
+	while (running && !ftp->curl.canceled);
 
 	CURL_OptCleanup(&ftp->curl);
 	CURL_HeaderCleanup(&ftp->curl);
@@ -243,13 +262,19 @@ void FTP_Shell(uv_work_t* req)
 void FTP_PostFile(uv_work_t* req)
 {
 	FTP_REQUEST* ftp = (FTP_REQUEST*)req->data;
-	CURLcode res = curl_easy_perform(ftp->curl.handle);
+	CURLMcode res = 0;
+	int running = 0;
 
-	if (res != CURLE_OK)
+	do
 	{
-		Sys_PrintF("curl_easy_perform() failed %s\n", curl_easy_strerror(res));
-		ftp->curl.status = ASYNC_FAILURE;
-	}
+		res = curl_multi_perform(ftp->curl.multiHandle, &running);
+		if (res != CURLE_OK)
+		{
+			Sys_PrintF("curl_easy_perform() failed: %s\n", curl_multi_strerror(res));
+			ftp->curl.status = ASYNC_FAILURE;
+		}
+	} 
+	while (running && !ftp->curl.canceled);
 
 	CURL_OptCleanup(&ftp->curl);
 	CURL_HeaderCleanup(&ftp->curl);
@@ -259,13 +284,19 @@ void FTP_PostFile(uv_work_t* req)
 void FTP_GetFile(uv_work_t* req)
 {
 	FTP_REQUEST* ftp = (FTP_REQUEST*)req->data;
-	CURLcode res = curl_easy_perform(ftp->curl.handle);
+	CURLMcode res = 0;
+	int running = 0;
 
-	if (res != CURLE_OK)
+	do
 	{
-		Sys_PrintF("curl_easy_perform() failed %s\n", curl_easy_strerror(res));
-		ftp->curl.status = ASYNC_FAILURE;
-	}
+		res = curl_multi_perform(ftp->curl.multiHandle, &running);
+		if (res != CURLE_OK)
+		{
+			Sys_PrintF("curl_easy_perform() failed: %s\n", curl_multi_strerror(res));
+			ftp->curl.status = ASYNC_FAILURE;
+		}
+	} 
+	while (running && !ftp->curl.canceled);
 
 	CURL_OptCleanup(&ftp->curl);
 	CURL_HeaderCleanup(&ftp->curl);

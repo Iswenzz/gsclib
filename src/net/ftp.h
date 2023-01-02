@@ -18,6 +18,7 @@ typedef struct
 typedef struct
 {
 	CURL* handle;
+	CURLM* multiHandle;
 	char url[4096];
 	char password[255];
 	unsigned short port;
@@ -51,6 +52,11 @@ void GScr_FTP_Connect();
 /// Close the FTP/FTPS/SFTP connection.
 /// </summary>
 void GScr_FTP_Close();
+
+/// <summary>
+/// Cancel an FTP request.
+/// </summary>
+void GScr_FTP_Cancel();
 
 /// <summary>
 /// Execute a command to the FTP/FTPS/SFTP server.

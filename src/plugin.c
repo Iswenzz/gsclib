@@ -106,6 +106,7 @@ PCL int OnInit()
 	FUNCTION("http_get", 				&GScr_HTTP_Get);
 	FUNCTION("http_getfile", 			&GScr_HTTP_GetFile);
 	FUNCTION("http_response", 			&GScr_HTTP_Response);
+	FUNCTION("http_cancel", 			&GScr_HTTP_Cancel);
 	FUNCTION("http_free", 				&GScr_HTTP_Free);
 
 	// net/ftp
@@ -116,6 +117,7 @@ PCL int OnInit()
 	FUNCTION("ftp_shell", 				&GScr_FTP_Shell);
 	FUNCTION("ftp_postfile", 			&GScr_FTP_PostFile);
 	FUNCTION("ftp_getfile", 			&GScr_FTP_GetFile);
+	FUNCTION("ftp_cancel", 				&GScr_FTP_Cancel);
 	FUNCTION("ftp_free", 				&GScr_FTP_Free);
 
 	// net/handle
@@ -140,7 +142,7 @@ PCL int OnInit()
 	FUNCTION("sql_version", 			&GScr_MySQL_Version);
 	FUNCTION("sql_connect", 			&GScr_MySQL_Connect);
 	FUNCTION("sql_close", 				&GScr_MySQL_Close);
-	FUNCTION("sql_kill", 				&GScr_MySQL_Kill);
+	FUNCTION("sql_cancel", 				&GScr_MySQL_Cancel);
 	FUNCTION("sql_free", 				&GScr_MySQL_Free);
 
 	// sys/system
@@ -217,11 +219,11 @@ PCL int OnInit()
 /// <returns></returns>
 PCL void OnPreFastRestart()
 {
-	ShutdownCriticalSections();
+	OnExitLevel();
 }
 
 /// <summary>
-/// Pre exit level callback.
+/// Exit level callback.
 /// </summary>
 /// <returns></returns>
 PCL void OnExitLevel()
@@ -250,7 +252,7 @@ PCL void OnInfoRequest(pluginInfo_t *info)
 {
 	// ===== MANDATORY FIELDS =====
 	info->handlerVersion.major = PLUGIN_HANDLER_VERSION_MAJOR;
-	info->handlerVersion.minor = PLUGIN_HANDLER_VERSION_MINOR; // Requested handler version
+	info->handlerVersion.minor = PLUGIN_HANDLER_VERSION_MINOR;
 
 	// ===== OPTIONAL FIELDS =====
 	info->pluginVersion.major = GSCLIB_VERSION_MAJOR;

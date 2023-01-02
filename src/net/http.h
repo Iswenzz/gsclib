@@ -42,6 +42,11 @@ void GScr_HTTP_Init();
 void GScr_HTTP_Free();
 
 /// <summary>
+/// Cancel an HTTP request.
+/// </summary>
+void GScr_HTTP_Cancel();
+
+/// <summary>
 /// Upload a file to an HTTP url.
 /// </summary>
 void GScr_HTTP_PostFile();

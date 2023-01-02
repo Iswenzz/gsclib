@@ -1,5 +1,6 @@
 #include "http.h"
 
+#include <apr.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -9,8 +10,16 @@ void GScr_HTTP_Init()
 {
 	CHECK_PARAMS(0, "Usage: HTTP_Init()");
 
+	if (http_handler.working)
+	{
+		Plugin_Scr_Error("[DEBUG] ALREADY RUNNING");
+		return;
+	}
+
 	HTTP_REQUEST* http = (HTTP_REQUEST*)calloc(1, sizeof(HTTP_REQUEST));
 	http->curl.handle = curl_easy_init();
+	http->curl.multiHandle = curl_multi_init();
+	curl_multi_add_handle(http->curl.multiHandle, http->curl.handle);
 	http_handler.working = qtrue;
 
 	Plugin_Scr_AddInt((int)http);
@@ -24,21 +33,31 @@ void GScr_HTTP_Free()
 
 	CHECK_HTTP_REQUEST(http);
 
-	if (http)
+	if (http->curl.multiHandle)
 	{
-		if (http->curl.handle)
-			curl_easy_cleanup(http->curl.handle);
-		if (http->response.buffer)
-			free(http->response.buffer);
-		if (http->file.stream)
-			fclose(http->file.stream);
-
-		free(http);
-		http = NULL;
+		curl_multi_remove_handle(http->curl.multiHandle, http->curl.handle);
+		curl_multi_cleanup(http->curl.multiHandle);
 	}
-	http_handler.working = qfalse;
+	if (http->curl.handle)
+		curl_easy_cleanup(http->curl.handle);
+	if (http->response.buffer)
+		free(http->response.buffer);
+	if (http->file.stream)
+		fclose(http->file.stream);
 
+	free(http);
+	http = NULL;
+
+	http_handler.working = qfalse;
 	Plugin_Scr_AddBool(qtrue);
+}
+
+void GScr_HTTP_Cancel()
+{
+	CHECK_PARAMS(1, "Usage: HTTP_Cancel(<request>)");
+
+	HTTP_REQUEST* http = (HTTP_REQUEST*)Plugin_Scr_GetInt(0);
+	if (http) http->curl.canceled = qtrue;
 }
 
 void GScr_HTTP_Get()
@@ -215,13 +234,21 @@ size_t HTTP_WriteString(void* ptr, size_t size, size_t nmemb, void* stream)
 void HTTP_Get(uv_work_t* req)
 {
 	HTTP_REQUEST* http = (HTTP_REQUEST*)req->data;
-	CURLcode res = curl_easy_perform(http->curl.handle);
+	CURLMcode res = 0;
+	int running = 0;
 
-	if (res != CURLE_OK)
+	do 
 	{
-		Sys_PrintF("curl_easy_perform() failed: %s\n", curl_easy_strerror(res));
-		http->curl.status = ASYNC_FAILURE;
-	}
+		res = curl_multi_perform(http->curl.multiHandle, &running);
+		if (res != CURLE_OK)
+		{
+			Sys_PrintF("curl_easy_perform() failed: %s\n", curl_multi_strerror(res));
+			http->curl.status = ASYNC_FAILURE;
+		}
+	} 
+	while (running && !http->curl.canceled);
+
+	fprintf(stderr, "[DEBUG] Lmao canceled it works\n");
 
 	CURL_OptCleanup(&http->curl);
 	CURL_HeaderCleanup(&http->curl);
@@ -231,13 +258,19 @@ void HTTP_Get(uv_work_t* req)
 void HTTP_GetFile(uv_work_t* req)
 {
 	HTTP_REQUEST* http = (HTTP_REQUEST*)req->data;
-	CURLcode res = curl_easy_perform(http->curl.handle);
+	CURLMcode res = 0;
+	int running = 0;
 
-	if (res != CURLE_OK)
+	do
 	{
-		Sys_PrintF("curl_easy_perform() failed: %s\n", curl_easy_strerror(res));
-		http->curl.status = ASYNC_FAILURE;
-	}
+		res = curl_multi_perform(http->curl.multiHandle, &running);
+		if (res != CURLE_OK)
+		{
+			Sys_PrintF("curl_easy_perform() failed: %s\n", curl_multi_strerror(res));
+			http->curl.status = ASYNC_FAILURE;
+		}
+	} 
+	while (running && !http->curl.canceled);
 	
 	CURL_OptCleanup(&http->curl);
 	CURL_HeaderCleanup(&http->curl);
@@ -247,13 +280,18 @@ void HTTP_GetFile(uv_work_t* req)
 void HTTP_Post(uv_work_t* req)
 {
 	HTTP_REQUEST* http = (HTTP_REQUEST*)req->data;
-	CURLcode res = curl_easy_perform(http->curl.handle);
+	CURLMcode res = 0;
+	int running = 0;
 
-	if (res != CURLE_OK)
+	do
 	{
-		Sys_PrintF("curl_easy_perform() failed: %s\n", curl_easy_strerror(res));
-		http->curl.status = ASYNC_FAILURE;
-	}
+		if (curl_multi_perform(http->curl.multiHandle, &running) != CURLE_OK)
+		{
+			Sys_PrintF("curl_easy_perform() failed: %s\n", curl_multi_strerror(res));
+			http->curl.status = ASYNC_FAILURE;
+		}
+	} 
+	while (running);
 
 	CURL_OptCleanup(&http->curl);
 	CURL_HeaderCleanup(&http->curl);
@@ -263,13 +301,19 @@ void HTTP_Post(uv_work_t* req)
 void HTTP_PostFile(uv_work_t* req)
 {
 	HTTP_REQUEST* http = (HTTP_REQUEST*)req->data;
-	CURLcode res = curl_easy_perform(http->curl.handle);
+	CURLMcode res = 0;
+	int running = 0;
 
-	if (res != CURLE_OK)
+	do
 	{
-		Sys_PrintF("curl_easy_perform() failed: %s\n", curl_easy_strerror(res));
-		http->curl.status = ASYNC_FAILURE;
-	}
+		res = curl_multi_perform(http->curl.multiHandle, &running);
+		if (res != CURLE_OK)
+		{
+			Sys_PrintF("curl_easy_perform() failed: %s\n", curl_multi_strerror(res));
+			http->curl.status = ASYNC_FAILURE;
+		}
+	} 
+	while (running && !http->curl.canceled);
 
 	CURL_OptCleanup(&http->curl);
 	CURL_HeaderCleanup(&http->curl);
