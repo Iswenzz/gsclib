@@ -108,8 +108,7 @@ void GScr_MySQL_Execute()
 	CHECK_MYSQL_INSTANCE(mysql->handle);
 	CHECK_MYSQL_STMT(mysql->stmt);
 
-	mysql->request.status = ASYNC_PENDING;
-	Plugin_AsyncCall(mysql, &MySQL_Execute, &Plugin_AsyncNull);
+	mysql->worker = Plugin_AsyncWorker(mysql, &MySQL_Execute, NULL, NULL);
 
 	Plugin_Scr_AddBool(qtrue);
 }
@@ -357,10 +356,9 @@ void GScr_MySQL_Query()
 
 	MySQL_Free_Result(mysql);
 
-	mysql->request.status = ASYNC_PENDING;
-	mysql_handler.working = qtrue;
-	Plugin_AsyncCall(mysql, &MySQL_Query, &Plugin_AsyncNull);
+	mysql->worker = Plugin_AsyncWorker(mysql, &MySQL_Query, NULL, NULL);
 
+	mysql_handler.working = qtrue;
 	Plugin_Scr_AddInt((int)mysql);
 }
 
@@ -387,13 +385,13 @@ void GScr_MySQL_Connect()
 	mysql_options(mysql_handler.handle, MYSQL_OPT_RECONNECT, &reconnect);
 
 	if (!mysql_real_connect(mysql_handler.handle,	/* MYSQL structure to use */
-		Plugin_Scr_GetString(0),  			/* server hostname or IP address */
-		Plugin_Scr_GetString(2),  			/* handle user */
-		Plugin_Scr_GetString(3),  			/* password */
-		NULL,  								/* default database to use, NULL for none */
-		Plugin_Scr_GetInt(1),     			/* port number, 0 for default */
-		NULL,  								/* socket file or named pipe name */
-		0 									/* connection flags */
+		Plugin_Scr_GetString(0),  					/* server hostname or IP address */
+		Plugin_Scr_GetString(2),  					/* handle user */
+		Plugin_Scr_GetString(3),  					/* password */
+		NULL,  										/* default database to use, NULL for none */
+		Plugin_Scr_GetInt(1),     					/* port number, 0 for default */
+		NULL,  										/* socket file or named pipe name */
+		0 											/* connection flags */
 	))
 	{
 		// Close previous connection
@@ -421,7 +419,8 @@ void GScr_MySQL_Cancel()
 	CHECK_PARAMS(1, "Usage: SQL_Cancel(<request>)");
 
 	MYSQL_REQUEST* mysql = (MYSQL_REQUEST*)Plugin_Scr_GetInt(0);
-	if (mysql) mysql->request.canceled = qtrue;
+	if (mysql && mysql->worker)
+		Plugin_AsyncWorkerCancel(mysql->worker);
 }
 
 void GScr_MySQL_Free()
@@ -432,13 +431,11 @@ void GScr_MySQL_Free()
 
 	CHECK_MYSQL_REQUEST(mysql);
 
+	Plugin_AsyncWorkerFree(mysql->worker);
 	if (mysql)
-	{
 		free(mysql);
-		mysql = NULL;
-	}
-	mysql_handler.working = qfalse;
 
+	mysql_handler.working = qfalse;
 	Plugin_Scr_AddBool(qtrue);
 }
 
@@ -646,12 +643,12 @@ void MySQL_Query(uv_work_t* req)
 	if (mysql_query(mysql->handle, mysql->query))
 	{
 		Sys_PrintF("SQL_Query(): Query failed: %s\n", mysql_error(mysql->handle));
-		mysql->request.status = ASYNC_FAILURE;
+		Plugin_AsyncWorkerDone(req, ASYNC_FAILURE);
 		return;
 	}
 
 	mysql->result = mysql_store_result(mysql->handle);
-	mysql->request.status = ASYNC_SUCCESSFUL;
+	Plugin_AsyncWorkerDone(req, ASYNC_SUCCESSFUL);
 }
 
 void MySQL_Execute(uv_work_t* req)
@@ -662,7 +659,7 @@ void MySQL_Execute(uv_work_t* req)
 	if (mysql->bindsLength && mysql_stmt_bind_param(mysql->stmt, mysql->binds))
 	{
 		Sys_PrintF("SQL_Execute(): Bind statement failed: %s", mysql_stmt_error(mysql->stmt));
-		mysql->request.status = ASYNC_FAILURE;
+		Plugin_AsyncWorkerDone(req, ASYNC_FAILURE);
 		return;
 	}
 
@@ -670,7 +667,7 @@ void MySQL_Execute(uv_work_t* req)
 	if (mysql->bindsResultLength && mysql_stmt_bind_result(mysql->stmt, mysql->bindsResult))
 	{
 		Sys_PrintF("SQL_Execute(): Bind result statement failed: %s", mysql_stmt_error(mysql->stmt));
-		mysql->request.status = ASYNC_FAILURE;
+		Plugin_AsyncWorkerDone(req, ASYNC_FAILURE);
 		return;
 	}
 
@@ -678,7 +675,7 @@ void MySQL_Execute(uv_work_t* req)
 	if (mysql_stmt_execute(mysql->stmt))
 	{
 		Sys_PrintF("SQL_Execute(): Execute statement failed: %s", mysql_stmt_error(mysql->stmt));
-		mysql->request.status = ASYNC_FAILURE;
+		Plugin_AsyncWorkerDone(req, ASYNC_FAILURE);
 		return;
 	}
 
@@ -686,11 +683,11 @@ void MySQL_Execute(uv_work_t* req)
 	if (mysql_stmt_store_result(mysql->stmt))
 	{
 		Sys_PrintF("SQL_Execute(): Store result failed: %s", mysql_stmt_error(mysql->stmt));
-		mysql->request.status = ASYNC_FAILURE;
+		Plugin_AsyncWorkerDone(req, ASYNC_FAILURE);
 		return;
 	}
 	mysql->resultStmt = mysql_stmt_result_metadata(mysql->stmt);
-	mysql->request.status = ASYNC_SUCCESSFUL;
+	Plugin_AsyncWorkerDone(req, ASYNC_SUCCESSFUL);
 }
 
 void MySQL_Free_Statement(MYSQL_REQUEST *mysql)

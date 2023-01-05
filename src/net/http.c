@@ -1,6 +1,5 @@
 #include "http.h"
 
-#include <apr.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -20,8 +19,8 @@ void GScr_HTTP_Init()
 	http->curl.handle = curl_easy_init();
 	http->curl.multiHandle = curl_multi_init();
 	curl_multi_add_handle(http->curl.multiHandle, http->curl.handle);
-	http_handler.working = qtrue;
 
+	http_handler.working = qtrue;
 	Plugin_Scr_AddInt((int)http);
 }
 
@@ -32,6 +31,9 @@ void GScr_HTTP_Free()
 	HTTP_REQUEST* http = (HTTP_REQUEST*)Plugin_Scr_GetInt(0);
 
 	CHECK_HTTP_REQUEST(http);
+
+	CURL_OptCleanup(&http->curl);
+	CURL_HeaderCleanup(&http->curl);
 
 	if (http->curl.multiHandle)
 	{
@@ -45,8 +47,9 @@ void GScr_HTTP_Free()
 	if (http->file.stream)
 		fclose(http->file.stream);
 
-	free(http);
-	http = NULL;
+	Plugin_AsyncWorkerFree(http->curl.worker);
+	if (http) 
+		free(http);
 
 	http_handler.working = qfalse;
 	Plugin_Scr_AddBool(qtrue);
@@ -57,7 +60,8 @@ void GScr_HTTP_Cancel()
 	CHECK_PARAMS(1, "Usage: HTTP_Cancel(<request>)");
 
 	HTTP_REQUEST* http = (HTTP_REQUEST*)Plugin_Scr_GetInt(0);
-	if (http) http->curl.request.canceled = qtrue;
+	if (http && http->curl.worker) 
+		Plugin_AsyncWorkerCancel(http->curl.worker);
 }
 
 void GScr_HTTP_Get()
@@ -78,8 +82,7 @@ void GScr_HTTP_Get()
 		curl_easy_setopt(http->curl.handle, CURLOPT_WRITEDATA, &http->response);
 		CURL_SetOpts(&http->curl);
 
-		http->curl.request.status = ASYNC_PENDING;
-		Plugin_AsyncCall(http, &HTTP_Get, &Plugin_AsyncNull);
+		http->curl.worker = Plugin_AsyncWorker(http, &HTTP_Execute, NULL, NULL);
 	}
 	Plugin_Scr_AddBool(qtrue);
 }
@@ -100,7 +103,7 @@ void GScr_HTTP_GetFile()
 	{
 		Plugin_Printf("File not found.\n");
 		Plugin_Scr_AddBool(qfalse);
-		http->curl.request.status = ASYNC_FAILURE;
+		http->curl.worker->status = ASYNC_FAILURE;
 		return;
 	}
 	if (http->curl.handle)
@@ -113,8 +116,7 @@ void GScr_HTTP_GetFile()
 		curl_easy_setopt(http->curl.handle, CURLOPT_WRITEDATA, http->file.stream);
 		CURL_SetOpts(&http->curl);
 
-		http->curl.request.status = ASYNC_PENDING;
-		Plugin_AsyncCall(http, &HTTP_GetFile, &Plugin_AsyncNull);
+		http->curl.worker = Plugin_AsyncWorker(http, &HTTP_Execute, NULL, NULL);
 	}
 	Plugin_Scr_AddBool(qtrue);
 }
@@ -138,8 +140,7 @@ void GScr_HTTP_Post()
 		curl_easy_setopt(http->curl.handle, CURLOPT_WRITEDATA, &http->response);
 		CURL_SetOpts(&http->curl);
 
-		http->curl.request.status = ASYNC_PENDING;
-		Plugin_AsyncCall(http, &HTTP_Post, &Plugin_AsyncNull);
+		http->curl.worker = Plugin_AsyncWorker(http, &HTTP_Execute, NULL, NULL);
 	}
 	Plugin_Scr_AddBool(qtrue);
 }
@@ -172,7 +173,7 @@ void GScr_HTTP_PostFile()
 	{
 		Plugin_Printf("File not found.\n");
 		Plugin_Scr_AddBool(qfalse);
-		http->curl.request.status = ASYNC_FAILURE;
+		http->curl.worker->status = ASYNC_FAILURE;
 		return;
 	}
 
@@ -189,8 +190,7 @@ void GScr_HTTP_PostFile()
 		curl_easy_setopt(http->curl.handle, CURLOPT_WRITEDATA, &http->response);
 		CURL_SetOpts(&http->curl);
 
-		http->curl.request.status = ASYNC_PENDING;
-		Plugin_AsyncCall(http, &HTTP_PostFile, &Plugin_AsyncNull);
+		http->curl.worker = Plugin_AsyncWorker(http, &HTTP_Execute, NULL, NULL);
 	}
 	Plugin_Scr_AddBool(qtrue);
 }
@@ -231,89 +231,23 @@ size_t HTTP_WriteString(void* ptr, size_t size, size_t nmemb, void* stream)
 	return size * nmemb;
 }
 
-void HTTP_Get(uv_work_t* req)
+void HTTP_Execute(uv_work_t* req)
 {
-	HTTP_REQUEST* http = (HTTP_REQUEST*)req->data;
-	CURLMcode res = 0;
-	int running = 0;
-
-	do 
-	{
-		res = curl_multi_perform(http->curl.multiHandle, &running);
-		if (res != CURLE_OK)
-		{
-			Sys_PrintF("curl_easy_perform() failed: %s\n", curl_multi_strerror(res));
-			http->curl.request.status = ASYNC_FAILURE;
-		}
-	} 
-	while (running && !http->curl.request.canceled);
-
-	CURL_OptCleanup(&http->curl);
-	CURL_HeaderCleanup(&http->curl);
-	http->curl.request.status = ASYNC_SUCCESSFUL;
-}
-
-void HTTP_GetFile(uv_work_t* req)
-{
-	HTTP_REQUEST* http = (HTTP_REQUEST*)req->data;
-	CURLMcode res = 0;
-	int running = 0;
+	async_worker* worker = (async_worker*)req->data;
+	HTTP_REQUEST* http = (HTTP_REQUEST*)worker->data;
+	qboolean running = qfalse;
 
 	do
 	{
-		res = curl_multi_perform(http->curl.multiHandle, &running);
+		const CURLMcode res = curl_multi_perform(http->curl.multiHandle, &running);
 		if (res != CURLE_OK)
 		{
-			Sys_PrintF("curl_easy_perform() failed: %s\n", curl_multi_strerror(res));
-			http->curl.request.status = ASYNC_FAILURE;
+			Sys_PrintF("curl_multi_perform() failed: %s\n", curl_multi_strerror(res));
+			Plugin_AsyncWorkerDone(req, ASYNC_FAILURE);
+			return;
 		}
-	} 
-	while (running && !http->curl.request.canceled);
-	
-	CURL_OptCleanup(&http->curl);
-	CURL_HeaderCleanup(&http->curl);
-	http->curl.request.status = ASYNC_SUCCESSFUL;
-}
+	}
+	while (running && worker->status != ASYNC_CANCEL);
 
-void HTTP_Post(uv_work_t* req)
-{
-	HTTP_REQUEST* http = (HTTP_REQUEST*)req->data;
-	CURLMcode res = 0;
-	int running = 0;
-
-	do
-	{
-		if (curl_multi_perform(http->curl.multiHandle, &running) != CURLE_OK)
-		{
-			Sys_PrintF("curl_easy_perform() failed: %s\n", curl_multi_strerror(res));
-			http->curl.request.status = ASYNC_FAILURE;
-		}
-	} 
-	while (running);
-
-	CURL_OptCleanup(&http->curl);
-	CURL_HeaderCleanup(&http->curl);
-	http->curl.request.status = ASYNC_SUCCESSFUL;
-}
-
-void HTTP_PostFile(uv_work_t* req)
-{
-	HTTP_REQUEST* http = (HTTP_REQUEST*)req->data;
-	CURLMcode res = 0;
-	int running = 0;
-
-	do
-	{
-		res = curl_multi_perform(http->curl.multiHandle, &running);
-		if (res != CURLE_OK)
-		{
-			Sys_PrintF("curl_easy_perform() failed: %s\n", curl_multi_strerror(res));
-			http->curl.request.status = ASYNC_FAILURE;
-		}
-	} 
-	while (running && !http->curl.request.canceled);
-
-	CURL_OptCleanup(&http->curl);
-	CURL_HeaderCleanup(&http->curl);
-	http->curl.request.status = ASYNC_SUCCESSFUL;
+	Plugin_AsyncWorkerDone(req, ASYNC_SUCCESSFUL);
 }

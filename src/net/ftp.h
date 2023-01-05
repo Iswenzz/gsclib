@@ -3,11 +3,11 @@
 #include <CGSC/cgsc.h>
 
 #define CHECK_FTP_REQUEST(ftp) \
-CURL_CHECK_ERROR(ftp, "FTP request not found."); \
-CURL_CHECK_ERROR((ftp->curl.request.status != ASYNC_PENDING), "FTP request is pending.");
+CURL_CHECK_ERROR(!ftp, "FTP request not found."); \
+CURL_CHECK_ERROR(ftp->curl.worker && ftp->curl.worker->status == ASYNC_PENDING, "FTP request is pending.");
 
 #define CHECK_FTP_INSTANCE(handle) \
-CURL_CHECK_ERROR(handle, "FTP Connection not found.\n");
+CURL_CHECK_ERROR(!handle, "FTP Connection not found.\n");
 
 typedef struct
 {
@@ -110,19 +110,7 @@ size_t FTP_Write(void* buffer, size_t size, size_t nmemb, void* stream);
 size_t FTP_Read(void* ptr, size_t size, size_t nmemb, void* stream);
 
 /// <summary>
-/// Execute an FTP shell command.
+/// Execute the async request.
 /// </summary>
 /// <param name="req">The worker request.</param>
-void FTP_Shell(uv_work_t * req);
-
-/// <summary>
-/// Post a file.
-/// </summary>
-/// <param name="req">The worker request</param>
-void FTP_PostFile(uv_work_t* req);
-
-/// <summary>
-/// Get a file.
-/// </summary>
-/// <param name="req">The worker request</param>
-void FTP_GetFile(uv_work_t* req);
+void FTP_Execute(uv_work_t * req);

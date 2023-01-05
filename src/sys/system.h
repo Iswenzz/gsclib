@@ -24,27 +24,7 @@ typedef struct
 	int length;
 } critical_sections;
 
-/// <summary>
-/// Async request struct.
-/// </summary>
-/// <remarks>Async request is at the top of every struct passed to worker threads.</remarks>
-typedef struct
-{
-	async_status status;
-	qboolean canceled;
-} async_request;
-
-/// <summary>
-/// Async request pool.
-/// </summary>
-typedef struct
-{
-	async_request* pool;
-	int length;
-} async_requests;
-
 extern critical_sections sections;
-extern async_requests requests;
 
 /// <summary>
 /// Execute a system command.

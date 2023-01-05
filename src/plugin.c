@@ -27,6 +27,7 @@
 /// <returns></returns>
 PCL int OnInit()
 {
+	Plugin_AsyncInit();
 	curl_handler.code = curl_global_init(CURL_GLOBAL_ALL);
 	mysql_handler.code = mysql_library_init(0, NULL, NULL);
 
@@ -229,6 +230,7 @@ PCL void OnPreFastRestart()
 PCL void OnExitLevel()
 {
 	ShutdownCriticalSections();
+	fprintf(stderr, "[Debug] Exit level\n");
 }
 
 /// <summary>

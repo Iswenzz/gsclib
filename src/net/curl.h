@@ -8,18 +8,18 @@
 #include <stdlib.h>
 
 #define CURL_CHECK_ERROR(x, msg)	\
-if (!x)								\
+if (x)								\
 {									\
 	Plugin_Scr_Error(msg);			\
 	return;							\
 }
 
 #define CHECK_CURL_REQUEST(curl) \
-CURL_CHECK_ERROR(curl, "CURL request not found."); \
-CURL_CHECK_ERROR((curl->request.status != ASYNC_PENDING), "CURL request is pending.");
+CURL_CHECK_ERROR(!curl, "CURL request not found."); \
+CURL_CHECK_ERROR(curl->worker && curl->worker->status == ASYNC_PENDING, "CURL request is pending.");
 
 #define CHECK_CURL_WORKING() \
-CURL_CHECK_ERROR(!curl_handler.working, "CURL is processing another request.");
+CURL_CHECK_ERROR(curl_handler.working, "CURL is processing another request.");
 
 typedef struct
 {
@@ -36,7 +36,7 @@ typedef struct
 
 typedef struct
 {
-	async_request request;
+	async_worker* worker;
 	CURL* handle;
 	CURLM* multiHandle;
 	struct curl_slist* header;
