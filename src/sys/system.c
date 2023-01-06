@@ -7,6 +7,7 @@
 #include <stdarg.h>
 
 critical_sections sections = { 0 };
+async_handler* asyncHandler = NULL;
 
 void GScr_System()
 {
@@ -121,13 +122,13 @@ void GScr_AsyncStatus()
 {
 	CHECK_PARAMS(1, "Usage: Async_Status(<request>)");
 
-	async_worker* worker = (async_worker*)Plugin_Scr_GetInt(0);
-	if (!worker)
+	async_worker** worker = (async_worker**)Plugin_Scr_GetInt(0);
+	if (!worker || !(*worker))
 	{
 		Plugin_Scr_AddInt(0);
 		return;
 	}
-	Plugin_Scr_AddInt(worker->status);
+	Plugin_Scr_AddInt((*worker)->status);
 }
 
 void GScr_IsWindows()
@@ -252,4 +253,15 @@ void ShutdownCriticalSections()
 		sections.list = NULL;
 		sections.length = 0;
 	}
+}
+
+void AsyncHandlerRestart()
+{
+	Plugin_AsyncShutdown(asyncHandler);
+	asyncHandler = Plugin_AsyncInit();
+}
+
+void AsyncHandlerShutdown()
+{
+	Plugin_AsyncShutdown(asyncHandler);
 }

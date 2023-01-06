@@ -27,7 +27,6 @@
 /// <returns></returns>
 PCL int OnInit()
 {
-	Plugin_AsyncInit();
 	curl_handler.code = curl_global_init(CURL_GLOBAL_ALL);
 	mysql_handler.code = mysql_library_init(0, NULL, NULL);
 
@@ -143,7 +142,6 @@ PCL int OnInit()
 	FUNCTION("sql_version", 			&GScr_MySQL_Version);
 	FUNCTION("sql_connect", 			&GScr_MySQL_Connect);
 	FUNCTION("sql_close", 				&GScr_MySQL_Close);
-	FUNCTION("sql_cancel", 				&GScr_MySQL_Cancel);
 	FUNCTION("sql_free", 				&GScr_MySQL_Free);
 
 	// sys/system
@@ -229,8 +227,13 @@ PCL void OnPreFastRestart()
 /// <returns></returns>
 PCL void OnExitLevel()
 {
+	AsyncHandlerRestart();
 	ShutdownCriticalSections();
-	fprintf(stderr, "[Debug] Exit level\n");
+
+	MySQL_Working(qfalse);
+	HTTP_Working(qfalse);
+	FTP_Working(qfalse);
+	CURL_Working(qfalse);
 }
 
 /// <summary>
@@ -239,8 +242,9 @@ PCL void OnExitLevel()
 /// <returns></returns>
 PCL void OnTerminate()
 {
-	Plugin_AsyncShutdown();
+	AsyncHandlerShutdown();
 	ShutdownCriticalSections();
+
 	curl_global_cleanup();
 	mysql_library_end();
 }

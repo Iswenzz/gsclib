@@ -14,7 +14,7 @@ void GScr_FTP_Init()
 	ftp->curl.multiHandle = ftp_handler.multiHandle;
 	curl_multi_add_handle(ftp->curl.multiHandle, ftp->curl.handle);
 
-	ftp_handler.working = qtrue;
+	FTP_Working(qtrue);
 	Plugin_Scr_AddInt((int)ftp);
 }
 
@@ -73,7 +73,7 @@ void GScr_FTP_Shell()
 		curl_easy_setopt(ftp->curl.handle, CURLOPT_SSH_AUTH_TYPES, CURLSSH_AUTH_PASSWORD);
 		CURL_SetOpts(&ftp->curl);
 
-		ftp->curl.worker = Plugin_AsyncWorker(ftp, &FTP_Execute, NULL, NULL);
+		ftp->curl.worker = Plugin_AsyncWorker(asyncHandler, ftp, &FTP_Execute, NULL);
 	}
 	Plugin_Scr_AddBool(qtrue);
 }
@@ -132,7 +132,7 @@ void GScr_FTP_PostFile()
 		curl_easy_setopt(ftp->curl.handle, CURLOPT_SSH_AUTH_TYPES, CURLSSH_AUTH_PASSWORD);
 		CURL_SetOpts(&ftp->curl);
 
-		ftp->curl.worker = Plugin_AsyncWorker(ftp, &FTP_Execute, NULL, NULL);
+		ftp->curl.worker = Plugin_AsyncWorker(asyncHandler, ftp, &FTP_Execute, NULL);
 	}
 	Plugin_Scr_AddBool(qtrue);
 }
@@ -166,7 +166,7 @@ void GScr_FTP_GetFile()
 		curl_easy_setopt(ftp->curl.handle, CURLOPT_SSH_AUTH_TYPES, CURLSSH_AUTH_PASSWORD);
 		CURL_SetOpts(&ftp->curl);
 
-		ftp->curl.worker = Plugin_AsyncWorker(ftp, &FTP_Execute, NULL, NULL);
+		ftp->curl.worker = Plugin_AsyncWorker(asyncHandler, ftp, &FTP_Execute, NULL);
 	}
 	Plugin_Scr_AddBool(qtrue);
 }
@@ -184,12 +184,9 @@ void GScr_FTP_Free()
 
 	if (ftp->file.stream)
 		fclose(ftp->file.stream);
+	free(ftp);
 
-	Plugin_AsyncWorkerFree(ftp->curl.worker);
-	if (ftp)
-		free(ftp);
-
-	ftp_handler.working = qfalse;
+	FTP_Working(qfalse);
 	Plugin_Scr_AddBool(qtrue);
 }
 
@@ -239,6 +236,11 @@ size_t FTP_Read(void* ptr, size_t size, size_t nmemb, void* stream)
 	return (curl_off_t)fread(ptr, size, nmemb, (FILE*)stream);
 }
 
+void FTP_Working(qboolean state)
+{
+	ftp_handler.working = state;
+}
+
 void FTP_Execute(uv_work_t* req)
 {
 	async_worker* worker = (async_worker*)req->data;
@@ -256,6 +258,6 @@ void FTP_Execute(uv_work_t* req)
 		}
 	}
 	while (running && worker->status != ASYNC_CANCEL);
-	
+
 	Plugin_AsyncWorkerDone(req, ASYNC_SUCCESSFUL);
 }

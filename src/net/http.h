@@ -84,6 +84,12 @@ size_t HTTP_WriteFile(void* ptr, size_t size, size_t nmemb, void* stream);
 size_t HTTP_WriteString(void* ptr, size_t size, size_t nmemb, void* stream);
 
 /// <summary>
+/// Set the HTTP working state.
+/// </summary>
+/// <param name="state">The working state.</param>
+void HTTP_Working(qboolean state);
+
+/// <summary>
 /// Execute the async request.
 /// </summary>
 /// <param name="req">The worker request.</param>

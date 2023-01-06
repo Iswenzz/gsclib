@@ -25,6 +25,7 @@ typedef struct
 } critical_sections;
 
 extern critical_sections sections;
+extern async_handler* asyncHandler;
 
 /// <summary>
 /// Execute a system command.
@@ -131,3 +132,13 @@ void Sys_AnsiColorPrint(const char* msg, void (*print)(const char*, ...));
 /// Shutdown the critical sections.
 /// </summary>
 void ShutdownCriticalSections();
+
+/// <summary>
+/// Restart the async handler.
+/// </summary>
+void AsyncHandlerRestart();
+
+/// <summary>
+/// Shutdown the async handler.
+/// </summary>
+void AsyncHandlerShutdown();

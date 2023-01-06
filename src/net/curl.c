@@ -10,7 +10,7 @@ void GScr_CURL_Init()
 	CURL_REQUEST* curl = (CURL_REQUEST*)calloc(1, sizeof(CURL_REQUEST));
 	curl->handle = curl_handler.handle;
 
-	curl_handler.working = qtrue;
+	HTTP_Working(qtrue);
 	Plugin_Scr_AddInt((int)curl);
 }
 
@@ -110,12 +110,15 @@ void GScr_CURL_Free()
 
 	CHECK_CURL_REQUEST(curl);
 
-	Plugin_AsyncWorkerFree(curl->worker);
-	if (curl) 
-		free(curl);
+	free(curl);
 
-	curl_handler.working = qfalse;
+	HTTP_Working(qfalse);
 	Plugin_Scr_AddBool(qtrue);
+}
+
+void CURL_Working(qboolean state)
+{
+	curl_handler.working = state;
 }
 
 void CURL_SetHeader(CURL_REQUEST *curl, CURLoption headerType)

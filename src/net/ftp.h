@@ -110,6 +110,12 @@ size_t FTP_Write(void* buffer, size_t size, size_t nmemb, void* stream);
 size_t FTP_Read(void* ptr, size_t size, size_t nmemb, void* stream);
 
 /// <summary>
+/// Set the FTP working state.
+/// </summary>
+/// <param name="state">The working state.</param>
+void FTP_Working(qboolean state);
+
+/// <summary>
 /// Execute the async request.
 /// </summary>
 /// <param name="req">The worker request.</param>

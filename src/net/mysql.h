@@ -229,6 +229,12 @@ int MySQL_TypeToGSC(enum_field_types type);
 void MySQL_PrepareBindBuffer(MYSQL_BIND* b, void* value, int valueLength, enum_field_types type);
 
 /// <summary>
+/// Set the MySQL working state.
+/// </summary>
+/// <param name="state">The working state.</param>
+void MySQL_Working(qboolean state);
+
+/// <summary>
 /// Async MySQL query.
 /// </summary>
 /// <param name="req">The worker request.</param>

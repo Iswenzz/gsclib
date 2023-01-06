@@ -19,8 +19,7 @@ void GScr_MySQL_Prepare()
 	CHECK_MYSQL_WORKING();
 	CHECK_MYSQL_INSTANCE(mysql->handle);
 
-	mysql_handler.working = qtrue;
-
+	MySQL_Working(qtrue);
 	MySQL_Free_Result(mysql);
 	MySQL_Free_Statement(mysql);
 
@@ -108,7 +107,7 @@ void GScr_MySQL_Execute()
 	CHECK_MYSQL_INSTANCE(mysql->handle);
 	CHECK_MYSQL_STMT(mysql->stmt);
 
-	mysql->worker = Plugin_AsyncWorker(mysql, &MySQL_Execute, NULL, NULL);
+	mysql->worker = Plugin_AsyncWorker(asyncHandler, mysql, &MySQL_Execute, NULL);
 
 	Plugin_Scr_AddBool(qtrue);
 }
@@ -356,9 +355,9 @@ void GScr_MySQL_Query()
 
 	MySQL_Free_Result(mysql);
 
-	mysql->worker = Plugin_AsyncWorker(mysql, &MySQL_Query, NULL, NULL);
+	mysql->worker = Plugin_AsyncWorker(asyncHandler, mysql, &MySQL_Query, NULL);
 
-	mysql_handler.working = qtrue;
+	MySQL_Working(qtrue);
 	Plugin_Scr_AddInt((int)mysql);
 }
 
@@ -431,11 +430,9 @@ void GScr_MySQL_Free()
 
 	CHECK_MYSQL_REQUEST(mysql);
 
-	Plugin_AsyncWorkerFree(mysql->worker);
-	if (mysql)
-		free(mysql);
+	free(mysql);
 
-	mysql_handler.working = qfalse;
+	MySQL_Working(qfalse);
 	Plugin_Scr_AddBool(qtrue);
 }
 
@@ -636,9 +633,15 @@ int MySQL_TypeToGSC(enum_field_types type)
 	}
 }
 
+void MySQL_Working(qboolean state)
+{
+	mysql_handler.working = state;
+}
+
 void MySQL_Query(uv_work_t* req)
 {
-	MYSQL_REQUEST* mysql = (MYSQL_REQUEST*)req->data;
+	async_worker* worker = (async_worker*)req->data;
+	MYSQL_REQUEST* mysql = (MYSQL_REQUEST*)worker->data;
 
 	if (mysql_query(mysql->handle, mysql->query))
 	{
@@ -653,7 +656,8 @@ void MySQL_Query(uv_work_t* req)
 
 void MySQL_Execute(uv_work_t* req)
 {
-	MYSQL_REQUEST* mysql = (MYSQL_REQUEST*)req->data;
+	async_worker* worker = (async_worker*)req->data;
+	MYSQL_REQUEST* mysql = (MYSQL_REQUEST*)worker->data;
 
 	// Bind params
 	if (mysql->bindsLength && mysql_stmt_bind_param(mysql->stmt, mysql->binds))

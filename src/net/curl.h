@@ -82,6 +82,12 @@ void GScr_CURL_AddOpt();
 void GScr_CURL_Free();
 
 /// <summary>
+/// Set the CURL working state.
+/// </summary>
+/// <param name="state">The working state.</param>
+void CURL_Working(qboolean state);
+
+/// <summary>
 /// Set the options that has been set in the CURL_REQUEST struct.
 /// </summary>
 /// <param name="curl">The CURL request.</param>

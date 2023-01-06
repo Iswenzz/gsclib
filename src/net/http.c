@@ -9,18 +9,12 @@ void GScr_HTTP_Init()
 {
 	CHECK_PARAMS(0, "Usage: HTTP_Init()");
 
-	if (http_handler.working)
-	{
-		Plugin_Scr_Error("[DEBUG] ALREADY RUNNING");
-		return;
-	}
-
 	HTTP_REQUEST* http = (HTTP_REQUEST*)calloc(1, sizeof(HTTP_REQUEST));
 	http->curl.handle = curl_easy_init();
 	http->curl.multiHandle = curl_multi_init();
 	curl_multi_add_handle(http->curl.multiHandle, http->curl.handle);
 
-	http_handler.working = qtrue;
+	HTTP_Working(qtrue);
 	Plugin_Scr_AddInt((int)http);
 }
 
@@ -46,12 +40,9 @@ void GScr_HTTP_Free()
 		free(http->response.buffer);
 	if (http->file.stream)
 		fclose(http->file.stream);
+	free(http);
 
-	Plugin_AsyncWorkerFree(http->curl.worker);
-	if (http) 
-		free(http);
-
-	http_handler.working = qfalse;
+	HTTP_Working(qfalse);
 	Plugin_Scr_AddBool(qtrue);
 }
 
@@ -60,7 +51,7 @@ void GScr_HTTP_Cancel()
 	CHECK_PARAMS(1, "Usage: HTTP_Cancel(<request>)");
 
 	HTTP_REQUEST* http = (HTTP_REQUEST*)Plugin_Scr_GetInt(0);
-	if (http && http->curl.worker) 
+	if (http && http->curl.worker)
 		Plugin_AsyncWorkerCancel(http->curl.worker);
 }
 
@@ -82,7 +73,7 @@ void GScr_HTTP_Get()
 		curl_easy_setopt(http->curl.handle, CURLOPT_WRITEDATA, &http->response);
 		CURL_SetOpts(&http->curl);
 
-		http->curl.worker = Plugin_AsyncWorker(http, &HTTP_Execute, NULL, NULL);
+		http->curl.worker = Plugin_AsyncWorker(asyncHandler, http, &HTTP_Execute, NULL);
 	}
 	Plugin_Scr_AddBool(qtrue);
 }
@@ -116,7 +107,7 @@ void GScr_HTTP_GetFile()
 		curl_easy_setopt(http->curl.handle, CURLOPT_WRITEDATA, http->file.stream);
 		CURL_SetOpts(&http->curl);
 
-		http->curl.worker = Plugin_AsyncWorker(http, &HTTP_Execute, NULL, NULL);
+		http->curl.worker = Plugin_AsyncWorker(asyncHandler, http, &HTTP_Execute, NULL);
 	}
 	Plugin_Scr_AddBool(qtrue);
 }
@@ -140,7 +131,7 @@ void GScr_HTTP_Post()
 		curl_easy_setopt(http->curl.handle, CURLOPT_WRITEDATA, &http->response);
 		CURL_SetOpts(&http->curl);
 
-		http->curl.worker = Plugin_AsyncWorker(http, &HTTP_Execute, NULL, NULL);
+		http->curl.worker = Plugin_AsyncWorker(asyncHandler, http, &HTTP_Execute, NULL);
 	}
 	Plugin_Scr_AddBool(qtrue);
 }
@@ -190,7 +181,7 @@ void GScr_HTTP_PostFile()
 		curl_easy_setopt(http->curl.handle, CURLOPT_WRITEDATA, &http->response);
 		CURL_SetOpts(&http->curl);
 
-		http->curl.worker = Plugin_AsyncWorker(http, &HTTP_Execute, NULL, NULL);
+		http->curl.worker = Plugin_AsyncWorker(asyncHandler, http, &HTTP_Execute, NULL);
 	}
 	Plugin_Scr_AddBool(qtrue);
 }
@@ -229,6 +220,11 @@ size_t HTTP_WriteString(void* ptr, size_t size, size_t nmemb, void* stream)
 	res->len = new_len;
 
 	return size * nmemb;
+}
+
+void HTTP_Working(qboolean state)
+{
+	http_handler.working = state;
 }
 
 void HTTP_Execute(uv_work_t* req)
