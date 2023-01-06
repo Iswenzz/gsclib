@@ -16,6 +16,7 @@
 
 #ifdef _WIN32
 	#include <shellapi.h>
+	#define stat64 _stat64
 #else
 	#include <ftw.h>
 	#include <unistd.h>

@@ -88,7 +88,7 @@ void GScr_FTP_PostFile()
 	CHECK_FTP_INSTANCE(ftp->curl.handle);
 
 	const char *filepath = Plugin_Scr_GetString(1);
-	struct _stat64 file_info;
+	struct stat64 file_info;
 	curl_off_t fsize;
 
 	// Check file
