@@ -10,7 +10,7 @@ void GScr_CURL_Init()
 	CURL_REQUEST* curl = (CURL_REQUEST*)calloc(1, sizeof(CURL_REQUEST));
 	curl->handle = curl_handler.handle;
 
-	HTTP_Working(qtrue);
+	CURL_Working(qtrue);
 	Plugin_Scr_AddInt((int)curl);
 }
 

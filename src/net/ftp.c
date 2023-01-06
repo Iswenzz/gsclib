@@ -245,7 +245,7 @@ void FTP_Execute(uv_work_t* req)
 {
 	async_worker* worker = (async_worker*)req->data;
 	FTP_REQUEST* ftp = (FTP_REQUEST*)worker->data;
-	qboolean running = qfalse;
+	int running = 0;
 
 	do
 	{

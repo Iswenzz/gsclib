@@ -231,7 +231,7 @@ void HTTP_Execute(uv_work_t* req)
 {
 	async_worker* worker = (async_worker*)req->data;
 	HTTP_REQUEST* http = (HTTP_REQUEST*)worker->data;
-	qboolean running = qfalse;
+	int running = 0;
 
 	do
 	{
