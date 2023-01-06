@@ -88,7 +88,7 @@ void GScr_FTP_PostFile()
 	CHECK_FTP_INSTANCE(ftp->curl.handle);
 
 	const char *filepath = Plugin_Scr_GetString(1);
-	struct stat64 file_info;
+	struct stat file_info;
 	curl_off_t fsize;
 
 	// Check file
@@ -250,7 +250,7 @@ void FTP_Execute(uv_work_t* req)
 	do
 	{
 		const CURLMcode res = curl_multi_perform(ftp->curl.multiHandle, &running);
-		if (res != CURLE_OK)
+		if (res != CURLM_OK)
 		{
 			Sys_PrintF("curl_multi_perform() failed: %s\n", curl_multi_strerror(res));
 			Plugin_AsyncWorkerDone(req, ASYNC_FAILURE);

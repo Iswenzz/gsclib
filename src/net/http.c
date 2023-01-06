@@ -236,7 +236,7 @@ void HTTP_Execute(uv_work_t* req)
 	do
 	{
 		const CURLMcode res = curl_multi_perform(http->curl.multiHandle, &running);
-		if (res != CURLE_OK)
+		if (res != CURLM_OK)
 		{
 			Sys_PrintF("curl_multi_perform() failed: %s\n", curl_multi_strerror(res));
 			Plugin_AsyncWorkerDone(req, ASYNC_FAILURE);

@@ -112,7 +112,7 @@ void GScr_CURL_Free()
 
 	free(curl);
 
-	HTTP_Working(qfalse);
+	CURL_Working(qfalse);
 	Plugin_Scr_AddBool(qtrue);
 }
 
