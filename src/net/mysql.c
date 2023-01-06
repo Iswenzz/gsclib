@@ -645,7 +645,7 @@ void MySQL_Query(uv_work_t* req)
 
 	if (mysql_query(mysql->handle, mysql->query))
 	{
-		Sys_PrintF("SQL_Query(): Query failed: %s\n", mysql_error(mysql->handle));
+		Sys_PrintF("SQL_Query(): Query failed\n");
 		Plugin_AsyncWorkerDone(req, ASYNC_FAILURE);
 		return;
 	}
@@ -662,7 +662,7 @@ void MySQL_Execute(uv_work_t* req)
 	// Bind params
 	if (mysql->bindsLength && mysql_stmt_bind_param(mysql->stmt, mysql->binds))
 	{
-		Sys_PrintF("SQL_Execute(): Bind statement failed: %s", mysql_stmt_error(mysql->stmt));
+		Sys_PrintF("SQL_Execute(): Bind statement failed\n");
 		Plugin_AsyncWorkerDone(req, ASYNC_FAILURE);
 		return;
 	}
@@ -670,7 +670,7 @@ void MySQL_Execute(uv_work_t* req)
 	// Bind results
 	if (mysql->bindsResultLength && mysql_stmt_bind_result(mysql->stmt, mysql->bindsResult))
 	{
-		Sys_PrintF("SQL_Execute(): Bind result statement failed: %s", mysql_stmt_error(mysql->stmt));
+		Sys_PrintF("SQL_Execute(): Bind result statement failed\n");
 		Plugin_AsyncWorkerDone(req, ASYNC_FAILURE);
 		return;
 	}
@@ -678,7 +678,7 @@ void MySQL_Execute(uv_work_t* req)
 	// Execute statement
 	if (mysql_stmt_execute(mysql->stmt))
 	{
-		Sys_PrintF("SQL_Execute(): Execute statement failed: %s", mysql_stmt_error(mysql->stmt));
+		Sys_PrintF("SQL_Execute(): Execute statement failed\n");
 		Plugin_AsyncWorkerDone(req, ASYNC_FAILURE);
 		return;
 	}
@@ -686,7 +686,7 @@ void MySQL_Execute(uv_work_t* req)
 	// Result
 	if (mysql_stmt_store_result(mysql->stmt))
 	{
-		Sys_PrintF("SQL_Execute(): Store result failed: %s", mysql_stmt_error(mysql->stmt));
+		Sys_PrintF("SQL_Execute(): Store result failed\n");
 		Plugin_AsyncWorkerDone(req, ASYNC_FAILURE);
 		return;
 	}
