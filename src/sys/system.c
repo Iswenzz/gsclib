@@ -66,6 +66,22 @@ void GScr_CriticalSection()
 	section->locked = qfalse;
 }
 
+void GScr_CriticalSections()
+{
+	CHECK_PARAMS(0, "Usage: CriticalSections()");
+
+	if (!sections.length)
+		return;
+
+	Plugin_Scr_MakeArray();
+	for (int i = 0; i < sections.length; i++)
+	{
+		critical_section* section = &sections.list[i];
+		Plugin_Scr_AddInt(section->locked);
+		Plugin_Scr_AddArrayStringIndexed(Plugin_Scr_AllocString(section->id));
+	}
+}
+
 void GScr_EnterCriticalSection()
 {
 	CHECK_PARAMS(1, "Usage: EnterCriticalSection(<name>)");

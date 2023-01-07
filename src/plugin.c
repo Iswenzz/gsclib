@@ -152,6 +152,7 @@ PCL int OnInit()
 	FUNCTION("comprintln", 				&GScr_ComPrintLn);
 	FUNCTION("getsystime", 				&GScr_GetSysTime);
 	FUNCTION("criticalsection", 		&GScr_CriticalSection);
+	FUNCTION("criticalsections", 		&GScr_CriticalSections);
 	FUNCTION("entercriticalsection", 	&GScr_EnterCriticalSection);
 	FUNCTION("leavecriticalsection", 	&GScr_LeaveCriticalSection);
 	FUNCTION("asyncstatus", 			&GScr_AsyncStatus);

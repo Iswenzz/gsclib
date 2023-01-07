@@ -68,6 +68,11 @@ void GScr_Exit();
 void GScr_CriticalSection();
 
 /// <summary>
+/// Get the critical sections.
+/// </summary>
+void GScr_CriticalSections();
+
+/// <summary>
 /// Enter the critical section.
 /// </summary>
 void GScr_EnterCriticalSection();
