@@ -54,11 +54,6 @@ void GScr_FTP_Connect();
 void GScr_FTP_Close();
 
 /// <summary>
-/// Cancel an FTP request.
-/// </summary>
-void GScr_FTP_Cancel();
-
-/// <summary>
 /// Execute a command to the FTP/FTPS/SFTP server.
 /// The commands should be set with CURL_AddHeader.
 /// </summary>

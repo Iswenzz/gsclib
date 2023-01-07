@@ -46,15 +46,6 @@ void GScr_HTTP_Free()
 	Plugin_Scr_AddBool(qtrue);
 }
 
-void GScr_HTTP_Cancel()
-{
-	CHECK_PARAMS(1, "Usage: HTTP_Cancel(<request>)");
-
-	HTTP_REQUEST* http = (HTTP_REQUEST*)Plugin_Scr_GetInt(0);
-	if (http && http->curl.worker)
-		Plugin_AsyncWorkerCancel(http->curl.worker);
-}
-
 void GScr_HTTP_Get()
 {
 	CHECK_PARAMS(2, "Usage: HTTP_GetString(<request>, <url>)");

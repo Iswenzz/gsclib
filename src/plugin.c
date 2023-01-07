@@ -106,7 +106,6 @@ PCL int OnInit()
 	FUNCTION("http_get", 				&GScr_HTTP_Get);
 	FUNCTION("http_getfile", 			&GScr_HTTP_GetFile);
 	FUNCTION("http_response", 			&GScr_HTTP_Response);
-	FUNCTION("http_cancel", 			&GScr_HTTP_Cancel);
 	FUNCTION("http_free", 				&GScr_HTTP_Free);
 
 	// net/ftp
@@ -117,7 +116,6 @@ PCL int OnInit()
 	FUNCTION("ftp_shell", 				&GScr_FTP_Shell);
 	FUNCTION("ftp_postfile", 			&GScr_FTP_PostFile);
 	FUNCTION("ftp_getfile", 			&GScr_FTP_GetFile);
-	FUNCTION("ftp_cancel", 				&GScr_FTP_Cancel);
 	FUNCTION("ftp_free", 				&GScr_FTP_Free);
 
 	// net/handle

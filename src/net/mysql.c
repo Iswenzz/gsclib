@@ -413,15 +413,6 @@ void GScr_MySQL_Close()
 	Plugin_Scr_AddBool(qtrue);
 }
 
-void GScr_MySQL_Cancel()
-{
-	CHECK_PARAMS(1, "Usage: SQL_Cancel(<request>)");
-
-	MYSQL_REQUEST* mysql = (MYSQL_REQUEST*)Plugin_Scr_GetInt(0);
-	if (mysql && mysql->worker)
-		Plugin_AsyncWorkerCancel(mysql->worker);
-}
-
 void GScr_MySQL_Free()
 {
 	CHECK_PARAMS(1, "Usage: SQL_Free(<request>)");

@@ -154,11 +154,6 @@ void GScr_MySQL_EscapeString();
 void GScr_MySQL_HexString();
 
 /// <summary>
-/// Cancel a MySQL request.
-/// </summary>
-void GScr_MySQL_Cancel();
-
-/// <summary>
 /// Free a MySQL request.
 /// </summary>
 void GScr_MySQL_Free();

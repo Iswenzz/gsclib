@@ -44,15 +44,6 @@ void GScr_FTP_Close()
 	Plugin_Scr_AddBool(FTP_Close());
 }
 
-void GScr_FTP_Cancel()
-{
-	CHECK_PARAMS(1, "Usage: FTP_Cancel(<request>)");
-
-	FTP_REQUEST* ftp = (FTP_REQUEST*)Plugin_Scr_GetInt(0);
-	if (ftp && ftp->curl.worker)
-		Plugin_AsyncWorkerCancel(ftp->curl.worker);
-}
-
 void GScr_FTP_Shell()
 {
 	CHECK_PARAMS(1, "Usage: FTP_Shell(<request>)");
