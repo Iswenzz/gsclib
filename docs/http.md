@@ -1,22 +1,25 @@
 # HTTP
 
-### WARNING: **Requests are not thread safe, you'll need your own scripts in GSC to handle one request at a time !**
+### WARNING: **Requests are not thread safe. Use critical sections when needed**
 
 ## Example
 ```c
+critical_enter("http");
+
 json = "{\"login\":\"login\",\"password\":\"password\"}";
 url = "http://httpbin.org/post";
 
 request = HTTP_Init();
 CURL_AddHeader(request, "Accept: application/json,Content-Type: application/json");
 HTTP_Post(request, json, url);
-
-while (AsyncStatus(request) <= 1)
-	wait 0.05;
+status = AsyncWait(request);
 
 response = HTTP_Response(request);
 HTTP_Free(request);
+
+critical_leave("http");
 ```
+**The example above use GSC functions defined in [critical.md](https://github.com/Iswenzz/gsclib/blob/master/docs/critical.md)**
 
 #### ``HTTP_Init()``
 Initialize an HTTP request.

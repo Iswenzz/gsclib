@@ -1,26 +1,28 @@
 #pragma once
+#include "sys/system.h"
+
 #include <mysql.h>
 #include <CGSC/cgsc.h>
 
 #define MYSQL_CHECK_ERROR(x, msg)	\
-if (!x)								\
+if (x)								\
 {									\
 	Plugin_Scr_Error(msg);			\
 	return;							\
 }
 
-#define CHECK_MYSQL_REQUEST(mysql)													\
-MYSQL_CHECK_ERROR(mysql, "MySQL request not found.");								\
-MYSQL_CHECK_ERROR((mysql->status != ASYNC_PENDING), "MySQL request is pending.");	\
+#define CHECK_MYSQL_REQUEST(mysql) \
+MYSQL_CHECK_ERROR(!mysql, "MySQL request not found."); \
+MYSQL_CHECK_ERROR(mysql->worker && mysql->worker->status == ASYNC_PENDING, "MySQL request is pending.");
 
 #define CHECK_MYSQL_WORKING() \
-MYSQL_CHECK_ERROR(!mysql_handler.working, "MySQL is processing another request.");
+MYSQL_CHECK_ERROR(mysql_handler.working, "MySQL is processing another request.");
 
 #define CHECK_MYSQL_INSTANCE(handle) \
-MYSQL_CHECK_ERROR(handle, "MySQL connection not found.");
+MYSQL_CHECK_ERROR(!handle, "MySQL connection not found.");
 
 #define CHECK_MYSQL_STMT(stmt) \
-MYSQL_CHECK_ERROR(stmt, "MySQL statement not found.");
+MYSQL_CHECK_ERROR(!stmt, "MySQL statement not found.");
 
 typedef struct
 {
@@ -31,7 +33,7 @@ typedef struct
 
 typedef struct 
 {
-	async_status status;
+	async_worker *worker;
 	MYSQL *handle;
 	MYSQL_RES *result;
 	MYSQL_RES *resultStmt;
@@ -220,6 +222,12 @@ int MySQL_TypeToGSC(enum_field_types type);
 /// <param name="valueLength">The length of the string to allocate (0 for other types).</param>
 /// <param name="type">The MySQL type to bind.</param>
 void MySQL_PrepareBindBuffer(MYSQL_BIND* b, void* value, int valueLength, enum_field_types type);
+
+/// <summary>
+/// Set the MySQL working state.
+/// </summary>
+/// <param name="state">The working state.</param>
+void MySQL_Working(qboolean state);
 
 /// <summary>
 /// Async MySQL query.

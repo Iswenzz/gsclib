@@ -1,9 +1,9 @@
 #pragma once
 #include "curl.h"
 
-#define CHECK_HTTP_REQUEST(http)													\
-CURL_CHECK_ERROR(http, "HTTP request not found.");									\
-CURL_CHECK_ERROR((http->curl.status != ASYNC_PENDING), "HTTP request is pending.");	\
+#define CHECK_HTTP_REQUEST(http) \
+CURL_CHECK_ERROR(!http, "HTTP request not found."); \
+CURL_CHECK_ERROR(http->curl.worker && http->curl.worker->status == ASYNC_PENDING, "HTTP request is pending.");
 
 typedef struct
 {
@@ -79,25 +79,13 @@ size_t HTTP_WriteFile(void* ptr, size_t size, size_t nmemb, void* stream);
 size_t HTTP_WriteString(void* ptr, size_t size, size_t nmemb, void* stream);
 
 /// <summary>
-/// Get request.
+/// Set the HTTP working state.
+/// </summary>
+/// <param name="state">The working state.</param>
+void HTTP_Working(qboolean state);
+
+/// <summary>
+/// Execute the async request.
 /// </summary>
 /// <param name="req">The worker request.</param>
-void HTTP_Get(uv_work_t* req);
-
-/// <summary>
-/// Get file request.
-/// </summary>
-/// <param name="req">The worker request</param>
-void HTTP_GetFile(uv_work_t* req);
-
-/// <summary>
-/// Post request.
-/// </summary>
-/// <param name="req">The worker request</param>
-void HTTP_Post(uv_work_t* req);
-
-/// <summary>
-/// Post file request.
-/// </summary>
-/// <param name="req">The worker request</param>
-void HTTP_PostFile(uv_work_t* req);
+void HTTP_Execute(uv_work_t* req);

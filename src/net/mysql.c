@@ -19,8 +19,7 @@ void GScr_MySQL_Prepare()
 	CHECK_MYSQL_WORKING();
 	CHECK_MYSQL_INSTANCE(mysql->handle);
 
-	mysql_handler.working = qtrue;
-
+	MySQL_Working(qtrue);
 	MySQL_Free_Result(mysql);
 	MySQL_Free_Statement(mysql);
 
@@ -108,8 +107,7 @@ void GScr_MySQL_Execute()
 	CHECK_MYSQL_INSTANCE(mysql->handle);
 	CHECK_MYSQL_STMT(mysql->stmt);
 
-	mysql->status = ASYNC_PENDING;
-	Plugin_AsyncCall(mysql, &MySQL_Execute, &Plugin_AsyncNull);
+	mysql->worker = Plugin_AsyncWorker(asyncHandler, mysql, &MySQL_Execute, NULL);
 
 	Plugin_Scr_AddBool(qtrue);
 }
@@ -357,10 +355,9 @@ void GScr_MySQL_Query()
 
 	MySQL_Free_Result(mysql);
 
-	mysql->status = ASYNC_PENDING;
-	mysql_handler.working = qtrue;
-	Plugin_AsyncCall(mysql, &MySQL_Query, &Plugin_AsyncNull);
+	mysql->worker = Plugin_AsyncWorker(asyncHandler, mysql, &MySQL_Query, NULL);
 
+	MySQL_Working(qtrue);
 	Plugin_Scr_AddInt((int)mysql);
 }
 
@@ -387,13 +384,13 @@ void GScr_MySQL_Connect()
 	mysql_options(mysql_handler.handle, MYSQL_OPT_RECONNECT, &reconnect);
 
 	if (!mysql_real_connect(mysql_handler.handle,	/* MYSQL structure to use */
-		Plugin_Scr_GetString(0),  			/* server hostname or IP address */
-		Plugin_Scr_GetString(2),  			/* handle user */
-		Plugin_Scr_GetString(3),  			/* password */
-		NULL,  								/* default database to use, NULL for none */
-		Plugin_Scr_GetInt(1),     			/* port number, 0 for default */
-		NULL,  								/* socket file or named pipe name */
-		0 									/* connection flags */
+		Plugin_Scr_GetString(0),  					/* server hostname or IP address */
+		Plugin_Scr_GetString(2),  					/* handle user */
+		Plugin_Scr_GetString(3),  					/* password */
+		NULL,  										/* default database to use, NULL for none */
+		Plugin_Scr_GetInt(1),     					/* port number, 0 for default */
+		NULL,  										/* socket file or named pipe name */
+		0 											/* connection flags */
 	))
 	{
 		// Close previous connection
@@ -424,13 +421,9 @@ void GScr_MySQL_Free()
 
 	CHECK_MYSQL_REQUEST(mysql);
 
-	if (mysql)
-	{
-		free(mysql);
-		mysql = NULL;
-	}
-	mysql_handler.working = qfalse;
+	free(mysql);
 
+	MySQL_Working(qfalse);
 	Plugin_Scr_AddBool(qtrue);
 }
 
@@ -631,58 +624,65 @@ int MySQL_TypeToGSC(enum_field_types type)
 	}
 }
 
+void MySQL_Working(qboolean state)
+{
+	mysql_handler.working = state;
+}
+
 void MySQL_Query(uv_work_t* req)
 {
-	MYSQL_REQUEST* mysql = (MYSQL_REQUEST*)req->data;
+	async_worker* worker = (async_worker*)req->data;
+	MYSQL_REQUEST* mysql = (MYSQL_REQUEST*)worker->data;
 
 	if (mysql_query(mysql->handle, mysql->query))
 	{
-		Sys_PrintF("SQL_Query(): Query failed: %s\n", mysql_error(mysql->handle));
-		mysql->status = ASYNC_FAILURE;
+		Sys_PrintF("SQL_Query(): Query failed\n");
+		Plugin_AsyncWorkerDone(req, ASYNC_FAILURE);
 		return;
 	}
 
 	mysql->result = mysql_store_result(mysql->handle);
-	mysql->status = ASYNC_SUCCESSFUL;
+	Plugin_AsyncWorkerDone(req, ASYNC_SUCCESSFUL);
 }
 
 void MySQL_Execute(uv_work_t* req)
 {
-	MYSQL_REQUEST* mysql = (MYSQL_REQUEST*)req->data;
+	async_worker* worker = (async_worker*)req->data;
+	MYSQL_REQUEST* mysql = (MYSQL_REQUEST*)worker->data;
 
 	// Bind params
 	if (mysql->bindsLength && mysql_stmt_bind_param(mysql->stmt, mysql->binds))
 	{
-		Sys_PrintF("SQL_Execute(): Bind statement failed: %s", mysql_stmt_error(mysql->stmt));
-		mysql->status = ASYNC_FAILURE;
+		Sys_PrintF("SQL_Execute(): Bind statement failed\n");
+		Plugin_AsyncWorkerDone(req, ASYNC_FAILURE);
 		return;
 	}
 
 	// Bind results
 	if (mysql->bindsResultLength && mysql_stmt_bind_result(mysql->stmt, mysql->bindsResult))
 	{
-		Sys_PrintF("SQL_Execute(): Bind result statement failed: %s", mysql_stmt_error(mysql->stmt));
-		mysql->status = ASYNC_FAILURE;
+		Sys_PrintF("SQL_Execute(): Bind result statement failed\n");
+		Plugin_AsyncWorkerDone(req, ASYNC_FAILURE);
 		return;
 	}
 
 	// Execute statement
 	if (mysql_stmt_execute(mysql->stmt))
 	{
-		Sys_PrintF("SQL_Execute(): Execute statement failed: %s", mysql_stmt_error(mysql->stmt));
-		mysql->status = ASYNC_FAILURE;
+		Sys_PrintF("SQL_Execute(): Execute statement failed\n");
+		Plugin_AsyncWorkerDone(req, ASYNC_FAILURE);
 		return;
 	}
 
 	// Result
 	if (mysql_stmt_store_result(mysql->stmt))
 	{
-		Sys_PrintF("SQL_Execute(): Store result failed: %s", mysql_stmt_error(mysql->stmt));
-		mysql->status = ASYNC_FAILURE;
+		Sys_PrintF("SQL_Execute(): Store result failed\n");
+		Plugin_AsyncWorkerDone(req, ASYNC_FAILURE);
 		return;
 	}
 	mysql->resultStmt = mysql_stmt_result_metadata(mysql->stmt);
-	mysql->status = ASYNC_SUCCESSFUL;
+	Plugin_AsyncWorkerDone(req, ASYNC_SUCCESSFUL);
 }
 
 void MySQL_Free_Statement(MYSQL_REQUEST *mysql)
@@ -704,8 +704,8 @@ void MySQL_Free_Result(MYSQL_REQUEST* mysql)
 	}
 	if (mysql->result)
 	{
-		/*mysql_free_result(mysql->result);
-		mysql->result = NULL;*/
+		mysql_free_result(mysql->result);
+		mysql->result = NULL;
 	}
 	if (mysql->binds)
 	{

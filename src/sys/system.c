@@ -6,6 +6,9 @@
 #include <stdlib.h>
 #include <stdarg.h>
 
+critical_sections sections = { 0 };
+async_handler* asyncHandler = NULL;
+
 void GScr_System()
 {
 	CHECK_PARAMS(1, "Usage: System(<command>)");
@@ -44,17 +47,104 @@ void GScr_SysPrintLn()
 	Scr_PrintF(qtrue, &Sys_PrintF);
 }
 
+void GScr_CriticalSection()
+{
+	CHECK_PARAMS(1, "Usage: CriticalSection(<name>)");
+
+	const char* name = Plugin_Scr_GetString(0);
+	for (int i = 0; i < sections.length; i++)
+	{
+		if (!strcmp(name, sections.list[i].id))
+			return;
+	}
+	sections.list = !sections.list
+		? (critical_section*)malloc(sizeof(critical_section))
+		: (critical_section*)realloc(sections.list, (sections.length + 1) * sizeof(critical_section));
+	
+	critical_section* section = &sections.list[sections.length++];
+	strcpy(section->id, name);
+	section->locked = qfalse;
+}
+
+void GScr_CriticalSections()
+{
+	CHECK_PARAMS(0, "Usage: CriticalSections()");
+
+	if (!sections.length)
+		return;
+
+	Plugin_Scr_MakeArray();
+	for (int i = 0; i < sections.length; i++)
+	{
+		critical_section* section = &sections.list[i];
+		Plugin_Scr_AddInt(section->locked);
+		Plugin_Scr_AddArrayStringIndexed(Plugin_Scr_AllocString(section->id));
+	}
+}
+
+void GScr_EnterCriticalSection()
+{
+	CHECK_PARAMS(1, "Usage: EnterCriticalSection(<name>)");
+
+	critical_section* section = NULL;
+	const char* name = Plugin_Scr_GetString(0);
+
+	for (int i = 0; i < sections.length; i++)
+	{
+		if (!strcmp(name, sections.list[i].id))
+		{
+			section = &sections.list[i];
+			break;
+		}
+	}
+	if (!section)
+	{
+		Plugin_Scr_Error(fmt("MutexAcquire(): section %s not found.", name));
+		return;
+	}
+	if (!section->locked)
+	{
+		section->locked = qtrue;
+		Plugin_Scr_AddBool(qtrue);
+		return;
+	}
+	Plugin_Scr_AddBool(qfalse);
+}
+
+void GScr_LeaveCriticalSection()
+{
+	CHECK_PARAMS(1, "Usage: LeaveCriticalSection(<name>)");
+
+	critical_section* section = NULL;
+	const char* name = Plugin_Scr_GetString(0);
+
+	for (int i = 0; i < sections.length; i++)
+	{
+		if (!strcmp(name, sections.list[i].id))
+		{
+			section = &sections.list[i];
+			break;
+		}
+	}
+	if (!section)
+	{
+		Plugin_Scr_Error(fmt("LeaveCriticalSection(): section %s not found.", name));
+		return;
+	}
+	section->locked = qfalse;
+}
+
 void GScr_AsyncStatus()
 {
 	CHECK_PARAMS(1, "Usage: Async_Status(<request>)");
 
-	void *request = (void *)Plugin_Scr_GetInt(0);
-	if (!request)
+	async_worker** worker = (async_worker**)Plugin_Scr_GetInt(0);
+	if (!worker || !(*worker))
 	{
 		Plugin_Scr_AddInt(0);
 		return;
 	}
-	Plugin_Scr_AddInt(*(async_status *)request);
+	Plugin_Scr_AddInt((*worker)->status);
 }
 
 void GScr_IsWindows()
@@ -169,4 +259,25 @@ void Sys_AnsiColorPrint(const char* msg, void (*print)(const char*, ...))
 		buffer[length] = '\0';
 		print(buffer);
 	}
+}
+
+void ShutdownCriticalSections()
+{
+	if (sections.list)
+	{
+		free(sections.list);
+		sections.list = NULL;
+		sections.length = 0;
+	}
+}
+
+void AsyncHandlerRestart()
+{
+	Plugin_AsyncShutdown(asyncHandler);
+	asyncHandler = Plugin_AsyncInit();
+}
+
+void AsyncHandlerShutdown()
+{
+	Plugin_AsyncShutdown(asyncHandler);
 }

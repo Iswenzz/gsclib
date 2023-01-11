@@ -1,18 +1,18 @@
 # MySQL
 
-### WARNING: **Requests are not thread safe, you'll need your own scripts in GSC to handle one request at a time !**
+### WARNING: **Requests are not thread safe. Use critical sections when needed**
 
 ## Example
 ```c
+critical_enter("mysql");
+
 request = SQL_Prepare("SELECT name, guid, rank FROM speedrun_ranks WHERE name = ?");
 SQL_BindParam(request, "Iswenzz", level.MYSQL_TYPE_VAR_STRING);
 SQL_BindResult(request, level.MYSQL_TYPE_VAR_STRING, 60);
 SQL_BindResult(request, level.MYSQL_TYPE_VAR_STRING, 60);
 SQL_BindResult(request, level.MYSQL_TYPE_LONG);
 SQL_Execute(request);
-
-while (AsyncStatus(request) <= 1)
-	wait 0.05;
+status = AsyncWait(request);
 
 rows = SQL_FetchRowsDict(request);
 for (i = 0; i < rows.size; i++)
@@ -23,7 +23,10 @@ for (i = 0; i < rows.size; i++)
 	rank = row["rank"];
 }
 SQL_Free(request);
+
+critical_leave("mysql");
 ```
+**The example above use GSC functions defined in [critical.md](https://github.com/Iswenzz/gsclib/blob/master/docs/critical.md)**
 
 ### MySQL types for prepared statement:
 ```c

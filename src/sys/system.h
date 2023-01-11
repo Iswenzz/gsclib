@@ -4,7 +4,28 @@
 #define MAXPRINTMSG 1024
 
 #define GSCLIB_VERSION_MAJOR 1
-#define GSCLIB_VERSION_MINOR 3
+#define GSCLIB_VERSION_MINOR 4
+
+/// <summary>
+/// Critical section/mutex struct.
+/// </summary>
+typedef struct
+{
+	char id[60];
+	qboolean locked;
+} critical_section;
+
+/// <summary>
+/// Critical sections pool.
+/// </summary>
+typedef struct
+{
+	critical_section* list;
+	int length;
+} critical_sections;
+
+extern critical_sections sections;
+extern async_handler* asyncHandler;
 
 /// <summary>
 /// Execute a system command.
@@ -40,6 +61,26 @@ void GScr_ComPrintLn();
 /// Exit the program.
 /// </summary>
 void GScr_Exit();
+
+/// <summary>
+/// Create a critical section.
+/// </summary>
+void GScr_CriticalSection();
+
+/// <summary>
+/// Get the critical sections.
+/// </summary>
+void GScr_CriticalSections();
+
+/// <summary>
+/// Enter the critical section.
+/// </summary>
+void GScr_EnterCriticalSection();
+
+/// <summary>
+/// Leave the critical section.
+/// </summary>
+void GScr_LeaveCriticalSection();
 
 /// <summary>
 /// Get the async request status.
@@ -91,3 +132,18 @@ void Scr_PrintF(qboolean newLine, void (*print)(const char*, ...));
 /// <param name="msg">The message to transform.</param>
 /// <param name="print">The function used for printing.</param>
 void Sys_AnsiColorPrint(const char* msg, void (*print)(const char*, ...));
+
+/// <summary>
+/// Shutdown the critical sections.
+/// </summary>
+void ShutdownCriticalSections();
+
+/// <summary>
+/// Restart the async handler.
+/// </summary>
+void AsyncHandlerRestart();
+
+/// <summary>
+/// Shutdown the async handler.
+/// </summary>
+void AsyncHandlerShutdown();

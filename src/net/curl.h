@@ -8,18 +8,18 @@
 #include <stdlib.h>
 
 #define CURL_CHECK_ERROR(x, msg)	\
-if (!x)								\
+if (x)								\
 {									\
 	Plugin_Scr_Error(msg);			\
 	return;							\
 }
 
-#define CHECK_CURL_REQUEST(curl)												\
-CURL_CHECK_ERROR(curl, "CURL request not found.");								\
-CURL_CHECK_ERROR((curl->status != ASYNC_PENDING), "CURL request is pending.");	\
+#define CHECK_CURL_REQUEST(curl) \
+CURL_CHECK_ERROR(!curl, "CURL request not found."); \
+CURL_CHECK_ERROR(curl->worker && curl->worker->status == ASYNC_PENDING, "CURL request is pending.");
 
 #define CHECK_CURL_WORKING() \
-CURL_CHECK_ERROR(!curl_handler.working, "CURL is processing another request.");
+CURL_CHECK_ERROR(curl_handler.working, "CURL is processing another request.");
 
 typedef struct
 {
@@ -36,8 +36,9 @@ typedef struct
 
 typedef struct
 {
-	async_status status;
+	async_worker* worker;
 	CURL* handle;
+	CURLM* multiHandle;
 	struct curl_slist* header;
 	int optsCount;
 	CURL_OPTS opts[512];
@@ -79,6 +80,12 @@ void GScr_CURL_AddOpt();
 /// Free a CURL request.
 /// </summary>
 void GScr_CURL_Free();
+
+/// <summary>
+/// Set the CURL working state.
+/// </summary>
+/// <param name="state">The working state.</param>
+void CURL_Working(qboolean state);
 
 /// <summary>
 /// Set the options that has been set in the CURL_REQUEST struct.
