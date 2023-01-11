@@ -13,7 +13,7 @@ FTP_Free(request);
 
 critical_leave("ftp");
 ```
-**The example above use GSC functions defined in [critical.md](https://github.com/Iswenzz/gsclib/blob/master/docs/critical.md)**
+**The example above use GSC functions defined in [Critical Sections](https://github.com/Iswenzz/gsclib/blob/master/docs/critical.md)**
 
 #### ``SFTP_Connect(<host>, <user>, <password>, <port>)``
 Connect to an SFTP server, the connection can be closed with FTP_Close.

@@ -19,7 +19,7 @@ HTTP_Free(request);
 
 critical_leave("http");
 ```
-**The example above use GSC functions defined in [critical.md](https://github.com/Iswenzz/gsclib/blob/master/docs/critical.md)**
+**The example above use GSC functions defined in [Critical Sections](https://github.com/Iswenzz/gsclib/blob/master/docs/critical.md)**
 
 #### ``HTTP_Init()``
 Initialize an HTTP request.

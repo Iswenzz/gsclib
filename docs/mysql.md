@@ -26,7 +26,7 @@ SQL_Free(request);
 
 critical_leave("mysql");
 ```
-**The example above use GSC functions defined in [critical.md](https://github.com/Iswenzz/gsclib/blob/master/docs/critical.md)**
+**The example above use GSC functions defined in [Critical Sections](https://github.com/Iswenzz/gsclib/blob/master/docs/critical.md)**
 
 ### MySQL types for prepared statement:
 ```c
