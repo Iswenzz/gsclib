@@ -480,7 +480,7 @@ qboolean Scr_MySQL_FetchStatementRow(MYSQL_REQUEST* mysql, qboolean stringIndexe
 		}
 
 		// Add the value to an array
-		if (Plugin_CGSC_SupportIndexedString() && stringIndexed)
+		if (stringIndexed)
 			Plugin_Scr_AddArrayStringIndexed(Plugin_Scr_AllocString(field->name));
 		else
 			Plugin_Scr_AddArray();
@@ -529,7 +529,7 @@ qboolean Scr_MySQL_FetchQueryRow(MYSQL_REQUEST* mysql, qboolean stringIndexed)
 			Plugin_Scr_AddString(row[i]);
 
 		// Add the value to an array
-		if (Plugin_CGSC_SupportIndexedString() && stringIndexed)
+		if (stringIndexed)
 			Plugin_Scr_AddArrayStringIndexed(Plugin_Scr_AllocString(field->name));
 		else
 			Plugin_Scr_AddArray();

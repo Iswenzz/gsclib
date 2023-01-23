@@ -44,9 +44,10 @@ void GScr_GetType()
 				case VAR_ARRAY: 	Plugin_Scr_AddString("ARRAY"); 				break;
 				case VAR_OBJECT:	Plugin_Scr_AddString("OBJECT"); 			break;
 				case VAR_ENTITY:	Plugin_Scr_AddString("ENTITY"); 			break;
+				case VAR_UNDEFINED:
+				default:			Plugin_Scr_AddString("UNDEFINED");			break;
 			}
 			break;
-		case VAR_UNDEFINED: 		Plugin_Scr_AddString("UNDEFINED"); 			break;
 		case VAR_STRING: 			Plugin_Scr_AddString("STRING");  			break;
 		case VAR_ISTRING: 			Plugin_Scr_AddString("ISTRING");  			break;
 		case VAR_VECTOR: 			Plugin_Scr_AddString("VECTOR");  			break;
@@ -71,6 +72,8 @@ void GScr_GetType()
 		case VAR_COUNT: 			Plugin_Scr_AddString("COUNT"); 				break;
 		case VAR_THREAD_LIST: 		Plugin_Scr_AddString("THREAD_LIST"); 		break;
 		case VAR_ENDON_LIST: 		Plugin_Scr_AddString("ENDON_LIST");  		break;
+		case VAR_UNDEFINED:
+		default:					Plugin_Scr_AddString("UNDEFINED"); 			break;
 	}
 }
 

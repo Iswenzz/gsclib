@@ -218,13 +218,9 @@ void GScr_PathJoin()
 		return;
 	}
 	char buffer[MAX_STRING_CHARS] = { 0 };
-	strcpy(buffer, Plugin_SL_ConvertToString(Plugin_Scr_SelectParam(0)->u.stringValue));
+	strcpy(buffer, Plugin_Scr_GetString(0));
 
 	for (int i = 1; i < argCount; i++)
-	{
-		int stringIndex = Plugin_Scr_SelectParam(i)->u.stringValue;
-		const char* path = Plugin_SL_ConvertToString(stringIndex);
-		cwk_path_join(buffer, path, buffer, sizeof(buffer));
-	}
+		cwk_path_join(buffer, Plugin_Scr_GetString(i), buffer, sizeof(buffer));
 	Plugin_Scr_AddString(buffer);
 }
