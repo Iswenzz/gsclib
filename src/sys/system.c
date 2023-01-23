@@ -60,7 +60,7 @@ void GScr_CriticalSection()
 	sections.list = !sections.list
 		? (critical_section*)malloc(sizeof(critical_section))
 		: (critical_section*)realloc(sections.list, (sections.length + 1) * sizeof(critical_section));
-	
+
 	critical_section* section = &sections.list[sections.length++];
 	strcpy(section->id, name);
 	section->locked = qfalse;
@@ -99,7 +99,7 @@ void GScr_EnterCriticalSection()
 	}
 	if (!section)
 	{
-		Plugin_Scr_Error(fmt("MutexAcquire(): section %s not found.", name));
+		Plugin_Scr_Error(fmt("EnterCriticalSection(): section %s not found.", name));
 		return;
 	}
 	if (!section->locked)
@@ -136,7 +136,7 @@ void GScr_LeaveCriticalSection()
 
 void GScr_AsyncStatus()
 {
-	CHECK_PARAMS(1, "Usage: Async_Status(<request>)");
+	CHECK_PARAMS(1, "Usage: AsyncStatus(<request>)");
 
 	async_worker** worker = (async_worker**)Plugin_Scr_GetInt(0);
 	if (!worker || !(*worker))
