@@ -99,7 +99,7 @@ void GScr_EnterCriticalSection()
 	}
 	if (!section)
 	{
-		Plugin_Scr_Error(fmt("EnterCriticalSection(): section %s not found.", name));
+		Plugin_Scr_AddBool(qfalse);
 		return;
 	}
 	if (!section->locked)
