@@ -19,7 +19,23 @@
 #include "utils/player.h"
 
 #define FUNCTION(name, function) Plugin_ScrReplaceFunction(name, function)
-#define METHOD(name, function)	Plugin_ScrReplaceMethod(name, function)
+#define METHOD(name, function) Plugin_ScrReplaceMethod(name, function)
+
+/// <summary>
+/// Init gsclib library.
+/// </summary>
+void Init()
+{
+	Plugin_Printf("[GSCLIB] Initialize\n");
+
+	AsyncHandlerRestart();
+	ShutdownCriticalSections();
+
+	MySQL_Working(qfalse);
+	HTTP_Working(qfalse);
+	FTP_Working(qfalse);
+	CURL_Working(qfalse);
+}
 
 /// <summary>
 /// Plugin initialization.
@@ -29,6 +45,9 @@ PCL int OnInit()
 {
 	curl_handler.code = curl_global_init(CURL_GLOBAL_ALL);
 	mysql_handler.code = mysql_library_init(0, NULL, NULL);
+
+	// gsclib
+	FUNCTION("gsclib_init",				&Init);
 
 	// data/file
 	FUNCTION("file_create",				&GScr_FILE_Create);
@@ -209,30 +228,6 @@ PCL int OnInit()
 	METHOD("weaponflags",				&GScr_WeaponFlags);
 
 	return 0;
-}
-
-/// <summary>
-/// Pre fast restart callback.
-/// </summary>
-/// <returns></returns>
-PCL void OnPreFastRestart()
-{
-	OnExitLevel();
-}
-
-/// <summary>
-/// Exit level callback.
-/// </summary>
-/// <returns></returns>
-PCL void OnExitLevel()
-{
-	AsyncHandlerRestart();
-	ShutdownCriticalSections();
-
-	MySQL_Working(qfalse);
-	HTTP_Working(qfalse);
-	FTP_Working(qfalse);
-	CURL_Working(qfalse);
 }
 
 /// <summary>

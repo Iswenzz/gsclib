@@ -4,7 +4,7 @@
 #define MAXPRINTMSG 1024
 
 #define GSCLIB_VERSION_MAJOR 1
-#define GSCLIB_VERSION_MINOR 4
+#define GSCLIB_VERSION_MINOR 5
 
 /// <summary>
 /// Critical section/mutex struct.

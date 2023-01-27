@@ -21,11 +21,21 @@
 * [Math](https://github.com/Iswenzz/gsclib/blob/master/docs/math.md)
 
 ## Instructions
-In order to use this library, just download the archived file down below, and extract it to the Call of Duty 4X ``plugins/gsclib`` directory.
+In order to use this library, you'll need to compile the binary and place it to the CoD4 ``plugins`` directory.
+Then you can simply use ``loadplugin gsclib`` in your ``server.cfg`` or as CLI arguments.
+
+To initialize gsclib library you need to call ``GSCLIB_Init()`` at the start of your mod entry point.
+
+```c
+main()
+{
+	GSCLIB_Init();
+}
+```
 
 ## Building (Linux)
 _Pre-Requisites:_
-1. Edit plugin_handle.h then recompile the server with an empty obj directory:
+1. Edit plugin_handler.h then recompile the server with an empty obj directory:
 ```c
 #define MAX_SCRIPTFUNCTIONS 256
 ```

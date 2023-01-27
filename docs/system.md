@@ -1,5 +1,16 @@
 # System
 
+#### ``GSCLIB_Init()``
+Initialize gsclib library, this should be called at the start of your mod entry point.
+
+```c
+main()
+{
+	GSCLIB_Init();
+}
+```
+<hr>
+
 #### ``System(<command>)``
 Execute a system command.
 
