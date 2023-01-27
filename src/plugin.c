@@ -24,7 +24,7 @@
 /// <summary>
 /// Init gsclib library.
 /// </summary>
-void Init()
+void GScr_GSCLIB_Init()
 {
 	Plugin_Printf("[GSCLIB] Initialize\n");
 
@@ -47,7 +47,7 @@ PCL int OnInit()
 	mysql_handler.code = mysql_library_init(0, NULL, NULL);
 
 	// gsclib
-	FUNCTION("gsclib_init",				&Init);
+	FUNCTION("gsclib_init",				&GScr_GSCLIB_Init);
 
 	// data/file
 	FUNCTION("file_create",				&GScr_FILE_Create);
