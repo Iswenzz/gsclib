@@ -273,11 +273,13 @@ void ShutdownCriticalSections()
 
 void AsyncHandlerRestart()
 {
-	Plugin_AsyncShutdown(asyncHandler);
+	AsyncHandlerShutdown();
 	asyncHandler = Plugin_AsyncInit();
 }
 
 void AsyncHandlerShutdown()
 {
+	Plugin_Printf("[GSCLIB] Shutting down all async tasks...\n");
+
 	Plugin_AsyncShutdown(asyncHandler);
 }
