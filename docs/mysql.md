@@ -91,7 +91,7 @@ SQL_Close();
 Free a MySQL Request, this must be called after being done with the query/prepare request.
 
 ```c
-SQL_Close(request);
+SQL_Free(request);
 ```
 <hr>
 
