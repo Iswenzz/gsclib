@@ -15,6 +15,8 @@ jobs:
 
     - name: Conan
       uses: turtlebrowser/get-conan@main
+      with:
+        version: 1.60.2
 
     - name: NASM
       uses: ilammy/setup-nasm@v1

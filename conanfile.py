@@ -15,8 +15,8 @@ class gsclib(ConanFile):
 		"libcurl/7.80.0",
 		"libzip/1.8.0",
 		"pcre2/10.39",
-		"openssl/1.1.1m",
-		"zlib/1.2.12"
+		"openssl/1.1.1u",
+		"zlib/1.2.12",
 	)
 	build_requires = "greatest/1.5.0"
 	settings = "os", "arch", "compiler", "build_type"
