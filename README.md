@@ -64,7 +64,6 @@ _Pre-Requisites:_
 _Build Command:_
 
     scripts/build_libcom.bat
-	conan remote add iswenzz-conan https://iswenzz.jfrog.io/artifactory/api/conan/iswenzz-conan
 	mkdir build && cd build
 	conan install .. --build missing --profile ../.conan/windows.conf
 	cmake .. -A Win32 -T ClangCL
