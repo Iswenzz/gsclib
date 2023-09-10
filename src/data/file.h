@@ -15,8 +15,8 @@
 #endif
 
 #ifdef _WIN32
+	#include <windows.h>
 	#include <shellapi.h>
-	#define stat _stat64
 #else
 	#include <ftw.h>
 	#include <unistd.h>

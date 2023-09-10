@@ -31,7 +31,7 @@ typedef struct
 	qboolean working;
 } MYSQL_HANDLER;
 
-typedef struct 
+typedef struct
 {
 	async_worker *worker;
 	MYSQL *handle;
@@ -143,7 +143,7 @@ void GScr_MySQL_FetchRowsDict();
 void GScr_MySQL_FetchFields();
 
 /// <summary>
-/// Prepends backslashes to the following characters: \x00 , \n , \r , \ , ' , " and \x1a. 
+/// Prepends backslashes to the following characters: \x00 , \n , \r , \ , ' , " and \x1a.
 /// This function must always(with few exceptions) be used to make data safe before sending a query to MySQL.
 /// </summary>
 void GScr_MySQL_EscapeString();
@@ -212,7 +212,7 @@ void MySQL_Free_Statement(MYSQL_REQUEST* mysql);
 /// </summary>
 /// <param name="type">The MySQL type.</param>
 /// <returns>The GSC variable type.</returns>
-int MySQL_TypeToGSC(enum_field_types type);
+int MySQL_TypeToGSC(enum enum_field_types type);
 
 /// <summary>
 /// Generic bind for a prepare statement.
@@ -221,7 +221,7 @@ int MySQL_TypeToGSC(enum_field_types type);
 /// <param name="value">The param bind value or NULL for a result bind.</param>
 /// <param name="valueLength">The length of the string to allocate (0 for other types).</param>
 /// <param name="type">The MySQL type to bind.</param>
-void MySQL_PrepareBindBuffer(MYSQL_BIND* b, void* value, int valueLength, enum_field_types type);
+void MySQL_PrepareBindBuffer(MYSQL_BIND* b, void* value, int valueLength, enum enum_field_types type);
 
 /// <summary>
 /// Set the MySQL working state.

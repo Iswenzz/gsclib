@@ -40,14 +40,12 @@ _Pre-Requisites:_
 #define MAX_SCRIPTFUNCTIONS 256
 ```
 2. [CGSC](https://github.com/Iswenzz/CGSC) and it's pre-requisites.
-3. [CMake](https://cmake.org/) and [Conan](https://conan.io/).
+3. [CMake](https://cmake.org/) and [vcpkg](https://vcpkg.io/en/).
 
 _Build Command:_
 
-   	conan remote add iswenzz-conan https://iswenzz.jfrog.io/artifactory/api/conan/iswenzz-conan
 	mkdir build && cd build
-	conan install .. --build missing --profile:host ../.conan/linux_host.conf --profile:build ../.conan/linux_build.conf
-	cmake ..
+	cmake .. -DCMAKE_TOOLCHAIN_FILE=.vcpkg/linux.cmake
 	cmake --build .
 
 ## Building (Windows)
@@ -57,7 +55,7 @@ _Pre-Requisites:_
 #define MAX_SCRIPTFUNCTIONS 256
 ```
 2. [CGSC](https://github.com/Iswenzz/CGSC) and it's pre-requisites.
-3. [CMake](https://cmake.org/) and [Conan](https://conan.io/).
+3. [CMake](https://cmake.org/) and [vcpkg](https://vcpkg.io/en/).
 4. [Visual Studio](https://visualstudio.microsoft.com/) with [Clang](https://docs.microsoft.com/en-us/cpp/build/clang-support-msbuild?view=msvc-170) toolset.
 
 **Using the Developer Command Prompt for Visual Studio**
@@ -65,8 +63,7 @@ _Build Command:_
 
     scripts/build_libcom.bat
 	mkdir build && cd build
-	conan install .. --build missing --profile ../.conan/windows.conf
-	cmake .. -A Win32 -T ClangCL
+	cmake .. -G "MinGW Makefiles" -DCMAKE_TOOLCHAIN_FILE=.vcpkg/windows.cmake
 	cmake --build .
 
 ***Note:***

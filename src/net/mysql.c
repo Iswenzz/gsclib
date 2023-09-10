@@ -1,6 +1,8 @@
 #include "mysql.h"
 #include "sys/system.h"
 
+#include <stdlib.h>
+
 MYSQL_HANDLER mysql_handler = { 0 };
 
 void GScr_MySQL_Version()
@@ -46,7 +48,7 @@ void GScr_MySQL_BindParam()
 	CHECK_MYSQL_STMT(mysql->stmt);
 
 	VariableValue *variable = Plugin_Scr_SelectParam(1);
-	enum_field_types type = (enum_field_types)Plugin_Scr_GetInt(2);
+	enum enum_field_types type = (enum enum_field_types)Plugin_Scr_GetInt(2);
 
 	mysql->binds = !mysql->binds
 		? (MYSQL_BIND*)malloc(sizeof(MYSQL_BIND))
@@ -86,7 +88,7 @@ void GScr_MySQL_BindResult()
 	CHECK_MYSQL_INSTANCE(mysql->handle);
 	CHECK_MYSQL_STMT(mysql->stmt);
 
-	enum_field_types type = Plugin_Scr_GetInt(1);
+	enum enum_field_types type = Plugin_Scr_GetInt(1);
 	int stringLength = Plugin_Scr_GetNumParam() == 3 ? Plugin_Scr_GetInt(2) + 1 : 0;
 
 	mysql->bindsResult = !mysql->bindsResult
@@ -537,7 +539,7 @@ qboolean Scr_MySQL_FetchQueryRow(MYSQL_REQUEST* mysql, qboolean stringIndexed)
 	return qtrue;
 }
 
-void MySQL_PrepareBindBuffer(MYSQL_BIND* b, void* value, int valueLength, enum_field_types type)
+void MySQL_PrepareBindBuffer(MYSQL_BIND* b, void* value, int valueLength, enum enum_field_types type)
 {
 	memset(b, 0, sizeof(MYSQL_BIND));
 	b->buffer_type = type;
@@ -578,23 +580,19 @@ void MySQL_PrepareBindBuffer(MYSQL_BIND* b, void* value, int valueLength, enum_f
 	}
 }
 
-int MySQL_TypeToGSC(enum_field_types type)
+int MySQL_TypeToGSC(enum enum_field_types type)
 {
 	switch (type)
 	{
 	case MYSQL_TYPE_STRING:
 	case MYSQL_TYPE_VAR_STRING:
 	case MYSQL_TYPE_VARCHAR:
-	case MYSQL_TYPE_JSON:
 	case MYSQL_TYPE_GEOMETRY:
 	case MYSQL_TYPE_BLOB:
 	case MYSQL_TYPE_LONG_BLOB:
 	case MYSQL_TYPE_MEDIUM_BLOB:
 	case MYSQL_TYPE_TINY_BLOB:
 	case MYSQL_TYPE_SET:
-	case MYSQL_TYPE_TIME2:
-	case MYSQL_TYPE_DATETIME2:
-	case MYSQL_TYPE_TIMESTAMP2:
 	case MYSQL_TYPE_NEWDATE:
 	case MYSQL_TYPE_YEAR:
 	case MYSQL_TYPE_DATETIME:

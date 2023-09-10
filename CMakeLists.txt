@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.16.0)
-project(gsclib VERSION 1.5.0 LANGUAGES C)
+project(gsclib VERSION 1.5.1 LANGUAGES C)
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 set(CMAKE_C_STANDARD 11)
 set(CMAKE_C_STANDARD_REQUIRED ON)
@@ -15,31 +15,41 @@ set(CPACK_PROJECT_VERSION ${PROJECT_VERSION})
 set(CPACK_GENERATOR 7Z)
 include(CPack)
 
-# Conan
-include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
-conan_basic_setup()
+# Dependencies
+set(LIBMARIADB_LIBRARY ${VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/lib/mariadb/libmariadbclient.a)
+set(LIBMARIADB_INCLUDE_DIRS ${VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/include/mariadb)
+set(PCRE2_LIBRARY ${VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/lib/libpcre2-8.a)
+find_package(CURL CONFIG REQUIRED)
+find_package(Cwalk CONFIG REQUIRED)
+find_package(libzip CONFIG REQUIRED)
+find_path(CGSC_INCLUDE_DIRS "CGSC/cgsc.h")
 
 # Tests
-include(CTest)
-add_executable(gsclib.Tests)
-add_dependencies(gsclib.Tests gsclib.Static)
-target_link_libraries(gsclib.Tests PUBLIC ${CONAN_LIBS} gsclib.Static)
-add_test(NAME Tests COMMAND gsclib.Tests)
+if(BUILD_TESTING)
+	include(CTest)
+	add_executable(gsclib.Tests)
+	find_path(GREATEST_INCLUDE_DIRS "greatest.h")
+	target_link_libraries(gsclib.Tests PRIVATE gsclib.Static)
+	target_include_directories(gsclib.Tests PRIVATE .. ${GREATEST_INCLUDE_DIRS})
+	add_test(NAME Tests COMMAND gsclib.Tests)
+endif()
 
 # Build
 add_subdirectory(src)
-target_include_directories(gsclib PUBLIC ..)
+target_include_directories(gsclib PUBLIC .. ${CGSC_INCLUDE_DIRS} ${LIBMARIADB_INCLUDE_DIRS})
 target_link_directories(gsclib PUBLIC ..)
 
-if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
-	target_link_libraries(gsclib PUBLIC ${CONAN_LIBS} libcom_plugin)
-else()
-	target_link_libraries(gsclib PUBLIC ${CONAN_LIBS})
-endif()
+target_link_libraries(gsclib PUBLIC
+	$<$<STREQUAL:${CMAKE_SYSTEM_NAME},Windows>:libcom_plugin>
+	CURL::libcurl
+	cwalk
+	libzip::zip
+	${LIBMARIADB_LIBRARY}
+	${PCRE2_LIBRARY})
 
-target_include_directories(gsclib.Static PUBLIC ..)
-target_link_directories(gsclib.Static PUBLIC ..)
-target_link_libraries(gsclib.Static PUBLIC ${CONAN_LIBS})
+target_include_directories(gsclib.Static PRIVATE .. ${CGSC_INCLUDE_DIRS} ${LIBMARIADB_INCLUDE_DIRS})
+target_link_directories(gsclib.Static PRIVATE ..)
+target_link_libraries(gsclib.Static PRIVATE gsclib)
 
 # Pack
 install(TARGETS gsclib LIBRARY DESTINATION lib)
