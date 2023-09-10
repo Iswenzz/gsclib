@@ -51,7 +51,6 @@ target_include_directories(gsclib.Static PRIVATE .. ${CGSC_INCLUDE_DIRS} ${LIBMA
 target_link_directories(gsclib.Static PRIVATE ..)
 target_link_libraries(gsclib.Static PRIVATE gsclib)
 
-# Pack
+# Install
 install(TARGETS gsclib LIBRARY DESTINATION lib)
-install(DIRECTORY src/ DESTINATION lib/include/gsclib
-    FILES_MATCHING PATTERN "*.h" PATTERN "__test__" EXCLUDE)
+install(DIRECTORY src/ DESTINATION include/gsclib FILES_MATCHING PATTERN "*.h" PATTERN "__test__" EXCLUDE)
