@@ -33,14 +33,16 @@ main()
 }
 ```
 
-## Building (Linux)
-_Pre-Requisites:_
-1. Edit plugin_handler.h then recompile the server with an empty obj directory:
+## Server
+1. Edit plugin_handler.h then recompile the server with a clean obj directory:
 ```c
 #define MAX_SCRIPTFUNCTIONS 256
 ```
-2. [CGSC](https://github.com/Iswenzz/CGSC) and it's pre-requisites.
-3. [CMake](https://cmake.org/) and [vcpkg](https://vcpkg.io/en/).
+
+## Building (Linux)
+_Pre-Requisites:_
+1. [CGSC](https://github.com/Iswenzz/CGSC) and it's pre-requisites.
+2. [CMake](https://cmake.org/) and [vcpkg](https://vcpkg.io/en/).
 
 _Build Command:_
 
@@ -50,13 +52,8 @@ _Build Command:_
 
 ## Building (Windows)
 _Pre-Requisites:_
-1. Edit plugin_handle.h and recompile your server:
-```c
-#define MAX_SCRIPTFUNCTIONS 256
-```
-2. [CGSC](https://github.com/Iswenzz/CGSC) and it's pre-requisites.
-3. [CMake](https://cmake.org/) and [vcpkg](https://vcpkg.io/en/).
-4. [Visual Studio](https://visualstudio.microsoft.com/) with [Clang](https://docs.microsoft.com/en-us/cpp/build/clang-support-msbuild?view=msvc-170) toolset.
+1. [CGSC](https://github.com/Iswenzz/CGSC) and it's pre-requisites.
+2. [CMake](https://cmake.org/) and [vcpkg](https://vcpkg.io/en/).
 
 **Using the Developer Command Prompt for Visual Studio**
 _Build Command:_
@@ -65,9 +62,6 @@ _Build Command:_
 	mkdir build && cd build
 	cmake .. -G "MinGW Makefiles" -DCMAKE_TOOLCHAIN_FILE=.vcpkg/windows.cmake
 	cmake --build .
-
-***Note:***
-VCPKG integration need to be disabled ``vcpkg integration remove``.
 
 ## [Download](https://github.com/Iswenzz/gsclib/releases)
 
