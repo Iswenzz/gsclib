@@ -134,7 +134,7 @@ afterFTP()
 
 test_CURL_Version()
 {
-	EXPECT_EQ(CURL_Version(), "7.80.0");
+	EXPECT_EQ(CURL_Version(), "8.2.1-DEV");
 }
 
 test_CURL_HeaderCleanup()
@@ -486,7 +486,7 @@ test_SQL_ListTables()
 
 test_SQL_Version()
 {
-	EXPECT_EQ(SQL_Version(), "8.0.17");
+	EXPECT_EQ(SQL_Version(), "3.3.1");
 }
 
 AsyncWait(request)

@@ -20,7 +20,7 @@
 	"overrides": [
         { "name": "cgsc", "version": "1.2.3" },
         { "name": "cwalk", "version": "1.2.6" },
-        { "name": "libmariadb", "version": "2.3.2" },
+        { "name": "libmariadb", "version": "3.3.1" },
         { "name": "curl", "version": "8.2.1" },
         { "name": "libzip", "version": "1.9.2#2" },
         { "name": "pcre2", "version": "10.42" },

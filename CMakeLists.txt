@@ -16,9 +16,8 @@ set(CPACK_GENERATOR 7Z)
 include(CPack)
 
 # Dependencies
-set(LIBMARIADB_LIBRARY ${VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/lib/mariadb/libmariadbclient.a)
-set(LIBMARIADB_INCLUDE_DIRS ${VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/include/mariadb)
 set(PCRE2_LIBRARY ${VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/lib/libpcre2-8.a)
+find_package(unofficial-libmariadb CONFIG REQUIRED)
 find_package(CURL CONFIG REQUIRED)
 find_package(Cwalk CONFIG REQUIRED)
 find_package(libzip CONFIG REQUIRED)
@@ -36,18 +35,18 @@ endif()
 
 # Build
 add_subdirectory(src)
-target_include_directories(gsclib PUBLIC .. ${CGSC_INCLUDE_DIRS} ${LIBMARIADB_INCLUDE_DIRS})
+target_include_directories(gsclib PUBLIC .. ${CGSC_INCLUDE_DIRS})
 target_link_directories(gsclib PUBLIC ..)
 
 target_link_libraries(gsclib PUBLIC
-	$<$<STREQUAL:${CMAKE_SYSTEM_NAME},Windows>:libcom_plugin>
+	$<$<STREQUAL:${CMAKE_SYSTEM_NAME},Windows>:com_plugin>
+	unofficial::libmariadb
 	CURL::libcurl
 	cwalk
 	libzip::zip
-	${LIBMARIADB_LIBRARY}
 	${PCRE2_LIBRARY})
 
-target_include_directories(gsclib.Static PRIVATE .. ${CGSC_INCLUDE_DIRS} ${LIBMARIADB_INCLUDE_DIRS})
+target_include_directories(gsclib.Static PRIVATE .. ${CGSC_INCLUDE_DIRS})
 target_link_directories(gsclib.Static PRIVATE ..)
 target_link_libraries(gsclib.Static PRIVATE gsclib)
 

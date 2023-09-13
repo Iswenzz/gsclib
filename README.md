@@ -55,10 +55,8 @@ _Pre-Requisites:_
 1. [CGSC](https://github.com/Iswenzz/CGSC) and it's pre-requisites.
 2. [CMake](https://cmake.org/) and [vcpkg](https://vcpkg.io/en/).
 
-**Using the Developer Command Prompt for Visual Studio**
 _Build Command:_
 
-    scripts/build_libcom.bat
 	mkdir build && cd build
 	cmake .. -G "MinGW Makefiles" -DCMAKE_TOOLCHAIN_FILE=.vcpkg/windows.cmake
 	cmake --build .
