@@ -27,15 +27,15 @@ TEST test_zipClose()
 
 TEST test_zipAdd()
 {
-	ASSERT(ZIP_Add(zipFile, "conaninfo.txt", "conaninfo.txt"));
-	ASSERT(ZIP_Add(zipFile, "conaninfo.txt", "delete.txt"));
+	ASSERT(ZIP_Add(zipFile, "cmake_install.cmake", "cmake_install.cmake"));
+	ASSERT(ZIP_Add(zipFile, "cmake_install.cmake", "delete.txt"));
 	PASS();
 }
 
 TEST test_zipRename()
 {
-	ZIP_Delete(zipFile, "conaninfo_new.txt");
-	ASSERT(ZIP_Rename(zipFile, "conaninfo.txt", "conaninfo_new.txt"));
+	ZIP_Delete(zipFile, "cmake_install_new.cmake");
+	ASSERT(ZIP_Rename(zipFile, "cmake_install.cmake", "cmake_install_new.cmake"));
 	PASS();
 }
 
