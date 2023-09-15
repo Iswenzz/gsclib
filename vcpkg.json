@@ -10,20 +10,20 @@
 		}
 	},
 	"dependencies": [
-		"libmariadb",
+		{ "name": "libmariadb", "features": ["openssl"], "default-features": false },
+		{ "name": "libzip", "features": ["bzip2", "openssl"], "default-features": false },
+		{ "name": "curl", "features": ["non-http", "openssl"], "default-features": false },
 		"cgsc",
 		"cwalk",
-		"curl",
-		"libzip",
 		"pcre2"
 	],
 	"overrides": [
         { "name": "cgsc", "version": "1.2.3" },
         { "name": "cwalk", "version": "1.2.6" },
-        { "name": "libmariadb", "version": "3.3.1" },
         { "name": "curl", "version": "8.2.1" },
+        { "name": "greatest", "version": "1.5.0" },
+        { "name": "libmariadb", "version": "3.3.1" },
         { "name": "libzip", "version": "1.9.2#2" },
-        { "name": "pcre2", "version": "10.42" },
-        { "name": "greatest", "version": "1.5.0" }
+        { "name": "pcre2", "version": "10.42" }
     ]
 }

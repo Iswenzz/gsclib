@@ -137,7 +137,7 @@ PCL int OnInit()
 	FUNCTION("ftp_getfile", 			&GScr_FTP_GetFile);
 	FUNCTION("ftp_free", 				&GScr_FTP_Free);
 
-	// net/handle
+	// net/mysql
 	FUNCTION("sql_prepare", 			&GScr_MySQL_Prepare);
 	FUNCTION("sql_bindparam", 			&GScr_MySQL_BindParam);
 	FUNCTION("sql_bindresult", 			&GScr_MySQL_BindResult);
