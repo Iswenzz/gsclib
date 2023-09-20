@@ -68,4 +68,4 @@ jobs:
       working-directory: build
       run: |
         chmod +x bin/gsclib.Tests
-        ctest
+        ctest -C Release
