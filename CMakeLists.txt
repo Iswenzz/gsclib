@@ -17,53 +17,64 @@ include(CPack)
 
 # Dependencies
 find_path(CGSC_INCLUDE_DIRS "CGSC/cgsc.h")
-find_library(BZ2_LIBRARY libbz2.a)
+find_path(LIBMARIADB_INCLUDE_DIRS "mysql/mysql.h")
 find_library(CURL_LIBRARY libcurl.a)
+find_library(BZ2_LIBRARY libbz2.a)
 find_library(LIBCRYPTO_LIBRARY libcrypto.a)
+find_library(LIBMARIADB_LIBRARY libmariadb.a)
 find_library(LIBZIB_LIBRARY libzip.a)
 find_library(OPENSSL_LIBRARY libssl.a)
 find_library(PCRE2_LIBRARY libpcre2-8.a)
+find_library(ZLIB_LIBRARY NAMES libzlib.a libz.a)
 find_package(Cwalk CONFIG REQUIRED)
-find_package(libmariadb CONFIG REQUIRED)
 
-set(SYSTEM_LIBS
-    $<$<BOOL:${WIN32}>:crypt32;ws2_32;bcrypt;shlwapi>
-    $<$<BOOL:${UNIX}>:dl;rt;pthread>)
+# Includes
+string(APPEND LIBMARIADB_INCLUDE_DIRS "/mysql")
 
 # Tests
 if(BUILD_TESTING)
 	include(CTest)
+	add_library(gsclib.Lib STATIC)
 	add_executable(gsclib.Tests)
 	find_path(GREATEST_INCLUDE_DIRS "greatest.h")
-
-	target_include_directories(gsclib.Static PRIVATE gsclib)
-	target_link_libraries(gsclib.Static PRIVATE gsclib)
-	target_link_libraries(gsclib.Tests PRIVATE gsclib.Static)
-
-	target_include_directories(gsclib.Tests PRIVATE ..
-		${CGSC_INCLUDE_DIRS}
-		${GREATEST_INCLUDE_DIRS})
-
+	target_link_libraries(gsclib.Lib PUBLIC gsclib)
+	target_include_directories(gsclib.Lib PUBLIC gsclib)
+	target_link_libraries(gsclib.Tests PRIVATE gsclib.Lib)
+	target_include_directories(gsclib.Tests PRIVATE gsclib.Lib ${GREATEST_INCLUDE_DIRS})
 	add_test(NAME Tests COMMAND gsclib.Tests)
 endif()
 
 # Build
 add_subdirectory(src)
-target_link_directories(gsclib PUBLIC ..)
-target_include_directories(gsclib PUBLIC .. ${CGSC_INCLUDE_DIRS})
-set_target_properties(gsclib PROPERTIES RUNTIME_OUTPUT_DIRECTORY ../../../../bin)
+
+set_target_properties(gsclib PROPERTIES
+	LIBRARY_OUTPUT_DIRECTORY ../../../../bin
+	RUNTIME_OUTPUT_DIRECTORY ../../../../bin)
+
+target_include_directories(gsclib PUBLIC ..
+	${CGSC_INCLUDE_DIRS}
+	${LIBMARIADB_INCLUDE_DIRS})
 
 target_link_libraries(gsclib PUBLIC
 	$<$<BOOL:${WIN32}>:com_plugin>
-	libmariadb::libmariadb
 	${CURL_LIBRARY}
+	${LIBMARIADB_LIBRARY}
 	${LIBZIB_LIBRARY}
 	${BZ2_LIBRARY}
 	${OPENSSL_LIBRARY}
 	${LIBCRYPTO_LIBRARY}
 	${PCRE2_LIBRARY}
-	${SYSTEM_LIBS}
+	${ZLIB_LIBRARY}
+	$<$<BOOL:${WIN32}>:crypt32>
+	$<$<BOOL:${WIN32}>:ws2_32>
+	$<$<BOOL:${WIN32}>:bcrypt>
+	$<$<BOOL:${WIN32}>:shlwapi>
+	$<$<BOOL:${UNIX}>:dl>
+	$<$<BOOL:${UNIX}>:rt>
+	$<$<BOOL:${UNIX}>:pthread>
 	cwalk)
+
+target_link_directories(gsclib PUBLIC ..)
 
 # Install
 install(TARGETS gsclib LIBRARY DESTINATION lib)

@@ -7,13 +7,13 @@ static zip_t* zipFile;
 
 TEST test_zipVersion()
 {
-	ASSERT_STR_EQ(zip_libzip_version(), "1.8.0");
+	ASSERT_STR_EQ(zip_libzip_version(), "1.9.2");
 	PASS();
 }
 
 TEST test_zipOpen()
 {
-	zipFile = ZIP_Open("bin/test.zip");
+	zipFile = ZIP_Open("test.zip");
 
 	ASSERT(zipFile);
 	PASS();
