@@ -29,20 +29,18 @@ find_package(Libzip REQUIRED)
 # Tests
 if(BUILD_TESTING)
 	include(CTest)
-	add_library(gsclib.Lib STATIC)
 	add_executable(gsclib.Tests)
 	find_path(GREATEST_INCLUDE_DIRS "greatest.h")
-	target_link_libraries(gsclib.Lib PUBLIC gsclib)
-	target_include_directories(gsclib.Lib PUBLIC gsclib)
-	target_link_libraries(gsclib.Tests PRIVATE gsclib.Lib)
-	target_include_directories(gsclib.Tests PRIVATE gsclib.Lib ${GREATEST_INCLUDE_DIRS})
+	target_link_libraries(gsclib.Tests PRIVATE gsclib)
+	target_include_directories(gsclib.Tests PRIVATE ${GREATEST_INCLUDE_DIRS})
 	add_test(NAME Tests COMMAND gsclib.Tests)
 endif()
 
 # Build
 add_subdirectory(src)
 
-set_target_properties(gsclib PROPERTIES
+set_target_properties(gsclib.Plugin PROPERTIES
+	OUTPUT_NAME gsclib
 	LIBRARY_OUTPUT_DIRECTORY ../../../../bin
 	RUNTIME_OUTPUT_DIRECTORY ../../../../bin)
 
@@ -58,7 +56,3 @@ target_link_libraries(gsclib PUBLIC
 	cwalk)
 
 target_link_directories(gsclib PUBLIC ..)
-
-# Install
-install(TARGETS gsclib LIBRARY DESTINATION lib)
-install(DIRECTORY src/ DESTINATION include/gsclib FILES_MATCHING PATTERN "*.h" PATTERN "__test__" EXCLUDE)
