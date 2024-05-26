@@ -1,13 +1,12 @@
 #pragma once
-#include "curl.h"
 #include <CGSC/cgsc.h>
+#include "curl.h"
 
-#define CHECK_FTP_REQUEST(ftp) \
-CURL_CHECK_ERROR(!ftp, "FTP request not found."); \
-CURL_CHECK_ERROR(ftp->curl.worker && ftp->curl.worker->status == ASYNC_PENDING, "FTP request is pending.");
+#define CHECK_FTP_REQUEST(ftp)                        \
+	CURL_CHECK_ERROR(!ftp, "FTP request not found."); \
+	CURL_CHECK_ERROR(ftp->curl.worker && ftp->curl.worker->status == ASYNC_PENDING, "FTP request is pending.");
 
-#define CHECK_FTP_INSTANCE(handle) \
-CURL_CHECK_ERROR(!handle, "FTP Connection not found.\n");
+#define CHECK_FTP_INSTANCE(handle) CURL_CHECK_ERROR(!handle, "FTP Connection not found.\n");
 
 typedef struct
 {
@@ -83,8 +82,8 @@ void GScr_FTP_Free();
 /// <param name="password">The password to connect with.</param>
 /// <param name="port">The server port.</param>
 /// <returns>True when the connection succeded.</returns>
-qboolean FTP_Connect(const char* protocol, const char* hostname, const char* username,
-	const char* password, unsigned short port);
+qboolean FTP_Connect(const char* protocol, const char* hostname, const char* username, const char* password,
+	unsigned short port);
 
 /// <summary>
 /// Close all connections.
@@ -114,4 +113,4 @@ void FTP_Working(qboolean state);
 /// Execute the async request.
 /// </summary>
 /// <param name="req">The worker request.</param>
-void FTP_Execute(uv_work_t * req);
+void FTP_Execute(uv_work_t* req);

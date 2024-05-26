@@ -1,7 +1,7 @@
 #include "ftp.h"
 
-#include <string.h>
 #include <errno.h>
+#include <string.h>
 
 FTP_HANDLER ftp_handler = { 0 };
 
@@ -22,8 +22,8 @@ void GScr_SFTP_Connect()
 {
 	CHECK_PARAMS(4, "Usage: SFTP_Connect(<hostname>, <username>, <password>, <port>)");
 
-	qboolean connect = FTP_Connect("sftp", Plugin_Scr_GetString(0), Plugin_Scr_GetString(1),
-		Plugin_Scr_GetString(2), Plugin_Scr_GetInt(3));
+	qboolean connect = FTP_Connect("sftp", Plugin_Scr_GetString(0), Plugin_Scr_GetString(1), Plugin_Scr_GetString(2),
+		Plugin_Scr_GetInt(3));
 
 	Plugin_Scr_AddBool(connect);
 }
@@ -32,8 +32,8 @@ void GScr_FTP_Connect()
 {
 	CHECK_PARAMS(4, "Usage: FTP_Connect(<hostname>, <username>, <password>, <port>)");
 
-	qboolean connect = FTP_Connect("ftp", Plugin_Scr_GetString(0), Plugin_Scr_GetString(1),
-		Plugin_Scr_GetString(2), Plugin_Scr_GetInt(3));
+	qboolean connect = FTP_Connect("ftp", Plugin_Scr_GetString(0), Plugin_Scr_GetString(1), Plugin_Scr_GetString(2),
+		Plugin_Scr_GetInt(3));
 
 	Plugin_Scr_AddBool(connect);
 }
@@ -78,7 +78,7 @@ void GScr_FTP_PostFile()
 	CHECK_FTP_REQUEST(ftp);
 	CHECK_FTP_INSTANCE(ftp->curl.handle);
 
-	const char *filepath = Plugin_Scr_GetString(1);
+	const char* filepath = Plugin_Scr_GetString(1);
 	struct stat file_info;
 	curl_off_t fsize;
 
@@ -137,7 +137,7 @@ void GScr_FTP_GetFile()
 	CHECK_FTP_REQUEST(ftp);
 	CHECK_FTP_INSTANCE(ftp->curl.handle);
 
-	const char *filepath = Plugin_Scr_GetString(1);
+	const char* filepath = Plugin_Scr_GetString(1);
 	strcpy((char*)ftp->file.filename, filepath);
 
 	if (ftp->curl.handle)
@@ -197,8 +197,8 @@ qboolean FTP_Close()
 	return qfalse;
 }
 
-qboolean FTP_Connect(const char* protocol, const char* hostname, const char* username,
-	const char* password, unsigned short port)
+qboolean FTP_Connect(const char* protocol, const char* hostname, const char* username, const char* password,
+	unsigned short port)
 {
 	FTP_Close();
 
@@ -247,8 +247,7 @@ void FTP_Execute(uv_work_t* req)
 			Plugin_AsyncWorkerDone(req, ASYNC_FAILURE);
 			return;
 		}
-	}
-	while (running && worker->status != ASYNC_CANCEL);
+	} while (running && worker->status != ASYNC_CANCEL);
 
 	Plugin_AsyncWorkerDone(req, ASYNC_SUCCESSFUL);
 }

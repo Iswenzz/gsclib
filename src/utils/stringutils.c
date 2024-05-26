@@ -2,8 +2,8 @@
 #include "vsnprintf.h"
 
 #include <CGSC/cgsc.h>
-#include <cwalk.h>
 #include <ctype.h>
+#include <cwalk.h>
 #include <stdlib.h>
 
 #include "sys/system.h"
@@ -12,7 +12,7 @@ void GScr_IsStringAlpha()
 {
 	CHECK_PARAMS(1, "Usage: IsStringAlpha(<string>)");
 
-	const char *str = Plugin_Scr_GetString(0);
+	const char* str = Plugin_Scr_GetString(0);
 	for (int i = 0; i < strlen(str); i++)
 	{
 		if (!isalpha(str[i]))
@@ -28,8 +28,8 @@ void GScr_IsStringFloat()
 {
 	CHECK_PARAMS(1, "Usage: IsStringFloat(<string>)");
 
-	const char *nptr = Plugin_Scr_GetString(0);
-	char *endptr = NULL;
+	const char* nptr = Plugin_Scr_GetString(0);
+	char* endptr = NULL;
 	strtof(nptr, &endptr);
 	Plugin_Scr_AddBool(*endptr == '\0');
 }
@@ -38,8 +38,8 @@ void GScr_IsStringInt()
 {
 	CHECK_PARAMS(1, "Usage: IsStringInt(<string>)");
 
-	const char *nptr = Plugin_Scr_GetString(0);
-	char *endptr = NULL;
+	const char* nptr = Plugin_Scr_GetString(0);
+	char* endptr = NULL;
 	strtol(nptr, &endptr, 10);
 	Plugin_Scr_AddBool(*endptr == '\0');
 }
@@ -71,23 +71,23 @@ void GScr_HexToRGB()
 {
 	CHECK_PARAMS(1, "Usage: HexToRGB(<hex string>)");
 
-	char *string = Plugin_Scr_GetString(0);
-    int rgb = 0;
-    vec3_t vec = { 0, 0, 0 };
+	char* string = Plugin_Scr_GetString(0);
+	int rgb = 0;
+	vec3_t vec = { 0, 0, 0 };
 
-    if (string[0] == '#') 
+	if (string[0] == '#')
 		string++;
-    if (strlen(string) != 6)
-    {
-        Plugin_Scr_ParamError(1, "Wrong HEX color input");
-        return;
-    }
-    rgb = (int)strtol(string, NULL, 16);
+	if (strlen(string) != 6)
+	{
+		Plugin_Scr_ParamError(1, "Wrong HEX color input");
+		return;
+	}
+	rgb = (int)strtol(string, NULL, 16);
 
-    // Normalize vector for cod4 rgb
-    vec[0] = ((float)((rgb >> 16) & 0xFF)) / 255;
-    vec[1] = ((float)((rgb >> 8) & 0xFF)) / 255;
-    vec[2] = ((float)(rgb & 0xFF)) / 255;
+	// Normalize vector for cod4 rgb
+	vec[0] = ((float)((rgb >> 16) & 0xFF)) / 255;
+	vec[1] = ((float)((rgb >> 8) & 0xFF)) / 255;
+	vec[2] = ((float)(rgb & 0xFF)) / 255;
 	Plugin_Scr_AddVector(vec);
 }
 
@@ -101,7 +101,7 @@ void GScr_Fmt()
 	}
 	char buffer[MAX_STRING_CHARS] = { 0 };
 	const char* format = Plugin_Scr_GetString(0);
-	
+
 	if (argCount == 1)
 	{
 		Plugin_Scr_AddString(format);
@@ -124,14 +124,14 @@ void GScr_Trim()
 	char* ptr = NULL;
 	char* string = Plugin_Scr_GetString(0);
 
-	while (*string == ' ') 
+	while (*string == ' ')
 		string++;
 
 	ptr = string + strlen(string) - 1;
-	while (*ptr == ' ') 
-	{ 
-		*ptr = '\0'; 
-		ptr--; 
+	while (*ptr == ' ')
+	{
+		*ptr = '\0';
+		ptr--;
 	}
 	Plugin_Scr_AddString(string);
 }

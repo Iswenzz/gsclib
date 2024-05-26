@@ -233,8 +233,7 @@ void HTTP_Execute(uv_work_t* req)
 			Plugin_AsyncWorkerDone(req, ASYNC_FAILURE);
 			return;
 		}
-	}
-	while (running && worker->status != ASYNC_CANCEL);
+	} while (running && worker->status != ASYNC_CANCEL);
 
 	Plugin_AsyncWorkerDone(req, ASYNC_SUCCESSFUL);
 }

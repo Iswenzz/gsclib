@@ -6,20 +6,20 @@
 
 typedef struct
 {
-    char string[MAX_STRING_CHARS];
-    qboolean matched;
+	char string[MAX_STRING_CHARS];
+	qboolean matched;
 } PCRE2_VALUE;
 
 typedef struct
 {
-    PCRE2_VALUE* results;
-    size_t count;
+	PCRE2_VALUE* results;
+	size_t count;
 } PCRE2_VALUES;
 
 typedef struct
 {
-    int position;
-    size_t length;
+	int position;
+	size_t length;
 } PCRE2_VECTOR;
 
 /// <summary>

@@ -36,7 +36,7 @@ void GScr_FILE_Exists()
 
 	struct stat fileinfo;
 	const char* path = Plugin_Scr_GetString(0);
-	
+
 	Plugin_Scr_AddBool(stat(path, &fileinfo) == 0);
 }
 
@@ -220,7 +220,7 @@ void GScr_FILE_MkDir()
 {
 	CHECK_PARAMS(1, "Usage: FILE_MkDir(<path>)");
 	const char* path = Plugin_Scr_GetString(0);
-	
+
 #ifdef _WIN32
 	Plugin_Scr_AddBool(CreateDirectory(path, NULL));
 #else
@@ -274,8 +274,8 @@ BOOL WIN_RemoveDirectory(const char* path)
 	memset(tempdir, 0, len);
 	strcpy(tempdir, path);
 
-	SHFILEOPSTRUCT file_op = { NULL, FO_DELETE, tempdir, NULL,
-		FOF_NOCONFIRMATION | FOF_NOERRORUI | FOF_SILENT, false, 0, "" };
+	SHFILEOPSTRUCT file_op = { NULL, FO_DELETE, tempdir, NULL, FOF_NOCONFIRMATION | FOF_NOERRORUI | FOF_SILENT, false,
+		0, "" };
 	int ret = SHFileOperation(&file_op);
 	free(tempdir);
 
@@ -285,7 +285,8 @@ BOOL WIN_RemoveDirectory(const char* path)
 int UNIX_RemoveDirectory(const char* path, const struct stat* sb, int typeflag, PFTW ftwbuf)
 {
 	int ret = remove(path);
-	if (ret) perror(path);
+	if (ret)
+		perror(path);
 	return ret;
 }
 #endif

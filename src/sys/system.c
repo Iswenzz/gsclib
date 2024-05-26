@@ -2,9 +2,9 @@
 #include "utils/utils.h"
 #include "utils/vsnprintf.h"
 
+#include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <stdarg.h>
 
 critical_sections sections = { 0 };
 async_handler* asyncHandler = NULL;
@@ -212,7 +212,8 @@ void Scr_PrintF(qboolean newLine, void (*print)(const char*, ...))
 		args.items[i - 1] = *Plugin_Scr_SelectParam(i);
 
 	Scr_vsnprintf(buffer, sizeof(buffer), format, args);
-	if (newLine) strcat(buffer, "\n");
+	if (newLine)
+		strcat(buffer, "\n");
 	Sys_AnsiColorPrint(buffer, print);
 
 	Plugin_Scr_FreeArray(&args);

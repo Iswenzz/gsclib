@@ -9,7 +9,7 @@ int q3ToAnsi[8] = {
 	34, // COLOR_BLUE
 	36, // COLOR_CYAN
 	35, // COLOR_MAGENTA
-	0   // COLOR_WHITE
+	0	// COLOR_WHITE
 };
 
 void GScr_Ternary()
@@ -38,51 +38,109 @@ void GScr_GetType()
 	VariableValue *var = Plugin_Scr_SelectParam(0);
 	switch (var->type)
 	{
-		case VAR_POINTER:
-			switch (Plugin_Scr_GetObjectType(var->u.pointerValue))
-			{
-				case VAR_ARRAY: 	Plugin_Scr_AddString("ARRAY"); 				break;
-				case VAR_OBJECT:	Plugin_Scr_AddString("OBJECT"); 			break;
-				case VAR_ENTITY:	Plugin_Scr_AddString("ENTITY"); 			break;
-				case VAR_UNDEFINED:
-				default:			Plugin_Scr_AddString("UNDEFINED");			break;
-			}
+	case VAR_POINTER:
+		switch (Plugin_Scr_GetObjectType(var->u.pointerValue))
+		{
+		case VAR_ARRAY:
+			Plugin_Scr_AddString("ARRAY");
 			break;
-		case VAR_STRING: 			Plugin_Scr_AddString("STRING");  			break;
-		case VAR_ISTRING: 			Plugin_Scr_AddString("ISTRING");  			break;
-		case VAR_VECTOR: 			Plugin_Scr_AddString("VECTOR");  			break;
-		case VAR_FLOAT: 			Plugin_Scr_AddString("FLOAT"); 				break;
-		case VAR_INTEGER: 			Plugin_Scr_AddString("INTEGER");  			break;
-		case VAR_CODEPOS: 			Plugin_Scr_AddString("CODEPOS"); 			break;
-		case VAR_PRECODEPOS: 		Plugin_Scr_AddString("PRECODEPOS"); 		break;
-		case VAR_FUNCTION: 			Plugin_Scr_AddString("FUNCTION"); 			break;
-		case VAR_STACK: 			Plugin_Scr_AddString("STACK"); 				break;
-		case VAR_ANIMATION: 		Plugin_Scr_AddString("ANIMATION"); 			break;
-		case VAR_DEVELOPER_CODEPOS: Plugin_Scr_AddString("DEVELOPER_CODEPOS");  break;
-		case VAR_INCLUDE_CODEPOS: 	Plugin_Scr_AddString("INCLUDE_CODEPOS");  	break;
-		case VAR_THREAD: 			Plugin_Scr_AddString("THREAD"); 			break;
-		case VAR_NOTIFY_THREAD: 	Plugin_Scr_AddString("NOTIFY_THREAD");  	break;
-		case VAR_TIME_THREAD: 		Plugin_Scr_AddString("TIME_THREAD");  		break;
-		case VAR_CHILD_THREAD: 		Plugin_Scr_AddString("CHILD_THREAD");  		break;
-		case VAR_OBJECT: 			Plugin_Scr_AddString("OBJECT"); 			break;
-		case VAR_DEAD_ENTITY: 		Plugin_Scr_AddString("DEAD_ENTITY"); 		break;
-		case VAR_ENTITY: 			Plugin_Scr_AddString("ENTITY"); 			break;
-		case VAR_ARRAY: 			Plugin_Scr_AddString("ARRAY"); 				break;
-		case VAR_DEAD_THREAD: 		Plugin_Scr_AddString("DEAD_THREAD"); 		break;
-		case VAR_COUNT: 			Plugin_Scr_AddString("COUNT"); 				break;
-		case VAR_THREAD_LIST: 		Plugin_Scr_AddString("THREAD_LIST"); 		break;
-		case VAR_ENDON_LIST: 		Plugin_Scr_AddString("ENDON_LIST");  		break;
+		case VAR_OBJECT:
+			Plugin_Scr_AddString("OBJECT");
+			break;
+		case VAR_ENTITY:
+			Plugin_Scr_AddString("ENTITY");
+			break;
 		case VAR_UNDEFINED:
-		default:					Plugin_Scr_AddString("UNDEFINED"); 			break;
+		default:
+			Plugin_Scr_AddString("UNDEFINED");
+			break;
+		}
+		break;
+	case VAR_STRING:
+		Plugin_Scr_AddString("STRING");
+		break;
+	case VAR_ISTRING:
+		Plugin_Scr_AddString("ISTRING");
+		break;
+	case VAR_VECTOR:
+		Plugin_Scr_AddString("VECTOR");
+		break;
+	case VAR_FLOAT:
+		Plugin_Scr_AddString("FLOAT");
+		break;
+	case VAR_INTEGER:
+		Plugin_Scr_AddString("INTEGER");
+		break;
+	case VAR_CODEPOS:
+		Plugin_Scr_AddString("CODEPOS");
+		break;
+	case VAR_PRECODEPOS:
+		Plugin_Scr_AddString("PRECODEPOS");
+		break;
+	case VAR_FUNCTION:
+		Plugin_Scr_AddString("FUNCTION");
+		break;
+	case VAR_STACK:
+		Plugin_Scr_AddString("STACK");
+		break;
+	case VAR_ANIMATION:
+		Plugin_Scr_AddString("ANIMATION");
+		break;
+	case VAR_DEVELOPER_CODEPOS:
+		Plugin_Scr_AddString("DEVELOPER_CODEPOS");
+		break;
+	case VAR_INCLUDE_CODEPOS:
+		Plugin_Scr_AddString("INCLUDE_CODEPOS");
+		break;
+	case VAR_THREAD:
+		Plugin_Scr_AddString("THREAD");
+		break;
+	case VAR_NOTIFY_THREAD:
+		Plugin_Scr_AddString("NOTIFY_THREAD");
+		break;
+	case VAR_TIME_THREAD:
+		Plugin_Scr_AddString("TIME_THREAD");
+		break;
+	case VAR_CHILD_THREAD:
+		Plugin_Scr_AddString("CHILD_THREAD");
+		break;
+	case VAR_OBJECT:
+		Plugin_Scr_AddString("OBJECT");
+		break;
+	case VAR_DEAD_ENTITY:
+		Plugin_Scr_AddString("DEAD_ENTITY");
+		break;
+	case VAR_ENTITY:
+		Plugin_Scr_AddString("ENTITY");
+		break;
+	case VAR_ARRAY:
+		Plugin_Scr_AddString("ARRAY");
+		break;
+	case VAR_DEAD_THREAD:
+		Plugin_Scr_AddString("DEAD_THREAD");
+		break;
+	case VAR_COUNT:
+		Plugin_Scr_AddString("COUNT");
+		break;
+	case VAR_THREAD_LIST:
+		Plugin_Scr_AddString("THREAD_LIST");
+		break;
+	case VAR_ENDON_LIST:
+		Plugin_Scr_AddString("ENDON_LIST");
+		break;
+	case VAR_UNDEFINED:
+	default:
+		Plugin_Scr_AddString("UNDEFINED");
+		break;
 	}
 }
 
-char* fmt(char* format, ...)
+char *fmt(char *format, ...)
 {
-	va_list	argptr;
+	va_list argptr;
 	static char string[2][32000]; // In case va is called by nested functions
 	static int index = 0;
-	char* buf;
+	char *buf;
 
 	buf = string[index & 1];
 	index++;

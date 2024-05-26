@@ -1,0 +1,23 @@
+{
+	"version": 7,
+	"cmakeMinimumRequired": {
+		"major": 3,
+		"minor": 27,
+		"patch": 0
+	},
+	"configurePresets": [
+		{
+			"name": "windows",
+			"generator": "MinGW Makefiles",
+			"cacheVariables": {
+				"CMAKE_TOOLCHAIN_FILE": ".vcpkg/windows.cmake"
+			}
+		},
+		{
+			"name": "linux",
+			"cacheVariables": {
+				"CMAKE_TOOLCHAIN_FILE": ".vcpkg/linux.cmake"
+			}
+		}
+	]
+}

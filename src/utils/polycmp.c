@@ -1,7 +1,7 @@
 #include "polycmp.h"
 
-#include <string.h>
 #include <math.h>
+#include <string.h>
 
 float VectorDistance(vec3_t a, vec3_t b)
 {
@@ -20,7 +20,7 @@ int VectorCmp(const void *a, const void *b)
 
 	float distanceA = VectorDistance(*vecA, zero);
 	float distanceB = VectorDistance(*vecB, zero);
-	
+
 	return distanceA - distanceB;
 }
 
@@ -54,8 +54,8 @@ int Scr_VectorCmp(const void *a, const void *b)
 	VariableValue *ia = (VariableValue *)a;
 	VariableValue *ib = (VariableValue *)b;
 
-	float distanceA = VectorDistance((vec_t*)ia->u.vectorValue, zero);
-	float distanceB = VectorDistance((vec_t*)ib->u.vectorValue, zero);
+	float distanceA = VectorDistance((vec_t *)ia->u.vectorValue, zero);
+	float distanceB = VectorDistance((vec_t *)ib->u.vectorValue, zero);
 
 	return distanceA - distanceB;
 }

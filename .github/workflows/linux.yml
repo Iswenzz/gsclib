@@ -1,71 +1,71 @@
 name: Linux
 
 on:
-  push:
-    branches: [master]
-  pull_request:
-    branches: [master]
+    push:
+        branches: [master]
+    pull_request:
+        branches: [master]
 
 jobs:
-  build:
-    runs-on: ubuntu-18.04
-    steps:
-    - name: Checkout
-      uses: actions/checkout@v2
+    build:
+        runs-on: ubuntu-18.04
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v2
 
-    - name: Vcpkg
-      uses: lukka/run-vcpkg@v11
-      with:
-        vcpkgGitCommitId: 4a600e9fea71bd7872080cbb716797e04d30e6d3
+            - name: Vcpkg
+              uses: lukka/run-vcpkg@v11
+              with:
+                  vcpkgGitCommitId: 4a600e9fea71bd7872080cbb716797e04d30e6d3
 
-    - name: NASM
-      uses: ilammy/setup-nasm@v1
+            - name: NASM
+              uses: ilammy/setup-nasm@v1
 
-    - name: Dependencies
-      run: |
-        sudo apt-get install g++-multilib gcc-multilib
-        sudo dpkg --add-architecture i386
-        sudo apt-get install nasm:i386 paxctl:i386 libtommath-dev:i386
+            - name: Dependencies
+              run: |
+                  sudo apt-get install g++-multilib gcc-multilib
+                  sudo dpkg --add-architecture i386
+                  sudo apt-get install nasm:i386 paxctl:i386 libtommath-dev:i386
 
-    - name: GCC
-      uses: egor-tensin/setup-gcc@v1
-      with:
-        version: 9
-        platform: x86
+            - name: GCC
+              uses: egor-tensin/setup-gcc@v1
+              with:
+                  version: 9
+                  platform: x86
 
-    - name: Plugin Interface
-      run: |
-        cd ..
-        curl -o plugin.zip https://iswenzz.com/github/gsclib/plugin.zip
-        7z x plugin.zip
+            - name: Plugin Interface
+              run: |
+                  cd ..
+                  curl -o plugin.zip https://iswenzz.com/github/gsclib/plugin.zip
+                  7z x plugin.zip
 
-    - name: Build
-      run: |
-        mkdir build && cd build
-        cmake .. -DCMAKE_TOOLCHAIN_FILE=".vcpkg/linux.cmake" -DBUILD_TESTING=True
-        cmake --build .
+            - name: Build
+              run: |
+                  mkdir build && cd build
+                  cmake .. --preset linux -DBUILD_TESTING=True
+                  cmake --build .
 
-    - name: Artifact
-      uses: actions/upload-artifact@v2
-      with:
-        name: build-artifact
-        path: build
+            - name: Artifact
+              uses: actions/upload-artifact@v2
+              with:
+                  name: build-artifact
+                  path: build
 
-  tests:
-    runs-on: ubuntu-18.04
-    needs: [build]
-    steps:
-    - name: Checkout
-      uses: actions/checkout@v2
+    tests:
+        runs-on: ubuntu-18.04
+        needs: [build]
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v2
 
-    - name: Artifact
-      uses: actions/download-artifact@v2
-      with:
-        name: build-artifact
-        path: build
+            - name: Artifact
+              uses: actions/download-artifact@v2
+              with:
+                  name: build-artifact
+                  path: build
 
-    - name: Tests
-      working-directory: build
-      run: |
-        chmod +x bin/gsclib.Tests
-        ctest -C Release
+            - name: Tests
+              working-directory: build
+              run: |
+                  chmod +x bin/gsclib.Tests
+                  ctest -C Release

@@ -4,8 +4,8 @@
 #define _FILE_OFFSET_BITS 64
 #define _XOPEN_SOURCE 700
 
-#include <sys/stat.h>
 #include <dirent.h>
+#include <sys/stat.h>
 
 #if !defined(S_ISREG) && defined(S_IFMT) && defined(S_IFREG)
 	#define S_ISREG(m) (((m) & S_IFMT) == S_IFREG)
@@ -21,7 +21,7 @@
 	#include <ftw.h>
 	#include <unistd.h>
 
-	typedef struct FTW* PFTW;
+typedef struct FTW* PFTW;
 #endif
 
 #ifndef MAX_PATH

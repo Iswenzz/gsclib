@@ -8,7 +8,7 @@ MYSQL_HANDLER mysql_handler = { 0 };
 void GScr_MySQL_Version()
 {
 	CHECK_PARAMS(0, "Usage: SQL_Version()");
-    Plugin_Scr_AddString(mysql_get_client_info());
+	Plugin_Scr_AddString(mysql_get_client_info());
 }
 
 void GScr_MySQL_Prepare()
@@ -25,7 +25,7 @@ void GScr_MySQL_Prepare()
 	MySQL_Free_Result(mysql);
 	MySQL_Free_Statement(mysql);
 
-	const char *query = Plugin_Scr_GetString(0);
+	const char* query = Plugin_Scr_GetString(0);
 	mysql->stmt = mysql_stmt_init(mysql->handle);
 
 	if (mysql_stmt_prepare(mysql->stmt, query, strlen(query)))
@@ -47,12 +47,11 @@ void GScr_MySQL_BindParam()
 	CHECK_MYSQL_INSTANCE(mysql->handle);
 	CHECK_MYSQL_STMT(mysql->stmt);
 
-	VariableValue *variable = Plugin_Scr_SelectParam(1);
+	VariableValue* variable = Plugin_Scr_SelectParam(1);
 	enum enum_field_types type = (enum enum_field_types)Plugin_Scr_GetInt(2);
 
-	mysql->binds = !mysql->binds
-		? (MYSQL_BIND*)malloc(sizeof(MYSQL_BIND))
-		: (MYSQL_BIND*)realloc(mysql->binds, sizeof(MYSQL_BIND) * (mysql->bindsLength + 1));
+	mysql->binds = !mysql->binds ? (MYSQL_BIND*)malloc(sizeof(MYSQL_BIND))
+								 : (MYSQL_BIND*)realloc(mysql->binds, sizeof(MYSQL_BIND) * (mysql->bindsLength + 1));
 
 	void* value = NULL;
 	int valueSize = 0;
@@ -60,14 +59,14 @@ void GScr_MySQL_BindParam()
 	switch (variable->type)
 	{
 	case VAR_STRING:
-		value = (void *)Plugin_SL_ConvertToString(variable->u.stringValue);
-		valueSize = strlen((const char *)value);
+		value = (void*)Plugin_SL_ConvertToString(variable->u.stringValue);
+		valueSize = strlen((const char*)value);
 		break;
 	case VAR_INTEGER:
-		value = (void *)&variable->u.intValue;
+		value = (void*)&variable->u.intValue;
 		break;
 	case VAR_FLOAT:
-		value = (void *)&variable->u.floatValue;
+		value = (void*)&variable->u.floatValue;
 		break;
 	}
 	MySQL_PrepareBindBuffer(&mysql->binds[mysql->bindsLength], value, valueSize, type);
@@ -119,7 +118,7 @@ void GScr_MySQL_ListDB()
 	CHECK_PARAMS(0, "Usage: SQL_ListDB()");
 	CHECK_MYSQL_INSTANCE(mysql_handler.handle);
 
-	MYSQL_RES *result = mysql_list_dbs(mysql_handler.handle, "%");
+	MYSQL_RES* result = mysql_list_dbs(mysql_handler.handle, "%");
 	MYSQL_ROW row;
 
 	if (!result)
@@ -142,7 +141,7 @@ void GScr_MySQL_ListTables()
 	CHECK_PARAMS(0, "Usage: SQL_ListTables()");
 	CHECK_MYSQL_INSTANCE(mysql_handler.handle);
 
-	MYSQL_RES *result = mysql_list_tables(mysql_handler.handle, "%");
+	MYSQL_RES* result = mysql_list_tables(mysql_handler.handle, "%");
 	MYSQL_ROW row;
 
 	if (!result)
@@ -165,10 +164,10 @@ void GScr_MySQL_EscapeString()
 	CHECK_PARAMS(1, "Usage: SQL_EscapeString(<string>)");
 	CHECK_MYSQL_INSTANCE(mysql_handler.handle);
 
-	const char *from = Plugin_Scr_GetString(0);
-    char to[strlen(from) + 1];
-    unsigned long len = mysql_real_escape_string(mysql_handler.handle, to, from, strlen(from));
-    to[len] = '\0';
+	const char* from = Plugin_Scr_GetString(0);
+	char to[strlen(from) + 1];
+	unsigned long len = mysql_real_escape_string(mysql_handler.handle, to, from, strlen(from));
+	to[len] = '\0';
 
 	Plugin_Scr_AddString(to);
 }
@@ -177,12 +176,12 @@ void GScr_MySQL_HexString()
 {
 	CHECK_PARAMS(1, "Usage: SQL_HexString(<string>)");
 
-	const char *from = Plugin_Scr_GetString(0);
-    char to[(strlen(from) * 2) + 1];
-    unsigned long len = mysql_hex_string(to, from, strlen(from));
-    to[len] = '\0';
+	const char* from = Plugin_Scr_GetString(0);
+	char to[(strlen(from) * 2) + 1];
+	unsigned long len = mysql_hex_string(to, from, strlen(from));
+	to[len] = '\0';
 
-    Plugin_Scr_AddString(to);
+	Plugin_Scr_AddString(to);
 }
 
 void GScr_MySQL_SelectDB()
@@ -208,7 +207,7 @@ void GScr_MySQL_FetchFields()
 	CHECK_MYSQL_REQUEST(mysql);
 	CHECK_MYSQL_INSTANCE(mysql->handle);
 
-	MYSQL_RES *res = mysql->result ? mysql->result : mysql->resultStmt;
+	MYSQL_RES* res = mysql->result ? mysql->result : mysql->resultStmt;
 	if (!res)
 	{
 		Plugin_Scr_AddUndefined();
@@ -221,7 +220,7 @@ void GScr_MySQL_FetchFields()
 	mysql_field_seek(res, 0);
 	for (int i = 0; i < num_fields; i++)
 	{
-		MYSQL_FIELD *field = mysql_fetch_field(res);
+		MYSQL_FIELD* field = mysql_fetch_field(res);
 		if (!field)
 		{
 			Plugin_Scr_AddUndefined();
@@ -385,15 +384,15 @@ void GScr_MySQL_Connect()
 	qboolean reconnect = qtrue;
 	mysql_options(mysql_handler.handle, MYSQL_OPT_RECONNECT, &reconnect);
 
-	if (!mysql_real_connect(mysql_handler.handle,	/* MYSQL structure to use */
-		Plugin_Scr_GetString(0),  					/* server hostname or IP address */
-		Plugin_Scr_GetString(2),  					/* handle user */
-		Plugin_Scr_GetString(3),  					/* password */
-		NULL,  										/* default database to use, NULL for none */
-		Plugin_Scr_GetInt(1),     					/* port number, 0 for default */
-		NULL,  										/* socket file or named pipe name */
-		0 											/* connection flags */
-	))
+	if (!mysql_real_connect(mysql_handler.handle, /* MYSQL structure to use */
+			Plugin_Scr_GetString(0),			  /* server hostname or IP address */
+			Plugin_Scr_GetString(2),			  /* handle user */
+			Plugin_Scr_GetString(3),			  /* password */
+			NULL,								  /* default database to use, NULL for none */
+			Plugin_Scr_GetInt(1),				  /* port number, 0 for default */
+			NULL,								  /* socket file or named pipe name */
+			0									  /* connection flags */
+			))
 	{
 		// Close previous connection
 		Plugin_Scr_Error("SQL_Connect(): Connection failed");
@@ -683,7 +682,7 @@ void MySQL_Execute(uv_work_t* req)
 	Plugin_AsyncWorkerDone(req, ASYNC_SUCCESSFUL);
 }
 
-void MySQL_Free_Statement(MYSQL_REQUEST *mysql)
+void MySQL_Free_Statement(MYSQL_REQUEST* mysql)
 {
 	if (mysql->stmt)
 	{

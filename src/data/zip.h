@@ -1,8 +1,8 @@
 #pragma once
 #include "file.h"
 
-#include <zip.h>
 #include <CGSC/cgsc.h>
+#include <zip.h>
 
 /// <summary>
 /// Add a file to the archive.

@@ -1,9 +1,9 @@
 #include "vsnprintf.h"
 
 #include <math.h>
-#include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 int Scr_vsnprintf(char* str, size_t size, const char* format, VariableValueArray args)
 {
@@ -61,7 +61,7 @@ int Scr_vsnprintf(char* str, size_t size, const char* format, VariableValueArray
 			ch = *format++;
 			break;
 		case PRINT_S_FLAGS:
-			switch (ch) 
+			switch (ch)
 			{
 			case '-':
 				flags |= PRINT_F_MINUS;
@@ -93,10 +93,10 @@ int Scr_vsnprintf(char* str, size_t size, const char* format, VariableValueArray
 			}
 			break;
 		case PRINT_S_WIDTH:
-			if (ISDIGIT(ch)) 
+			if (ISDIGIT(ch))
 			{
 				ch = CHARTOINT(ch);
-				if (width > (INT_MAX - ch) / 10) 
+				if (width > (INT_MAX - ch) / 10)
 				{
 					overflow = 1;
 					goto out;
@@ -104,14 +104,14 @@ int Scr_vsnprintf(char* str, size_t size, const char* format, VariableValueArray
 				width = 10 * width + ch;
 				ch = *format++;
 			}
-			else if (ch == '*') 
+			else if (ch == '*')
 			{
 				/**
 				 * C99 says: "A negative field width argument is
 				 * taken as a `-' flag followed by a positive
 				 * field width." (7.19.6.1, 5)
 				 */
-				if ((width = (*(args.items++)).u.intValue) < 0) 
+				if ((width = (*(args.items++)).u.intValue) < 0)
 				{
 					flags |= PRINT_F_MINUS;
 					width = -width;
@@ -123,7 +123,7 @@ int Scr_vsnprintf(char* str, size_t size, const char* format, VariableValueArray
 				state = PRINT_S_DOT;
 			break;
 		case PRINT_S_DOT:
-			if (ch == '.') 
+			if (ch == '.')
 			{
 				state = PRINT_S_PRECISION;
 				ch = *format++;
@@ -134,10 +134,10 @@ int Scr_vsnprintf(char* str, size_t size, const char* format, VariableValueArray
 		case PRINT_S_PRECISION:
 			if (precision == -1)
 				precision = 0;
-			if (ISDIGIT(ch)) 
+			if (ISDIGIT(ch))
 			{
 				ch = CHARTOINT(ch);
-				if (precision > (INT_MAX - ch) / 10) 
+				if (precision > (INT_MAX - ch) / 10)
 				{
 					overflow = 1;
 					goto out;
@@ -145,7 +145,7 @@ int Scr_vsnprintf(char* str, size_t size, const char* format, VariableValueArray
 				precision = 10 * precision + ch;
 				ch = *format++;
 			}
-			else if (ch == '*') 
+			else if (ch == '*')
 			{
 				/**
 				 * C99 says: "A negative precision argument is
@@ -161,11 +161,11 @@ int Scr_vsnprintf(char* str, size_t size, const char* format, VariableValueArray
 				state = PRINT_S_MOD;
 			break;
 		case PRINT_S_MOD:
-			switch (ch) 
+			switch (ch)
 			{
 			case 'h':
 				ch = *format++;
-				if (ch == 'h') 
+				if (ch == 'h')
 				{
 					ch = *format++;
 					cflags = PRINT_C_CHAR;
@@ -175,7 +175,7 @@ int Scr_vsnprintf(char* str, size_t size, const char* format, VariableValueArray
 				break;
 			case 'l':
 				ch = *format++;
-				if (ch == 'l') 
+				if (ch == 'l')
 				{
 					ch = *format++;
 					cflags = PRINT_C_LLONG;
@@ -203,11 +203,11 @@ int Scr_vsnprintf(char* str, size_t size, const char* format, VariableValueArray
 			state = PRINT_S_CONV;
 			break;
 		case PRINT_S_CONV:
-			switch (ch) 
+			switch (ch)
 			{
 			case 'd':
 			case 'i':
-				switch (cflags) 
+				switch (cflags)
 				{
 				case PRINT_C_CHAR:
 					value = Plugin_SL_ConvertToString((*(args.items++)).u.stringValue)[0];
@@ -238,7 +238,7 @@ int Scr_vsnprintf(char* str, size_t size, const char* format, VariableValueArray
 				if (base == 0)
 					base = 10;
 				flags |= PRINT_F_UNSIGNED;
-				switch (cflags) 
+				switch (cflags)
 				{
 				case PRINT_C_CHAR:
 					value = Plugin_SL_ConvertToString((*(args.items++)).u.stringValue)[0];
@@ -319,7 +319,7 @@ int Scr_vsnprintf(char* str, size_t size, const char* format, VariableValueArray
 				 * characters, in an implementation-defined
 				 * manner." (C99: 7.19.6.1, 8)
 				 */
-				if ((strvalue = (const char *)(*(args.items++)).u.pointerValue) == NULL)
+				if ((strvalue = (const char*)(*(args.items++)).u.pointerValue) == NULL)
 				{
 					/**
 					 * We use the glibc format.  BSD prints
@@ -327,7 +327,7 @@ int Scr_vsnprintf(char* str, size_t size, const char* format, VariableValueArray
 					 */
 					fmtstr(str, &len, size, "(nil)", width, -1, flags);
 				}
-				else 
+				else
 				{
 					/**
 					 * We use the BSD/glibc format. SysV
@@ -339,10 +339,10 @@ int Scr_vsnprintf(char* str, size_t size, const char* format, VariableValueArray
 					fmtint(str, &len, size, (UINTPTR_T)strvalue, 16, width, precision, flags);
 				}
 				break;
-			case '%':	// Print a "%" character verbatim
+			case '%': // Print a "%" character verbatim
 				OUTCHAR(str, len, size, ch);
 				break;
-			default:	// Skip other characters
+			default: // Skip other characters
 				break;
 			}
 			ch = *format++;
@@ -358,7 +358,7 @@ out:
 	else if (size > 0)
 		str[size - 1] = '\0';
 
-	if (overflow || len >= INT_MAX) 
+	if (overflow || len >= INT_MAX)
 	{
 		errno = overflow ? EOVERFLOW : ERANGE;
 		return -1;
@@ -366,8 +366,7 @@ out:
 	return (int)len;
 }
 
-void fmtstr(char* str, size_t* len, size_t size, const char* value, 
-	int width, int precision, int flags)
+void fmtstr(char* str, size_t* len, size_t size, const char* value, int width, int precision, int flags)
 {
 	int padlen, strln;
 	int noprecision = (precision == -1);
@@ -376,8 +375,7 @@ void fmtstr(char* str, size_t* len, size_t size, const char* value,
 		value = "(null)";
 
 	// If a precision was specified, don't read the string past it
-	for (strln = 0; value[strln] != '\0' &&
-		(noprecision || strln < precision); strln++)
+	for (strln = 0; value[strln] != '\0' && (noprecision || strln < precision); strln++)
 		continue;
 
 	if ((padlen = width - strln) < 0)
@@ -385,25 +383,24 @@ void fmtstr(char* str, size_t* len, size_t size, const char* value,
 	if (flags & PRINT_F_MINUS)
 		padlen = -padlen;
 
-	while (padlen > 0) 
+	while (padlen > 0)
 	{
 		OUTCHAR(str, *len, size, ' ');
 		padlen--;
 	}
-	while (*value != '\0' && (noprecision || precision-- > 0)) 
+	while (*value != '\0' && (noprecision || precision-- > 0))
 	{
 		OUTCHAR(str, *len, size, *value);
 		value++;
 	}
-	while (padlen < 0) 
+	while (padlen < 0)
 	{
 		OUTCHAR(str, *len, size, ' ');
 		padlen++;
 	}
 }
 
-void fmtint(char* str, size_t* len, size_t size, INTMAX_T value, int base, 
-	int width, int precision, int flags)
+void fmtint(char* str, size_t* len, size_t size, INTMAX_T value, int base, int width, int precision, int flags)
 {
 	UINTMAX_T uvalue;
 	char iconvert[MAX_CONVERT_LENGTH];
@@ -417,7 +414,7 @@ void fmtint(char* str, size_t* len, size_t size, INTMAX_T value, int base,
 
 	if (flags & PRINT_F_UNSIGNED)
 		uvalue = value;
-	else 
+	else
 	{
 		uvalue = (value >= 0) ? value : -value;
 		if (value < 0)
@@ -429,7 +426,7 @@ void fmtint(char* str, size_t* len, size_t size, INTMAX_T value, int base,
 	}
 
 	pos = convert(uvalue, iconvert, sizeof(iconvert), base, flags & PRINT_F_UP);
-	if (flags & PRINT_F_NUM && uvalue != 0) 
+	if (flags & PRINT_F_NUM && uvalue != 0)
 	{
 		/**
 		 * C99 says: "The result is converted to an `alternative form'.
@@ -439,7 +436,7 @@ void fmtint(char* str, size_t* len, size_t size, INTMAX_T value, int base,
 		 * printed).  For `x' (or `X') conversion, a nonzero result has
 		 * `0x' (or `0X') prefixed to it." (7.19.6.1, 6)
 		 */
-		switch (base) 
+		switch (base)
 		{
 		case 8:
 			if (precision <= pos)
@@ -454,11 +451,11 @@ void fmtint(char* str, size_t* len, size_t size, INTMAX_T value, int base,
 		separators = getnumsep(pos);
 
 	zpadlen = precision - pos - separators;
-	spadlen = width                         // Minimum field width
-		- separators                        // Number of separators
-		- MAX(precision, pos)               // Number of integer digits
-		- ((sign != 0) ? 1 : 0)             // Will we print a sign ?
-		- ((hexprefix != 0) ? 2 : 0);       // Will we print a prefix ?
+	spadlen = width					  // Minimum field width
+		- separators				  // Number of separators
+		- MAX(precision, pos)		  // Number of integer digits
+		- ((sign != 0) ? 1 : 0)		  // Will we print a sign ?
+		- ((hexprefix != 0) ? 2 : 0); // Will we print a prefix ?
 
 	if (zpadlen < 0)
 		zpadlen = 0;
@@ -472,44 +469,43 @@ void fmtint(char* str, size_t* len, size_t size, INTMAX_T value, int base,
 	 */
 	if (flags & PRINT_F_MINUS)
 		spadlen = -spadlen;
-	else if (flags & PRINT_F_ZERO && noprecision) 
+	else if (flags & PRINT_F_ZERO && noprecision)
 	{
 		zpadlen += spadlen;
 		spadlen = 0;
 	}
-	while (spadlen > 0) 
+	while (spadlen > 0)
 	{
 		OUTCHAR(str, *len, size, ' ');
 		spadlen--;
 	}
 	if (sign != 0)
 		OUTCHAR(str, *len, size, sign);
-	if (hexprefix != 0) 
+	if (hexprefix != 0)
 	{
 		OUTCHAR(str, *len, size, '0');
 		OUTCHAR(str, *len, size, hexprefix);
 	}
-	while (zpadlen > 0) 
+	while (zpadlen > 0)
 	{
 		OUTCHAR(str, *len, size, '0');
 		zpadlen--;
 	}
-	while (pos > 0) 
+	while (pos > 0)
 	{
 		pos--;
 		OUTCHAR(str, *len, size, iconvert[pos]);
 		if (separators > 0 && pos > 0 && pos % 3 == 0)
 			printsep(str, len, size);
 	}
-	while (spadlen < 0) 
+	while (spadlen < 0)
 	{
 		OUTCHAR(str, *len, size, ' ');
 		spadlen++;
 	}
 }
 
-void fmtflt(char* str, size_t* len, size_t size, LDOUBLE fvalue, int width,
-	int precision, int flags, int* overflow)
+void fmtflt(char* str, size_t* len, size_t size, LDOUBLE fvalue, int width, int precision, int flags, int* overflow)
 {
 	LDOUBLE ufvalue;
 	UINTMAX_T intpart;
@@ -556,7 +552,7 @@ void fmtflt(char* str, size_t* len, size_t size, LDOUBLE fvalue, int width,
 	else if (ISINF(fvalue))
 		infnan = (flags & PRINT_F_UP) ? "INF" : "inf";
 
-	if (infnan != NULL) 
+	if (infnan != NULL)
 	{
 		if (sign != 0)
 			iconvert[ipos++] = sign;
@@ -567,9 +563,9 @@ void fmtflt(char* str, size_t* len, size_t size, LDOUBLE fvalue, int width,
 	}
 
 	// "%e" (or "%E") or "%g" (or "%G") conversion
-	if (flags & PRINT_F_TYPE_E || flags & PRINT_F_TYPE_G) 
+	if (flags & PRINT_F_TYPE_E || flags & PRINT_F_TYPE_G)
 	{
-		if (flags & PRINT_F_TYPE_G) 
+		if (flags & PRINT_F_TYPE_G)
 		{
 			/**
 			 * For "%g" (and "%G") conversions, the precision
@@ -603,7 +599,7 @@ again:
 	 * digits of the 32-bit, the 64-bit, or the 128-bit UINTMAX_MAX value
 	 * minus one) past the decimal point due to our conversion method.
 	 */
-	switch (sizeof(UINTMAX_T)) 
+	switch (sizeof(UINTMAX_T))
 	{
 	case 16:
 		if (precision > 38)
@@ -622,7 +618,7 @@ again:
 	if (estyle)
 		ufvalue /= mypow10(exponent);
 
-	if ((intpart = cast(ufvalue)) == UINTMAX_MAX) 
+	if ((intpart = cast(ufvalue)) == UINTMAX_MAX)
 	{
 		*overflow = 1;
 		return;
@@ -637,7 +633,7 @@ again:
 	 * We "cheat" by converting the fractional part to integer by
 	 * multiplying by a factor of ten.
 	 */
-	if ((fracpart = myround(mask * (ufvalue - intpart))) >= mask) 
+	if ((fracpart = myround(mask * (ufvalue - intpart))) >= mask)
 	{
 		/**
 		 * For example, ufvalue = 2.99962, intpart = 2, and mask = 1000
@@ -647,7 +643,7 @@ again:
 		 */
 		intpart++;
 		fracpart = 0;
-		if (estyle && intpart == 10) 
+		if (estyle && intpart == 10)
 		{
 			/**
 			 * The value was rounded up to ten, but we only want one
@@ -678,16 +674,16 @@ again:
 	 *
 	 * Note that we had decremented the precision by one.
 	 */
-	if (flags & PRINT_F_TYPE_G && estyle && precision + 1 > exponent && exponent >= -4) 
+	if (flags & PRINT_F_TYPE_G && estyle && precision + 1 > exponent && exponent >= -4)
 	{
 		precision -= exponent;
 		estyle = 0;
 		goto again;
 	}
 
-	if (estyle) 
+	if (estyle)
 	{
-		if (exponent < 0) 
+		if (exponent < 0)
 		{
 			exponent = -exponent;
 			esign = '-';
@@ -720,14 +716,14 @@ again:
 
 	leadfraczeros = precision - fpos;
 
-	if (omitzeros) 
+	if (omitzeros)
 	{
 		if (fpos > 0)
 		{
 			while (omitcount < fpos && fconvert[omitcount] == '0')
 				omitcount++;
 		}
-		else 
+		else
 		{
 			omitcount = precision;
 			leadfraczeros = 0;
@@ -744,13 +740,13 @@ again:
 	if (separators)
 		separators = getnumsep(ipos);
 
-	padlen = width                  // Minimum field width
-		- ipos                      // Number of integer digits
-		- epos                      // Number of exponent characters
-		- precision                 // Number of fractional digits
-		- separators                // Number of group separators
-		- (emitpoint ? 1 : 0)       // Will we print a decimal point ?
-		- ((sign != 0) ? 1 : 0);    // Will we print a sign character ?
+	padlen = width				 // Minimum field width
+		- ipos					 // Number of integer digits
+		- epos					 // Number of exponent characters
+		- precision				 // Number of fractional digits
+		- separators			 // Number of group separators
+		- (emitpoint ? 1 : 0)	 // Will we print a decimal point ?
+		- ((sign != 0) ? 1 : 0); // Will we print a sign character ?
 
 	if (padlen < 0)
 		padlen = 0;
@@ -761,34 +757,34 @@ again:
 	 */
 	if (flags & PRINT_F_MINUS)
 		padlen = -padlen;
-	else if (flags & PRINT_F_ZERO && padlen > 0) 
+	else if (flags & PRINT_F_ZERO && padlen > 0)
 	{
-		if (sign != 0) 
+		if (sign != 0)
 		{
 			OUTCHAR(str, *len, size, sign);
 			sign = 0;
 		}
-		while (padlen > 0) 
+		while (padlen > 0)
 		{
 			OUTCHAR(str, *len, size, '0');
 			padlen--;
 		}
 	}
-	while (padlen > 0) 
+	while (padlen > 0)
 	{
 		OUTCHAR(str, *len, size, ' ');
 		padlen--;
 	}
 	if (sign != 0)
 		OUTCHAR(str, *len, size, sign);
-	while (ipos > 0) 
+	while (ipos > 0)
 	{
 		ipos--;
 		OUTCHAR(str, *len, size, iconvert[ipos]);
 		if (separators > 0 && ipos > 0 && ipos % 3 == 0)
 			printsep(str, len, size);
 	}
-	if (emitpoint) 
+	if (emitpoint)
 	{
 #if HAVE_LOCALECONV && HAVE_LCONV_DECIMAL_POINT
 		if (lc->decimal_point != NULL && *lc->decimal_point != '\0')
@@ -797,22 +793,22 @@ again:
 #endif
 			OUTCHAR(str, *len, size, '.');
 	}
-	while (leadfraczeros > 0) 
+	while (leadfraczeros > 0)
 	{
 		OUTCHAR(str, *len, size, '0');
 		leadfraczeros--;
 	}
-	while (fpos > omitcount) 
+	while (fpos > omitcount)
 	{
 		fpos--;
 		OUTCHAR(str, *len, size, fconvert[fpos]);
 	}
-	while (epos > 0) 
+	while (epos > 0)
 	{
 		epos--;
 		OUTCHAR(str, *len, size, econvert[epos]);
 	}
-	while (padlen < 0) 
+	while (padlen < 0)
 	{
 		OUTCHAR(str, *len, size, ' ');
 		padlen++;
@@ -843,7 +839,7 @@ int getnumsep(int digits)
 	struct lconv* lc = localeconv();
 
 	// We support an arbitrary separator length (including zero)
-	if (lc->thousands_sep != NULL) 
+	if (lc->thousands_sep != NULL)
 	{
 		for (strln = 0; lc->thousands_sep[strln] != '\0'; strln++)
 			continue;
@@ -878,12 +874,11 @@ int convert(UINTMAX_T value, char* buf, size_t size, int base, int caps)
 	size_t pos = 0;
 
 	// We return an unterminated buffer with the digits in reverse order
-	do 
+	do
 	{
 		buf[pos++] = digits[value % base];
 		value /= base;
-	} 
-	while (value != 0 && pos < size);
+	} while (value != 0 && pos < size);
 
 	return (int)pos;
 }
@@ -921,12 +916,12 @@ LDOUBLE mypow10(int exponent)
 {
 	LDOUBLE result = 1;
 
-	while (exponent > 0) 
+	while (exponent > 0)
 	{
 		result *= 10;
 		exponent--;
 	}
-	while (exponent < 0) 
+	while (exponent < 0)
 	{
 		result /= 10;
 		exponent++;

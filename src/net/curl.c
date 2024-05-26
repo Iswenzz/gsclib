@@ -19,11 +19,12 @@ void GScr_CURL_Version()
 	CHECK_PARAMS(0, "Usage: CURL_Version()");
 
 	curl_version_info_data* info = curl_version_info(CURLVERSION_NOW);
-	if (!info) return;
+	if (!info)
+		return;
 
 	Plugin_Printf("----------[CURL INFO]----------\n");
-	Plugin_Printf("Age: %d\nHost: %s\nSSH: %s\nSSL: %s\nVersion: %s\n",
-		info->age, info->host, info->libssh_version, info->ssl_version, info->version);
+	Plugin_Printf("Age: %d\nHost: %s\nSSH: %s\nSSL: %s\nVersion: %s\n", info->age, info->host, info->libssh_version,
+		info->ssl_version, info->version);
 
 	Plugin_Printf("Features: ");
 	Plugin_Printf("%s", info->features & CURL_VERSION_IPV6 ? "IPv6 " : "");
@@ -121,7 +122,7 @@ void CURL_Working(qboolean state)
 	curl_handler.working = state;
 }
 
-void CURL_SetHeader(CURL_REQUEST *curl, CURLoption headerType)
+void CURL_SetHeader(CURL_REQUEST* curl, CURLoption headerType)
 {
 	if (curl->header != NULL)
 		curl_easy_setopt(curl->handle, headerType, curl->header);

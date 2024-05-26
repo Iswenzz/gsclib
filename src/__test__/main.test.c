@@ -7,11 +7,11 @@ extern SUITE(Suite_utils_vsnprintf);
 
 int main(int argc, char** argv)
 {
-    GREATEST_MAIN_BEGIN();
+	GREATEST_MAIN_BEGIN();
 
-    RUN_SUITE(Suite_data_regex);
-    RUN_SUITE(Suite_data_zip);
-    RUN_SUITE(Suite_utils_vsnprintf);
+	RUN_SUITE(Suite_data_regex);
+	RUN_SUITE(Suite_data_zip);
+	RUN_SUITE(Suite_utils_vsnprintf);
 
-    GREATEST_MAIN_END();
+	GREATEST_MAIN_END();
 }
