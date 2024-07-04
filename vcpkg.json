@@ -1,6 +1,6 @@
 {
 	"name": "gsclib",
-	"version": "1.5.1",
+	"version": "1.5.2",
 	"description": "gsclib acts as a standard library extension for the Call of Duty 4 scripting language.",
   	"homepage": "https://github.com/Iswenzz/gsclib",
 	  "features": {
