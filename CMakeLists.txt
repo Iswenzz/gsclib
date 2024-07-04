@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.27)
-project(gsclib VERSION 1.5.1 LANGUAGES C)
+project(gsclib VERSION 1.5.2 LANGUAGES C)
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 set(CMAKE_C_STANDARD 11)
 set(CMAKE_C_STANDARD_REQUIRED ON)
