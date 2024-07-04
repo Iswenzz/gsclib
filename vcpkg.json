@@ -18,7 +18,7 @@
 		"pcre2"
 	],
 	"overrides": [
-        { "name": "cgsc", "version": "1.2.3" },
+        { "name": "cgsc", "version": "1.2.4" },
         { "name": "cwalk", "version": "1.2.6" },
         { "name": "curl", "version": "8.2.1" },
         { "name": "greatest", "version": "1.5.0" },
