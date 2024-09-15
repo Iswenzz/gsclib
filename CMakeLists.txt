@@ -50,6 +50,7 @@ target_include_directories(gsclib PUBLIC ..
 
 target_link_libraries(gsclib PUBLIC
 	$<$<BOOL:${WIN32}>:com_plugin>
+	$<$<BOOL:${UNIX}>:m>
 	${PCRE2_LIB}
 	curl::curl
 	libmariadb::libmariadb
