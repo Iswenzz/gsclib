@@ -37,7 +37,7 @@ jobs:
                   cmake --build .
 
             - name: Artifact
-              uses: actions/upload-artifact@v2
+              uses: actions/upload-artifact@v4
               with:
                   name: build-artifact
                   path: build
@@ -50,7 +50,7 @@ jobs:
               uses: actions/checkout@v2
 
             - name: Artifact
-              uses: actions/download-artifact@v2
+              uses: actions/download-artifact@v4
               with:
                   name: build-artifact
                   path: build
