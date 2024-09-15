@@ -58,4 +58,5 @@ jobs:
             - name: Tests
               working-directory: build
               run: |
+                  chmod +x build/gsclib.Tests
                   ctest -C Release
