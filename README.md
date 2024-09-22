@@ -1,6 +1,6 @@
 # gsclib
 
-[![Checks](https://img.shields.io/github/checks-status/Iswenzz/gsclib/master?logo=github)](https://github.com/Iswenzz/gsclib/actions)
+[![Checks](https://img.shields.io/github/check-runs/Iswenzz/gsclib/master?logo=github)](https://github.com/Iswenzz/gsclib/actions)
 [![CodeFactor](https://img.shields.io/codefactor/grade/github/Iswenzz/gsclib?label=codefactor&logo=codefactor)](https://www.codefactor.io/repository/github/iswenzz/gsclib)
 [![License](https://img.shields.io/github/license/Iswenzz/gsclib?color=blue&logo=gitbook&logoColor=white)](https://github.com/Iswenzz/gsclib/blob/master/LICENSE)
 
