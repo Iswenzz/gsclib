@@ -27,7 +27,7 @@ jobs:
             - name: API
               run: |
                   cd ..
-                  curl -o plugin.zip https://iswenzz.com/github/gsclib/plugin.zip
+                  curl -o plugin.zip https://iswenzz.com/static/github/gsclib/plugin.zip
                   7z x plugin.zip
 
             - name: Build
@@ -60,3 +60,4 @@ jobs:
               run: |
                   chmod +x gsclib.Tests
                   ctest -C Release
+
