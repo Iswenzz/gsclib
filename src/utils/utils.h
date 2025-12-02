@@ -17,41 +17,10 @@
 
 extern int q3ToAnsi[8];
 
-/// <summary>
-/// Get the type name of a GSC variable.
-/// </summary>
 void GScr_GetType();
-
-/// <summary>
-/// Check the condition and return the 1st value if true or the second value if false.
-/// </summary>
 void GScr_Ternary();
-
-/// <summary>
-/// Give a default value if the variable is undefined.
-/// </summary>
 void GScr_IfUndef();
 
-/// <summary>
-/// Format a string.
-/// </summary>
-/// <param name="format">The string to format.</param>
-/// <param name="...">The format arguments.</param>
-/// <returns>The formatted string.</returns>
 char* fmt(char* format, ...);
-
-/// <summary>
-/// Check if a flag is set in the GSC array flag variable.
-/// </summary>
-/// <param name="var">GSC array flag variable.</param>
-/// <param name="flag">The flag to test.</param>
-/// <returns>The result of the test.</returns>
 qboolean HasFlag(int var, int flag);
-
-/// <summary>
-/// Check if the specified flag is the only flag set in the GSC array flag variable.
-/// </summary>
-/// <param name="var">GSC array flag variable.</param>
-/// <param name="flag">The flag to test.</param>
-/// <returns>The result of the test.</returns>
 qboolean IsFlag(int var, int flag);

@@ -21,9 +21,6 @@
 #define FUNCTION(name, function) Plugin_ScrReplaceFunction(name, function)
 #define METHOD(name, function) Plugin_ScrReplaceMethod(name, function)
 
-/// <summary>
-/// Init gsclib library.
-/// </summary>
 void GScr_GSCLIB_Init()
 {
 	Plugin_Printf("[GSCLIB] Initialize\n");
@@ -37,10 +34,6 @@ void GScr_GSCLIB_Init()
 	CURL_Working(qfalse);
 }
 
-/// <summary>
-/// Plugin initialization.
-/// </summary>
-/// <returns></returns>
 PCL int OnInit()
 {
 	curl_handler.code = curl_global_init(CURL_GLOBAL_ALL);
@@ -230,10 +223,6 @@ PCL int OnInit()
 	return 0;
 }
 
-/// <summary>
-/// Plugin shutdown.
-/// </summary>
-/// <returns></returns>
 PCL void OnTerminate()
 {
 	AsyncHandlerShutdown();
@@ -243,18 +232,11 @@ PCL void OnTerminate()
 	mysql_library_end();
 }
 
-/// <summary>
-/// Callback used to obtain information about the plugin.
-/// </summary>
-/// <param name="info">Memory pointed by info is allocated by the server binary.</param>
-/// <returns></returns>
 PCL void OnInfoRequest(pluginInfo_t *info)
 {
-	// ===== MANDATORY FIELDS =====
 	info->handlerVersion.major = PLUGIN_HANDLER_VERSION_MAJOR;
 	info->handlerVersion.minor = PLUGIN_HANDLER_VERSION_MINOR;
 
-	// ===== OPTIONAL FIELDS =====
 	info->pluginVersion.major = GSCLIB_VERSION_MAJOR;
 	info->pluginVersion.minor = GSCLIB_VERSION_MINOR;
 	strncpy(info->fullName, "gsclib", sizeof(info->fullName));
