@@ -1,6 +1,4 @@
 #pragma once
-#include "Base.hpp"
-
 #include <atomic>
 #include <condition_variable>
 #include <functional>

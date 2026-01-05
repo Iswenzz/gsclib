@@ -14,8 +14,8 @@ target_include_directories(gsclib PUBLIC . ../..)
 set_target_properties(gsclib PROPERTIES
 	PREFIX ""
 	OUTPUT_NAME gsclib
-	LIBRARY_OUTPUT_DIRECTORY ../../../../../bin
-	RUNTIME_OUTPUT_DIRECTORY ../../../../../bin)
+	LIBRARY_OUTPUT_DIRECTORY ../../../../bin
+	RUNTIME_OUTPUT_DIRECTORY ../../../../bin)
 
 target_link_libraries(gsclib PUBLIC
 	$<$<BOOL:${WIN32}>:com_plugin>

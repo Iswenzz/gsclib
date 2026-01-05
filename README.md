@@ -46,7 +46,7 @@ _Build Command:_
 
     mkdir build && cd build
     cmake .. --preset windows
-    cmake --build .
+    cmake --build . --target install
 
 ## Building (Linux)
 
@@ -56,13 +56,13 @@ _Pre-Requisites:_
 
 	sudo dpkg --add-architecture i386
     sudo apt update
-    sudo apt install build-essential gcc-multilib g++-multilib pkg-config nasm:i386 linux-libc-dev:i386
+    sudo apt install build-essential gcc-multilib g++-multilib pkg-config linux-libc-dev nasm:i386
 
 _Build Command:_
 
     mkdir build && cd build
     cmake .. --preset linux
-    cmake --build .
+    cmake --build . --target install
 
 ## [Download](https://github.com/Iswenzz/gsclib/releases)
 
