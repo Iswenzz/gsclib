@@ -22,7 +22,7 @@ jobs:
               run: |
                   sudo dpkg --add-architecture i386
                   sudo apt-get update
-                  sudo apt-get install nasm:i386 make gcc-multilib g++-multilib git
+                  sudo apt-get install git make gcc-multilib g++-multilib pkg-config linux-libc-dev nasm:i386
 
             - name: API
               run: |
