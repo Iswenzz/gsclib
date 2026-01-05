@@ -26,15 +26,11 @@
 In order to use this library, you'll need to compile the binary and place it to the CoD4 `plugins` directory.
 Then you can simply use `loadplugin gsclib` in your `server.cfg` or as CLI arguments.
 
-To initialize gsclib library you need to call `GSCLIB_Init()` at the start of your mod entry point.
-
 ## Server
 
-1. Edit plugin_handler.h then clean the obj directory and recompile the server.
-
-```c
-#define MAX_SCRIPTFUNCTIONS 256
-```
+1. Edit `plugin_handler.h` and set `#define MAX_SCRIPTFUNCTIONS` to `256`.
+2. Run the script `install.bat` or `install.sh` located in the `api` folder.
+3. Clean the server build then recompile.
 
 ## Building (Windows)
 
