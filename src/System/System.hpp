@@ -1,0 +1,28 @@
+#pragma once
+#include "Base.hpp"
+
+#include <unordered_map>
+
+namespace gsclib
+{
+	class System
+	{
+	public:
+		static inline std::unordered_map<std::string, bool> CriticalSections;
+
+		static void Initialize();
+		static void Execute();
+		static void GetSysTime();
+		static void Exit();
+		static void CriticalSectionCreate();
+		static void CriticalSectionList();
+		static void EnterCriticalSection();
+		static void LeaveCriticalSection();
+		static void AsyncStatus();
+		static void AsyncCancel();
+		static void IsWindows();
+		static void IsLinux();
+		static void CoD4XVersion();
+		static void GSCLIBVersion();
+	};
+}

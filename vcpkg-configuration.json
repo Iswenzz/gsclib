@@ -9,7 +9,7 @@
 			"kind": "git",
 			"repository": "https://github.com/Iswenzz/vcpkg-registry",
 			"baseline": "c12eb749ee43da80e9951717c334059a50bbdf5b",
-			"packages": ["cgsc", "libmariadb"]
+			"packages": ["libmariadb", "mariadb-connector-cpp"]
 		}
 	],
 	"overlay-triplets": [".vcpkg/triplets"]

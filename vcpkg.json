@@ -1,29 +1,26 @@
 {
 	"name": "gsclib",
-	"version": "1.5.2",
+	"version": "2.0.0",
 	"description": "gsclib acts as a standard library extension for the Call of Duty 4 scripting language.",
   	"homepage": "https://github.com/Iswenzz/gsclib",
 	  "features": {
 		"tests": {
 			"description": "Build tests",
-			"dependencies": ["greatest"]
+			"dependencies": ["gtest"]
 		}
 	},
 	"dependencies": [
-		{ "name": "libmariadb", "features": ["openssl"], "default-features": false },
-		{ "name": "libzip", "features": ["bzip2", "openssl"], "default-features": false },
-		{ "name": "curl", "features": ["non-http", "openssl"], "default-features": false },
-		"cgsc",
-		"cwalk",
+		"curl",
+		"libzippp",
+		"mariadb-connector-cpp",
 		"pcre2"
 	],
 	"overrides": [
-        { "name": "cgsc", "version": "1.2.4" },
-        { "name": "cwalk", "version": "1.2.6" },
-        { "name": "curl", "version": "8.2.1" },
-        { "name": "greatest", "version": "1.5.0" },
-        { "name": "libmariadb", "version": "3.3.1" },
-        { "name": "libzip", "version": "1.9.2#2" },
-        { "name": "pcre2", "version": "10.42" }
+        { "name": "curl", "version": "8.14.1" },
+        { "name": "gtest", "version": "1.17.0#1" },
+		{ "name": "libmariadb", "version": "3.3.1#1" },
+        { "name": "libzippp", "version": "7.1-1.10.1" },
+        { "name": "mariadb-connector-cpp", "version": "1.1.5" },
+        { "name": "pcre2", "version": "10.45" }
     ]
 }

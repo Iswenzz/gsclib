@@ -1,8 +1,8 @@
 {
 	"version": 7,
 	"cmakeMinimumRequired": {
-		"major": 3,
-		"minor": 27,
+		"major": 4,
+		"minor": 2,
 		"patch": 0
 	},
 	"configurePresets": [
@@ -16,8 +16,8 @@
 		{
 			"name": "linux",
 			"cacheVariables": {
-				"CMAKE_TOOLCHAIN_FILE": ".vcpkg/linux.cmake"
-			}
+                "CMAKE_TOOLCHAIN_FILE": ".vcpkg/linux.cmake"
+            }
 		}
 	]
 }

@@ -1,7 +1,2 @@
-gsclib.so
-gsclib.dll
-*.ignore
-compile.bat
 build/
 build_linux/
-opencppcoverageCoverage.xml

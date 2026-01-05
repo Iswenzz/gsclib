@@ -1,19 +1,22 @@
-find_path(LIBMARIADB_INCLUDE_DIRS "mysql/mysql.h")
+find_path(LIBMARIADB_INCLUDE_DIR "mysql/mysql.h")
+find_path(LIBMARIADB_CPP_INCLUDE_DIR "mariadb/conncpp.hpp")
 find_library(LIBMARIADB_LIB mariadb)
+find_library(LIBMARIADBCPP_LIB mariadbcpp-static)
 find_library(ZLIB_LIB NAMES zlib z)
-find_package(OpenSSL REQUIRED)
 
 set(LIBMARIADB_LIBS
+	${LIBMARIADBCPP_LIB}
 	${LIBMARIADB_LIB}
-	${ZLIB_LIB}
-	openssl::openssl)
+	${ZLIB_LIB})
 
 set(LIBMARIADB_INCLUDE_DIRS
-	${LIBMARIADB_INCLUDE_DIRS}
-	${LIBMARIADB_INCLUDE_DIRS}/mysql)
+	${LIBMARIADB_CPP_INCLUDE_DIR}
+	${LIBMARIADB_CPP_INCLUDE_DIR}/mariadb
+	${LIBMARIADB_INCLUDE_DIR}
+	${LIBMARIADB_INCLUDE_DIR}/mysql)
 
 if(WIN32)
-	list(APPEND LIBMARIADB_LIBS ws2_32 advapi32 kernel32 shlwapi crypt32)
+	list(APPEND LIBMARIADB_LIBS secur32 Ws2_32 Shlwapi Crypt32)
 endif()
 
 include(FindPackageHandleStandardArgs)

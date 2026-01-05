@@ -28,40 +28,19 @@ Then you can simply use `loadplugin gsclib` in your `server.cfg` or as CLI argum
 
 To initialize gsclib library you need to call `GSCLIB_Init()` at the start of your mod entry point.
 
-```c
-main()
-{
-	GSCLIB_Init();
-}
-```
-
 ## Server
 
-1. Edit plugin_handler.h then recompile the server with a clean obj directory:
+1. Edit plugin_handler.h then clean the obj directory and recompile the server.
 
 ```c
 #define MAX_SCRIPTFUNCTIONS 256
 ```
 
-## Building (Linux)
-
-_Pre-Requisites:_
-
-1. [CGSC](https://github.com/Iswenzz/CGSC) and it's pre-requisites.
-2. [CMake](https://cmake.org/) and [vcpkg](https://vcpkg.io/en/).
-
-_Build Command:_
-
-    mkdir build && cd build
-    cmake .. --preset linux
-    cmake --build .
-
 ## Building (Windows)
 
 _Pre-Requisites:_
 
-1. [CGSC](https://github.com/Iswenzz/CGSC) and it's pre-requisites.
-2. [CMake](https://cmake.org/) and [vcpkg](https://vcpkg.io/en/).
+1. [CMake](https://cmake.org/) and [vcpkg](https://vcpkg.io/en/).
 
 _Build Command:_
 
@@ -69,11 +48,23 @@ _Build Command:_
     cmake .. --preset windows
     cmake --build .
 
+## Building (Linux)
+
+_Pre-Requisites:_
+
+1. [CMake](https://cmake.org/) and [vcpkg](https://vcpkg.io/en/).
+
+	sudo dpkg --add-architecture i386
+    sudo apt update
+    sudo apt install build-essential gcc-multilib g++-multilib pkg-config nasm:i386 linux-libc-dev:i386
+
+_Build Command:_
+
+    mkdir build && cd build
+    cmake .. --preset linux
+    cmake --build .
+
 ## [Download](https://github.com/Iswenzz/gsclib/releases)
-
-## Troubleshouting
-
-For resolving missing dependencies you can use the [ldd](https://man7.org/linux/man-pages/man1/ldd.1.html) command for Linux, and [Dependency Walker](https://www.dependencywalker.com/) for Windows.
 
 ## Contributors:
 
