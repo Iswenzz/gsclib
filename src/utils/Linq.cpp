@@ -5,12 +5,6 @@
 #include <charconv>
 #include <cstring>
 
-// TODO REMOVE
-VariableValue Plugin_Scr_GetThreadResult()
-{
-	return {};
-}
-
 namespace gsclib
 {
 	void Linq::Select()

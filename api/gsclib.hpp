@@ -1,12 +1,25 @@
 #pragma once
 
 #ifndef PLUGIN
+	#include <q_shared.h>
+	#include <cscr_main.h>
+	#include <cscr_variable.h>
+	#include <cscr_stringlist.h>
 	#include <scr_vm.h>
+	#include <sys_main.h>
 #endif
 
 #define EXPORT(type, definition) \
 	type definition;             \
 	type Plugin_##definition
+
+#define VAR_MASK 0x1F
+#define VAR_NAME_BITS 8
+
+#define VARIABLELIST_CHILD_BEGIN 0x8002
+#define VARIABLELIST_PARENT_BEGIN 0x1
+#define VARIABLELIST_CHILD_SIZE 0xFFFE
+#define VARIABLELIST_PARENT_SIZE 0x8000
 
 extern "C"
 {
@@ -51,7 +64,6 @@ extern "C"
 	EXPORT(VariableValueArray, Scr_CreateArray(int length));
 	EXPORT(void, Scr_FreeArray(VariableValueArray *array));
 	EXPORT(VariableValueArray, Scr_GetArray(unsigned int paramnum));
-	EXPORT(int, Scr_GetFunc(unsigned int paramnum));
 	EXPORT(void, Scr_AddVariable(VariableValue var));
 	EXPORT(void, Scr_AddPointerArray(unsigned int pointerValue));
 	EXPORT(void, Scr_AddFunc(const char *codePosValue));
@@ -59,7 +71,6 @@ extern "C"
 	EXPORT(VariableValue, Scr_GetThreadResult());
 	EXPORT(VariableValue *, Scr_GetTop(unsigned int paramnum));
 	EXPORT(VariableValue *, Scr_SelectParam(unsigned int paramnum));
-	EXPORT(VariableValue *, Scr_SelectParamOrDefault(unsigned int paramnum));
 	EXPORT(uint32_t, Scr_GetArrayFlags(VariableValueArray array));
 	EXPORT(unsigned int, Scr_GetObjectType(unsigned int id));
 }

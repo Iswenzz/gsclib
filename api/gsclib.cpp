@@ -2,6 +2,16 @@
 
 extern "C"
 {
+	extern struct scrVarGlob_t gScrVarGlob;
+	extern unsigned int VM_Execute(unsigned int paramcount, const char* pos);
+	extern void IncInParam();
+	extern void Scr_AddIString(const char* value);
+
+	struct __attribute__((aligned(64))) scrVarGlob_t
+	{
+		VariableValueInternal* variableList;
+	};
+
 	VariableValueArray Scr_CreateArray(int length)
 	{
 		VariableValueArray array;
@@ -35,23 +45,23 @@ extern "C"
 
 		VariableValueInternal* entryValue;
 		array = Scr_CreateArray(length);
-		unsigned int id = IGScrVarGlob[parentId + VARIABLELIST_PARENT_BEGIN].nextSibling;
+		unsigned int id = gScrVarGlob.variableList[parentId + VARIABLELIST_PARENT_BEGIN].nextSibling;
 		unsigned int nextSibling;
 
 		if (id)
 		{
 			while (true)
 			{
-				entryValue = &IGScrVarGlob[id + VARIABLELIST_CHILD_BEGIN];
+				entryValue = &gScrVarGlob.variableList[id + VARIABLELIST_CHILD_BEGIN];
 
 				array.items[index].type = entryValue->w.type & VAR_MASK;
 				array.items[index].u = entryValue->u.u;
 
-				nextSibling = IGScrVarGlob[id + VARIABLELIST_CHILD_BEGIN].nextSibling;
+				nextSibling = gScrVarGlob.variableList[id + VARIABLELIST_CHILD_BEGIN].nextSibling;
 				if (!nextSibling)
 					break;
 
-				id = IGScrVarGlob[nextSibling + VARIABLELIST_CHILD_BEGIN].hash.id;
+				id = gScrVarGlob.variableList[nextSibling + VARIABLELIST_CHILD_BEGIN].hash.id;
 				index--;
 			}
 		}
@@ -72,20 +82,20 @@ extern "C"
 			return;
 		}
 		auto* entries = new VariableValueInternal[length];
-		unsigned int id = IGScrVarGlob[pointerValue + VARIABLELIST_PARENT_BEGIN].nextSibling;
+		unsigned int id = gScrVarGlob.variableList[pointerValue + VARIABLELIST_PARENT_BEGIN].nextSibling;
 		unsigned int nextSibling;
 
 		if (id)
 		{
 			while (true)
 			{
-				entries[index] = IGScrVarGlob[id + VARIABLELIST_CHILD_BEGIN];
-				nextSibling = IGScrVarGlob[id + VARIABLELIST_CHILD_BEGIN].nextSibling;
+				entries[index] = gScrVarGlob.variableList[id + VARIABLELIST_CHILD_BEGIN];
+				nextSibling = gScrVarGlob.variableList[id + VARIABLELIST_CHILD_BEGIN].nextSibling;
 
 				if (!nextSibling)
 					break;
 
-				id = IGScrVarGlob[nextSibling + VARIABLELIST_CHILD_BEGIN].hash.id;
+				id = gScrVarGlob.variableList[nextSibling + VARIABLELIST_CHILD_BEGIN].hash.id;
 				index--;
 			}
 		}
@@ -110,26 +120,26 @@ extern "C"
 	void Scr_AddFunc(const char* codePosValue)
 	{
 		IncInParam();
-		IGScrVmPub.top->type = VAR_FUNCTION;
-		IGScrVmPub.top->u.codePosValue = codePosValue;
+		gScrVmPub.top->type = VAR_FUNCTION;
+		gScrVmPub.top->u.codePosValue = codePosValue;
 	}
 
 	unsigned short Scr_ExecThreadResult(int handle, unsigned int paramcount)
 	{
-		const char* pos = &scrVarPub.programBuffer[handle];
+		const char* pos = &gScrVarPub.programBuffer[handle];
 
-		if (!scrVmPub.function_count)
-			scrVmGlob.starttime = Sys_Milliseconds();
+		if (!gScrVmPub.function_count)
+			gScrVmGlob.starttime = Sys_Milliseconds();
 
 		Scr_IsInOpcodeMemory(pos);
-		AddRefToObject(scrVarPub.levelId);
-		AllocThread(scrVarPub.levelId);
+		AddRefToObject(gScrVarPub.levelId);
+		AllocThread(gScrVarPub.levelId);
 
 		unsigned int id = VM_Execute(paramcount, pos);
 
-		RemoveRefToValue(scrVmPub.top->type, scrVmPub.top->u);
-		--scrVmPub.top;
-		--scrVmPub.inparamcount;
+		RemoveRefToValue(gScrVmPub.top->type, gScrVmPub.top->u);
+		--gScrVmPub.top;
+		--gScrVmPub.inparamcount;
 
 		return static_cast<unsigned short>(id);
 	}
@@ -144,25 +154,15 @@ extern "C"
 
 	VariableValue* Scr_GetTop(unsigned int paramnum)
 	{
-		return &IGScrVmPub.top[-paramnum];
+		return &gScrVmPub.top[-paramnum];
 	}
 
 	VariableValue* Scr_SelectParam(unsigned int paramnum)
 	{
-		if (paramnum >= IGScrVmPub.outparamcount)
+		if (paramnum >= gScrVmPub.outparamcount)
 		{
 			Scr_Error(const_cast<char*>("parameter does not exist\n"));
 			return nullptr;
-		}
-		return Scr_GetTop(paramnum);
-	}
-
-	VariableValue* Scr_SelectParamOrDefault(unsigned int paramnum)
-	{
-		if (paramnum >= IGScrVmPub.outparamcount)
-		{
-			IGScrVmPub.top++;
-			IGScrVmPub.outparamcount++;
 		}
 		return Scr_GetTop(paramnum);
 	}
@@ -222,7 +222,7 @@ extern "C"
 	uint32_t Scr_GetArrayFlags(VariableValueArray array)
 	{
 		uint32_t flags = 0;
-		for (int i = 0; i < array.length; i++)
+		for (unsigned int i = 0; i < array.length; i++)
 		{
 			switch (array.items[i].type)
 			{
