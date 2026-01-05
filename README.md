@@ -43,7 +43,7 @@ _Build Command:_
 
     mkdir build && cd build
     cmake .. --preset windows
-    cmake --build . --target install
+    cmake --build .
 
 ## Building (Linux)
 
@@ -59,7 +59,7 @@ _Build Command:_
 
     mkdir build && cd build
     cmake .. --preset linux
-    cmake --build . --target install
+    cmake --build .
 
 ## [Download](https://github.com/Iswenzz/gsclib/releases)
 
