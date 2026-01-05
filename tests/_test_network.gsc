@@ -13,18 +13,18 @@ main()
 	it(::test_SFTP_PostGetFile, "SFTP_PostGetFile", ::beforeSFTP, ::afterSFTP);
 	it(::test_FTP_Shell, "FTP_Shell", ::beforeFTP, ::afterFTP);
 	it(::test_FTP_PostGetFile, "FTP_PostGetFile", ::beforeFTP, ::afterFTP);
-	it(::test_FTP_HeaderCleanup, "CURL_HeaderCleanup");
-	it(::test_FTP_OptCleanup, "CURL_OptCleanup");
-	it(::test_FTP_AddOpt, "CURL_AddOpt");
+	it(::test_FTP_HeaderCleanup, "FTP_HeaderCleanup");
+	it(::test_FTP_OptCleanup, "FTP_OptCleanup");
+	it(::test_FTP_AddOpt, "FTP_AddOpt");
 
 	// Network/HTTP
 	it(::test_HTTP_Get, "HTTP_Get");
 	it(::test_HTTP_GetFile, "HTTP_GetFile");
 	it(::test_HTTP_Post, "HTTP_Post");
 	it(::test_HTTP_PostFile, "HTTP_PostFile");
-	it(::test_HTTP_HeaderCleanup, "CURL_HeaderCleanup");
-	it(::test_HTTP_OptCleanup, "CURL_OptCleanup");
-	it(::test_HTTP_AddOpt, "CURL_AddOpt");
+	it(::test_HTTP_HeaderCleanup, "FTP_HeaderCleanup");
+	it(::test_HTTP_OptCleanup, "FTP_OptCleanup");
+	it(::test_HTTP_AddOpt, "FTP_AddOpt");
 
 	// Network/MySQL
 	it(::test_SQL_Version, "SQL_Version", ::beforeMySQL);
@@ -160,7 +160,7 @@ test_HTTP_Post()
 	url = "http://httpbin.org/post";
 
 	request = HTTP_Init();
-	CURL_AddHeader(request, "Accept: application/json,Content-Type: application/json");
+	HTTP_AddHeader(request, "Accept: application/json,Content-Type: application/json");
 	HTTP_Post(request, json, url);
 	AsyncWait(request);
 
@@ -183,23 +183,23 @@ test_HTTP_PostFile()
 
 test_HTTP_HeaderCleanup()
 {
-	request = CURL_Init();
-	EXPECT_UNDEFINED(CURL_HeaderCleanup(request));
-	CURL_Free(request);
+	request = HTTP_Init();
+	EXPECT_UNDEFINED(HTTP_HeaderCleanup(request));
+	HTTP_Free(request);
 }
 
 test_HTTP_OptCleanup()
 {
-	request = CURL_Init();
-	EXPECT_UNDEFINED(CURL_OptCleanup(request));
-	CURL_Free(request);
+	request = HTTP_Init();
+	EXPECT_UNDEFINED(HTTP_OptCleanup(request));
+	HTTP_Free(request);
 }
 
 test_HTTP_AddOpt()
 {
-	request = CURL_Init();
-	EXPECT_UNDEFINED(CURL_AddOpt(request, 41, 1));
-	CURL_Free(request);
+	request = HTTP_Init();
+	EXPECT_UNDEFINED(HTTP_AddOpt(request, 41, 1));
+	HTTP_Free(request);
 }
 
 test_SFTP_Shell()
@@ -212,13 +212,13 @@ test_SFTP_Shell()
 	FTP_Free(request);
 
 	request = FTP_Init();
-	CURL_AddHeader(request, "rename test.txt new.txt");
+	FTP_AddHeader(request, "rename test.txt new.txt");
 	EXPECT_TRUE(FTP_Shell(request));
 	AsyncWait(request);
 	FTP_Free(request);
 
 	request = FTP_Init();
-	CURL_AddHeader(request, "rm new.txt");
+	FTP_AddHeader(request, "rm new.txt");
 	EXPECT_TRUE(FTP_Shell(request));
 	AsyncWait(request);
 	FTP_Free(request);
@@ -237,7 +237,7 @@ test_SFTP_PostGetFile()
 	FTP_Free(request);
 
 	request = FTP_Init();
-	CURL_AddHeader(request, "rm get.txt");
+	FTP_AddHeader(request, "rm get.txt");
 	EXPECT_TRUE(FTP_Shell(request));
 	AsyncWait(request);
 	FTP_Free(request);
@@ -255,14 +255,14 @@ test_FTP_Shell()
 	FTP_Free(request);
 
 	request = FTP_Init();
-	CURL_AddHeader(request, "RNFR test.txt");
-	CURL_AddHeader(request, "RNTO new.txt");
+	FTP_AddHeader(request, "RNFR test.txt");
+	FTP_AddHeader(request, "RNTO new.txt");
 	EXPECT_TRUE(FTP_Shell(request));
 	AsyncWait(request);
 	FTP_Free(request);
 
 	request = FTP_Init();
-	CURL_AddHeader(request, "DELE new.txt");
+	FTP_AddHeader(request, "DELE new.txt");
 	EXPECT_TRUE(FTP_Shell(request));
 	AsyncWait(request);
 	FTP_Free(request);
@@ -281,7 +281,7 @@ test_FTP_PostGetFile()
 	FTP_Free(request);
 
 	request = FTP_Init();
-	CURL_AddHeader(request, "DELE get.txt");
+	FTP_AddHeader(request, "DELE get.txt");
 	EXPECT_TRUE(FTP_Shell(request));
 	AsyncWait(request);
 	FTP_Free(request);
@@ -291,23 +291,23 @@ test_FTP_PostGetFile()
 
 test_FTP_HeaderCleanup()
 {
-	request = CURL_Init();
-	EXPECT_UNDEFINED(CURL_HeaderCleanup(request));
-	CURL_Free(request);
+	request = FTP_Init();
+	EXPECT_UNDEFINED(FTP_HeaderCleanup(request));
+	FTP_Free(request);
 }
 
 test_FTP_OptCleanup()
 {
-	request = CURL_Init();
-	EXPECT_UNDEFINED(CURL_OptCleanup(request));
-	CURL_Free(request);
+	request = FTP_Init();
+	EXPECT_UNDEFINED(FTP_OptCleanup(request));
+	FTP_Free(request);
 }
 
 test_FTP_AddOpt()
 {
-	request = CURL_Init();
-	EXPECT_UNDEFINED(CURL_AddOpt(request, 41, 1));
-	CURL_Free(request);
+	request = FTP_Init();
+	EXPECT_UNDEFINED(FTP_AddOpt(request, 41, 1));
+	FTP_Free(request);
 }
 
 test_SQL_PrepareStatement()
