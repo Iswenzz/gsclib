@@ -1,10 +1,10 @@
-# Critical Sections
+# Async
 
 Critical sections are used to protect shared resources from concurrent access, which can lead to race conditions and other synchronization issues. By executing a critical section as an atomic operation, you can ensure that the shared resource is not modified by another process or thread while the critical section is being executed.
 
 ## Example
 
-You can define the following GSC functions to ensure concurrent access to MySQL/HTTP/FTP/CURL etc...
+You can define the following GSC functions to ensure concurrent access to MySQL/HTTP/FTP etc...
 
 ```c
 main()
@@ -12,7 +12,6 @@ main()
 	critical("mysql");
 	critical("http");
 	critical("ftp");
-	critical("curl");
 }
 
 critical(id)

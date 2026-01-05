@@ -1,4 +1,4 @@
-# Regular Expression (PCRE2 RegEx)
+# Regular Expression (PCRE2)
 
 #### ``RegexMatch(<input>, <regex>)``
 Get all matches in an array from the specified input string and regex.

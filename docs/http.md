@@ -1,6 +1,7 @@
 # HTTP
 
-### WARNING: **Requests are not thread safe. Use critical sections when needed**
+**Requests are not thread safe. Use critical sections when needed**
+**The example below uses GSC functions defined in [Async](https://github.com/Iswenzz/gsclib/blob/master/docs/async.md)**
 
 ## Example
 ```c
@@ -10,7 +11,7 @@ json = "{\"login\":\"login\",\"password\":\"password\"}";
 url = "http://httpbin.org/post";
 
 request = HTTP_Init();
-CURL_AddHeader(request, "Accept: application/json,Content-Type: application/json");
+HTTP_AddHeader(request, "Accept: application/json,Content-Type: application/json");
 HTTP_Post(request, json, url);
 status = AsyncWait(request);
 
@@ -19,7 +20,6 @@ HTTP_Free(request);
 
 critical_leave("http");
 ```
-**The example above use GSC functions defined in [Critical Sections](https://github.com/Iswenzz/gsclib/blob/master/docs/critical.md)**
 
 #### ``HTTP_Init()``
 Initialize an HTTP request.
@@ -71,5 +71,38 @@ Post a string to HTTP url.
 ```c
 request = HTTP_Init();
 HTTP_Post(request, "{\"login\":\"login\",\"password\":\"password\"}", "http://httpbin.org/post");
+```
+<hr>
+
+#### ``HTTP_AddHeader(<request>, <commands>)``
+Set HTTP Header for the next requests.
+
+```c
+HTTP_AddHeader(request, "Accept: application/json");
+HTTP_AddHeader(request, "Content-Type: application/json");
+```
+<hr>
+
+#### ``HTTP_HeaderCleanup(<request>)``
+Clean header set by HTTP_AddHeader.
+
+```c
+HTTP_HeaderCleanup(request);
+```
+<hr>
+
+#### ``HTTP_AddOpt(<request>, <option>, <value>)``
+Add a HTTP Option for the next request.
+
+```c
+HTTP_AddOpt(request, 47, 1);
+```
+<hr>
+
+#### ``HTTP_OptCleanup(<request>)``
+Clean all HTTP Option added by HTTP_AddOpt.
+
+```c
+HTTP_OptCleanup(request);
 ```
 <hr>

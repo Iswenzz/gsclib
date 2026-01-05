@@ -57,13 +57,13 @@ PCL int OnInit()
 
 	// Network/FTP
 	Plugin_ScrAddFunction("ftp_init", &Ftp::Initialize);
+	Plugin_ScrAddFunction("ftp_free", &Ftp::Free);
 	Plugin_ScrAddFunction("sftp_connect", &Ftp::SftpConnect);
 	Plugin_ScrAddFunction("ftp_connect", &Ftp::Connect);
 	Plugin_ScrAddFunction("ftp_close", &Ftp::Close);
 	Plugin_ScrAddFunction("ftp_shell", &Ftp::Shell);
 	Plugin_ScrAddFunction("ftp_postfile", &Ftp::PostFile);
 	Plugin_ScrAddFunction("ftp_getfile", &Ftp::GetFile);
-	Plugin_ScrAddFunction("ftp_free", &Ftp::Free);
 	Plugin_ScrAddFunction("ftp_addheader", &Ftp::AddHeader);
 	Plugin_ScrAddFunction("ftp_addopt", &Ftp::AddOpt);
 	Plugin_ScrAddFunction("ftp_headercleanup", &Ftp::HeaderCleanup);
@@ -71,12 +71,12 @@ PCL int OnInit()
 
 	// Network/HTTP
 	Plugin_ScrAddFunction("http_init", &Http::Initialize);
+	Plugin_ScrAddFunction("http_free", &Http::Free);
 	Plugin_ScrAddFunction("http_post", &Http::Post);
 	Plugin_ScrAddFunction("http_postfile", &Http::PostFile);
 	Plugin_ScrAddFunction("http_get", &Http::Get);
 	Plugin_ScrAddFunction("http_getfile", &Http::GetFile);
 	Plugin_ScrAddFunction("http_response", &Http::GetResponse);
-	Plugin_ScrAddFunction("http_free", &Http::Free);
 	Plugin_ScrAddFunction("http_addheader", &Http::AddHeader);
 	Plugin_ScrAddFunction("http_addopt", &Http::AddOpt);
 	Plugin_ScrAddFunction("http_headercleanup", &Http::HeaderCleanup);

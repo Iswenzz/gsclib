@@ -60,7 +60,7 @@ time = player PmTime();
 Set the player's movement time.
 
 ```c
-player PmTime(time);
+player SetPmTime(time);
 ```
 <hr>
 

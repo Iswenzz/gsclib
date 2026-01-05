@@ -55,6 +55,21 @@ namespace gsclib
 		Plugin_Scr_AddInt(reinterpret_cast<uintptr_t>(file));
 	}
 
+	void File::Close()
+	{
+		CHECK_PARAMS(1, "Usage: FILE_Close(<file>)\n");
+
+		auto* file = reinterpret_cast<std::fstream*>(Plugin_Scr_GetInt(0));
+		if (!file)
+		{
+			Plugin_Scr_AddBool(qfalse);
+			return;
+		}
+		file->close();
+		Plugin_Scr_AddBool(static_cast<qboolean>(!file->fail()));
+		delete file;
+	}
+
 	void File::Exists()
 	{
 		CHECK_PARAMS(1, "Usage: FILE_Exists(<path>)\n");
@@ -152,23 +167,6 @@ namespace gsclib
 		Plugin_Scr_FreeArray(&array);
 	}
 
-	void File::Seek()
-	{
-		CHECK_PARAMS(2, "Usage: FILE_Seek(<file>, <offset>)\n");
-
-		auto* file = reinterpret_cast<std::fstream*>(Plugin_Scr_GetInt(0));
-		int offset = Plugin_Scr_GetInt(1);
-
-		if (!file)
-		{
-			Plugin_Scr_Error("File handle is NULL\n");
-			return;
-		}
-		file->seekg(offset, std::ios::beg);
-		file->seekp(offset, std::ios::beg);
-		Plugin_Scr_AddBool(static_cast<qboolean>(file->good()));
-	}
-
 	void File::Read()
 	{
 		CHECK_PARAMS(1, "Usage: FILE_Read(<file>)\n");
@@ -218,27 +216,29 @@ namespace gsclib
 		Plugin_Scr_AddBool(static_cast<qboolean>(file->good()));
 	}
 
+	void File::Seek()
+	{
+		CHECK_PARAMS(2, "Usage: FILE_Seek(<file>, <offset>)\n");
+
+		auto* file = reinterpret_cast<std::fstream*>(Plugin_Scr_GetInt(0));
+		int offset = Plugin_Scr_GetInt(1);
+
+		if (!file)
+		{
+			Plugin_Scr_Error("File handle is NULL\n");
+			return;
+		}
+		file->seekg(offset, std::ios::beg);
+		file->seekp(offset, std::ios::beg);
+		Plugin_Scr_AddBool(static_cast<qboolean>(file->good()));
+	}
+
 	void File::Delete()
 	{
 		CHECK_PARAMS(1, "Usage: FILE_Delete(<path>)\n");
 
 		const char* path = Plugin_Scr_GetString(0);
 		Plugin_Scr_AddBool(static_cast<qboolean>(std::filesystem::remove(path)));
-	}
-
-	void File::Close()
-	{
-		CHECK_PARAMS(1, "Usage: FILE_Close(<file>)\n");
-
-		auto* file = reinterpret_cast<std::fstream*>(Plugin_Scr_GetInt(0));
-		if (!file)
-		{
-			Plugin_Scr_AddBool(qfalse);
-			return;
-		}
-		file->close();
-		Plugin_Scr_AddBool(static_cast<qboolean>(!file->fail()));
-		delete file;
 	}
 
 	void File::MkDir()

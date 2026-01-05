@@ -8,18 +8,18 @@
 
 ## Features & Documentation
 
--   [HTTP/HTTPS Client](https://github.com/Iswenzz/gsclib/blob/master/docs/http.md)
--   [FTP/FTPS/SFTP Client](https://github.com/Iswenzz/gsclib/blob/master/docs/ftp.md)
--   [Regular Expression (PCRE2)](https://github.com/Iswenzz/gsclib/blob/master/docs/regex.md)
--   [Language Integrated Query (Linq)](https://github.com/Iswenzz/gsclib/blob/master/docs/linq.md)
--   [MySQL](https://github.com/Iswenzz/gsclib/blob/master/docs/mysql.md)
--   [Critical Sections](https://github.com/Iswenzz/gsclib/blob/master/docs/critical.md)
--   [Utilities](https://github.com/Iswenzz/gsclib/blob/master/docs/utility.md)
--   [File](https://github.com/Iswenzz/gsclib/blob/master/docs/file.md)
--   [System](https://github.com/Iswenzz/gsclib/blob/master/docs/system.md)
--   [Zip](https://github.com/Iswenzz/gsclib/blob/master/docs/zip.md)
--   [Player](https://github.com/Iswenzz/gsclib/blob/master/docs/player.md)
--   [Math](https://github.com/Iswenzz/gsclib/blob/master/docs/math.md)
+- [HTTP/HTTPS Client](https://github.com/Iswenzz/gsclib/blob/master/docs/http.md)
+- [FTP/FTPS/SFTP Client](https://github.com/Iswenzz/gsclib/blob/master/docs/ftp.md)
+- [Regular Expression (PCRE2)](https://github.com/Iswenzz/gsclib/blob/master/docs/regex.md)
+- [Language Integrated Query (Linq)](https://github.com/Iswenzz/gsclib/blob/master/docs/linq.md)
+- [MySQL](https://github.com/Iswenzz/gsclib/blob/master/docs/mysql.md)
+- [Async](https://github.com/Iswenzz/gsclib/blob/master/docs/async.md)
+- [Utilities](https://github.com/Iswenzz/gsclib/blob/master/docs/utility.md)
+- [File](https://github.com/Iswenzz/gsclib/blob/master/docs/file.md)
+- [Zip](https://github.com/Iswenzz/gsclib/blob/master/docs/zip.md)
+- [System](https://github.com/Iswenzz/gsclib/blob/master/docs/system.md)
+- [Player](https://github.com/Iswenzz/gsclib/blob/master/docs/player.md)
+- [Math](https://github.com/Iswenzz/gsclib/blob/master/docs/math.md)
 
 ## Instructions
 
@@ -40,7 +40,8 @@ To initialize gsclib library you need to call `GSCLIB_Init()` at the start of yo
 
 _Pre-Requisites:_
 
-1. [CMake](https://cmake.org/) and [vcpkg](https://vcpkg.io/en/).
+1. [MinGW](https://github.com/brechtsanders/winlibs_mingw/releases/download/15.2.0posix-13.0.0-msvcrt-r5/winlibs-i686-posix-dwarf-gcc-15.2.0-mingw-w64msvcrt-13.0.0-r5.zip)
+2. [CMake](https://cmake.org/) and [vcpkg](https://vcpkg.io/en/)
 
 _Build Command:_
 
@@ -52,7 +53,7 @@ _Build Command:_
 
 _Pre-Requisites:_
 
-1. [CMake](https://cmake.org/) and [vcpkg](https://vcpkg.io/en/).
+1. [CMake](https://cmake.org/) and [vcpkg](https://vcpkg.io/en/)
 
 	sudo dpkg --add-architecture i386
     sudo apt update

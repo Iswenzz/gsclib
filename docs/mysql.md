@@ -1,12 +1,13 @@
 # MySQL
 
-### WARNING: **Requests are not thread safe. Use critical sections when needed**
+**Requests are not thread safe. Use critical sections when needed**
+**The example below uses GSC functions defined in [Async](https://github.com/Iswenzz/gsclib/blob/master/docs/async.md)**
 
 ## Example
 ```c
 critical_enter("mysql");
 
-request = SQL_Prepare("SELECT name, guid, rank FROM speedrun_ranks WHERE name = ?");
+request = SQL_Prepare("SELECT name, guid, rank FROM ranks WHERE name = ?");
 SQL_BindParam(request, "Iswenzz", level.MYSQL_TYPE_VAR_STRING);
 SQL_BindResult(request, level.MYSQL_TYPE_VAR_STRING, 60);
 SQL_BindResult(request, level.MYSQL_TYPE_VAR_STRING, 60);
@@ -26,7 +27,6 @@ SQL_Free(request);
 
 critical_leave("mysql");
 ```
-**The example above use GSC functions defined in [Critical Sections](https://github.com/Iswenzz/gsclib/blob/master/docs/critical.md)**
 
 ### MySQL types for prepared statement:
 ```c
@@ -133,7 +133,7 @@ Command for performing a statement on the database server, binds must be set in 
 The request should be freed when done using SQL_Free.
 
 ```c
-request = SQL_Prepare("SELECT name, guid, rank FROM speedrun_ranks WHERE name = ?");
+request = SQL_Prepare("SELECT name, guid, rank FROM ranks WHERE name = ?");
 SQL_BindParam(request, "Iswenzz", level.MYSQL_TYPE_VAR_STRING);
 SQL_BindResult(request, level.MYSQL_TYPE_VAR_STRING, 60);
 SQL_BindResult(request, level.MYSQL_TYPE_VAR_STRING, 60);
@@ -143,7 +143,7 @@ SQL_BindResult(request, level.MYSQL_TYPE_LONG);
 SQL_Execute(request);
 ```
 ```c
-request = SQL_Prepare("INSERT INTO speedrun_ranks (name, guid, rank) VALUES (?, ?, ?)");
+request = SQL_Prepare("INSERT INTO ranks (name, guid, rank) VALUES (?, ?, ?)");
 SQL_BindParam(request, "Iswenzz", level.MYSQL_TYPE_VAR_STRING);
 SQL_BindParam(request, "313354b4", level.MYSQL_TYPE_VAR_STRING);
 SQL_BindParam(request, "80", level.MYSQL_TYPE_LONG);
