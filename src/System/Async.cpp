@@ -22,7 +22,7 @@ namespace gsclib
 		Running = false;
 		Condition.notify_all();
 
-		for (auto &worker : Workers)
+		for (auto& worker : Workers)
 		{
 			if (worker.joinable())
 				worker.join();
@@ -32,24 +32,36 @@ namespace gsclib
 		std::scoped_lock lock(QueueMutex);
 		while (!Tasks.empty())
 			Tasks.pop();
+
+		ActiveTasks.clear();
 	}
 
-	std::shared_ptr<AsyncTask> Async::Submit(std::function<void(AsyncTask &)> work)
+	std::shared_ptr<AsyncTask> Async::Create(void* data)
 	{
 		auto task = std::make_shared<AsyncTask>();
+		task->Data = data;
+		task->Status = AsyncStatus::Pending;
 		{
 			std::scoped_lock lock(QueueMutex);
-			Tasks.push({ task, std::move(work) });
+			ActiveTasks.push_back(task);
+		}
+		return task;
+	}
+
+	void Async::Submit(std::function<void()> work)
+	{
+		{
+			std::scoped_lock lock(QueueMutex);
+			Tasks.push(std::move(work));
 		}
 		Condition.notify_one();
-		return task;
 	}
 
 	void Async::WorkerThread()
 	{
 		while (Running)
 		{
-			std::pair<std::shared_ptr<AsyncTask>, std::function<void(AsyncTask &)>> taskPair;
+			std::function<void()> work;
 			{
 				std::unique_lock lock(QueueMutex);
 				Condition.wait(lock, [] { return !Tasks.empty() || !Running; });
@@ -57,23 +69,16 @@ namespace gsclib
 				if (!Running && Tasks.empty())
 					return;
 
-				taskPair = std::move(Tasks.front());
+				work = std::move(Tasks.front());
 				Tasks.pop();
 			}
-			auto &task = taskPair.first;
-			auto &work = taskPair.second;
-			task->Status = AsyncStatus::Running;
-
 			try
 			{
-				work(*task);
-				if (task->Status == AsyncStatus::Running)
-					task->Status = AsyncStatus::Successful;
+				work();
 			}
-			catch (const std::exception &e)
+			catch (const std::exception& e)
 			{
-				task->Error = e.what();
-				task->Status = AsyncStatus::Failure;
+				Plugin_Printf("Async exception: %s\n", e.what());
 			}
 		}
 	}

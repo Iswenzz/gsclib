@@ -1,6 +1,7 @@
 #include "Zip.hpp"
 
 #include <libzippp.h>
+#include <zip.h>
 #include <filesystem>
 
 namespace gsclib
@@ -36,16 +37,16 @@ namespace gsclib
 		const char* filepath = Plugin_Scr_GetString(1);
 		const char* renamepath = Plugin_Scr_GetString(2);
 
-		libzippp::ZipEntry entry = zip->getEntry(filepath);
-		if (entry.isNull())
+		int index = zip_name_locate(zip->getZipHandle(), filepath, ZIP_FL_ENC_GUESS);
+		if (index == -1)
 		{
-			Plugin_Scr_Error(std::format("File not found in the archive {}\n", filepath).c_str());
+			Plugin_Scr_Error(std::format("File not found in the archive {}", filepath).c_str());
 			Plugin_Scr_AddBool(qfalse);
 			return;
 		}
-		if (zip->renameEntry(entry, renamepath) < 1)
+		if (zip_file_rename(zip->getZipHandle(), index, renamepath, ZIP_FL_ENC_GUESS) < 0)
 		{
-			Plugin_Scr_Error(std::format("Failed to rename file {}\n", filepath).c_str());
+			Plugin_Scr_Error(std::format("Failed to rename file {}", filepath).c_str());
 			Plugin_Scr_AddBool(qfalse);
 			return;
 		}

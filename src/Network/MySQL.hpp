@@ -15,7 +15,6 @@ namespace gsclib
 		std::unique_ptr<sql::ResultSet> Result;
 		std::string Query;
 		std::vector<SqlValue> Params;
-		std::shared_ptr<AsyncTask> Task;
 
 		MySqlRequest() = default;
 		~MySqlRequest() = default;
@@ -24,8 +23,6 @@ namespace gsclib
 	class MySql
 	{
 	public:
-		static inline bool Working = false;
-
 		static void Version();
 		static void Connect();
 		static void Close();
@@ -54,7 +51,7 @@ namespace gsclib
 
 		static bool FetchQueryRow(MySqlRequest* request, bool stringIndexed);
 		static void FetchQueryRows(MySqlRequest* request, bool stringIndexed);
-		static void ExecuteQuery(MySqlRequest* request, AsyncTask& task);
-		static void ExecuteStatement(MySqlRequest* request, AsyncTask& task);
+		static void ExecuteQuery(AsyncTask* task);
+		static void ExecuteStatement(AsyncTask* task);
 	};
 }

@@ -62,12 +62,13 @@ namespace gsclib
 		auto* file = reinterpret_cast<std::fstream*>(Plugin_Scr_GetInt(0));
 		if (!file)
 		{
+			Plugin_Scr_Error("File handle is NULL\n");
 			Plugin_Scr_AddBool(qfalse);
 			return;
 		}
 		file->close();
-		Plugin_Scr_AddBool(static_cast<qboolean>(!file->fail()));
 		delete file;
+		Plugin_Scr_AddBool(qtrue);
 	}
 
 	void File::Exists()

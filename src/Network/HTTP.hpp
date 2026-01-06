@@ -17,10 +17,9 @@ namespace gsclib
 		curl_slist* Headers = nullptr;
 		std::string Response;
 		std::string Filepath;
-		std::string PostData;
+		std::string Data;
 		std::vector<std::string> HeaderList;
 		std::vector<std::pair<CURLoption, VariableValue>> Opts;
-		std::shared_ptr<AsyncTask> Task;
 
 		HttpRequest();
 		~HttpRequest();
@@ -29,8 +28,6 @@ namespace gsclib
 	class Http
 	{
 	public:
-		static inline bool Working = false;
-
 		static void Initialize();
 		static void Free();
 		static void Get();
@@ -46,8 +43,8 @@ namespace gsclib
 	private:
 		static void ApplyHeaders(HttpRequest* request);
 		static void ApplyOpts(HttpRequest* request);
-		static void Execute(HttpRequest* request, AsyncTask& task);
-		static void ExecuteFileDownload(HttpRequest* request, AsyncTask& task);
+		static void Execute(AsyncTask* task);
+		static void ExecuteFileDownload(AsyncTask* task);
 		static size_t WriteCallback(void* ptr, size_t size, size_t nmemb, void* userdata);
 		static size_t WriteFileCallback(void* ptr, size_t size, size_t nmemb, void* userdata);
 	};

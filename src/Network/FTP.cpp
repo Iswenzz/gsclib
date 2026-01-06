@@ -63,28 +63,29 @@ namespace gsclib
 			Plugin_Scr_Error("FTP Connection not found.\n");
 			return;
 		}
-		auto* request = new FtpRequest();
-		Working = true;
-		Plugin_Scr_AddInt(reinterpret_cast<int>(request));
+		auto request = new FtpRequest();
+		auto task = Async::Create(request);
+		Plugin_Scr_AddInt(reinterpret_cast<uintptr_t>(task.get()));
 	}
 
 	void Ftp::Free()
 	{
 		CHECK_PARAMS(1, "Usage: FTP_Free(<request>)\n");
 
-		auto* request = reinterpret_cast<FtpRequest*>(Plugin_Scr_GetInt(0));
-		if (!request)
+		auto task = reinterpret_cast<AsyncTask*>(Plugin_Scr_GetInt(0));
+		if (!task)
 		{
 			Plugin_Scr_Error("FTP request not found.\n");
 			return;
 		}
-		if (request->Task && request->Task->Status == AsyncStatus::Running)
+		if (task->Status == AsyncStatus::Running)
 		{
 			Plugin_Scr_Error("FTP request is running.\n");
 			return;
 		}
+		auto request = task->GetData<FtpRequest>();
 		delete request;
-		Working = false;
+		task->Data = nullptr;
 		Plugin_Scr_AddBool(qtrue);
 	}
 
@@ -137,13 +138,13 @@ namespace gsclib
 	{
 		CHECK_PARAMS(1, "Usage: FTP_Shell(<request>)\n");
 
-		auto* request = reinterpret_cast<FtpRequest*>(Plugin_Scr_GetInt(0));
-		if (!request)
+		auto task = reinterpret_cast<AsyncTask*>(Plugin_Scr_GetInt(0));
+		if (!task)
 		{
 			Plugin_Scr_Error("FTP request not found.\n");
 			return;
 		}
-		if (request->Task && request->Task->Status == AsyncStatus::Running)
+		if (task->Status == AsyncStatus::Running)
 		{
 			Plugin_Scr_Error("FTP request is running.\n");
 			return;
@@ -153,7 +154,8 @@ namespace gsclib
 			Plugin_Scr_Error("FTP Connection not found.\n");
 			return;
 		}
-		curl_easy_reset(request->Easy);
+		auto request = task->GetData<FtpRequest>();
+
 		ApplyHeaders(request, CURLOPT_QUOTE);
 		curl_easy_setopt(request->Easy, CURLOPT_URL, Connection->Url.c_str());
 		curl_easy_setopt(request->Easy, CURLOPT_PASSWORD, Connection->Password.c_str());
@@ -161,7 +163,8 @@ namespace gsclib
 		curl_easy_setopt(request->Easy, CURLOPT_SSH_AUTH_TYPES, CURLSSH_AUTH_PASSWORD);
 		ApplyOpts(request);
 
-		request->Task = Async::Submit([request](AsyncTask& task) { Execute(request, task); });
+		task->Status = AsyncStatus::Running;
+		Async::Submit([task] { Execute(task); });
 
 		Plugin_Scr_AddBool(qtrue);
 	}
@@ -170,13 +173,16 @@ namespace gsclib
 	{
 		CHECK_PARAMS(3, "Usage: FTP_PostFile(<request>, <filepath>, <uploadtopath>)\n");
 
-		auto* request = reinterpret_cast<FtpRequest*>(Plugin_Scr_GetInt(0));
-		if (!request)
+		auto task = reinterpret_cast<AsyncTask*>(Plugin_Scr_GetInt(0));
+		const char* filepath = Plugin_Scr_GetString(1);
+		const char* uploadPath = Plugin_Scr_GetString(2);
+
+		if (!task)
 		{
 			Plugin_Scr_Error("FTP request not found.\n");
 			return;
 		}
-		if (request->Task && request->Task->Status == AsyncStatus::Running)
+		if (task->Status == AsyncStatus::Running)
 		{
 			Plugin_Scr_Error("FTP request is running.\n");
 			return;
@@ -186,10 +192,8 @@ namespace gsclib
 			Plugin_Scr_Error("FTP Connection not found.\n");
 			return;
 		}
-		const char* filepath = Plugin_Scr_GetString(1);
-		const char* uploadPath = Plugin_Scr_GetString(2);
-
 		std::ifstream testFile(filepath, std::ios::binary | std::ios::ate);
+
 		if (!testFile.is_open())
 		{
 			Plugin_Printf("Couldn't open '%s': %s\n", filepath, std::strerror(errno));
@@ -199,10 +203,10 @@ namespace gsclib
 		auto fileSize = testFile.tellg();
 		testFile.close();
 
+		auto request = task->GetData<FtpRequest>();
 		request->Filepath = filepath;
 		std::string url = Connection->Url + uploadPath;
 
-		curl_easy_reset(request->Easy);
 		ApplyHeaders(request, CURLOPT_POSTQUOTE);
 		curl_easy_setopt(request->Easy, CURLOPT_URL, url.c_str());
 		curl_easy_setopt(request->Easy, CURLOPT_PASSWORD, Connection->Password.c_str());
@@ -212,33 +216,36 @@ namespace gsclib
 		curl_easy_setopt(request->Easy, CURLOPT_SSH_AUTH_TYPES, CURLSSH_AUTH_PASSWORD);
 		ApplyOpts(request);
 
-		request->Task = Async::Submit(
-			[request](AsyncTask& task)
+		task->Status = AsyncStatus::Running;
+
+		Async::Submit(
+			[task, request]
 			{
 				std::ifstream file(request->Filepath, std::ios::binary);
+				int running = 0;
+
 				if (!file.is_open())
 				{
-					task.Error = "Failed to open file for reading";
-					task.Status = AsyncStatus::Failure;
+					task->Error = "Failed to open file for reading";
+					task->Status = AsyncStatus::Failure;
 					return;
 				}
 				curl_easy_setopt(request->Easy, CURLOPT_READFUNCTION, ReadCallback);
 				curl_easy_setopt(request->Easy, CURLOPT_READDATA, &file);
 
-				int running = 0;
 				do
 				{
 					CURLMcode mc = curl_multi_perform(request->Multi, &running);
 					if (mc != CURLM_OK)
 					{
-						task.Error = curl_multi_strerror(mc);
-						task.Status = AsyncStatus::Failure;
+						task->Error = curl_multi_strerror(mc);
+						task->Status = AsyncStatus::Failure;
 						file.close();
 						return;
 					}
-					if (task.IsCancelled())
+					if (task->IsCancelled())
 					{
-						task.Status = AsyncStatus::Cancelled;
+						task->Status = AsyncStatus::Cancelled;
 						file.close();
 						return;
 					}
@@ -247,7 +254,7 @@ namespace gsclib
 				} while (running > 0);
 
 				file.close();
-				task.Status = AsyncStatus::Successful;
+				task->Status = AsyncStatus::Successful;
 			});
 
 		Plugin_Scr_AddBool(qtrue);
@@ -257,13 +264,15 @@ namespace gsclib
 	{
 		CHECK_PARAMS(3, "Usage: FTP_GetFile(<request>, <savefilepath>, <downloadfilepath>)\n");
 
-		auto* request = reinterpret_cast<FtpRequest*>(Plugin_Scr_GetInt(0));
-		if (!request)
+		auto task = reinterpret_cast<AsyncTask*>(Plugin_Scr_GetInt(0));
+		const char* downloadPath = Plugin_Scr_GetString(2);
+
+		if (!task)
 		{
 			Plugin_Scr_Error("FTP request not found.\n");
 			return;
 		}
-		if (request->Task && request->Task->Status == AsyncStatus::Running)
+		if (task->Status == AsyncStatus::Running)
 		{
 			Plugin_Scr_Error("FTP request is running.\n");
 			return;
@@ -273,11 +282,10 @@ namespace gsclib
 			Plugin_Scr_Error("FTP Connection not found.\n");
 			return;
 		}
+		auto request = task->GetData<FtpRequest>();
 		request->Filepath = Plugin_Scr_GetString(1);
-		const char* downloadPath = Plugin_Scr_GetString(2);
 		std::string url = Connection->Url + downloadPath;
 
-		curl_easy_reset(request->Easy);
 		ApplyHeaders(request, CURLOPT_PREQUOTE);
 		curl_easy_setopt(request->Easy, CURLOPT_URL, url.c_str());
 		curl_easy_setopt(request->Easy, CURLOPT_PASSWORD, Connection->Password.c_str());
@@ -285,33 +293,36 @@ namespace gsclib
 		curl_easy_setopt(request->Easy, CURLOPT_SSH_AUTH_TYPES, CURLSSH_AUTH_PASSWORD);
 		ApplyOpts(request);
 
-		request->Task = Async::Submit(
-			[request](AsyncTask& task)
+		task->Status = AsyncStatus::Running;
+
+		Async::Submit(
+			[task, request]
 			{
 				std::ofstream file(request->Filepath, std::ios::binary);
+				int running = 0;
+
 				if (!file.is_open())
 				{
-					task.Error = "Failed to open file for writing";
-					task.Status = AsyncStatus::Failure;
+					task->Error = "Failed to open file for writing";
+					task->Status = AsyncStatus::Failure;
 					return;
 				}
 				curl_easy_setopt(request->Easy, CURLOPT_WRITEFUNCTION, WriteCallback);
 				curl_easy_setopt(request->Easy, CURLOPT_WRITEDATA, &file);
 
-				int running = 0;
 				do
 				{
 					CURLMcode mc = curl_multi_perform(request->Multi, &running);
 					if (mc != CURLM_OK)
 					{
-						task.Error = curl_multi_strerror(mc);
-						task.Status = AsyncStatus::Failure;
+						task->Error = curl_multi_strerror(mc);
+						task->Status = AsyncStatus::Failure;
 						file.close();
 						return;
 					}
-					if (task.IsCancelled())
+					if (task->IsCancelled())
 					{
-						task.Status = AsyncStatus::Cancelled;
+						task->Status = AsyncStatus::Cancelled;
 						file.close();
 						return;
 					}
@@ -320,7 +331,7 @@ namespace gsclib
 				} while (running > 0);
 
 				file.close();
-				task.Status = AsyncStatus::Successful;
+				task->Status = AsyncStatus::Successful;
 			});
 
 		Plugin_Scr_AddBool(qtrue);
@@ -330,12 +341,13 @@ namespace gsclib
 	{
 		CHECK_PARAMS(2, "Usage: FTP_AddHeader(<request>, <header>)\n");
 
-		auto* request = reinterpret_cast<FtpRequest*>(Plugin_Scr_GetInt(0));
-		if (!request)
+		auto task = reinterpret_cast<AsyncTask*>(Plugin_Scr_GetInt(0));
+		if (!task)
 		{
 			Plugin_Scr_Error("FTP request not found.\n");
 			return;
 		}
+		auto request = task->GetData<FtpRequest>();
 		request->HeaderList.push_back(Plugin_Scr_GetString(1));
 	}
 
@@ -343,12 +355,13 @@ namespace gsclib
 	{
 		CHECK_PARAMS(3, "Usage: FTP_AddOpt(<request>, <opt>, <value>)\n");
 
-		auto* request = reinterpret_cast<FtpRequest*>(Plugin_Scr_GetInt(0));
-		if (!request)
+		auto task = reinterpret_cast<AsyncTask*>(Plugin_Scr_GetInt(0));
+		if (!task)
 		{
 			Plugin_Scr_Error("FTP request not found.\n");
 			return;
 		}
+		auto request = task->GetData<FtpRequest>();
 		auto opt = static_cast<CURLoption>(Plugin_Scr_GetInt(1));
 		VariableValue param = *Plugin_Scr_SelectParam(2);
 		request->Opts.push_back({ opt, param });
@@ -358,12 +371,13 @@ namespace gsclib
 	{
 		CHECK_PARAMS(1, "Usage: FTP_HeaderCleanup(<request>)\n");
 
-		auto* request = reinterpret_cast<FtpRequest*>(Plugin_Scr_GetInt(0));
-		if (!request)
+		auto task = reinterpret_cast<AsyncTask*>(Plugin_Scr_GetInt(0));
+		if (!task)
 		{
 			Plugin_Scr_Error("FTP request not found.\n");
 			return;
 		}
+		auto request = task->GetData<FtpRequest>();
 		request->HeaderList.clear();
 		if (request->Headers)
 		{
@@ -376,12 +390,13 @@ namespace gsclib
 	{
 		CHECK_PARAMS(1, "Usage: FTP_OptCleanup(<request>)\n");
 
-		auto* request = reinterpret_cast<FtpRequest*>(Plugin_Scr_GetInt(0));
-		if (!request)
+		auto task = reinterpret_cast<AsyncTask*>(Plugin_Scr_GetInt(0));
+		if (!task)
 		{
 			Plugin_Scr_Error("FTP request not found.\n");
 			return;
 		}
+		auto request = task->GetData<FtpRequest>();
 		request->Opts.clear();
 	}
 
@@ -419,8 +434,9 @@ namespace gsclib
 		}
 	}
 
-	void Ftp::Execute(FtpRequest* request, AsyncTask& task)
+	void Ftp::Execute(AsyncTask* task)
 	{
+		auto request = task->GetData<FtpRequest>();
 		int running = 0;
 
 		do
@@ -428,19 +444,19 @@ namespace gsclib
 			CURLMcode mc = curl_multi_perform(request->Multi, &running);
 			if (mc != CURLM_OK)
 			{
-				task.Error = curl_multi_strerror(mc);
-				task.Status = AsyncStatus::Failure;
+				task->Error = curl_multi_strerror(mc);
+				task->Status = AsyncStatus::Failure;
 				return;
 			}
-			if (task.IsCancelled())
+			if (task->IsCancelled())
 			{
-				task.Status = AsyncStatus::Cancelled;
+				task->Status = AsyncStatus::Cancelled;
 				return;
 			}
 			if (running > 0)
 				curl_multi_wait(request->Multi, nullptr, 0, 100, nullptr);
 		} while (running > 0);
 
-		task.Status = AsyncStatus::Successful;
+		task->Status = AsyncStatus::Successful;
 	}
 }

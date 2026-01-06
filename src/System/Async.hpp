@@ -25,6 +25,13 @@ namespace gsclib
 		std::atomic<AsyncStatus> Status{ AsyncStatus::Pending };
 		std::string Result;
 		std::string Error;
+		void* Data = nullptr;
+
+		template <typename T>
+		T* GetData()
+		{
+			return reinterpret_cast<T*>(Data);
+		}
 
 		bool IsCancelled() const
 		{
@@ -42,11 +49,14 @@ namespace gsclib
 	public:
 		static void Initialize(size_t threadCount = 4);
 		static void Shutdown();
-		static std::shared_ptr<AsyncTask> Submit(std::function<void(AsyncTask &)> work);
+
+		static std::shared_ptr<AsyncTask> Create(void* data = nullptr);
+		static void Submit(std::function<void()> work);
 
 	private:
 		static inline std::vector<std::thread> Workers;
-		static inline std::queue<std::pair<std::shared_ptr<AsyncTask>, std::function<void(AsyncTask &)>>> Tasks;
+		static inline std::queue<std::function<void()>> Tasks;
+		static inline std::vector<std::shared_ptr<AsyncTask>> ActiveTasks;
 		static inline std::mutex QueueMutex;
 		static inline std::condition_variable Condition;
 		static inline std::atomic<bool> Running{ false };

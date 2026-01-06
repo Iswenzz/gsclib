@@ -201,18 +201,15 @@ namespace gsclib
 			Plugin_Scr_Error("MySQL connection not found.\n");
 			return;
 		}
-		if (Working)
-		{
-			Plugin_Scr_Error("MySQL is processing another request.\n");
-			return;
-		}
-		auto* request = new MySqlRequest();
+		auto request = new MySqlRequest();
+		auto task = Async::Create(request);
 		request->Connection = Connection.get();
 		request->Query = Plugin_Scr_GetString(0);
-		request->Task = Async::Submit([request](AsyncTask& task) { ExecuteQuery(request, task); });
 
-		Working = true;
-		Plugin_Scr_AddInt(reinterpret_cast<int>(request));
+		task->Status = AsyncStatus::Running;
+		Async::Submit([task] { ExecuteQuery(task.get()); });
+
+		Plugin_Scr_AddInt(reinterpret_cast<uintptr_t>(task.get()));
 	}
 
 	void MySql::Prepare()
@@ -224,26 +221,22 @@ namespace gsclib
 			Plugin_Scr_Error("MySQL connection not found.\n");
 			return;
 		}
-		if (Working)
-		{
-			Plugin_Scr_Error("MySQL is processing another request.\n");
-			return;
-		}
-		auto* request = new MySqlRequest();
+		auto request = new MySqlRequest();
+		auto task = Async::Create(request);
 		request->Connection = Connection.get();
 		request->Query = Plugin_Scr_GetString(0);
 
 		try
 		{
 			request->Statement.reset(Connection->prepareStatement(request->Query));
-			Working = true;
-			Plugin_Scr_AddInt(reinterpret_cast<int>(request));
+			Plugin_Scr_AddInt(reinterpret_cast<uintptr_t>(task.get()));
 		}
 		catch (sql::SQLException& e)
 		{
 			Plugin_Scr_Error(std::format("SQL_Prepare(): {}\n", e.what()).c_str());
-			delete request;
 			Plugin_Scr_AddBool(qfalse);
+			delete request;
+			task->Data = nullptr;
 		}
 	}
 
@@ -251,18 +244,20 @@ namespace gsclib
 	{
 		CHECK_PARAMS(3, "Usage: SQL_BindParam(<request>, <value>, <type>)\n");
 
-		auto* request = reinterpret_cast<MySqlRequest*>(Plugin_Scr_GetInt(0));
-		if (!request)
+		auto task = reinterpret_cast<AsyncTask*>(Plugin_Scr_GetInt(0));
+		VariableValue* variable = Plugin_Scr_SelectParam(1);
+
+		if (!task)
 		{
 			Plugin_Scr_Error("MySQL request not found.\n");
 			return;
 		}
+		auto request = task->GetData<MySqlRequest>();
 		if (!request->Statement)
 		{
 			Plugin_Scr_Error("MySQL statement not found.\n");
 			return;
 		}
-		VariableValue* variable = Plugin_Scr_SelectParam(1);
 		int paramIndex = static_cast<int>(request->Params.size()) + 1;
 
 		try
@@ -301,23 +296,26 @@ namespace gsclib
 	{
 		CHECK_PARAMS(1, "Usage: SQL_Execute(<request>)\n");
 
-		auto* request = reinterpret_cast<MySqlRequest*>(Plugin_Scr_GetInt(0));
-		if (!request)
+		auto task = reinterpret_cast<AsyncTask*>(Plugin_Scr_GetInt(0));
+		if (!task)
 		{
 			Plugin_Scr_Error("MySQL request not found.\n");
 			return;
 		}
-		if (request->Task && request->Task->Status == AsyncStatus::Pending)
+		if (task->Status == AsyncStatus::Pending)
 		{
 			Plugin_Scr_Error("MySQL request is pending.\n");
 			return;
 		}
+		auto request = task->GetData<MySqlRequest>();
 		if (!request->Statement)
 		{
 			Plugin_Scr_Error("MySQL statement not found.\n");
 			return;
 		}
-		request->Task = Async::Submit([request](AsyncTask& task) { ExecuteStatement(request, task); });
+		task->Status = AsyncStatus::Running;
+		Async::Submit([task] { ExecuteStatement(task); });
+
 		Plugin_Scr_AddBool(qtrue);
 	}
 
@@ -325,28 +323,27 @@ namespace gsclib
 	{
 		CHECK_PARAMS(1, "Usage: SQL_NumRows(<request>)\n");
 
-		auto* request = reinterpret_cast<MySqlRequest*>(Plugin_Scr_GetInt(0));
-		if (!request)
+		auto task = reinterpret_cast<AsyncTask*>(Plugin_Scr_GetInt(0));
+		if (!task)
 		{
 			Plugin_Scr_Error("MySQL request not found.\n");
 			return;
 		}
-		if (request->Result)
-			Plugin_Scr_AddInt(static_cast<int>(request->Result->rowsCount()));
-		else
-			Plugin_Scr_AddInt(0);
+		auto request = task->GetData<MySqlRequest>();
+		Plugin_Scr_AddInt(request->Result ? static_cast<int>(request->Result->rowsCount()) : 0);
 	}
 
 	void MySql::NumFields()
 	{
 		CHECK_PARAMS(1, "Usage: SQL_NumFields(<request>)\n");
 
-		auto* request = reinterpret_cast<MySqlRequest*>(Plugin_Scr_GetInt(0));
-		if (!request)
+		auto task = reinterpret_cast<AsyncTask*>(Plugin_Scr_GetInt(0));
+		if (!task)
 		{
 			Plugin_Scr_Error("MySQL request not found.\n");
 			return;
 		}
+		auto request = task->GetData<MySqlRequest>();
 		if (request->Result)
 		{
 			sql::ResultSetMetaData* meta = request->Result->getMetaData();
@@ -360,28 +357,27 @@ namespace gsclib
 	{
 		CHECK_PARAMS(1, "Usage: SQL_AffectedRows(<request>)\n");
 
-		auto* request = reinterpret_cast<MySqlRequest*>(Plugin_Scr_GetInt(0));
-		if (!request)
+		auto task = reinterpret_cast<AsyncTask*>(Plugin_Scr_GetInt(0));
+		if (!task)
 		{
 			Plugin_Scr_Error("MySQL request not found.\n");
 			return;
 		}
-		if (request->Statement)
-			Plugin_Scr_AddInt(static_cast<int>(request->Statement->getUpdateCount()));
-		else
-			Plugin_Scr_AddInt(0);
+		auto request = task->GetData<MySqlRequest>();
+		Plugin_Scr_AddInt(request->Statement ? static_cast<int>(request->Statement->getUpdateCount()) : 0);
 	}
 
 	void MySql::FetchRow()
 	{
 		CHECK_PARAMS(1, "Usage: SQL_FetchRow(<request>)\n");
 
-		auto* request = reinterpret_cast<MySqlRequest*>(Plugin_Scr_GetInt(0));
-		if (!request)
+		auto task = reinterpret_cast<AsyncTask*>(Plugin_Scr_GetInt(0));
+		if (!task)
 		{
 			Plugin_Scr_Error("MySQL request not found.\n");
 			return;
 		}
+		auto request = task->GetData<MySqlRequest>();
 		FetchQueryRow(request, false);
 	}
 
@@ -389,12 +385,13 @@ namespace gsclib
 	{
 		CHECK_PARAMS(1, "Usage: SQL_FetchRows(<request>)\n");
 
-		auto* request = reinterpret_cast<MySqlRequest*>(Plugin_Scr_GetInt(0));
-		if (!request)
+		auto task = reinterpret_cast<AsyncTask*>(Plugin_Scr_GetInt(0));
+		if (!task)
 		{
 			Plugin_Scr_Error("MySQL request not found.\n");
 			return;
 		}
+		auto request = task->GetData<MySqlRequest>();
 		FetchQueryRows(request, false);
 	}
 
@@ -402,12 +399,13 @@ namespace gsclib
 	{
 		CHECK_PARAMS(1, "Usage: SQL_FetchRowDict(<request>)\n");
 
-		auto* request = reinterpret_cast<MySqlRequest*>(Plugin_Scr_GetInt(0));
-		if (!request)
+		auto task = reinterpret_cast<AsyncTask*>(Plugin_Scr_GetInt(0));
+		if (!task)
 		{
 			Plugin_Scr_Error("MySQL request not found.\n");
 			return;
 		}
+		auto request = task->GetData<MySqlRequest>();
 		FetchQueryRow(request, true);
 	}
 
@@ -415,12 +413,13 @@ namespace gsclib
 	{
 		CHECK_PARAMS(1, "Usage: SQL_FetchRowsDict(<request>)\n");
 
-		auto* request = reinterpret_cast<MySqlRequest*>(Plugin_Scr_GetInt(0));
-		if (!request)
+		auto task = reinterpret_cast<AsyncTask*>(Plugin_Scr_GetInt(0));
+		if (!task)
 		{
 			Plugin_Scr_Error("MySQL request not found.\n");
 			return;
 		}
+		auto request = task->GetData<MySqlRequest>();
 		FetchQueryRows(request, true);
 	}
 
@@ -428,12 +427,13 @@ namespace gsclib
 	{
 		CHECK_PARAMS(1, "Usage: SQL_FetchFields(<request>)\n");
 
-		auto* request = reinterpret_cast<MySqlRequest*>(Plugin_Scr_GetInt(0));
-		if (!request)
+		auto task = reinterpret_cast<AsyncTask*>(Plugin_Scr_GetInt(0));
+		if (!task)
 		{
 			Plugin_Scr_Error("MySQL request not found.\n");
 			return;
 		}
+		auto request = task->GetData<MySqlRequest>();
 		if (!request->Result)
 		{
 			Plugin_Scr_AddUndefined();
@@ -455,19 +455,20 @@ namespace gsclib
 	{
 		CHECK_PARAMS(1, "Usage: SQL_Free(<request>)\n");
 
-		auto* request = reinterpret_cast<MySqlRequest*>(Plugin_Scr_GetInt(0));
-		if (!request)
+		auto task = reinterpret_cast<AsyncTask*>(Plugin_Scr_GetInt(0));
+		if (!task)
 		{
 			Plugin_Scr_Error("MySQL request not found.\n");
 			return;
 		}
-		if (request->Task && request->Task->Status == AsyncStatus::Pending)
+		if (task->Status == AsyncStatus::Pending)
 		{
 			Plugin_Scr_Error("MySQL request is pending.\n");
 			return;
 		}
+		auto request = task->GetData<MySqlRequest>();
 		delete request;
-		Working = false;
+		task->Data = nullptr;
 		Plugin_Scr_AddBool(qtrue);
 	}
 
@@ -509,32 +510,36 @@ namespace gsclib
 			Plugin_Scr_AddArray();
 	}
 
-	void MySql::ExecuteQuery(MySqlRequest* request, AsyncTask& task)
+	void MySql::ExecuteQuery(AsyncTask* task)
 	{
+		auto request = task->GetData<MySqlRequest>();
+
 		try
 		{
 			std::unique_ptr<sql::Statement> stmt(request->Connection->createStatement());
 			request->Result.reset(stmt->executeQuery(request->Query));
-			task.Status = AsyncStatus::Successful;
+			task->Status = AsyncStatus::Successful;
 		}
 		catch (sql::SQLException& e)
 		{
-			task.Error = e.what();
-			task.Status = AsyncStatus::Failure;
+			task->Error = e.what();
+			task->Status = AsyncStatus::Failure;
 		}
 	}
 
-	void MySql::ExecuteStatement(MySqlRequest* request, AsyncTask& task)
+	void MySql::ExecuteStatement(AsyncTask* task)
 	{
+		auto request = task->GetData<MySqlRequest>();
+
 		try
 		{
 			request->Result.reset(request->Statement->executeQuery());
-			task.Status = AsyncStatus::Successful;
+			task->Status = AsyncStatus::Successful;
 		}
 		catch (sql::SQLException& e)
 		{
-			task.Error = e.what();
-			task.Status = AsyncStatus::Failure;
+			task->Error = e.what();
+			task->Status = AsyncStatus::Failure;
 		}
 	}
 }

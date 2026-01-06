@@ -31,7 +31,6 @@ namespace gsclib
 		std::string Response;
 		std::vector<std::string> HeaderList;
 		std::vector<std::pair<CURLoption, VariableValue>> Opts;
-		std::shared_ptr<AsyncTask> Task;
 
 		FtpRequest();
 		~FtpRequest();
@@ -40,8 +39,6 @@ namespace gsclib
 	class Ftp
 	{
 	public:
-		static inline bool Working = false;
-
 		static void Initialize();
 		static void Free();
 		static void Connect();
@@ -62,7 +59,7 @@ namespace gsclib
 			const std::string& password, unsigned short port);
 		static void ApplyHeaders(FtpRequest* request, CURLoption headerType);
 		static void ApplyOpts(FtpRequest* request);
-		static void Execute(FtpRequest* request, AsyncTask& task);
+		static void Execute(AsyncTask* task);
 		static size_t WriteCallback(void* ptr, size_t size, size_t nmemb, void* userdata);
 		static size_t ReadCallback(void* ptr, size_t size, size_t nmemb, void* userdata);
 	};

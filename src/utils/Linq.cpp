@@ -19,6 +19,7 @@ namespace gsclib
 		{
 			Plugin_Scr_AddInt(i);
 			Plugin_Scr_AddVariable(array.items[i]);
+
 			const short tid = Plugin_Scr_ExecThreadResult(threadId, 2);
 			VariableValue var = Plugin_Scr_GetThreadResult();
 

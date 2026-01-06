@@ -1,9 +1,4 @@
-
 #include "System.hpp"
-
-#include "Network/FTP.hpp"
-#include "Network/HTTP.hpp"
-#include "Network/MySQL.hpp"
 
 #include <cstdlib>
 
@@ -15,12 +10,7 @@ namespace gsclib
 
 		Async::Shutdown();
 		Async::Initialize();
-
 		CriticalSections.clear();
-
-		Ftp::Working = false;
-		Http::Working = false;
-		MySql::Working = false;
 	}
 
 	void System::Execute()
@@ -150,6 +140,7 @@ namespace gsclib
 
 	void System::GSCLIBVersion()
 	{
-		Plugin_Scr_AddString(std::format("{}.{}", GSCLIB_VERSION_MAJOR, GSCLIB_VERSION_MINOR).c_str());
+		Plugin_Scr_AddString(
+			std::format("{}.{}.{}", GSCLIB_VERSION_MAJOR, GSCLIB_VERSION_MINOR, GSCLIB_VERSION_PATCH).c_str());
 	}
 }

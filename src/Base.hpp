@@ -8,6 +8,7 @@
 #define PLUGIN
 #define GSCLIB_VERSION_MAJOR 2
 #define GSCLIB_VERSION_MINOR 0
+#define GSCLIB_VERSION_PATCH 0
 
 #define CHECK_PARAMS(count, message)       \
 	if (Plugin_Scr_GetNumParam() != count) \
