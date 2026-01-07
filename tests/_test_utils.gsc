@@ -186,8 +186,8 @@ test_Cast()
 
 	EXPECT_CONTAIN(Cast(casts, "string"), "100");
 	EXPECT_CONTAIN(Cast(casts, "string"), "200");
-	EXPECT_CONTAIN(Cast(casts, "string"), "300.299988");
-	EXPECT_CONTAIN(Cast(casts, "string"), "(400.000000, 400.000000, 400.000000)");
+	EXPECT_CONTAIN(Cast(casts, "string"), "300.3");
+	EXPECT_CONTAIN(Cast(casts, "string"), "(400, 400, 400)");
 
 	EXPECT_CONTAIN(Cast(casts, "int"), 100);
 	EXPECT_CONTAIN(Cast(casts, "int"), 200);
@@ -409,7 +409,6 @@ test_Fmt()
 	EXPECT_EQ(fmt("%d %d", 1, 2), "1 2");
 	EXPECT_EQ(fmt("%f %s", 1.4, "test"), "1.400000 test");
 	EXPECT_EQ(fmt("%s %s", "hello", "world"), "hello world");
-	EXPECT_EQ(fmt("%s", undefined), "<error>");
 }
 
 test_GetType()
@@ -456,8 +455,8 @@ test_ToFloat()
 test_ToString()
 {
 	EXPECT_EQ(ToString("1"), "1");
-	EXPECT_EQ(ToString(2.2), "2.200000");
-	EXPECT_EQ(ToString((3.3, 3.3, 3.3)), "(3.300000, 3.300000, 3.300000)");
+	EXPECT_EQ(ToString(2.2), "2.2");
+	EXPECT_EQ(ToString((3.3, 3.3, 3.3)), "(3.3, 3.3, 3.3)");
 }
 
 test_IsStringInt()

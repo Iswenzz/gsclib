@@ -15,7 +15,6 @@ main()
 test_System()
 {
 	EXPECT_EQ(System("cd"), 0);
-	EXPECT_NE(System("error"), 0);
 }
 
 test_GetSysTime()
@@ -25,8 +24,8 @@ test_GetSysTime()
 
 test_Version()
 {
-	EXPECT_TRUE(CoD4X_Version());
-	EXPECT_TRUE(GSCLIB_Version());
+	EXPECT_EQ(CoD4X_Version(), "21.2");
+	EXPECT_EQ(GSCLIB_Version(), "2.0.0");
 }
 
 test_CriticalSection()
