@@ -15,10 +15,6 @@ set(LIBZIP_INCLUDE_DIRS
 	${LIBZIPPP_INCLUDE_DIR}/libzippp
 	${LIBZIP_INCLUDE_DIR})
 
-if(WIN32)
-	list(APPEND LIBZIP_LIBS Bcrypt)
-endif()
-
 include(FindPackageHandleStandardArgs)
 find_package_handle_standard_args(Libzip DEFAULT_MSG LIBZIP_LIBS LIBZIP_INCLUDE_DIRS)
 mark_as_advanced(LIBZIP_LIBS LIBZIP_INCLUDE_DIRS)

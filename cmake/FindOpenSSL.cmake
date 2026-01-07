@@ -1,0 +1,24 @@
+find_path(OPENSSL_INCLUDE_DIR "openssl/ssl.h")
+find_library(LIBCRYPTO_LIB crypto)
+find_library(OPENSSL_LIB ssl)
+
+set(OPENSSL_LIBS
+	${OPENSSL_LIB}
+	${LIBCRYPTO_LIB})
+
+set(OPENSSL_INCLUDE_DIRS
+	${OPENSSL_INCLUDE_DIR})
+
+if(WIN32)
+	list(APPEND OPENSSL_LIBS ws2_32 crypt32)
+endif()
+
+include(FindPackageHandleStandardArgs)
+find_package_handle_standard_args(OpenSSL DEFAULT_MSG OPENSSL_LIBS OPENSSL_INCLUDE_DIRS)
+mark_as_advanced(OPENSSL_LIBS OPENSSL_INCLUDE_DIRS)
+
+if(NOT TARGET OpenSSL::OpenSSL)
+	add_library(OpenSSL::OpenSSL INTERFACE IMPORTED)
+    set_property(TARGET OpenSSL::OpenSSL PROPERTY INTERFACE_LINK_LIBRARIES "${OPENSSL_LIBS}")
+	set_property(TARGET OpenSSL::OpenSSL PROPERTY INTERFACE_INCLUDE_DIRECTORIES "${OPENSSL_INCLUDE_DIRS}")
+endif()

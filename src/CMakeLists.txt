@@ -23,6 +23,7 @@ target_link_libraries(gsclib PUBLIC
 	libcurl::libcurl
 	libmariadb::libmariadb
 	libzip::libzip
+	OpenSSL::OpenSSL
 	PCRE2::PCRE2)
 
 target_link_directories(gsclib PUBLIC ../..)

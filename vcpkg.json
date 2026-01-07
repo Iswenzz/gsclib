@@ -10,7 +10,9 @@
 		}
 	},
 	"dependencies": [
-		"curl",
+		{ "name": "curl", "features": ["non-http", "openssl", "ssh"], "default-features": false },
+		{ "name": "libmariadb", "features": ["openssl"], "default-features": false },
+		{ "name": "libzip", "features": ["bzip2", "openssl"], "default-features": false },
 		"libzippp",
 		"mariadb-connector-cpp",
 		"pcre2"
@@ -19,8 +21,10 @@
         { "name": "curl", "version": "8.14.1" },
         { "name": "gtest", "version": "1.17.0#1" },
 		{ "name": "libmariadb", "version": "3.3.1#1" },
+        { "name": "libzip", "version": "1.11.4" },
         { "name": "libzippp", "version": "7.1-1.10.1" },
         { "name": "mariadb-connector-cpp", "version": "1.1.5" },
+		{ "name": "openssl", "version": "3.5.1" },
         { "name": "pcre2", "version": "10.45" }
     ]
 }

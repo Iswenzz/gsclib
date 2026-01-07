@@ -13,6 +13,7 @@ include(ClangTools)
 find_package(Libcurl REQUIRED)
 find_package(Libmariadb REQUIRED)
 find_package(Libzip REQUIRED)
+find_package(OpenSSL REQUIRED)
 find_package(PCRE2 REQUIRED)
 
 # Tests

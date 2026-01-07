@@ -16,7 +16,7 @@ set(LIBMARIADB_INCLUDE_DIRS
 	${LIBMARIADB_INCLUDE_DIR}/mysql)
 
 if(WIN32)
-	list(APPEND LIBMARIADB_LIBS secur32 Ws2_32 Shlwapi Crypt32)
+	list(APPEND LIBMARIADB_LIBS shlwapi)
 endif()
 
 include(FindPackageHandleStandardArgs)
