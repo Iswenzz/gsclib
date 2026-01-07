@@ -1,5 +1,6 @@
 #include "System.hpp"
 
+#include <curl/curl.h>
 #include <cstdlib>
 
 namespace gsclib
@@ -62,7 +63,7 @@ namespace gsclib
 
 		if (!CriticalSections.contains(name))
 		{
-			Plugin_Scr_Error(std::format("EnterCriticalSection(): section {} not found.\n", name).c_str());
+			Plugin_Scr_Error(std::format("Section {} not found.\n", name).c_str());
 			return;
 		}
 		if (!CriticalSections[name])
@@ -82,7 +83,7 @@ namespace gsclib
 
 		if (!CriticalSections.contains(name))
 		{
-			Plugin_Scr_Error(std::format("LeaveCriticalSection(): section {} not found.\n", name).c_str());
+			Plugin_Scr_Error(std::format("Section {} not found.\n", name).c_str());
 			return;
 		}
 		CriticalSections[name] = false;
@@ -142,5 +143,57 @@ namespace gsclib
 	{
 		Plugin_Scr_AddString(
 			std::format("{}.{}.{}", GSCLIB_VERSION_MAJOR, GSCLIB_VERSION_MINOR, GSCLIB_VERSION_PATCH).c_str());
+	}
+
+	void System::CURLVersion()
+	{
+		CHECK_PARAMS(0, "Usage: CURL_Version()");
+
+		curl_version_info_data* info = curl_version_info(CURLVERSION_NOW);
+		if (!info)
+			return;
+
+		Plugin_Printf("----------[CURL INFO]----------\n");
+		Plugin_Printf("Age: %d\nHost: %s\nSSH: %s\nSSL: %s\nVersion: %s\n", info->age, info->host, info->libssh_version,
+			info->ssl_version, info->version);
+
+		Plugin_Printf("Features: ");
+		Plugin_Printf("%s", info->features & CURL_VERSION_IPV6 ? "IPv6 " : "");
+		Plugin_Printf("%s", info->features & CURL_VERSION_SSL ? "SSL " : "");
+		Plugin_Printf("%s", info->features & CURL_VERSION_LIBZ ? "LIBZ " : "");
+		Plugin_Printf("%s", info->features & CURL_VERSION_NTLM ? "NTML " : "");
+		Plugin_Printf("%s", info->features & CURL_VERSION_DEBUG ? "DEBUG " : "");
+		Plugin_Printf("%s", info->features & CURL_VERSION_ASYNCHDNS ? "ASYNCHDNS " : "");
+		Plugin_Printf("%s", info->features & CURL_VERSION_SPNEGO ? "SPNEGO " : "");
+		Plugin_Printf("%s", info->features & CURL_VERSION_LARGEFILE ? "LARGEFILE " : "");
+		Plugin_Printf("%s", info->features & CURL_VERSION_IDN ? "IDN " : "");
+		Plugin_Printf("%s", info->features & CURL_VERSION_SSPI ? "SSPI " : "");
+		Plugin_Printf("%s", info->features & CURL_VERSION_CONV ? "CONV " : "");
+		Plugin_Printf("%s", info->features & CURL_VERSION_CURLDEBUG ? "CURLDEBUG " : "");
+		Plugin_Printf("%s", info->features & CURL_VERSION_TLSAUTH_SRP ? "TLSAUTH_SRP " : "");
+		Plugin_Printf("%s", info->features & CURL_VERSION_NTLM_WB ? "NTLM_WB " : "");
+		Plugin_Printf("%s", info->features & CURL_VERSION_HTTP2 ? "HTTP2 " : "");
+		Plugin_Printf("%s", info->features & CURL_VERSION_GSSAPI ? "GSSAPI " : "");
+		Plugin_Printf("%s", info->features & CURL_VERSION_KERBEROS5 ? "KERBEROS5 " : "");
+		Plugin_Printf("%s", info->features & CURL_VERSION_UNIX_SOCKETS ? "UNIX_SOCKETS " : "");
+		Plugin_Printf("%s", info->features & CURL_VERSION_PSL ? "PSL " : "");
+		Plugin_Printf("%s", info->features & CURL_VERSION_HTTPS_PROXY ? "HTTPS_PROXY " : "");
+		Plugin_Printf("%s", info->features & CURL_VERSION_MULTI_SSL ? "MULTI_SSL " : "");
+		Plugin_Printf("%s", info->features & CURL_VERSION_BROTLI ? "BROTLI " : "");
+		Plugin_Printf("%s", info->features & CURL_VERSION_ALTSVC ? "ALTSVC " : "");
+		Plugin_Printf("%s", info->features & CURL_VERSION_HTTP3 ? "HTTP3 " : "");
+		Plugin_Printf("%s", info->features & CURL_VERSION_ZSTD ? "ZSTD " : "");
+		Plugin_Printf("%s", info->features & CURL_VERSION_UNICODE ? "UNICODE " : "");
+		Plugin_Printf("%s", info->features & CURL_VERSION_HSTS ? "HSTS " : "");
+		Plugin_Printf("%s", info->features & CURL_VERSION_GSASL ? "GSASL " : "");
+		Plugin_Printf("%s", info->features & CURL_VERSION_THREADSAFE ? "THREADSAFE " : "");
+		Plugin_Printf("\n");
+
+		Plugin_Printf("Protocols: ");
+		for (int i = 0; info->protocols[i] != NULL; i++)
+			Plugin_Printf("%s ", info->protocols[i]);
+		Plugin_Printf("\n-------------------------------\n");
+
+		Plugin_Scr_AddString(info->version);
 	}
 }

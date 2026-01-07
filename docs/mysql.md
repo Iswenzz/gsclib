@@ -9,17 +9,13 @@ critical_enter("mysql");
 
 request = SQL_Prepare("SELECT name, guid, rank FROM ranks WHERE name = ?");
 SQL_BindParam(request, "Iswenzz", level.MYSQL_TYPE_VAR_STRING);
-SQL_BindResult(request, level.MYSQL_TYPE_VAR_STRING, 60);
-SQL_BindResult(request, level.MYSQL_TYPE_VAR_STRING, 60);
-SQL_BindResult(request, level.MYSQL_TYPE_LONG);
 SQL_Execute(request);
-status = AsyncWait(request);
+AsyncWait(request);
 
 rows = SQL_FetchRowsDict(request);
 for (i = 0; i < rows.size; i++)
 {
 	row = rows[i];
-
 	player = row["guid"];
 	rank = row["rank"];
 }
@@ -135,11 +131,6 @@ The request should be freed when done using SQL_Free.
 ```c
 request = SQL_Prepare("SELECT name, guid, rank FROM ranks WHERE name = ?");
 SQL_BindParam(request, "Iswenzz", level.MYSQL_TYPE_VAR_STRING);
-SQL_BindResult(request, level.MYSQL_TYPE_VAR_STRING, 60);
-SQL_BindResult(request, level.MYSQL_TYPE_VAR_STRING, 60);
-SQL_BindResult(request, level.MYSQL_TYPE_LONG);
-SQL_BindResult(request, level.MYSQL_TYPE_LONG);
-SQL_BindResult(request, level.MYSQL_TYPE_LONG);
 SQL_Execute(request);
 ```
 ```c
@@ -156,16 +147,6 @@ Bind a value in the prepared statement.
 
 ```c
 SQL_BindParam(request, "Iswenzz", level.MYSQL_TYPE_VAR_STRING);
-```
-<hr>
-
-#### ``SQL_BindResult(<request>, <type>, <?string length>)``
-Bind a result in the prepared statement, if you want to retrieve the col when fetching rows.
-The <?string length> is optional for all types except strings where you have to specify the string length.
-
-```c
-SQL_BindResult(request, level.MYSQL_TYPE_VAR_STRING, 60);
-SQL_BindResult(request, level.MYSQL_TYPE_LONG);
 ```
 <hr>
 

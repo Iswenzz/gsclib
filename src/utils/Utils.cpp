@@ -390,7 +390,7 @@ namespace gsclib
 	void Utils::AnsiColorPrint(const char* msg, void (*print)(const char*, ...))
 	{
 		int length = 0;
-		static char buffer[MAXPRINTMSG] = { 0 };
+		static char buffer[MAX_STRING_CHARS] = { 0 };
 
 		while (*msg)
 		{
@@ -416,7 +416,7 @@ namespace gsclib
 			}
 			else
 			{
-				if (length >= MAXPRINTMSG - 1)
+				if (length >= MAX_STRING_CHARS - 1)
 					break;
 				buffer[length] = *msg;
 				length++;

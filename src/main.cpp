@@ -119,6 +119,7 @@ PCL int OnInit()
 	Plugin_ScrAddFunction("islinux", &System::IsLinux);
 	Plugin_ScrAddFunction("cod4x_version", &System::CoD4XVersion);
 	Plugin_ScrAddFunction("gsclib_version", &System::GSCLIBVersion);
+	Plugin_ScrAddFunction("curl_version", &System::CURLVersion);
 	Plugin_ScrAddFunction("exit", &System::Exit);
 
 	// Utils/Linq

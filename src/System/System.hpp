@@ -24,5 +24,6 @@ namespace gsclib
 		static void IsLinux();
 		static void CoD4XVersion();
 		static void GSCLIBVersion();
+		static void CURLVersion();
 	};
 }

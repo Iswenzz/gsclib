@@ -87,7 +87,6 @@ namespace gsclib
 			return;
 		}
 		auto request = task->GetData<HttpRequest>();
-		request->Response.clear();
 
 		ApplyHeaders(request);
 		curl_easy_setopt(request->Easy, CURLOPT_URL, url);
@@ -130,7 +129,7 @@ namespace gsclib
 		ApplyOpts(request);
 
 		task->Status = AsyncStatus::Running;
-		Async::Submit([task] { ExecuteFileDownload(task); });
+		Async::Submit([task] { ExecuteGetFile(task); });
 
 		Plugin_Scr_AddBool(qtrue);
 	}
@@ -154,11 +153,11 @@ namespace gsclib
 		}
 		auto request = task->GetData<HttpRequest>();
 		request->Data = Plugin_Scr_GetString(1);
-		request->Response.clear();
 
 		ApplyHeaders(request);
 		curl_easy_setopt(request->Easy, CURLOPT_URL, url);
-		curl_easy_setopt(request->Easy, CURLOPT_POSTFIELDS, request->Data.c_str());
+		curl_easy_setopt(request->Easy, CURLOPT_POSTFIELDSIZE, request->Data.size());
+		curl_easy_setopt(request->Easy, CURLOPT_POSTFIELDS, request->Data.data());
 		curl_easy_setopt(request->Easy, CURLOPT_SSL_VERIFYPEER, 0L);
 		curl_easy_setopt(request->Easy, CURLOPT_NOPROGRESS, 1L);
 		curl_easy_setopt(request->Easy, CURLOPT_WRITEFUNCTION, WriteCallback);
@@ -193,23 +192,21 @@ namespace gsclib
 
 		if (!file.is_open())
 		{
-			Plugin_Printf("File not found.\n");
+			Plugin_Scr_Error("File not found.\n");
 			Plugin_Scr_AddBool(qfalse);
 			return;
 		}
-		auto size = file.tellg();
+		auto size = static_cast<size_t>(file.tellg());
 		file.seekg(0, std::ios::beg);
 
 		auto request = task->GetData<HttpRequest>();
-		request->Response.clear();
-		request->Data.resize(static_cast<size_t>(size));
-		file.read(request->Data.data(), size);
-		file.close();
+		request->Data.resize(size);
+		file.read(request->Data.data(), static_cast<std::streamsize>(size));
 
 		ApplyHeaders(request);
 		curl_easy_setopt(request->Easy, CURLOPT_URL, url);
-		curl_easy_setopt(request->Easy, CURLOPT_POSTFIELDSIZE, static_cast<long>(size));
-		curl_easy_setopt(request->Easy, CURLOPT_POSTFIELDS, request->Data.c_str());
+		curl_easy_setopt(request->Easy, CURLOPT_POSTFIELDSIZE, request->Data.size());
+		curl_easy_setopt(request->Easy, CURLOPT_POSTFIELDS, request->Data.data());
 		curl_easy_setopt(request->Easy, CURLOPT_SSL_VERIFYPEER, 0L);
 		curl_easy_setopt(request->Easy, CURLOPT_NOPROGRESS, 1L);
 		curl_easy_setopt(request->Easy, CURLOPT_WRITEFUNCTION, WriteCallback);
@@ -224,7 +221,7 @@ namespace gsclib
 
 	void Http::GetResponse()
 	{
-		CHECK_PARAMS(1, "Usage: HTTP_Response(<request>)\n");
+		CHECK_PARAMS(1, "Usage: HTTP_Response(<request>, <?chunkIndex>)\n");
 
 		auto task = reinterpret_cast<AsyncTask*>(Plugin_Scr_GetInt(0));
 		if (!task)
@@ -233,7 +230,21 @@ namespace gsclib
 			return;
 		}
 		auto request = task->GetData<HttpRequest>();
-		Plugin_Scr_AddString(request->Response.c_str());
+		auto& response = request->Response;
+		size_t size = response.size();
+
+		const int argCount = Plugin_Scr_GetNumParam();
+		int chunkIndex = argCount == 2 ? Plugin_Scr_GetInt(1) : 0;
+		size_t offset = static_cast<size_t>(chunkIndex) * MAX_STRING_CHARS;
+
+		if (offset >= size)
+		{
+			Plugin_Scr_AddUndefined();
+			return;
+		}
+		size_t chunkSize = std::min(static_cast<size_t>(MAX_STRING_CHARS), size - offset);
+		std::string chunk = response.substr(offset, chunkSize);
+		Plugin_Scr_AddString(chunk.c_str());
 	}
 
 	void Http::AddHeader()
@@ -345,6 +356,7 @@ namespace gsclib
 			{
 				task->Error = curl_multi_strerror(mc);
 				task->Status = AsyncStatus::Failure;
+				Plugin_Printf("%s\n", task->Error.c_str());
 				return;
 			}
 			if (task->IsCancelled())
@@ -356,10 +368,21 @@ namespace gsclib
 				curl_multi_wait(request->Multi, nullptr, 0, 100, nullptr);
 		} while (running > 0);
 
+		int msgsleft;
+		CURLMsg* msg;
+		while ((msg = curl_multi_info_read(request->Multi, &msgsleft)))
+		{
+			if (msg->msg == CURLMSG_DONE && msg->data.result != CURLE_OK)
+			{
+				task->Error = curl_easy_strerror(msg->data.result);
+				task->Status = AsyncStatus::Failure;
+				Plugin_Printf("%s\n", task->Error.c_str());
+			}
+		}
 		task->Status = AsyncStatus::Successful;
 	}
 
-	void Http::ExecuteFileDownload(AsyncTask* task)
+	void Http::ExecuteGetFile(AsyncTask* task)
 	{
 		auto request = task->GetData<HttpRequest>();
 		std::ofstream file(request->Filepath, std::ios::binary);
@@ -368,6 +391,7 @@ namespace gsclib
 		{
 			task->Error = "Failed to open file for writing";
 			task->Status = AsyncStatus::Failure;
+			Plugin_Printf("%s\n", task->Error.c_str());
 			return;
 		}
 		curl_easy_setopt(request->Easy, CURLOPT_WRITEFUNCTION, WriteFileCallback);
@@ -382,6 +406,7 @@ namespace gsclib
 				task->Error = curl_multi_strerror(mc);
 				task->Status = AsyncStatus::Failure;
 				file.close();
+				Plugin_Printf("%s\n", task->Error.c_str());
 				return;
 			}
 			if (task->IsCancelled())
@@ -393,8 +418,19 @@ namespace gsclib
 			if (running > 0)
 				curl_multi_wait(request->Multi, nullptr, 0, 100, nullptr);
 		} while (running > 0);
-
 		file.close();
+
+		int msgsleft;
+		CURLMsg* msg;
+		while ((msg = curl_multi_info_read(request->Multi, &msgsleft)))
+		{
+			if (msg->msg == CURLMSG_DONE && msg->data.result != CURLE_OK)
+			{
+				task->Error = curl_easy_strerror(msg->data.result);
+				task->Status = AsyncStatus::Failure;
+				Plugin_Printf("%s\n", task->Error.c_str());
+			}
+		}
 		task->Status = AsyncStatus::Successful;
 	}
 }

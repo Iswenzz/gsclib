@@ -13,7 +13,7 @@ url = "http://httpbin.org/post";
 request = HTTP_Init();
 HTTP_AddHeader(request, "Accept: application/json,Content-Type: application/json");
 HTTP_Post(request, json, url);
-status = AsyncWait(request);
+AsyncWait(request);
 
 response = HTTP_Response(request);
 HTTP_Free(request);
@@ -71,6 +71,14 @@ Post a string to HTTP url.
 ```c
 request = HTTP_Init();
 HTTP_Post(request, "{\"login\":\"login\",\"password\":\"password\"}", "http://httpbin.org/post");
+```
+<hr>
+
+#### ``HTTP_Response(<request>, <?chunkIndex>)``
+Get the HTTP response string.
+
+```c
+response = HTTP_Response(request);
 ```
 <hr>
 

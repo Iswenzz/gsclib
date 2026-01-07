@@ -60,6 +60,8 @@ namespace gsclib
 		static void ApplyHeaders(FtpRequest* request, CURLoption headerType);
 		static void ApplyOpts(FtpRequest* request);
 		static void Execute(AsyncTask* task);
+		static void ExecuteGetFile(AsyncTask* task);
+		static void ExecutePostFile(AsyncTask* task);
 		static size_t WriteCallback(void* ptr, size_t size, size_t nmemb, void* userdata);
 		static size_t ReadCallback(void* ptr, size_t size, size_t nmemb, void* userdata);
 	};

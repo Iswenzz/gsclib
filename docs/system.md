@@ -61,3 +61,11 @@ version = GSCLIB_Version();
 ```
 <hr>
 
+#### ``CURL_Version()``
+Get the CURL version.
+
+```c
+version = CURL_Version();
+```
+<hr>
+

@@ -1,7 +1,6 @@
 #pragma once
 #include "Base.hpp"
 
-#define MAXPRINTMSG 1024
 #define Q_COLOR_ESCAPE '^'
 #define Q_IsColorString(p) (p && *(p) == Q_COLOR_ESCAPE && *((p) + 1) && *((p) + 1) != Q_COLOR_ESCAPE)
 

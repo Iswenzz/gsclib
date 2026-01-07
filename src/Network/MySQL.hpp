@@ -11,10 +11,12 @@ namespace gsclib
 	struct MySqlRequest
 	{
 		sql::Connection* Connection = nullptr;
-		std::unique_ptr<sql::PreparedStatement> Statement;
+		std::unique_ptr<sql::PreparedStatement> PreparedStatement;
+		std::unique_ptr<sql::Statement> QueryStatement;
 		std::unique_ptr<sql::ResultSet> Result;
-		std::string Query;
 		std::vector<SqlValue> Params;
+		std::string Query;
+		int64_t AffectedCount = 0;
 
 		MySqlRequest() = default;
 		~MySqlRequest() = default;

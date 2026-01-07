@@ -44,7 +44,7 @@ namespace gsclib
 		static void ApplyHeaders(HttpRequest* request);
 		static void ApplyOpts(HttpRequest* request);
 		static void Execute(AsyncTask* task);
-		static void ExecuteFileDownload(AsyncTask* task);
+		static void ExecuteGetFile(AsyncTask* task);
 		static size_t WriteCallback(void* ptr, size_t size, size_t nmemb, void* userdata);
 		static size_t WriteFileCallback(void* ptr, size_t size, size_t nmemb, void* userdata);
 	};

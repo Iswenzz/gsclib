@@ -6,6 +6,9 @@ namespace gsclib
 	{
 		Easy = curl_easy_init();
 		Multi = curl_multi_init();
+
+		if (Easy && Multi)
+			curl_multi_add_handle(Multi, Easy);
 	}
 
 	FtpConnection::~FtpConnection()
@@ -196,7 +199,7 @@ namespace gsclib
 
 		if (!testFile.is_open())
 		{
-			Plugin_Printf("Couldn't open '%s': %s\n", filepath, std::strerror(errno));
+			Plugin_Scr_Error(std::format("Couldn't open {}: {}\n", filepath, std::strerror(errno)).c_str());
 			Plugin_Scr_AddBool(qfalse);
 			return;
 		}
@@ -218,44 +221,7 @@ namespace gsclib
 
 		task->Status = AsyncStatus::Running;
 
-		Async::Submit(
-			[task, request]
-			{
-				std::ifstream file(request->Filepath, std::ios::binary);
-				int running = 0;
-
-				if (!file.is_open())
-				{
-					task->Error = "Failed to open file for reading";
-					task->Status = AsyncStatus::Failure;
-					return;
-				}
-				curl_easy_setopt(request->Easy, CURLOPT_READFUNCTION, ReadCallback);
-				curl_easy_setopt(request->Easy, CURLOPT_READDATA, &file);
-
-				do
-				{
-					CURLMcode mc = curl_multi_perform(request->Multi, &running);
-					if (mc != CURLM_OK)
-					{
-						task->Error = curl_multi_strerror(mc);
-						task->Status = AsyncStatus::Failure;
-						file.close();
-						return;
-					}
-					if (task->IsCancelled())
-					{
-						task->Status = AsyncStatus::Cancelled;
-						file.close();
-						return;
-					}
-					if (running > 0)
-						curl_multi_wait(request->Multi, nullptr, 0, 100, nullptr);
-				} while (running > 0);
-
-				file.close();
-				task->Status = AsyncStatus::Successful;
-			});
+		Async::Submit([task] { ExecutePostFile(task); });
 
 		Plugin_Scr_AddBool(qtrue);
 	}
@@ -295,44 +261,7 @@ namespace gsclib
 
 		task->Status = AsyncStatus::Running;
 
-		Async::Submit(
-			[task, request]
-			{
-				std::ofstream file(request->Filepath, std::ios::binary);
-				int running = 0;
-
-				if (!file.is_open())
-				{
-					task->Error = "Failed to open file for writing";
-					task->Status = AsyncStatus::Failure;
-					return;
-				}
-				curl_easy_setopt(request->Easy, CURLOPT_WRITEFUNCTION, WriteCallback);
-				curl_easy_setopt(request->Easy, CURLOPT_WRITEDATA, &file);
-
-				do
-				{
-					CURLMcode mc = curl_multi_perform(request->Multi, &running);
-					if (mc != CURLM_OK)
-					{
-						task->Error = curl_multi_strerror(mc);
-						task->Status = AsyncStatus::Failure;
-						file.close();
-						return;
-					}
-					if (task->IsCancelled())
-					{
-						task->Status = AsyncStatus::Cancelled;
-						file.close();
-						return;
-					}
-					if (running > 0)
-						curl_multi_wait(request->Multi, nullptr, 0, 100, nullptr);
-				} while (running > 0);
-
-				file.close();
-				task->Status = AsyncStatus::Successful;
-			});
+		Async::Submit([task] { ExecuteGetFile(task); });
 
 		Plugin_Scr_AddBool(qtrue);
 	}
@@ -446,6 +375,7 @@ namespace gsclib
 			{
 				task->Error = curl_multi_strerror(mc);
 				task->Status = AsyncStatus::Failure;
+				Plugin_Printf("%s\n", task->Error.c_str());
 				return;
 			}
 			if (task->IsCancelled())
@@ -457,6 +387,121 @@ namespace gsclib
 				curl_multi_wait(request->Multi, nullptr, 0, 100, nullptr);
 		} while (running > 0);
 
+		int msgsleft;
+		CURLMsg* msg;
+		while ((msg = curl_multi_info_read(request->Multi, &msgsleft)))
+		{
+			if (msg->msg == CURLMSG_DONE && msg->data.result != CURLE_OK)
+			{
+				task->Error = curl_easy_strerror(msg->data.result);
+				task->Status = AsyncStatus::Failure;
+				Plugin_Printf("%s\n", task->Error.c_str());
+			}
+		}
+		task->Status = AsyncStatus::Successful;
+	}
+
+	void Ftp::ExecuteGetFile(AsyncTask* task)
+	{
+		auto request = task->GetData<FtpRequest>();
+		std::ofstream file(request->Filepath, std::ios::binary);
+		int running = 0;
+
+		if (!file.is_open())
+		{
+			task->Error = "Failed to open file for writing";
+			task->Status = AsyncStatus::Failure;
+			Plugin_Printf("%s\n", task->Error.c_str());
+			return;
+		}
+		curl_easy_setopt(request->Easy, CURLOPT_WRITEFUNCTION, WriteCallback);
+		curl_easy_setopt(request->Easy, CURLOPT_WRITEDATA, &file);
+
+		do
+		{
+			CURLMcode mc = curl_multi_perform(request->Multi, &running);
+			if (mc != CURLM_OK)
+			{
+				task->Error = curl_multi_strerror(mc);
+				task->Status = AsyncStatus::Failure;
+				file.close();
+				Plugin_Printf("%s\n", task->Error.c_str());
+				return;
+			}
+			if (task->IsCancelled())
+			{
+				task->Status = AsyncStatus::Cancelled;
+				file.close();
+				return;
+			}
+			if (running > 0)
+				curl_multi_wait(request->Multi, nullptr, 0, 100, nullptr);
+		} while (running > 0);
+		file.close();
+
+		int msgsleft;
+		CURLMsg* msg;
+		while ((msg = curl_multi_info_read(request->Multi, &msgsleft)))
+		{
+			if (msg->msg == CURLMSG_DONE && msg->data.result != CURLE_OK)
+			{
+				task->Error = curl_easy_strerror(msg->data.result);
+				task->Status = AsyncStatus::Failure;
+				Plugin_Printf("%s\n", task->Error.c_str());
+			}
+		}
+		task->Status = AsyncStatus::Successful;
+	}
+
+	void Ftp::ExecutePostFile(AsyncTask* task)
+	{
+		auto request = task->GetData<FtpRequest>();
+		std::ifstream file(request->Filepath, std::ios::binary);
+		int running = 0;
+
+		if (!file.is_open())
+		{
+			task->Error = "Failed to open file for reading";
+			task->Status = AsyncStatus::Failure;
+			Plugin_Printf("%s\n", task->Error.c_str());
+			return;
+		}
+		curl_easy_setopt(request->Easy, CURLOPT_READFUNCTION, ReadCallback);
+		curl_easy_setopt(request->Easy, CURLOPT_READDATA, &file);
+
+		do
+		{
+			CURLMcode mc = curl_multi_perform(request->Multi, &running);
+			if (mc != CURLM_OK)
+			{
+				task->Error = curl_multi_strerror(mc);
+				task->Status = AsyncStatus::Failure;
+				file.close();
+				Plugin_Printf("%s\n", task->Error.c_str());
+				return;
+			}
+			if (task->IsCancelled())
+			{
+				task->Status = AsyncStatus::Cancelled;
+				file.close();
+				return;
+			}
+			if (running > 0)
+				curl_multi_wait(request->Multi, nullptr, 0, 100, nullptr);
+		} while (running > 0);
+		file.close();
+
+		int msgsleft;
+		CURLMsg* msg;
+		while ((msg = curl_multi_info_read(request->Multi, &msgsleft)))
+		{
+			if (msg->msg == CURLMSG_DONE && msg->data.result != CURLE_OK)
+			{
+				task->Error = curl_easy_strerror(msg->data.result);
+				task->Status = AsyncStatus::Failure;
+				Plugin_Printf("%s\n", task->Error.c_str());
+			}
+		}
 		task->Status = AsyncStatus::Successful;
 	}
 }

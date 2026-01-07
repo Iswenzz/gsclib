@@ -9,7 +9,7 @@ critical_enter("ftp");
 
 request = FTP_Init();
 FTP_PostFile(request, "temp/test.txt", "get.txt");
-status = AsyncWait(request);
+AsyncWait(request);
 FTP_Free(request);
 
 critical_leave("ftp");

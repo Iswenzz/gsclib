@@ -33,7 +33,7 @@ critical_release(id)
 AsyncWait(request)
 {
 	status = AsyncStatus(request);
-	while (status <= 1)
+	while (status == 0 || status == 1)
 	{
 		wait 0.05;
 		status = AsyncStatus(request);

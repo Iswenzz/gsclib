@@ -9,7 +9,7 @@ namespace gsclib
 		if (!Driver)
 			Driver = sql::mariadb::get_driver_instance();
 
-		Plugin_Scr_AddString(Driver->getName().c_str());
+		Plugin_Scr_AddString(std::format("{}.{}", Driver->getMajorVersion(), Driver->getMinorVersion()).c_str());
 	}
 
 	void MySql::Connect()
@@ -35,12 +35,12 @@ namespace gsclib
 
 			Connection.reset(Driver->connect(url, properties));
 
-			Plugin_Printf("SQL_Connect(): Connected to MariaDB Server\n");
+			Plugin_Printf("Connected to MariaDB Server\n");
 			Plugin_Scr_AddBool(qtrue);
 		}
 		catch (sql::SQLException& e)
 		{
-			Plugin_Scr_Error(std::format("SQL_Connect(): Connection failed: {}\n", e.what()).c_str());
+			Plugin_Scr_Error(std::format("Connection failed: {}\n", e.what()).c_str());
 			Plugin_Scr_AddBool(qfalse);
 		}
 	}
@@ -73,7 +73,7 @@ namespace gsclib
 		}
 		catch (sql::SQLException& e)
 		{
-			Plugin_Scr_Error(std::format("SQL_SelectDB(): {}\n", e.what()).c_str());
+			Plugin_Scr_Error(std::format("{}\n", e.what()).c_str());
 			Plugin_Scr_AddBool(qfalse);
 		}
 	}
@@ -101,7 +101,7 @@ namespace gsclib
 		}
 		catch (sql::SQLException& e)
 		{
-			Plugin_Scr_Error(std::format("SQL_ListDB(): {}\n", e.what()).c_str());
+			Plugin_Scr_Error(std::format("{}\n", e.what()).c_str());
 		}
 	}
 
@@ -128,7 +128,7 @@ namespace gsclib
 		}
 		catch (sql::SQLException& e)
 		{
-			Plugin_Scr_Error(std::format("SQL_ListTables(): {}\n", e.what()).c_str());
+			Plugin_Scr_Error(std::format("{}\n", e.what()).c_str());
 		}
 	}
 
@@ -228,12 +228,12 @@ namespace gsclib
 
 		try
 		{
-			request->Statement.reset(Connection->prepareStatement(request->Query));
+			request->PreparedStatement.reset(Connection->prepareStatement(request->Query));
 			Plugin_Scr_AddInt(reinterpret_cast<uintptr_t>(task.get()));
 		}
 		catch (sql::SQLException& e)
 		{
-			Plugin_Scr_Error(std::format("SQL_Prepare(): {}\n", e.what()).c_str());
+			Plugin_Scr_Error(std::format("{}\n", e.what()).c_str());
 			Plugin_Scr_AddBool(qfalse);
 			delete request;
 			task->Data = nullptr;
@@ -253,7 +253,7 @@ namespace gsclib
 			return;
 		}
 		auto request = task->GetData<MySqlRequest>();
-		if (!request->Statement)
+		if (!request->PreparedStatement)
 		{
 			Plugin_Scr_Error("MySQL statement not found.\n");
 			return;
@@ -268,27 +268,27 @@ namespace gsclib
 			case VAR_ISTRING:
 			{
 				std::string value = Plugin_SL_ConvertToString(variable->u.stringValue);
-				request->Statement->setString(paramIndex, value);
+				request->PreparedStatement->setString(paramIndex, value);
 				request->Params.push_back(value);
 				break;
 			}
 			case VAR_INTEGER:
-				request->Statement->setInt(paramIndex, variable->u.intValue);
+				request->PreparedStatement->setInt(paramIndex, variable->u.intValue);
 				request->Params.push_back(variable->u.intValue);
 				break;
 			case VAR_FLOAT:
-				request->Statement->setFloat(paramIndex, variable->u.floatValue);
+				request->PreparedStatement->setFloat(paramIndex, variable->u.floatValue);
 				request->Params.push_back(variable->u.floatValue);
 				break;
 			default:
-				request->Statement->setNull(paramIndex, 0);
+				request->PreparedStatement->setNull(paramIndex, 0);
 				request->Params.push_back(std::monostate{});
 				break;
 			}
 		}
 		catch (sql::SQLException& e)
 		{
-			Plugin_Scr_Error(std::format("SQL_BindParam(): {}\n", e.what()).c_str());
+			Plugin_Scr_Error(std::format("{}\n", e.what()).c_str());
 		}
 	}
 
@@ -302,13 +302,8 @@ namespace gsclib
 			Plugin_Scr_Error("MySQL request not found.\n");
 			return;
 		}
-		if (task->Status == AsyncStatus::Pending)
-		{
-			Plugin_Scr_Error("MySQL request is pending.\n");
-			return;
-		}
 		auto request = task->GetData<MySqlRequest>();
-		if (!request->Statement)
+		if (!request->PreparedStatement)
 		{
 			Plugin_Scr_Error("MySQL statement not found.\n");
 			return;
@@ -364,7 +359,7 @@ namespace gsclib
 			return;
 		}
 		auto request = task->GetData<MySqlRequest>();
-		Plugin_Scr_AddInt(request->Statement ? static_cast<int>(request->Statement->getUpdateCount()) : 0);
+		Plugin_Scr_AddInt(request ? static_cast<int>(request->AffectedCount) : 0);
 	}
 
 	void MySql::FetchRow()
@@ -437,7 +432,7 @@ namespace gsclib
 		if (!request->Result)
 		{
 			Plugin_Scr_AddUndefined();
-			Plugin_Scr_Error("SQL_FetchFields(): MySQL result not found.\n");
+			Plugin_Scr_Error("MySQL result not found.\n");
 			return;
 		}
 		sql::ResultSetMetaData* meta = request->Result->getMetaData();
@@ -483,11 +478,31 @@ namespace gsclib
 		Plugin_Scr_MakeArray();
 		for (unsigned int i = 1; i <= numFields; i++)
 		{
-			if (request->Result->isNull(i))
-				Plugin_Scr_AddUndefined();
-			else
-				Plugin_Scr_AddString(request->Result->getString(i).c_str());
+			int columnType = meta->getColumnType(i);
 
+			if (request->Result->isNull(i))
+			{
+				Plugin_Scr_AddUndefined();
+				continue;
+			}
+			switch (columnType)
+			{
+			case sql::DataType::TINYINT:
+			case sql::DataType::SMALLINT:
+			case sql::DataType::INTEGER:
+			case sql::DataType::BIGINT:
+				Plugin_Scr_AddInt(request->Result->getInt(i));
+				break;
+			case sql::DataType::FLOAT:
+			case sql::DataType::DOUBLE:
+			case sql::DataType::DECIMAL:
+			case sql::DataType::NUMERIC:
+				Plugin_Scr_AddFloat(request->Result->getFloat(i));
+				break;
+			default:
+				Plugin_Scr_AddString(request->Result->getString(i).c_str());
+				break;
+			}
 			if (stringIndexed)
 				Plugin_Scr_AddArrayStringIndexed(Plugin_Scr_AllocString(meta->getColumnName(i).c_str()));
 			else
@@ -498,16 +513,20 @@ namespace gsclib
 
 	void MySql::FetchQueryRows(MySqlRequest* request, bool stringIndexed)
 	{
-		if (!request->Result)
-		{
-			Plugin_Scr_MakeArray();
-			return;
-		}
 		Plugin_Scr_MakeArray();
-		request->Result->beforeFirst();
+		if (!request->Result)
+			return;
 
-		while (FetchQueryRow(request, stringIndexed))
-			Plugin_Scr_AddArray();
+		try
+		{
+			request->Result->beforeFirst();
+			while (FetchQueryRow(request, stringIndexed))
+				Plugin_Scr_AddArray();
+		}
+		catch (sql::SQLException& e)
+		{
+			Plugin_Scr_Error(std::format("{}\n", e.what()).c_str());
+		}
 	}
 
 	void MySql::ExecuteQuery(AsyncTask* task)
@@ -516,14 +535,26 @@ namespace gsclib
 
 		try
 		{
-			std::unique_ptr<sql::Statement> stmt(request->Connection->createStatement());
-			request->Result.reset(stmt->executeQuery(request->Query));
+			request->QueryStatement.reset(request->Connection->createStatement());
+			bool hasResultSet = request->QueryStatement->execute(request->Query);
+
+			if (hasResultSet)
+			{
+				request->Result.reset(request->QueryStatement->getResultSet());
+				request->AffectedCount = 0;
+			}
+			else
+			{
+				request->Result.reset();
+				request->AffectedCount = request->QueryStatement->getUpdateCount();
+			}
 			task->Status = AsyncStatus::Successful;
 		}
 		catch (sql::SQLException& e)
 		{
 			task->Error = e.what();
 			task->Status = AsyncStatus::Failure;
+			Plugin_Printf("%s\n", task->Error.c_str());
 		}
 	}
 
@@ -533,13 +564,25 @@ namespace gsclib
 
 		try
 		{
-			request->Result.reset(request->Statement->executeQuery());
+			bool hasResultSet = request->PreparedStatement->execute();
+
+			if (hasResultSet)
+			{
+				request->Result.reset(request->PreparedStatement->getResultSet());
+				request->AffectedCount = 0;
+			}
+			else
+			{
+				request->Result.reset();
+				request->AffectedCount = request->PreparedStatement->getUpdateCount();
+			}
 			task->Status = AsyncStatus::Successful;
 		}
 		catch (sql::SQLException& e)
 		{
 			task->Error = e.what();
 			task->Status = AsyncStatus::Failure;
+			Plugin_Printf("%s\n", task->Error.c_str());
 		}
 	}
 }
