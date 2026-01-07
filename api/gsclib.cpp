@@ -3,7 +3,6 @@
 extern "C"
 {
 	extern struct scrVarGlob_t gScrVarGlob;
-	extern unsigned int VM_Execute(unsigned int paramcount, const char* pos);
 	extern void IncInParam();
 	extern void Scr_AddIString(const char* value);
 
@@ -122,26 +121,6 @@ extern "C"
 		IncInParam();
 		gScrVmPub.top->type = VAR_FUNCTION;
 		gScrVmPub.top->u.codePosValue = codePosValue;
-	}
-
-	unsigned short Scr_ExecThreadResult(int handle, unsigned int paramcount)
-	{
-		const char* pos = &gScrVarPub.programBuffer[handle];
-
-		if (!gScrVmPub.function_count)
-			gScrVmGlob.starttime = Sys_Milliseconds();
-
-		Scr_IsInOpcodeMemory(pos);
-		AddRefToObject(gScrVarPub.levelId);
-		AllocThread(gScrVarPub.levelId);
-
-		unsigned int id = VM_Execute(paramcount, pos);
-
-		RemoveRefToValue(gScrVmPub.top->type, gScrVmPub.top->u);
-		--gScrVmPub.top;
-		--gScrVmPub.inparamcount;
-
-		return static_cast<unsigned short>(id);
 	}
 
 	VariableValue Scr_GetThreadResult()

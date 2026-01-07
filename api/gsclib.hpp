@@ -13,6 +13,7 @@
 	type definition;             \
 	type Plugin_##definition
 
+#define MAX_STRING_CHARS 1024
 #define VAR_MASK 0x1F
 #define VAR_NAME_BITS 8
 
