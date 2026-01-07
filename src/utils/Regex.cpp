@@ -107,7 +107,7 @@ namespace gsclib
 		PCRE2_UCHAR buffer[256];
 		pcre2_get_error_message(*errorCode, buffer, sizeof(buffer));
 
-		Plugin_Scr_Error(std::format("PCRE2 compilation failed at offset {}: {}\n", static_cast<int>(*errorOffset),
+		Plugin_Scr_Error(std::format("PCRE2 compilation failed at offset {} {}\n", static_cast<int>(*errorOffset),
 			reinterpret_cast<char*>(buffer))
 							 .c_str());
 		pcre2_code_free(re);

@@ -199,7 +199,7 @@ namespace gsclib
 
 		if (!testFile.is_open())
 		{
-			Plugin_Scr_Error(std::format("Couldn't open {}: {}\n", filepath, std::strerror(errno)).c_str());
+			Plugin_Scr_Error(std::format("Couldn't open {} {}\n", filepath, std::strerror(errno)).c_str());
 			Plugin_Scr_AddBool(qfalse);
 			return;
 		}

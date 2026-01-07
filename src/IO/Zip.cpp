@@ -16,7 +16,7 @@ namespace gsclib
 
 		if (!std::filesystem::exists(filepath))
 		{
-			Plugin_Scr_Error(std::format("File does not exists: {}\n", filepath).c_str());
+			Plugin_Scr_Error(std::format("File does not exists {}\n", filepath).c_str());
 			Plugin_Scr_AddBool(qfalse);
 			return;
 		}
@@ -40,13 +40,13 @@ namespace gsclib
 		int index = zip_name_locate(zip->getZipHandle(), filepath, ZIP_FL_ENC_GUESS);
 		if (index == -1)
 		{
-			Plugin_Scr_Error(std::format("File not found in the archive {}", filepath).c_str());
+			Plugin_Scr_Error(std::format("File not found in the archive {}\n", filepath).c_str());
 			Plugin_Scr_AddBool(qfalse);
 			return;
 		}
 		if (zip_file_rename(zip->getZipHandle(), index, renamepath, ZIP_FL_ENC_GUESS) < 0)
 		{
-			Plugin_Scr_Error(std::format("Failed to rename file {}", filepath).c_str());
+			Plugin_Scr_Error(std::format("Failed to rename file {}\n", filepath).c_str());
 			Plugin_Scr_AddBool(qfalse);
 			return;
 		}

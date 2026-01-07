@@ -40,7 +40,7 @@ namespace gsclib
 		}
 		catch (sql::SQLException& e)
 		{
-			Plugin_Scr_Error(std::format("Connection failed: {}\n", e.what()).c_str());
+			Plugin_Scr_Error(std::format("Connection failed {}\n", e.what()).c_str());
 			Plugin_Scr_AddBool(qfalse);
 		}
 	}
