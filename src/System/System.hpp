@@ -14,8 +14,9 @@ namespace gsclib
 		static void Execute();
 		static void GetSysTime();
 		static void Exit();
-		static void CriticalSectionCreate();
-		static void CriticalSectionList();
+		static void ListCriticalSections();
+		static void StatusCriticalSections();
+		static void CreateCriticalSection();
 		static void EnterCriticalSection();
 		static void LeaveCriticalSection();
 		static void AsyncStatus();

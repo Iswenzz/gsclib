@@ -30,6 +30,12 @@ critical_release(id)
 	LeaveCriticalSection(id);
 }
 
+waitCriticalSections()
+{
+	while (!StatusCriticalSections())
+		wait 0.05;
+}
+
 AsyncWait(request)
 {
 	status = AsyncStatus(request);
@@ -39,6 +45,22 @@ AsyncWait(request)
 		status = AsyncStatus(request);
 	}
 	return status;
+}
+
+levelRestart(persist)
+{
+	game["ended"] = true;
+	waitCriticalSections();
+
+	map_restart(persist);
+}
+
+levelExit(persist)
+{
+	game["ended"] = true;
+	waitCriticalSections();
+
+	exitLevel(persist);
 }
 ```
 
@@ -56,6 +78,15 @@ Get the critical sections.
 ```c
 sections = CriticalSections();
 keys = getArrayKeys(sections);
+```
+<hr>
+
+#### ``StatusCriticalSections()``
+Get the critical sections status.
+Returns false if a critical section is locked.
+
+```c
+status = StatusCriticalSections();
 ```
 <hr>
 

@@ -109,8 +109,9 @@ PCL int OnInit()
 	Plugin_ScrAddFunction("gsclib_init", &System::Initialize);
 	Plugin_ScrAddFunction("system", &System::Execute);
 	Plugin_ScrAddFunction("getsystime", &System::GetSysTime);
-	Plugin_ScrAddFunction("criticalsection", &System::CriticalSectionCreate);
-	Plugin_ScrAddFunction("criticalsections", &System::CriticalSectionList);
+	Plugin_ScrAddFunction("criticalsections", &System::ListCriticalSections);
+	Plugin_ScrAddFunction("statuscriticalsections", &System::StatusCriticalSections);
+	Plugin_ScrAddFunction("criticalsection", &System::CreateCriticalSection);
 	Plugin_ScrAddFunction("entercriticalsection", &System::EnterCriticalSection);
 	Plugin_ScrAddFunction("leavecriticalsection", &System::LeaveCriticalSection);
 	Plugin_ScrAddFunction("asyncstatus", &System::AsyncStatus);

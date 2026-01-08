@@ -7,7 +7,7 @@ namespace gsclib
 {
 	void System::Initialize()
 	{
-		Plugin_Printf("[GSCLIB] Initialize\n");
+		Plugin_Printf("^5[GSCLIB] Initialize\n");
 
 		Async::Shutdown();
 		Async::Initialize();
@@ -32,15 +32,7 @@ namespace gsclib
 		std::exit(Plugin_Scr_GetInt(0));
 	}
 
-	void System::CriticalSectionCreate()
-	{
-		CHECK_PARAMS(1, "Usage: CriticalSection(<name>)\n");
-
-		const char* name = Plugin_Scr_GetString(0);
-		CriticalSections[name] = false;
-	}
-
-	void System::CriticalSectionList()
+	void System::ListCriticalSections()
 	{
 		CHECK_PARAMS(0, "Usage: CriticalSections()\n");
 
@@ -50,9 +42,37 @@ namespace gsclib
 		Plugin_Scr_MakeArray();
 		for (const auto& [key, locked] : CriticalSections)
 		{
-			Plugin_Scr_AddInt(locked ? 1 : 0);
+			Plugin_Scr_AddBool(locked ? qtrue : qfalse);
 			Plugin_Scr_AddArrayStringIndexed(Plugin_Scr_AllocString(key.c_str()));
 		}
+	}
+
+	void System::StatusCriticalSections()
+	{
+		CHECK_PARAMS(0, "Usage: StatusCriticalSections()\n");
+
+		if (CriticalSections.empty())
+		{
+			Plugin_Scr_AddBool(qtrue);
+			return;
+		}
+		for (const auto& [key, locked] : CriticalSections)
+		{
+			if (locked)
+			{
+				Plugin_Scr_AddBool(qfalse);
+				return;
+			}
+		}
+		Plugin_Scr_AddBool(qtrue);
+	}
+
+	void System::CreateCriticalSection()
+	{
+		CHECK_PARAMS(1, "Usage: CriticalSection(<name>)\n");
+
+		const char* name = Plugin_Scr_GetString(0);
+		CriticalSections[name] = false;
 	}
 
 	void System::EnterCriticalSection()

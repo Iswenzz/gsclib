@@ -1,5 +1,14 @@
 # System
 
+#### ``GSCLIB_Init()``
+Initialize the gsclib library.
+
+```c
+GSCLIB_Init();
+```
+<hr>
+
+
 #### ``System(<command>)``
 Execute a system command.
 

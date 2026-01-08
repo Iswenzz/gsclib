@@ -25,6 +25,7 @@
 
 In order to use this library, you'll need to compile the binary and place it to the CoD4 `plugins` directory.
 Then you can simply use `loadplugin gsclib` in your `server.cfg` or as CLI arguments.
+To initialize gsclib library you need to call `GSCLIB_Init()` at the start of your mod entry point.
 
 ## Server
 
