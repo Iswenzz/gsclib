@@ -375,7 +375,7 @@ namespace gsclib
 			{
 				task->Error = curl_multi_strerror(mc);
 				task->Status = AsyncStatus::Failure;
-				Plugin_Printf("%s\n", task->Error.c_str());
+				Plugin_Printf("^1%s\n", task->Error.c_str());
 				return;
 			}
 			if (task->IsCancelled())
@@ -395,7 +395,7 @@ namespace gsclib
 			{
 				task->Error = curl_easy_strerror(msg->data.result);
 				task->Status = AsyncStatus::Failure;
-				Plugin_Printf("%s\n", task->Error.c_str());
+				Plugin_Printf("^1%s\n", task->Error.c_str());
 			}
 		}
 		task->Status = AsyncStatus::Successful;
@@ -411,7 +411,7 @@ namespace gsclib
 		{
 			task->Error = "Failed to open file for writing";
 			task->Status = AsyncStatus::Failure;
-			Plugin_Printf("%s\n", task->Error.c_str());
+			Plugin_Printf("^1%s\n", task->Error.c_str());
 			return;
 		}
 		curl_easy_setopt(request->Easy, CURLOPT_WRITEFUNCTION, WriteCallback);
@@ -425,7 +425,7 @@ namespace gsclib
 				task->Error = curl_multi_strerror(mc);
 				task->Status = AsyncStatus::Failure;
 				file.close();
-				Plugin_Printf("%s\n", task->Error.c_str());
+				Plugin_Printf("^1%s\n", task->Error.c_str());
 				return;
 			}
 			if (task->IsCancelled())
@@ -447,7 +447,7 @@ namespace gsclib
 			{
 				task->Error = curl_easy_strerror(msg->data.result);
 				task->Status = AsyncStatus::Failure;
-				Plugin_Printf("%s\n", task->Error.c_str());
+				Plugin_Printf("^1%s\n", task->Error.c_str());
 			}
 		}
 		task->Status = AsyncStatus::Successful;
@@ -463,7 +463,7 @@ namespace gsclib
 		{
 			task->Error = "Failed to open file for reading";
 			task->Status = AsyncStatus::Failure;
-			Plugin_Printf("%s\n", task->Error.c_str());
+			Plugin_Printf("^1%s\n", task->Error.c_str());
 			return;
 		}
 		curl_easy_setopt(request->Easy, CURLOPT_READFUNCTION, ReadCallback);
@@ -477,7 +477,7 @@ namespace gsclib
 				task->Error = curl_multi_strerror(mc);
 				task->Status = AsyncStatus::Failure;
 				file.close();
-				Plugin_Printf("%s\n", task->Error.c_str());
+				Plugin_Printf("^1%s\n", task->Error.c_str());
 				return;
 			}
 			if (task->IsCancelled())
@@ -499,7 +499,7 @@ namespace gsclib
 			{
 				task->Error = curl_easy_strerror(msg->data.result);
 				task->Status = AsyncStatus::Failure;
-				Plugin_Printf("%s\n", task->Error.c_str());
+				Plugin_Printf("^1%s\n", task->Error.c_str());
 			}
 		}
 		task->Status = AsyncStatus::Successful;

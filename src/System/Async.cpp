@@ -78,7 +78,7 @@ namespace gsclib
 			}
 			catch (const std::exception& e)
 			{
-				Plugin_Scr_Error(std::format("Async exception {}\n", e.what()).c_str());
+				Plugin_Printf("^1Async exception %s\n", e.what());
 			}
 		}
 	}

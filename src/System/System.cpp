@@ -173,11 +173,11 @@ namespace gsclib
 		if (!info)
 			return;
 
-		Plugin_Printf("----------[CURL INFO]----------\n");
-		Plugin_Printf("Age: %d\nHost: %s\nSSH: %s\nSSL: %s\nVersion: %s\n", info->age, info->host, info->libssh_version,
+		Plugin_Printf("^5----------[CURL INFO]----------\n");
+		Plugin_Printf("^5Age: %d\nHost: %s\nSSH: %s\nSSL: %s\nVersion: %s\n", info->age, info->host, info->libssh_version,
 			info->ssl_version, info->version);
 
-		Plugin_Printf("Features: ");
+		Plugin_Printf("^5Features: ");
 		Plugin_Printf("%s", info->features & CURL_VERSION_IPV6 ? "IPv6 " : "");
 		Plugin_Printf("%s", info->features & CURL_VERSION_SSL ? "SSL " : "");
 		Plugin_Printf("%s", info->features & CURL_VERSION_LIBZ ? "LIBZ " : "");
@@ -209,10 +209,10 @@ namespace gsclib
 		Plugin_Printf("%s", info->features & CURL_VERSION_THREADSAFE ? "THREADSAFE " : "");
 		Plugin_Printf("\n");
 
-		Plugin_Printf("Protocols: ");
+		Plugin_Printf("^5Protocols: ");
 		for (int i = 0; info->protocols[i] != NULL; i++)
 			Plugin_Printf("%s ", info->protocols[i]);
-		Plugin_Printf("\n-------------------------------\n");
+		Plugin_Printf("\n^5-------------------------------\n");
 
 		Plugin_Scr_AddString(info->version);
 	}

@@ -35,7 +35,7 @@ namespace gsclib
 
 			Connection.reset(Driver->connect(url, properties));
 
-			Plugin_Printf("Connected to MariaDB Server\n");
+			Plugin_Printf("^5Connected to MariaDB Server\n");
 			Plugin_Scr_AddBool(qtrue);
 		}
 		catch (sql::SQLException& e)
@@ -554,7 +554,7 @@ namespace gsclib
 		{
 			task->Error = e.what();
 			task->Status = AsyncStatus::Failure;
-			Plugin_Printf("%s\n", task->Error.c_str());
+			Plugin_Printf("^1%s\n", task->Error.c_str());
 		}
 	}
 
@@ -582,7 +582,7 @@ namespace gsclib
 		{
 			task->Error = e.what();
 			task->Status = AsyncStatus::Failure;
-			Plugin_Printf("%s\n", task->Error.c_str());
+			Plugin_Printf("^1%s\n", task->Error.c_str());
 		}
 	}
 }
