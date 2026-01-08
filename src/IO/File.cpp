@@ -238,8 +238,15 @@ namespace gsclib
 	{
 		CHECK_PARAMS(1, "Usage: FILE_Delete(<path>)\n");
 
-		const char* path = Plugin_Scr_GetString(0);
-		Plugin_Scr_AddBool(static_cast<qboolean>(std::filesystem::remove(path)));
+		try
+		{
+			const char* path = Plugin_Scr_GetString(0);
+			Plugin_Scr_AddBool(static_cast<qboolean>(std::filesystem::remove(path)));
+		}
+		catch (const std::filesystem::filesystem_error& e)
+		{
+			Plugin_Scr_AddBool(qfalse);
+		}
 	}
 
 	void File::MkDir()
