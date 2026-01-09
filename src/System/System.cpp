@@ -174,8 +174,8 @@ namespace gsclib
 			return;
 
 		Plugin_Printf("^5----------[CURL INFO]----------\n");
-		Plugin_Printf("^5Age: %d\nHost: %s\nSSH: %s\nSSL: %s\nVersion: %s\n", info->age, info->host, info->libssh_version,
-			info->ssl_version, info->version);
+		Plugin_Printf("^5Age: %d\nHost: %s\nSSH: %s\nSSL: %s\nVersion: %s\n", info->age, info->host,
+			info->libssh_version, info->ssl_version, info->version);
 
 		Plugin_Printf("^5Features: ");
 		Plugin_Printf("%s", info->features & CURL_VERSION_IPV6 ? "IPv6 " : "");
