@@ -1,12 +1,12 @@
 #pragma once
 
 #ifndef PLUGIN
-	#include <q_shared.h>
-	#include <cscr_main.h>
-	#include <cscr_variable.h>
-	#include <cscr_stringlist.h>
-	#include <scr_vm.h>
-	#include <sys_main.h>
+	#include "q_shared.h"
+	#include "cscr_main.h"
+	#include "cscr_variable.h"
+	#include "cscr_stringlist.h"
+	#include "scr_vm.h"
+	#include "sys_main.h"
 #endif
 
 #define EXPORT(type, definition) \
