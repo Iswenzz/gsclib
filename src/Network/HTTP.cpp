@@ -1,4 +1,4 @@
-#include "Http.hpp"
+#include "HTTP.hpp"
 
 namespace gsclib
 {

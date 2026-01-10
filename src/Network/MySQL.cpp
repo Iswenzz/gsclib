@@ -1,4 +1,4 @@
-#include "MySql.hpp"
+#include "MySQL.hpp"
 
 namespace gsclib
 {

@@ -1,4 +1,4 @@
-#include "Ftp.hpp"
+#include "FTP.hpp"
 
 namespace gsclib
 {
