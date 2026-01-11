@@ -535,6 +535,16 @@ namespace gsclib
 
 		try
 		{
+			if (!request->Connection->isValid())
+			{
+				if (!request->Connection->reconnect())
+				{
+					task->Error = "Connection lost, reconnect failed";
+					task->Status = AsyncStatus::Failure;
+					Plugin_Printf("^1%s\n", task->Error.c_str());
+					return;
+				}
+			}
 			request->QueryStatement.reset(request->Connection->createStatement());
 			bool hasResultSet = request->QueryStatement->execute(request->Query);
 
@@ -564,6 +574,16 @@ namespace gsclib
 
 		try
 		{
+			if (!request->Connection->isValid())
+			{
+				if (!request->Connection->reconnect())
+				{
+					task->Error = "Connection lost, reconnect failed";
+					task->Status = AsyncStatus::Failure;
+					Plugin_Printf("^1%s\n", task->Error.c_str());
+					return;
+				}
+			}
 			bool hasResultSet = request->PreparedStatement->execute();
 
 			if (hasResultSet)
