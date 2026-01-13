@@ -1,0 +1,74 @@
+name: Linux
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    - name: Vcpkg
+      uses: lukka/run-vcpkg@v11
+      with:
+        vcpkgGitCommitId: 4a600e9fea71bd7872080cbb716797e04d30e6d3
+
+    - name: Dependencies
+      run: |
+        sudo dpkg --add-architecture i386
+        sudo apt-get update
+        sudo apt-get install nasm:i386 make gcc-multilib g++-multilib git
+
+    - name: CoD4x
+      run: |
+        cd ../
+        curl -o CoD4x_Server-20.1.zip https://codeload.github.com/callofduty4x/CoD4x_Server/zip/refs/tags/20.1
+        7z x CoD4x_Server-20.1.zip
+        cp -r CGSC CoD4x_Server-20.1/src/CGSC
+
+    - name: Build
+      working-directory: ../CoD4x_Server-20.1/src/CGSC
+      run: |
+        mkdir build && cd build
+        cmake .. --preset linux -DBUILD_TESTING=True -DCOD4X=True
+        cmake --build .
+
+    - name: Copy
+      working-directory: ../CoD4x_Server-20.1/src/CGSC
+      run: |
+        cp -r build ../../../CGSC
+
+    - name: Artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: build-artifact
+        path: build
+
+  tests:
+    runs-on: ubuntu-latest
+    needs: [build]
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    - name: Artifact
+      uses: actions/download-artifact@v4
+      with:
+        name: build-artifact
+        path: build
+
+    - name: Artifact Setup
+      run: |
+        mkdir -p ../CoD4x_Server-20.1/src/CGSC
+        cp -r build ../CoD4x_Server-20.1/src/CGSC
+
+    - name: Tests
+      working-directory: ../CoD4x_Server-20.1/src/CGSC/build
+      run: |
+        chmod +x CGSC.Tests
+        ctest -C Release
