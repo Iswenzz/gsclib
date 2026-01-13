@@ -1,6 +1,0 @@
-Checks: >
-  -*
-  clang-analyzer-*
-
-WarningsAsErrors: "*"
-FormatStyle: file
