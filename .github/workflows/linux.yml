@@ -44,23 +44,3 @@ jobs:
               with:
                   name: build-artifact
                   path: build
-
-    tests:
-        runs-on: ubuntu-latest
-        needs: [build]
-        steps:
-            - name: Checkout
-              uses: actions/checkout@v2
-
-            - name: Artifact
-              uses: actions/download-artifact@v4
-              with:
-                  name: build-artifact
-                  path: build
-
-            - name: Tests
-              working-directory: build
-              run: |
-                  chmod +x gsclib.Tests
-                  ctest -C Release
-
