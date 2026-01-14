@@ -30,8 +30,8 @@ jobs:
             - name: API
               run: |
                   cd ..
-                  curl -o plugin.zip https://iswenzz.com/static/github/gsclib/plugin.zip
-                  7z x plugin.zip
+                  git clone https://github.com/callofduty4x/CoD4x_Server.git
+                  cp CoD4x_Server/plugins/* .
 
             - name: Build
               run: |
@@ -44,4 +44,5 @@ jobs:
               with:
                   name: build-artifact
                   path: build
+
 
