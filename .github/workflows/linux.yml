@@ -31,7 +31,7 @@ jobs:
               run: |
                   cd ..
                   git clone https://github.com/callofduty4x/CoD4x_Server.git
-                  cp CoD4x_Server/plugins/*.{h,a} .
+                  cp CoD4x_Server/plugins/*.h .
 
             - name: Build
               run: |
@@ -44,6 +44,7 @@ jobs:
               with:
                   name: build-artifact
                   path: build
+
 
 
 
