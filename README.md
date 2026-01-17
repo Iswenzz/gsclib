@@ -52,6 +52,8 @@ _Pre-Requisites:_
 
 1. [CMake](https://cmake.org/) and [vcpkg](https://vcpkg.io/en/)
 
+_Pre-Requisites:_
+
 	sudo dpkg --add-architecture i386
     sudo apt update
     sudo apt install build-essential gcc-multilib g++-multilib pkg-config linux-libc-dev nasm:i386
