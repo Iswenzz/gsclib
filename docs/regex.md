@@ -1,34 +1,58 @@
-# Regular Expression (PCRE2)
+# Regex
 
-#### ``RegexMatch(<input>, <regex>)``
-Get all matches in an array from the specified input string and regex.
+Regular expression functions powered by [PCRE2](https://www.pcre.org/).
 
-```c
-RegexMatch("hello123world456", "\\d+");
-```
-```c
-["123", "456"]
-```
-<hr>
+## Functions
 
-#### ``RegexSplit(<input>, <regex>)``
-Get all splited string in an array from the specified input string and regex.
+- [RegexMatch](#regexmatch)
+- [RegexSplit](#regexsplit)
+- [RegexReplace](#regexreplace)
 
-```c
-RegexSplit("hello123world456", "\\d+");
-```
-```c
-["hello", "world"]
-```
-<hr>
+---
 
-#### ``RegexReplace(<input>, <replace>, <regex>)``
-Replace all matches with a specific string.
+### `RegexMatch(<input>, <regex>)`
+
+Returns an array of all substrings in `input` that match the pattern.
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `input` | string | The string to search |
+| `regex` | string | PCRE2 regular expression |
 
 ```c
-RegexReplace("123hello456world789", "_", "\\d+");
+matches = RegexMatch("hello123world456", "\\d+");
+// ["123", "456"]
 ```
+
+---
+
+### `RegexSplit(<input>, <regex>)`
+
+Splits `input` at every match of the pattern and returns an array of the parts between matches.
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `input` | string | The string to split |
+| `regex` | string | PCRE2 regular expression |
+
 ```c
-_hello_world_
+parts = RegexSplit("hello123world456", "\\d+");
+// ["hello", "world"]
 ```
-<hr>
+
+---
+
+### `RegexReplace(<input>, <replace>, <regex>)`
+
+Replaces every match of the pattern in `input` with `replace` and returns the resulting string.
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `input` | string | The string to modify |
+| `replace` | string | Replacement string |
+| `regex` | string | PCRE2 regular expression |
+
+```c
+result = RegexReplace("123hello456world789", "_", "\\d+");
+// "_hello_world_"
+```

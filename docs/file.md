@@ -1,123 +1,247 @@
 # File
 
-#### ``FILE_Create(<path>)``
-Create an empty file.
+Functions for reading, writing, and managing files and directories on the host filesystem.
+
+## Functions
+
+- [FILE_Create](#file_create)
+- [FILE_Open](#file_open)
+- [FILE_Close](#file_close)
+- [FILE_Exists](#file_exists)
+- [FILE_Delete](#file_delete)
+- [FILE_Read](#file_read)
+- [FILE_ReadLine](#file_readline)
+- [FILE_ReadLines](#file_readlines)
+- [FILE_Write](#file_write)
+- [FILE_WriteLine](#file_writeline)
+- [FILE_WriteLines](#file_writelines)
+- [FILE_Seek](#file_seek)
+- [FILE_MkDir](#file_mkdir)
+- [FILE_RmDir](#file_rmdir)
+- [FILE_ReadDir](#file_readdir)
+
+---
+
+### `FILE_Create(<path>)`
+
+Creates a new empty file at the given path.
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `path` | string | Path of the file to create |
 
 ```c
 FILE_Create("test.txt");
 ```
-<hr>
 
-#### ``FILE_Open(<path>, <mode>)``
-Open a file with the specified mode.
+---
+
+### `FILE_Open(<path>, <mode>)`
+
+Opens a file and returns a file handle. Use the handle with other `FILE_*` functions.
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `path` | string | Path of the file to open |
+| `mode` | string | File mode (e.g. `"r"`, `"w"`, `"a"`, `"w+"`) |
 
 ```c
 file = FILE_Open("test.txt", "w+");
 ```
-<hr>
 
-#### ``FILE_Close(<file>)``
-Close a file.
+---
+
+### `FILE_Close(<file>)`
+
+Closes an open file handle.
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `file` | handle | An open file handle |
 
 ```c
 FILE_Close(file);
 ```
-<hr>
 
-#### ``FILE_Exists(<path>)``
-Check if a file exists.
+---
 
-```c
-val = FILE_Exists("test.txt");
-```
-<hr>
+### `FILE_Exists(<path>)`
 
-#### ``FILE_Read(<file>)``
-Read a file to a string value.
+Returns `true` if a file exists at the given path, `false` otherwise.
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `path` | string | Path to check |
 
 ```c
-string = FILE_Read(file);
+if (FILE_Exists("test.txt"))
+{
+    // ...
+}
 ```
-<hr>
 
-#### ``FILE_Write(<file>, <string>, <?arguments...>)``
-Write a string to a file.
+---
 
-```c
-FILE_Write(file, "test");
-FILE_Write(file, "%d %s", 10, "Iswenzz");
-```
-<hr>
+### `FILE_Delete(<path>)`
 
-#### ``FILE_ReadLine(<file>)``
-Read a line from a file.
+Deletes the file at the given path.
 
-```c
-line = FILE_ReadLine(file);
-```
-<hr>
-
-#### ``FILE_ReadLines(<file>)``
-Read lines from a file.
-
-```c
-lines = FILE_ReadLines(file);
-```
-<hr>
-
-#### ``FILE_WriteLine(<file>, <string>, <?arguments...>)``
-Write a new line to a file.
-
-```c
-FILE_WriteLine(file, "test");
-FILE_WriteLine(file, "%d %s", 10, "Iswenzz");
-```
-<hr>
-
-#### ``FILE_WriteLines(<file>, <lines>)``
-Write lines to a file.
-
-```c
-FILE_WriteLine(file, lines);
-```
-<hr>
-
-#### ``FILE_Seek(<file>, <offset>)``
-Set the file buffer position.
-
-```c
-FILE_Seek(file, 0);
-```
-<hr>
-
-#### ``FILE_Delete(<path>)``
-Delete a file.
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `path` | string | Path of the file to delete |
 
 ```c
 FILE_Delete("test.txt");
 ```
-<hr>
 
-#### ``FILE_MkDir(<path>)``
-Create a directory.
+---
 
-```c
-FILE_MkDir("name");
-```
-<hr>
+### `FILE_Read(<file>)`
 
-#### ``FILE_RmDir(<path>)``
-Delete a directory.
+Reads the entire file contents and returns it as a string.
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `file` | handle | An open file handle |
 
 ```c
-FILE_RmDir("name");
+string = FILE_Read(file);
 ```
-<hr>
 
-#### ``FILE_ReadDir(<path>)``
-Retrieve all file names from a directory.
+---
+
+### `FILE_ReadLine(<file>)`
+
+Reads and returns the next line from the file.
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `file` | handle | An open file handle |
 
 ```c
-files = FILE_ReadDir("name");
+line = FILE_ReadLine(file);
 ```
-<hr>
+
+---
+
+### `FILE_ReadLines(<file>)`
+
+Reads all lines from the file and returns them as an array of strings.
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `file` | handle | An open file handle |
+
+```c
+lines = FILE_ReadLines(file);
+for (i = 0; i < lines.size; i++)
+    ComPrintLn(lines[i]);
+```
+
+---
+
+### `FILE_Write(<file>, <string>, <?arguments...>)`
+
+Writes a formatted string to the file.
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `file` | handle | An open file handle |
+| `string` | string | Content or format string to write |
+| `arguments` | any | Optional format arguments |
+
+```c
+FILE_Write(file, "hello");
+FILE_Write(file, "%d %s", 10, "world");
+```
+
+---
+
+### `FILE_WriteLine(<file>, <string>, <?arguments...>)`
+
+Writes a formatted string followed by a newline to the file.
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `file` | handle | An open file handle |
+| `string` | string | Content or format string to write |
+| `arguments` | any | Optional format arguments |
+
+```c
+FILE_WriteLine(file, "hello");
+FILE_WriteLine(file, "%d %s", 10, "world");
+```
+
+---
+
+### `FILE_WriteLines(<file>, <lines>)`
+
+Writes an array of strings to the file, each on its own line.
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `file` | handle | An open file handle |
+| `lines` | array | Array of strings to write |
+
+```c
+FILE_WriteLines(file, lines);
+```
+
+---
+
+### `FILE_Seek(<file>, <offset>)`
+
+Sets the file buffer read/write position.
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `file` | handle | An open file handle |
+| `offset` | int | Byte offset from the beginning of the file |
+
+```c
+FILE_Seek(file, 0);
+```
+
+---
+
+### `FILE_MkDir(<path>)`
+
+Creates a directory at the given path.
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `path` | string | Path of the directory to create |
+
+```c
+FILE_MkDir("saves");
+```
+
+---
+
+### `FILE_RmDir(<path>)`
+
+Deletes the directory at the given path.
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `path` | string | Path of the directory to delete |
+
+```c
+FILE_RmDir("saves");
+```
+
+---
+
+### `FILE_ReadDir(<path>)`
+
+Returns an array of file names found in the given directory.
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `path` | string | Path of the directory to list |
+
+```c
+files = FILE_ReadDir("saves");
+for (i = 0; i < files.size; i++)
+    ComPrintLn(files[i]);
+```

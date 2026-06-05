@@ -1,80 +1,133 @@
 # System
 
-#### ``GSCLIB_Init()``
-Initialize the gsclib library.
+Core library functions for initialization, versioning, async request management, and system-level operations.
+
+## Functions
+
+- [GSCLIB_Init](#gsclib_init)
+- [GSCLIB_Version](#gsclib_version)
+- [CoD4X_Version](#cod4x_version)
+- [CURL_Version](#curl_version)
+- [System](#system)
+- [GetSysTime](#getsystime)
+- [Exit](#exit)
+- [AsyncStatus](#asyncstatus)
+- [AsyncCancel](#asynccancel)
+
+---
+
+### `GSCLIB_Init()`
+
+Initializes the gsclib library. Must be called once in `main()` before using any other gsclib functions.
 
 ```c
-GSCLIB_Init();
+main()
+{
+    GSCLIB_Init();
+}
 ```
-<hr>
 
+---
 
-#### ``System(<command>)``
-Execute a system command.
+### `GSCLIB_Version()`
 
-```c
-System("ls");
-```
-<hr>
-
-#### ``AsyncStatus(<request>)``
-Get the status of an async request.
-
-0 = Uninitialized
-1 = Pending
-2 = Successful
-3 = Failure
-
-```c
-status = AsyncStatus(request);
-```
-<hr>
-
-#### ``AsyncCancel(<request>)``
-Cancel an async request.
-
-```c
-state = AsyncCancel(request);
-```
-<hr>
-
-#### ``GetSysTime()``
-Get the system time in milliseconds.
-
-```c
-time = GetSysTime();
-```
-<hr>
-
-#### ``Exit(<code>)``
-Exit the program.
-
-```c
-Exit(0);
-```
-<hr>
-
-#### ``CoD4X_Version()``
-Get the CoD4X version.
-
-```c
-version = CoD4X_Version();
-```
-<hr>
-
-#### ``GSCLIB_Version()``
-Get the gsclib version.
+Returns the gsclib version string.
 
 ```c
 version = GSCLIB_Version();
 ```
-<hr>
 
-#### ``CURL_Version()``
-Get the CURL version.
+---
+
+### `CoD4X_Version()`
+
+Returns the CoD4X version string.
+
+```c
+version = CoD4X_Version();
+```
+
+---
+
+### `CURL_Version()`
+
+Returns the libcurl version string.
 
 ```c
 version = CURL_Version();
 ```
-<hr>
 
+---
+
+### `System(<command>)`
+
+Executes a shell command on the host system.
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `command` | string | The shell command to execute |
+
+```c
+System("ls");
+```
+
+---
+
+### `GetSysTime()`
+
+Returns the current system time in milliseconds.
+
+```c
+time = GetSysTime();
+```
+
+---
+
+### `Exit(<code>)`
+
+Exits the server process with the given exit code.
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `code` | int | Exit code |
+
+```c
+Exit(0);
+```
+
+---
+
+### `AsyncStatus(<request>)`
+
+Returns the current status of an async request.
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `request` | handle | An async request handle |
+
+**Return values:**
+
+| Value | Meaning |
+|-------|---------|
+| `0` | Uninitialized |
+| `1` | Pending |
+| `2` | Successful |
+| `3` | Failure |
+
+```c
+status = AsyncStatus(request);
+```
+
+---
+
+### `AsyncCancel(<request>)`
+
+Cancels a pending async request.
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `request` | handle | An async request handle |
+
+```c
+AsyncCancel(request);
+```

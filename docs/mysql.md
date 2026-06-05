@@ -1,11 +1,42 @@
 # MySQL
 
-**Requests are not thread safe. Use critical sections when needed**
-**The example below uses GSC functions defined in [Async](https://github.com/Iswenzz/gsclib/blob/master/docs/async.md)**
+Functions for connecting to and querying a MySQL database server.
+
+> **Note:** Requests are not thread safe. Wrap all MySQL calls in a [critical section](async.md).
+
+## Functions
+
+- [SQL_Connect](#sql_connect)
+- [SQL_Close](#sql_close)
+- [SQL_SelectDB](#sql_selectdb)
+- [SQL_Query](#sql_query)
+- [SQL_Prepare](#sql_prepare)
+- [SQL_BindParam](#sql_bindparam)
+- [SQL_Execute](#sql_execute)
+- [SQL_Free](#sql_free)
+- [SQL_FetchRow](#sql_fetchrow)
+- [SQL_FetchRowDict](#sql_fetchrowdict)
+- [SQL_FetchRows](#sql_fetchrows)
+- [SQL_FetchRowsDict](#sql_fetchrowsdict)
+- [SQL_FetchFields](#sql_fetchfields)
+- [SQL_NumRows](#sql_numrows)
+- [SQL_NumFields](#sql_numfields)
+- [SQL_AffectedRows](#sql_affectedrows)
+- [SQL_EscapeString](#sql_escapestring)
+- [SQL_HexString](#sql_hexstring)
+- [SQL_ListDB](#sql_listdb)
+- [SQL_ListTables](#sql_listtables)
+- [SQL_Version](#sql_version)
+
+---
 
 ## Example
+
 ```c
 critical_enter("mysql");
+
+SQL_Connect("127.0.0.1", 3306, "root", "rootpassword");
+SQL_SelectDB("gamedb");
 
 request = SQL_Prepare("SELECT name, guid, rank FROM ranks WHERE name = ?");
 SQL_BindParam(request, "Iswenzz", level.MYSQL_TYPE_VAR_STRING);
@@ -15,16 +46,22 @@ AsyncWait(request);
 rows = SQL_FetchRowsDict(request);
 for (i = 0; i < rows.size; i++)
 {
-	row = rows[i];
-	player = row["guid"];
-	rank = row["rank"];
+    row = rows[i];
+    guid = row["guid"];
+    rank = row["rank"];
 }
 SQL_Free(request);
+SQL_Close();
 
 critical_leave("mysql");
 ```
 
-### MySQL types for prepared statement:
+---
+
+## MySQL types
+
+Used as the `type` parameter in `SQL_BindParam` for prepared statements.
+
 ```c
 level.MYSQL_TYPE_DECIMAL      = 0;
 level.MYSQL_TYPE_TINY         = 1;
@@ -59,207 +96,307 @@ level.MYSQL_TYPE_STRING       = 254;
 level.MYSQL_TYPE_GEOMETRY     = 255;
 ```
 
-#### ``SQL_Version()``
-Print information about the MySQL client.
+---
 
-```c
-SQL_Version();
-```
-<hr>
+### `SQL_Connect(<host>, <port>, <user>, <password>)`
 
-#### ``SQL_Connect(<host>, <port>, <user>, <password>)``
-Connect to a MySQL server.
+Connects to a MySQL server.
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `host` | string | Hostname or IP address |
+| `port` | int | Server port (typically `3306`) |
+| `user` | string | MySQL username |
+| `password` | string | MySQL password |
 
 ```c
 SQL_Connect("127.0.0.1", 3306, "root", "rootpassword");
 ```
-<hr>
 
-#### ``SQL_Close()``
-Close the MySQL connection.
+---
+
+### `SQL_Close()`
+
+Closes the active MySQL connection.
 
 ```c
 SQL_Close();
 ```
-<hr>
 
-#### ``SQL_Free(<request>)``
-Free a MySQL Request, this must be called after being done with the query/prepare request.
+---
 
-```c
-SQL_Free(request);
-```
-<hr>
+### `SQL_SelectDB(<name>)`
 
-#### ``SQL_EscapeString(<string>)``
-Prepends backslashes to the following characters: \x00 , \n , \r , \ , ' , " and \x1a . This function must always (with few exceptions) be used to make data safe before sending a query to MySQL.
+Selects the active database to use for subsequent queries.
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `name` | string | Database name |
 
 ```c
-SQL_EscapeString("\\");
+SQL_SelectDB("gamedb");
 ```
-<hr>
 
-#### ``SQL_HexString(<string>)``
-Return a hex representation of the string.
+---
 
-```c
-hex = SQL_HexString("Iswenzz");
-```
-<hr>
+### `SQL_Query(<query>)`
 
-#### ``SQL_SelectDB(<db name>)``
-Select a MySQL database.
+Executes a raw SQL query and returns a request handle. Free it with `SQL_Free` when done.
 
-```c
-SQL_SelectDB("testdb");
-```
-<hr>
-
-#### ``SQL_Query(<query string>)``
-Command for performing a query on the database server.
-The request should be freed when done using SQL_Free.
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `query` | string | SQL query string |
 
 ```c
 request = SQL_Query("SELECT * FROM players");
+AsyncWait(request);
+rows = SQL_FetchRows(request);
+SQL_Free(request);
 ```
-<hr>
 
-#### ``SQL_Prepare(<query string>)``
-Command for performing a statement on the database server, binds must be set in order.
-The request should be freed when done using SQL_Free.
+---
+
+### `SQL_Prepare(<query>)`
+
+Creates a prepared statement with `?` placeholders. Bind values with `SQL_BindParam` in order, then execute with `SQL_Execute`. Free with `SQL_Free` when done.
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `query` | string | SQL query string with `?` placeholders |
 
 ```c
+// SELECT example
 request = SQL_Prepare("SELECT name, guid, rank FROM ranks WHERE name = ?");
 SQL_BindParam(request, "Iswenzz", level.MYSQL_TYPE_VAR_STRING);
 SQL_Execute(request);
-```
-```c
+
+// INSERT example
 request = SQL_Prepare("INSERT INTO ranks (name, guid, rank) VALUES (?, ?, ?)");
 SQL_BindParam(request, "Iswenzz", level.MYSQL_TYPE_VAR_STRING);
 SQL_BindParam(request, "313354b4", level.MYSQL_TYPE_VAR_STRING);
 SQL_BindParam(request, "80", level.MYSQL_TYPE_LONG);
 SQL_Execute(request);
 ```
-<hr>
 
-#### ``SQL_BindParam(<request>, <value>, <type>)``
-Bind a value in the prepared statement.
+---
+
+### `SQL_BindParam(<request>, <value>, <type>)`
+
+Binds a value to the next `?` placeholder in a prepared statement. Call once per placeholder, in order.
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `request` | handle | A prepared statement handle |
+| `value` | any | Value to bind |
+| `type` | int | MySQL type constant (see [MySQL types](#mysql-types)) |
 
 ```c
 SQL_BindParam(request, "Iswenzz", level.MYSQL_TYPE_VAR_STRING);
 ```
-<hr>
 
-#### ``SQL_Execute(<request>)``
-Executes the prepared statement.
+---
+
+### `SQL_Execute(<request>)`
+
+Executes a prepared statement.
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `request` | handle | A prepared statement handle |
 
 ```c
 SQL_Execute(request);
+AsyncWait(request);
 ```
-<hr>
 
-#### ``SQL_NumRows(<request>)``
-Return the number of rows after a query or statement.
+---
+
+### `SQL_Free(<request>)`
+
+Frees a query or prepared statement handle. Must be called after all data has been read.
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `request` | handle | A request handle |
 
 ```c
-count = SQL_NumRows(request);
+SQL_Free(request);
 ```
-<hr>
 
-#### ``SQL_NumFields(<request>)``
-Return the number of fields after a query or statement.
+---
 
-```c
-count = SQL_NumFields(request);
-```
-<hr>
+### `SQL_FetchRow(<request>)`
 
-#### ``SQL_AffectedRows(<request>)``
-Return the number of affected rows after a query or statement.
+Returns the next row as an integer-indexed GSC array.
 
-```c
-count = SQL_AffectedRows(request);
-```
-<hr>
-
-#### ``SQL_FetchRows(<request>)``
-Retrieve rows data in a two dimensional GSC array after a query.
-
-```c
-rows = SQL_FetchRows(request);
-if (isDefined(rows) && isDefined(rows.size))
-{
-    for (i = 0; i < rows.size; i++)
-    {
-        if (isDefined(rows[i]) && isDefined(rows[i].size))
-        {
-            for (j = 0; j < rows[i].size; j++)
-                comPrint(rows[i][j]);
-        }
-    }
-}
-```
-<hr>
-
-#### ``SQL_FetchRowsDict(<request>)``
-Retrieve rows data in a two dimensional GSC string indexed array after a query.
-
-```c
-rows = SQL_FetchRowsDict(request);
-if (isDefined(rows) && isDefined(rows.size))
-{
-    for (i = 0; i < rows.size; i++)
-    {
-        if (isDefined(rows[i]) && isDefined(rows[i].size))
-        {
-            for (j = 0; j < rows[i].size; j++)
-                comPrint(rows[i][j]);
-        }
-    }
-}
-```
-<hr>
-
-#### ``SQL_FetchRow(<request>)``
-Retrieve a single row data in a GSC array after a query.
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `request` | handle | A request handle |
 
 ```c
 row = SQL_FetchRow(request);
 for (i = 0; i < row.size; i++)
-    comPrint(row[i]);
+    ComPrint(row[i]);
 ```
-<hr>
 
-#### ``SQL_FetchRowDict(<request>)``
-Retrieve a single row data in a GSC string indexed array after a query.
+---
+
+### `SQL_FetchRowDict(<request>)`
+
+Returns the next row as a string-indexed GSC array (column name → value).
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `request` | handle | A request handle |
 
 ```c
 row = SQL_FetchRowDict(request);
-for (i = 0; i < row.size; i++)
-    comPrint(row[i]);
+ComPrint(row["name"]);
 ```
-<hr>
 
-#### ``SQL_FetchFields(<request>)``
-Retrieve all fields in a GSC array after a query.
+---
+
+### `SQL_FetchRows(<request>)`
+
+Returns all rows as a 2D integer-indexed GSC array.
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `request` | handle | A request handle |
 
 ```c
-array = SQL_FetchFields(request);
+rows = SQL_FetchRows(request);
+for (i = 0; i < rows.size; i++)
+    for (j = 0; j < rows[i].size; j++)
+        ComPrint(rows[i][j]);
 ```
-<hr>
 
-#### ``SQL_ListDB()``
-Get all database names.
+---
+
+### `SQL_FetchRowsDict(<request>)`
+
+Returns all rows as a 2D string-indexed GSC array (column name → value).
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `request` | handle | A request handle |
 
 ```c
-array = SQL_ListDB();
+rows = SQL_FetchRowsDict(request);
+for (i = 0; i < rows.size; i++)
+    ComPrint(rows[i]["name"]);
 ```
-<hr>
 
-#### ``SQL_ListTables()``
-Get all table names.
+---
+
+### `SQL_FetchFields(<request>)`
+
+Returns all column names as an array of strings.
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `request` | handle | A request handle |
 
 ```c
-array = SQL_ListTables();
+fields = SQL_FetchFields(request);
 ```
-<hr>
+
+---
+
+### `SQL_NumRows(<request>)`
+
+Returns the number of rows in the result set.
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `request` | handle | A request handle |
+
+```c
+count = SQL_NumRows(request);
+```
+
+---
+
+### `SQL_NumFields(<request>)`
+
+Returns the number of fields (columns) in the result set.
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `request` | handle | A request handle |
+
+```c
+count = SQL_NumFields(request);
+```
+
+---
+
+### `SQL_AffectedRows(<request>)`
+
+Returns the number of rows affected by an `INSERT`, `UPDATE`, or `DELETE` query.
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `request` | handle | A request handle |
+
+```c
+count = SQL_AffectedRows(request);
+```
+
+---
+
+### `SQL_EscapeString(<string>)`
+
+Escapes special characters in a string to make it safe for use in a raw SQL query. Always use this before interpolating user input into a query string.
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `string` | string | The raw string to escape |
+
+```c
+safe = SQL_EscapeString(userInput);
+```
+
+---
+
+### `SQL_HexString(<string>)`
+
+Returns a hex-encoded representation of the given string.
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `string` | string | The string to encode |
+
+```c
+hex = SQL_HexString("Iswenzz");
+```
+
+---
+
+### `SQL_ListDB()`
+
+Returns an array of all database names on the server.
+
+```c
+databases = SQL_ListDB();
+```
+
+---
+
+### `SQL_ListTables()`
+
+Returns an array of all table names in the currently selected database.
+
+```c
+tables = SQL_ListTables();
+```
+
+---
+
+### `SQL_Version()`
+
+Prints MySQL client version information to the console.
+
+```c
+SQL_Version();
+```

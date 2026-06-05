@@ -1,230 +1,415 @@
-# Language Integrated Query (LINQ)
+# LINQ
 
-#### `Select(<array>, <delegate>)`
+Array querying and transformation utilities inspired by Language Integrated Query (LINQ). All functions treat arrays as immutable — they return new arrays rather than modifying the original.
 
-Project data in a collection using delegates, the same way select clause in a SQL database to fetch specific columns of a table.
+## Functions
 
-```c
-new_array = Select(array, ::delegate);
-```
-<hr>
+**Iteration**
+- [Foreach](#foreach)
+- [Select](#select)
+- [Aggregate](#aggregate)
 
-#### `Foreach(<array>, <delegate>)`
+**Filtering**
+- [Where](#where)
+- [Any](#any)
+- [All](#all)
+- [Contains](#contains)
+- [OfType](#oftype)
 
-Executes a provided function for each array element.
+**Search**
+- [First](#first)
+- [Last](#last)
+- [IndexOf](#indexof)
+- [Count](#count)
+
+**Math**
+- [Min](#min)
+- [Max](#max)
+- [Sum](#sum)
+- [Average](#average)
+
+**Transformation**
+- [Sort](#sort)
+- [Reverse](#reverse)
+- [Concat](#concat)
+- [Chunk](#chunk)
+- [Range](#range)
+- [Repeat](#repeat)
+- [Cast](#cast)
+- [Remove](#remove)
+- [RemoveAt](#removeat)
+
+---
+
+### `Foreach(<array>, <delegate>)`
+
+Calls the delegate function once for each element in the array.
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `array` | array | The source array |
+| `delegate` | function | Function to call for each element |
 
 ```c
 Foreach(players, ::heal);
 ```
-<hr>
 
-#### `Aggregate(<initialValue>, <array>, <delegate>)`
+---
 
-Aggregate the result of multiple delegate.
+### `Select(<array>, <delegate>)`
 
-```c
-result = Aggregate(initialValue, array, ::delegate);
-```
-<hr>
+Returns a new array by applying the delegate to each element. Equivalent to `map` in other languages.
 
-#### `All(<array>, <predicate>)`
-
-Check if all items match the predicate.
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `array` | array | The source array |
+| `delegate` | function | Projection function |
 
 ```c
-isAll = All(array, ::predicate);
+names = Select(players, ::getName);
 ```
-<hr>
 
-#### `Where(<array>, <predicate>)`
+---
 
-Reconstruct the array with only matches values from the predicate.
+### `Aggregate(<initialValue>, <array>, <delegate>)`
+
+Reduces the array to a single value by repeatedly applying the delegate. Equivalent to `reduce` in other languages.
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `initialValue` | any | Starting value for the accumulator |
+| `array` | array | The source array |
+| `delegate` | function | Reducer function |
 
 ```c
-new_array = Where(array, ::predicate);
+result = Aggregate(0, scores, ::sum);
 ```
-<hr>
 
-#### `Any(<array>, <predicate>)`
+---
 
-Check if atleast one item match the predicate.
+### `Where(<array>, <predicate>)`
+
+Returns a new array containing only elements for which the predicate returns `true`.
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `array` | array | The source array |
+| `predicate` | function | Filter function |
 
 ```c
-isAny = Any(array, ::predicate);
+alive = Where(players, ::isAlive);
 ```
-<hr>
 
-#### `Last(<array>, <predicate>)`
+---
 
-Get the last item that match the predicate.
+### `Any(<array>, <predicate>)`
+
+Returns `true` if at least one element satisfies the predicate.
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `array` | array | The source array |
+| `predicate` | function | Test function |
 
 ```c
-last = Last(array, ::predicate);
+hasAdmin = Any(players, ::isAdmin);
 ```
-<hr>
 
-#### `First(<array>, <predicate>)`
+---
 
-Get the first item that match the predicate.
+### `All(<array>, <predicate>)`
+
+Returns `true` if every element satisfies the predicate.
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `array` | array | The source array |
+| `predicate` | function | Test function |
 
 ```c
-first = First(array, ::predicate);
+allReady = All(players, ::isReady);
 ```
-<hr>
 
-#### `Count(<array>, <predicate>)`
+---
 
-Count all items that match the predicate.
+### `Contains(<array>, <element>)`
+
+Returns `true` if the array contains the specified element.
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `array` | array | The source array |
+| `element` | any | The value to search for |
 
 ```c
-count = Count(array, ::predicate);
+if (Contains(ids, player.guid))
+{
+    // ...
+}
 ```
-<hr>
 
-#### `Min(<array>)`
+---
 
-Get the smallest value from an array of int/float/string/vector.
+### `OfType(<array>, <type>)`
+
+Returns a new array containing only elements of the specified type. Valid types: `"int"`, `"float"`, `"string"`.
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `array` | array | The source array |
+| `type` | string | Type name to filter by |
 
 ```c
-min = Min(array);
+strings = OfType(mixed, "string");
 ```
-<hr>
 
-#### `Max(<array>)`
+---
 
-Get the biggest value from an array of int/float/string/vector.
+### `First(<array>, <predicate>)`
+
+Returns the first element that satisfies the predicate.
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `array` | array | The source array |
+| `predicate` | function | Test function |
 
 ```c
-max = Max(array);
+host = First(players, ::isHost);
 ```
-<hr>
 
-#### `Cast(<array>, <type>)`
+---
 
-Reconstruct an array with all items casted to a specific type.
-Available types are: int, float, string.
+### `Last(<array>, <predicate>)`
+
+Returns the last element that satisfies the predicate.
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `array` | array | The source array |
+| `predicate` | function | Test function |
 
 ```c
-strings = Cast(array, "string");
-ints = Cast(array, "int");
+last = Last(players, ::isAlive);
 ```
-<hr>
 
-#### `OfType(<array>, <type>)`
+---
 
-Reconstruct the array with only the specified type.
-Available types are: int, float, string.
+### `IndexOf(<array>, <element>)`
+
+Returns the index of the first occurrence of the element, or `-1` if not found.
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `array` | array | The source array |
+| `element` | any | The value to find |
 
 ```c
-strings = OfType(array, "string");
-ints = OfType(array, "int");
+index = IndexOf(names, "Iswenzz");
 ```
-<hr>
 
-#### `Sort(<array>)`
+---
 
-Sort all items from an array of int/float/string/vector.
+### `Count(<array>, <predicate>)`
+
+Returns the number of elements that satisfy the predicate.
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `array` | array | The source array |
+| `predicate` | function | Test function |
 
 ```c
-new_array = Sort(array);
+aliveCount = Count(players, ::isAlive);
 ```
-<hr>
 
-#### `Average(<array>)`
+---
 
-Get the average value from an array of int/float/vector.
+### `Min(<array>)`
+
+Returns the smallest value in an array of `int`, `float`, `string`, or `vector`.
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `array` | array | The source array |
 
 ```c
-average = Average(array);
+lowest = Min(scores);
 ```
-<hr>
 
-#### `Sum(<array>)`
+---
 
-Adds all values from an array of int/float/vector/string.
+### `Max(<array>)`
+
+Returns the largest value in an array of `int`, `float`, `string`, or `vector`.
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `array` | array | The source array |
 
 ```c
-sum = Sum(array);
+highest = Max(scores);
 ```
-<hr>
 
-#### `Range(<array>, <min>, <max>)`
+---
 
-Reconstruct the array with a specified range.
+### `Sum(<array>)`
+
+Returns the sum of all values in an array of `int`, `float`, `vector`, or `string`.
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `array` | array | The source array |
 
 ```c
-new_array = Range(array, 3, 6);
+total = Sum(scores);
 ```
-<hr>
 
-#### `Repeat(<array>, <repeat>)`
+---
 
-Repeat all values in an array.
+### `Average(<array>)`
+
+Returns the average value of an array of `int`, `float`, or `vector`.
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `array` | array | The source array |
 
 ```c
-new_array = Repeat(array, 3);
+avg = Average(scores);
 ```
-<hr>
 
-#### `Reverse(<array>)`
+---
 
-Reverse the array.
+### `Sort(<array>)`
+
+Returns a new sorted array. Works with `int`, `float`, `string`, and `vector`.
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `array` | array | The source array |
 
 ```c
-new_array = Reverse(array);
+sorted = Sort(scores);
 ```
-<hr>
 
-#### `Concat(<arraySource>, <array>)`
+---
 
-Concat an array with another array.
+### `Reverse(<array>)`
+
+Returns a new array with all elements in reverse order.
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `array` | array | The source array |
 
 ```c
-new_array = Concat(arraySource, array);
+reversed = Reverse(scores);
 ```
-<hr>
 
-#### `Chunk(<array>, <count>)`
+---
 
-Split an array into multiple chunks.
+### `Concat(<arraySource>, <array>)`
+
+Returns a new array with the second array appended to the first.
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `arraySource` | array | The first array |
+| `array` | array | The array to append |
 
 ```c
-chunks = Chunk(array, 5);
+all = Concat(teamA, teamB);
 ```
-<hr>
 
-#### `Contains(<array>, <count>)`
+---
 
-Check if an array contains an element.
+### `Chunk(<array>, <count>)`
+
+Splits the array into multiple sub-arrays of at most `count` elements each.
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `array` | array | The source array |
+| `count` | int | Maximum size of each chunk |
 
 ```c
-contains = Contains(array, 5);
+groups = Chunk(players, 4);
 ```
-<hr>
 
-#### `IndexOf(<array>, <element>)`
+---
 
-Get the index of an element.
+### `Range(<array>, <min>, <max>)`
+
+Returns a new array containing only the elements between index `min` and `max` (inclusive).
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `array` | array | The source array |
+| `min` | int | Start index |
+| `max` | int | End index |
 
 ```c
-index = IndexOf(array, 10);
+page = Range(results, 0, 9);
 ```
-<hr>
 
-#### `Remove(<array>, <element>)`
+---
 
-Remove an element from the array.
+### `Repeat(<array>, <count>)`
+
+Returns a new array with all elements repeated `count` times.
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `array` | array | The source array |
+| `count` | int | Number of times to repeat |
 
 ```c
-newArray = Remove(array, 10);
+doubled = Repeat(items, 2);
 ```
-<hr>
 
-#### `RemoveAt(<array>, <element>)`
+---
 
-Remove an element from the array at a specific index.
+### `Cast(<array>, <type>)`
+
+Returns a new array with all elements converted to the given type. Valid types: `"int"`, `"float"`, `"string"`.
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `array` | array | The source array |
+| `type` | string | Target type name |
 
 ```c
-newArray = RemoveAt(array, 1);
+strings = Cast(numbers, "string");
+ints = Cast(floats, "int");
 ```
-<hr>
+
+---
+
+### `Remove(<array>, <element>)`
+
+Returns a new array with the first occurrence of the element removed.
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `array` | array | The source array |
+| `element` | any | The value to remove |
+
+```c
+updated = Remove(players, disconnectedPlayer);
+```
+
+---
+
+### `RemoveAt(<array>, <index>)`
+
+Returns a new array with the element at the specified index removed.
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `array` | array | The source array |
+| `index` | int | Index of the element to remove |
+
+```c
+updated = RemoveAt(players, 0);
+```

@@ -1,65 +1,128 @@
 # Math
 
-#### ``fmod()``
-Returns the remainder of x divided by y.
+Extended trigonometric and arithmetic functions not available in stock GSC.
+
+## Functions
+
+- [fmod](#fmod)
+- [sin1](#sin1)
+- [asin1](#asin1)
+- [cos1](#cos1)
+- [acos1](#acos1)
+- [tan1](#tan1)
+- [atan1](#atan1)
+- [atan2](#atan2)
+
+---
+
+### `fmod(<x>, <y>)`
+
+Returns the floating-point remainder of `x / y`.
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `x` | float | Dividend |
+| `y` | float | Divisor |
 
 ```c
-x = fmod(9, 2);
+r = fmod(9, 2); // 1
 ```
-<hr>
 
-#### ``tan1()``
-Returns the tangent of an angle of x radians.
+---
+
+### `sin1(<x>)`
+
+Returns the sine of `x` radians.
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `x` | float | Angle in radians |
 
 ```c
-x = tan1(0.4);
+s = sin1(0.4);
 ```
-<hr>
 
-#### ``atan1()``
-Returns the principal value of the arc tangent of x, expressed in radians.
+---
+
+### `asin1(<x>)`
+
+Returns the arc sine of `x` in radians.
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `x` | float | Value in the range `[-1, 1]` |
 
 ```c
-x = atan1(0.4);
+a = asin1(0.4);
 ```
-<hr>
 
-#### ``atan2()``
-Returns the arc tangent in radians of y/x based on the signs of both values to determine the correct quadrant.
+---
+
+### `cos1(<x>)`
+
+Returns the cosine of `x` radians.
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `x` | float | Angle in radians |
 
 ```c
-x = atan2(9, 2);
+c = cos1(0.4);
 ```
-<hr>
 
-#### ``cos1()``
-Returns the cosine of an angle of x radians.
+---
+
+### `acos1(<x>)`
+
+Returns the arc cosine of `x` in radians.
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `x` | float | Value in the range `[-1, 1]` |
 
 ```c
-x = cos1(0.4);
+a = acos1(0.4);
 ```
-<hr>
 
-#### ``acos1()``
-Returns the arc cosine of x in radians.
+---
+
+### `tan1(<x>)`
+
+Returns the tangent of `x` radians.
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `x` | float | Angle in radians |
 
 ```c
-x = acos1(0.4);
+t = tan1(0.4);
 ```
-<hr>
 
-#### ``sin1()``
-Returns the sine of an angle of x radians.
+---
+
+### `atan1(<x>)`
+
+Returns the arc tangent of `x` in radians.
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `x` | float | Input value |
 
 ```c
-x = sin1(0.4);
+a = atan1(0.4);
 ```
-<hr>
 
-#### ``asin1()``
-Returns the principal value of the arc sine of x, expressed in radians.
+---
+
+### `atan2(<y>, <x>)`
+
+Returns the arc tangent of `y / x` in radians, using the signs of both arguments to determine the correct quadrant.
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `y` | float | Numerator |
+| `x` | float | Denominator |
 
 ```c
-x = asin1(0.4);
+a = atan2(9, 2);
 ```
-<hr>

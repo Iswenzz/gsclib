@@ -1,108 +1,139 @@
 # Async
 
-Critical sections are used to protect shared resources from concurrent access, which can lead to race conditions and other synchronization issues. By executing a critical section as an atomic operation, you can ensure that the shared resource is not modified by another process or thread while the critical section is being executed.
+Critical sections protect shared resources from concurrent access and race conditions. Wrapping HTTP, FTP, and MySQL calls in a critical section ensures that only one coroutine accesses a resource at a time.
 
-## Example
+## Functions
 
-You can define the following GSC functions to ensure concurrent access to MySQL/HTTP/FTP etc...
+- [CriticalSection](#criticalsection)
+- [CriticalSections](#criticalsections)
+- [StatusCriticalSections](#statuscriticalsections)
+- [EnterCriticalSection](#entercriticalsection)
+- [LeaveCriticalSection](#leavecriticalsection)
+
+---
+
+## Usage pattern
+
+The following GSC helpers are the recommended way to manage critical sections across your scripts. Define them once and reuse them everywhere.
 
 ```c
 main()
 {
-	critical("mysql");
-	critical("http");
-	critical("ftp");
+    critical("mysql");
+    critical("http");
+    critical("ftp");
 }
 
 critical(id)
 {
-	CriticalSection(id);
+    CriticalSection(id);
 }
 
 critical_enter(id)
 {
-	while (!EnterCriticalSection(id))
-		wait 0.05;
+    while (!EnterCriticalSection(id))
+        wait 0.05;
 }
 
-critical_release(id)
+critical_leave(id)
 {
-	LeaveCriticalSection(id);
+    LeaveCriticalSection(id);
 }
 
 waitCriticalSections()
 {
-	while (!StatusCriticalSections())
-		wait 0.05;
+    while (!StatusCriticalSections())
+        wait 0.05;
 }
 
 AsyncWait(request)
 {
-	status = AsyncStatus(request);
-	while (status == 0 || status == 1)
-	{
-		wait 0.05;
-		status = AsyncStatus(request);
-	}
-	return status;
+    status = AsyncStatus(request);
+    while (status == 0 || status == 1)
+    {
+        wait 0.05;
+        status = AsyncStatus(request);
+    }
+    return status;
 }
 
 levelRestart(persist)
 {
-	game["ended"] = true;
-	waitCriticalSections();
-
-	map_restart(persist);
+    game["ended"] = true;
+    waitCriticalSections();
+    map_restart(persist);
 }
 
 levelExit(persist)
 {
-	game["ended"] = true;
-	waitCriticalSections();
-
-	exitLevel(persist);
+    game["ended"] = true;
+    waitCriticalSections();
+    exitLevel(persist);
 }
 ```
 
-#### ``CriticalSection(<id>)``
-Creates a new critical section.
+---
+
+## Functions
+
+### `CriticalSection(<id>)`
+
+Creates a new critical section with the given identifier.
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `id` | string | Unique name for the critical section |
 
 ```c
 CriticalSection("mysql");
 ```
-<hr>
 
-#### ``CriticalSections()``
-Get the critical sections.
+---
+
+### `CriticalSections()`
+
+Returns all registered critical sections as a string-indexed array.
 
 ```c
 sections = CriticalSections();
 keys = getArrayKeys(sections);
 ```
-<hr>
 
-#### ``StatusCriticalSections()``
-Get the critical sections status.
-Returns false if a critical section is locked.
+---
+
+### `StatusCriticalSections()`
+
+Returns `false` if any critical section is currently locked, `true` otherwise. Useful for waiting until all async work is done before restarting or exiting.
 
 ```c
 status = StatusCriticalSections();
 ```
-<hr>
 
-#### ``EnterCriticalSection(<id>)``
-Enter a critical section.
-Returns false if the critical section is already in use.
+---
+
+### `EnterCriticalSection(<id>)`
+
+Attempts to enter the critical section. Returns `false` if it is already in use by another coroutine.
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `id` | string | Name of the critical section to enter |
 
 ```c
-EnterCriticalSection("mysql");
+while (!EnterCriticalSection("mysql"))
+    wait 0.05;
 ```
-<hr>
 
-#### ``LeaveCriticalSection(<id>)``
-Leave a critical section.
+---
+
+### `LeaveCriticalSection(<id>)`
+
+Releases the critical section so other coroutines can enter it.
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `id` | string | Name of the critical section to leave |
 
 ```c
 LeaveCriticalSection("mysql");
 ```
-<hr>

@@ -1,223 +1,391 @@
-# Utilities
+# Utility
 
-#### `fmt(<string>, <?arguments...>)`
+General-purpose helpers for string formatting, type conversion, type checking, and color math.
 
-Get a formatted string.
+## Functions
+
+**Output**
+- [ComPrint](#comprint)
+- [ComPrintLn](#comprintln)
+- [SysPrint](#sysprint)
+- [SysPrintLn](#sysprintln)
+
+**Strings**
+- [fmt](#fmt)
+- [Trim](#trim)
+- [Replace](#replace)
+- [StartsWith](#startswith)
+- [EndsWith](#endswith)
+- [StrJoin](#strjoin)
+- [PathJoin](#pathjoin)
+- [IsNullOrEmpty](#isnullorempty)
+- [IsStringAlpha](#isstringalpha)
+- [IsStringInt](#isstringint)
+- [IsStringFloat](#isstringfloat)
+
+**Type conversion**
+- [ToString](#tostring)
+- [ToInt](#toint)
+- [ToFloat](#tofloat)
+- [GetType](#gettype)
+
+**Control flow**
+- [Ternary](#ternary)
+- [IfUndef](#ifundef)
+
+**Color**
+- [ToRGB](#torgb)
+- [HexToRGB](#hextorgb)
+
+---
+
+### `ComPrint(<fmt>, <?arguments...>)`
+
+Prints a formatted message to the server console.
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `fmt` | string | Format string (printf-style) |
+| `arguments` | any | Optional format arguments |
 
 ```c
-a = "Iswenzz";
-b = 10;
-
-string = fmt("%s %d", a, b);
-```
-<hr>
-
-#### ``ComPrint(<fmt>, <?arguments...>)``
-Print a formatted message to the console output.
-
-```c
-a = "Iswenzz";
-
 ComPrint("Hello World!");
-ComPrint("Hello %s!", a);
+ComPrint("Player: %s", player.name);
 ```
-<hr>
 
-#### ``ComPrintLn(<fmt>, <?arguments...>)``
-Print a formatted message on a new line to the console output.
+---
+
+### `ComPrintLn(<fmt>, <?arguments...>)`
+
+Prints a formatted message followed by a newline to the server console. Call with no arguments to print a blank line.
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `fmt` | string | Format string (printf-style) |
+| `arguments` | any | Optional format arguments |
 
 ```c
-a = "Iswenzz";
-
-ComPrintLn("Hello World!");
-ComPrintLn("Hello %s!", a);
-ComPrintLn();
+ComPrintLn("Player: %s", player.name);
+ComPrintLn(); // blank line
 ```
-<hr>
 
-#### ``SysPrint(<fmt>, <?arguments...>)``
-Print a formatted message to the system output.
+---
+
+### `SysPrint(<fmt>, <?arguments...>)`
+
+Prints a formatted message to the system output (stdout).
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `fmt` | string | Format string (printf-style) |
+| `arguments` | any | Optional format arguments |
 
 ```c
-a = "Iswenzz";
-
 SysPrint("Hello World!");
-SysPrint("Hello %s!", a);
+SysPrint("Player: %s", player.name);
 ```
-<hr>
 
-#### ``SysPrintLn(<fmt>, <?arguments...>)``
-Print a formatted message on a new line to the system output.
+---
+
+### `SysPrintLn(<fmt>, <?arguments...>)`
+
+Prints a formatted message followed by a newline to the system output. Call with no arguments to print a blank line.
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `fmt` | string | Format string (printf-style) |
+| `arguments` | any | Optional format arguments |
 
 ```c
-a = "Iswenzz";
-
-SysPrintLn("Hello World!");
-SysPrintLn("Hello %s!", a);
-SysPrintLn();
+SysPrintLn("Player: %s", player.name);
+SysPrintLn(); // blank line
 ```
-<hr>
 
-#### `Trim(<string>)`
+---
 
-Trim a string.
+### `fmt(<string>, <?arguments...>)`
+
+Returns a formatted string. Equivalent to `sprintf` in C.
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `string` | string | Format string (printf-style) |
+| `arguments` | any | Optional format arguments |
 
 ```c
-string = trim("    hello world    ");
+s = fmt("%s has rank %d", player.name, rank);
 ```
-<hr>
 
-#### `Ternary(<condition>, <true>, <false>)`
+---
 
-Check the condition and return the 1st value if true or the second value if false.
+### `Trim(<string>)`
+
+Returns a copy of the string with leading and trailing whitespace removed.
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `string` | string | The string to trim |
 
 ```c
-a = Ternary(player.name == "Iswenzz", 1000, 0);
+clean = Trim("  hello world  "); // "hello world"
 ```
-<hr>
 
-#### `IfUndef(<var>, <default>)`
+---
 
-Give a default value if the variable is undefined.
+### `Replace(<source>, <search>, <replace>)`
+
+Returns a copy of `source` with all occurrences of `search` replaced by `replace`.
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `source` | string | The original string |
+| `search` | string | The substring to find |
+| `replace` | string | The replacement string |
 
 ```c
-name = IfUndef(player.name, "Unknown player");
+result = Replace("SR Speedrun", "Speedrun", "Deathrun"); // "SR Deathrun"
 ```
-<hr>
 
-#### `GetType(<var>)`
+---
 
-Get the type name of a GSC variable.
+### `StartsWith(<string>, <value>)`
+
+Returns `true` if `string` begins with `value`.
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `string` | string | The string to test |
+| `value` | string | The prefix to check for |
 
 ```c
-type = GetType(player.name);
+if (StartsWith(command, "!"))
+{
+    // handle command
+}
 ```
-<hr>
 
-#### `ToString(<var>)`
+---
 
-Convert int, float, vector to string.
+### `EndsWith(<string>, <value>)`
+
+Returns `true` if `string` ends with `value`.
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `string` | string | The string to test |
+| `value` | string | The suffix to check for |
 
 ```c
-str = ToString(player.velocity);
+if (EndsWith(filename, ".gsc"))
+{
+    // handle script file
+}
 ```
-<hr>
 
-#### `ToInt(<var>)`
+---
 
-Convert string, float, vector to integer.
+### `StrJoin(<array>, <separator>)`
+
+Joins all elements of a string array into a single string, separated by `separator`.
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `array` | array | Array of strings |
+| `separator` | string | String to insert between elements |
 
 ```c
-i = ToInt("123");
+result = StrJoin(names, ", "); // "Alice, Bob, Charlie"
 ```
-<hr>
 
-#### `ToFloat(<var>)`
+---
 
-Convert string, int, vector to float.
+### `PathJoin(<paths...>)`
+
+Joins path segments into a single filepath string, handling separators correctly.
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `paths` | string | One or more path segments |
 
 ```c
-f = ToFloat("1.23");
+path = PathJoin("C:\\home", "cod4", "speedrun");
+path = PathJoin("/home", "cod4", "speedrun");
 ```
-<hr>
 
-#### `IsNullOrEmpty(<str>)`
+---
 
-Check if a string is undefined or empty.
+### `IsNullOrEmpty(<str>)`
+
+Returns `true` if the string is undefined or an empty string.
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `str` | string | The value to check |
 
 ```c
-IsNullOrEmpty(player.name);
+if (IsNullOrEmpty(player.name))
+    player.name = "Unknown";
 ```
-<hr>
 
-#### `IsStringAlpha(<str>)`
+---
 
-Check if a string is alphanumeric.
+### `IsStringAlpha(<str>)`
+
+Returns `true` if the string contains only alphanumeric characters.
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `str` | string | The string to test |
 
 ```c
-IsStringAlpha("abc123_&");
+IsStringAlpha("abc123"); // true
+IsStringAlpha("abc!"); // false
 ```
-<hr>
 
-#### `IsStringFloat(<str>)`
+---
 
-Check if a string contains a float.
+### `IsStringInt(<str>)`
+
+Returns `true` if the string represents a valid integer.
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `str` | string | The string to test |
 
 ```c
-IsStringFloat("123.123");
+IsStringInt("42");    // true
+IsStringInt("3.14");  // false
 ```
-<hr>
 
-#### `IsStringInt(<str>)`
+---
 
-Check if a string contains an integer.
+### `IsStringFloat(<str>)`
+
+Returns `true` if the string represents a valid floating-point number.
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `str` | string | The string to test |
 
 ```c
-IsStringInt("123");
+IsStringFloat("3.14"); // true
+IsStringFloat("abc");  // false
 ```
-<hr>
 
-#### `ToRGB(<r>, <g>, <b>)`
+---
 
-Normalize RGB vector.
+### `ToString(<var>)`
+
+Converts an `int`, `float`, or `vector` to a string.
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `var` | int \| float \| vector | The value to convert |
 
 ```c
-rgb = ToRGB(125, 255, 255);
+s = ToString(player.velocity);
 ```
-<hr>
 
-#### `HexToRGB(<hex>)`
+---
 
-Convert a HEX color string to a normalized RGB vector.
+### `ToInt(<var>)`
+
+Converts a `string`, `float`, or `vector` to an integer.
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `var` | string \| float \| vector | The value to convert |
 
 ```c
-rgb = HexToRGB("#AABBCC");
-rgb = HexToRGB("AABBCC");
+i = ToInt("42");
 ```
-<hr>
 
-#### `StartsWith(<string>, <value>)`
+---
 
-Check if a string starts with a specific value.
+### `ToFloat(<var>)`
+
+Converts a `string`, `int`, or `vector` to a float.
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `var` | string \| int \| vector | The value to convert |
 
 ```c
-StartsWith("hello world", "hello");
+f = ToFloat("3.14");
 ```
-<hr>
 
-#### `EndsWith(<string>, <value>)`
+---
 
-Check if a string ends with a specific value.
+### `GetType(<var>)`
+
+Returns the type name of a GSC variable as a string.
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `var` | any | The variable to inspect |
 
 ```c
-EndsWith("hello world", "world");
+type = GetType(player.name); // "string"
 ```
-<hr>
 
-#### `StrJoin(<array>, <separator>)`
+---
 
-Join string array with a separator.
+### `Ternary(<condition>, <true>, <false>)`
+
+Returns `true` if `condition` is truthy, otherwise returns `false`. Equivalent to the `? :` operator in C.
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `condition` | any | The condition to evaluate |
+| `true` | any | Value returned when condition is truthy |
+| `false` | any | Value returned when condition is falsy |
 
 ```c
-str = StrJoin(array, "-");
+score = Ternary(player.name == "Iswenzz", 1000, 0);
 ```
-<hr>
 
-#### `Replace(<source>, <search>, <replace>)`
+---
 
-Replace a string.
+### `IfUndef(<var>, <default>)`
+
+Returns `var` if it is defined, otherwise returns `default`.
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `var` | any | The variable to check |
+| `default` | any | Fallback value if `var` is undefined |
 
 ```c
-str = Replace("SR Speedrun", "Speedrun", "Deathrun");
+name = IfUndef(player.name, "Unknown");
 ```
-<hr>
 
-#### `PathJoin(<paths...>)`
+---
 
-Join filepath strings.
+### `ToRGB(<r>, <g>, <b>)`
+
+Converts 0–255 RGB channel values to a normalized `(0.0–1.0)` vector for use with GSC color functions.
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `r` | int | Red channel (0–255) |
+| `g` | int | Green channel (0–255) |
+| `b` | int | Blue channel (0–255) |
 
 ```c
-path = StrJoin("C:\\home", "cod4", "speedrun");
-path = StrJoin("/home", "cod4", "speedrun");
+color = ToRGB(255, 128, 0);
 ```
-<hr>
+
+---
+
+### `HexToRGB(<hex>)`
+
+Converts a hex color string to a normalized `(0.0–1.0)` RGB vector. Accepts both `#RRGGBB` and `RRGGBB` formats.
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `hex` | string | Hex color string |
+
+```c
+color = HexToRGB("#FF8800");
+color = HexToRGB("FF8800");
+```
