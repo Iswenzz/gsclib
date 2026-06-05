@@ -6,31 +6,16 @@ All functions are called as methods on a player entity: `player FunctionName()`.
 
 ## Functions
 
-**Info**
-- [GetIP](#getip)
-
-**Movement state**
 - [GetForwardMove](#getforwardmove)
-- [GetRightMove](#getrightmove)
+- [GetIP](#getip)
 - [GetJumpOrigin](#getjumporigin)
+- [GetRightMove](#getrightmove)
 - [PmFlags](#pmflags)
-- [SetPmFlags](#setpmflags)
 - [PmTime](#pmtime)
-- [SetPmTime](#setpmtime)
 - [PmType](#pmtype)
-
-**Weapon state**
+- [SetPmFlags](#setpmflags)
+- [SetPmTime](#setpmtime)
 - [WeaponFlags](#weaponflags)
-
----
-
-### `<client> GetIP()`
-
-Returns the client's IP address as a string.
-
-```c
-ip = player GetIP();
-```
 
 ---
 
@@ -44,12 +29,12 @@ forwardMove = player GetForwardMove();
 
 ---
 
-### `<client> GetRightMove()`
+### `<client> GetIP()`
 
-Returns the player's current right/strafe movement input state.
+Returns the client's IP address as a string.
 
 ```c
-rightMove = player GetRightMove();
+ip = player GetIP();
 ```
 
 ---
@@ -64,12 +49,42 @@ jumpOrigin = player GetJumpOrigin();
 
 ---
 
+### `<client> GetRightMove()`
+
+Returns the player's current right/strafe movement input state.
+
+```c
+rightMove = player GetRightMove();
+```
+
+---
+
 ### `<client> PmFlags()`
 
 Returns the player's current movement flags bitmask.
 
 ```c
 flags = player PmFlags();
+```
+
+---
+
+### `<client> PmTime()`
+
+Returns the player's current movement time value.
+
+```c
+time = player PmTime();
+```
+
+---
+
+### `<client> PmType()`
+
+Returns the player's current movement type.
+
+```c
+type = player PmType();
 ```
 
 ---
@@ -88,16 +103,6 @@ player SetPmFlags(flags);
 
 ---
 
-### `<client> PmTime()`
-
-Returns the player's current movement time value.
-
-```c
-time = player PmTime();
-```
-
----
-
 ### `<client> SetPmTime(<time>)`
 
 Sets the player's movement time value.
@@ -108,16 +113,6 @@ Sets the player's movement time value.
 
 ```c
 player SetPmTime(time);
-```
-
----
-
-### `<client> PmType()`
-
-Returns the player's current movement type.
-
-```c
-type = player PmType();
 ```
 
 ---
